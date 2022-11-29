@@ -257,7 +257,7 @@ class _ComboCourseState extends State<ComboCourse> {
                                                 ),
                                               ),
                                               Container(
-                                                width: 182 * horizontalScale,
+                                                width: 220 * horizontalScale,
                                                 child: Text(
                                                   course[index]
                                                       .courseDescription,
@@ -268,7 +268,7 @@ class _ComboCourseState extends State<ComboCourse> {
                                                       color: Color.fromRGBO(
                                                           0, 0, 0, 1),
                                                       fontFamily: 'Poppins',
-                                                      fontSize: 10,
+                                                      fontSize: 16,
                                                       letterSpacing:
                                                           0 /*percentages not used in flutter. defaulting to zero*/,
                                                       fontWeight:

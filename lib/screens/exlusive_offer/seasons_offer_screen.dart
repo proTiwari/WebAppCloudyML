@@ -141,10 +141,11 @@ class _SeasonOfferState extends State<SeasonOffer> {
         '"currency": "INR", '
         '"receipt": "receipt#R1", '
         '"payment_capture": 1 }'; // as per my experience the receipt doesn't play any role in helping you generate a certain pattern in your Order ID!!
+    final url = 'https://api.razorpay.com/v1/orders';
 
-    var res = await http.post(
-        Uri.parse('https://api.razorpay.com/v1/orders'),
-        headers: headers, body: data);
+    final res = await http.get(
+        Uri.parse(url),
+        headers: headers,);
     if (res.statusCode != 200)
       throw Exception('http.post error: statusCode= ${res.statusCode}');
     print('ORDER ID response => ${res.body}');

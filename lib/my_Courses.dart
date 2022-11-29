@@ -146,6 +146,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
 
     return Scaffold(
         key: _scaffoldKey,
@@ -519,7 +521,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.only(top: 30.0, left: 60, right: 60),
                         child: Container(
                     width: screenWidth / 2.5,
-                    height: screenHeight / 5.5,
+                    height: screenHeight / 5,
                     decoration: BoxDecoration(
                         color: Colors.white,
                         boxShadow: [
@@ -721,33 +723,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           height: 1),
                                                     ),
                                                   ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Row(
-                                                    children: [
-                                                      SizedBox(
-                                                        height: 5,
-                                                        width: 150,
-                                                        child:
-                                                        LinearProgressIndicator(
-                                                          value: 0.65,
-                                                          color: HexColor(
-                                                              "8346E1"),
-                                                          backgroundColor:
-                                                          HexColor(
-                                                              'E3E3E3'),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Expanded(
-                                                        child: Text(
-                                                            "${((course.length / int.parse(course[index].numOfVideos)) * 100).roundToDouble()}%"),
-                                                      )
-                                                    ],
-                                                  ),
                                                 ],
                                               ),
                                             ),
@@ -785,7 +760,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.only(right: 60.0, left: 60.0),
                     child: Container(
                       margin: EdgeInsets.only(top: 15, bottom: 15),
-                      height: screenHeight / 2,
+                      height: screenHeight / 1.9,
                       child: Center(
                         child: ListView.builder(
                             shrinkWrap: true,
@@ -794,6 +769,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             itemBuilder: (BuildContext context, index) {
                               if (course[index].courseName == "null") {
                                 return Container();
+                              }
+                              if (course[index].courses == null) {
+                                return Container(
+                                );
                               }
                               return InkWell(
                                 onTap: () {
@@ -824,17 +803,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(10.0),
                                   child: Container(
-                                    width: screenWidth / 5,
+                                    width: screenWidth / 4,
                                     height: screenHeight / 2,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black26,
-                                          offset: Offset(0, 2),
-                                          blurRadius: 40,
-                                        ),
-                                      ],
+                                      // boxShadow: [
+                                      //   BoxShadow(
+                                      //     color: Colors.black26,
+                                      //     offset: Offset(0, 2),
+                                      //     blurRadius: 40,
+                                      //   ),
+                                      // ],
                                       borderRadius:
                                       BorderRadius.circular(15),
                                       border: Border.all(
@@ -846,7 +825,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       CrossAxisAlignment.center,
                                       children: [
                                         Container(
-                                          width: screenWidth / 5,
+                                          width: screenWidth / 4,
                                           height: screenHeight / 6,
                                           child: ClipRRect(
                                             borderRadius: BorderRadius.only(
@@ -861,133 +840,112 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                         Container(
-                                          height: screenHeight / 5.5,
+                                          height: screenHeight/5,
+                                          padding: EdgeInsets.all(8),
                                           child: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .spaceBetween,
                                             children: [
-                                              Padding(
-                                                padding:
-                                                const EdgeInsets.all(
-                                                    8.0),
-                                                child: Column(
-                                                  children: [
-                                                    Align(
-                                                      alignment:
-                                                      Alignment.topLeft,
-                                                      child: Text(
-                                                        course[index]
+                                              Align(
+                                                alignment:
+                                                Alignment.topLeft,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(bottom: 5.0),
+                                                  child: Text(
+                                                    course[index]
+                                                        .courseName,
+                                                    style: TextStyle(
+                                                        color: Colors
+                                                            .black,
+                                                        debugLabel: course[index]
                                                             .courseName,
-                                                        style: TextStyle(
-                                                            color: Colors
-                                                                .black,
-                                                            fontFamily:
-                                                            'Medium',
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                            FontWeight
-                                                                .w500,
-                                                            height: 1),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    Align(
-                                                      alignment:
-                                                      Alignment.topLeft,
-                                                      child: Text(
-                                                        "- ${course[index].courseLanguage} Language",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                            FontWeight
-                                                                .bold,
-                                                            color: Colors
-                                                                .black,
-                                                            fontSize: 10),
-                                                      ),
-                                                    ),
-                                                    Align(
-                                                      alignment:
-                                                      Alignment.topLeft,
-                                                      child: Text(
-                                                        "- ${course[index].numOfVideos} Videos",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                            FontWeight
-                                                                .bold,
-                                                            color: Colors
-                                                                .black,
-                                                            fontSize: 10),
-                                                      ),
-                                                    ),
-                                                    Align(
-                                                      alignment:
-                                                      Alignment.topLeft,
-                                                      child: Text(
-                                                        "- Lifetime Access",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                            FontWeight
-                                                                .bold,
-                                                            color: Colors
-                                                                .black,
-                                                            fontSize: 10),
-                                                      ),
-                                                    ),
-                                                  ],
+                                                        fontFamily:
+                                                        'Medium',
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .w500,),
+                                                  ),
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment:
+                                                Alignment.topLeft,
+                                                child: Text(
+                                                  "- ${course[index].courseLanguage} Language",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .bold,
+                                                      color: Colors
+                                                          .black,
+                                                      fontSize: 10),
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment:
+                                                Alignment.topLeft,
+                                                child: Text(
+                                                  "- ${course[index].numOfVideos} Videos",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .bold,
+                                                      color: Colors
+                                                          .black,
+                                                      fontSize: 10),
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment:
+                                                Alignment.topLeft,
+                                                child: Text(
+                                                  "- Lifetime Access",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .bold,
+                                                      color: Colors
+                                                          .black,
+                                                      fontSize: 10),
+                                                ),
+                                              ),
+                                            Align(
+                                                alignment: Alignment.bottomRight,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(top: 5, left: 8.0, right: 8),
+                                                  child: Image.asset('assets/Rating.png',
+                                                    fit: BoxFit.fill,
+                                                    height: 10,
+                                                    width: screenWidth/16,)
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Padding(
-                                          padding:
-                                          const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                child: ElevatedButton(
-                                                    onPressed: () {},
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      backgroundColor:
-                                                      HexColor(
-                                                          "8346E1"),
-                                                      shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                          BorderRadius
-                                                              .circular(
-                                                              5)),
-                                                    ),
-                                                    child: Text(
-                                                      "${course[index].coursePrice}",
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          color:
-                                                          Colors.white,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                    )),
+                                        Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: ElevatedButton(
+                                              onPressed: () {},
+                                              style: ElevatedButton
+                                                  .styleFrom(
+                                                backgroundColor:
+                                                HexColor(
+                                                    "8346E1"),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .circular(
+                                                        5)),
                                               ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Expanded(
-                                                child: Image.asset(
-                                                  'assets/Rating.png',
-                                                  fit: BoxFit.fill,
-                                                  height: 11,
-                                                  width: 50,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                              child: Text(
+                                                "${course[index].coursePrice}",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color:
+                                                    Colors.white,
+                                                    fontWeight:
+                                                    FontWeight
+                                                        .bold),
+                                              )),
                                         ),
                                       ],
                                     ),
@@ -997,6 +955,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             }),
                       ),
                     ),
+                  ),
+                  Container(
+                    height: 20,
                   ),
                 ],
               ),

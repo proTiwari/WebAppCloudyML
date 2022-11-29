@@ -400,56 +400,56 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: SizedBox(
-        height: 70,
-        child: BottomNavigationBar(
-          iconSize: 24,
-          backgroundColor: Colors.grey.shade50,
-          elevation: 0,
-          selectedItemColor: Colors.black,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          onTap: (int index) {
-            setState(() {
-              _selectedIndex = index;
-              openPaymentHistory = false;
-            });
-          },
-          currentIndex: _selectedIndex!,
-          items: [
-            BottomNavigationBarItem(
-              icon: new Icon(
-                Icons.home_outlined,
-                color: Colors.black.withOpacity(0.5),
-              ),
-              activeIcon: Icon(
-                Icons.home,
-                color: Colors.black,
-              ),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.store_outlined,
-                  color: Colors.black.withOpacity(0.5)),
-              activeIcon: Icon(
-                Icons.store,
-                color: Colors.black,
-              ),
-              label: 'Store',
-            ),
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.chat_bubble_outline_sharp,
-                  color: Colors.black.withOpacity(0.5)),
-              activeIcon: Icon(
-                Icons.chat_bubble_outline_sharp,
-                color: Colors.black,
-              ),
-              label: 'Chat',
-            ),
-          ],
-          type: BottomNavigationBarType.fixed,
-        ),
-      ),
+      // bottomNavigationBar: SizedBox(
+      //   height: 70,
+      //   child: BottomNavigationBar(
+      //     iconSize: 24,
+      //     backgroundColor: Colors.grey.shade50,
+      //     elevation: 0,
+      //     selectedItemColor: Colors.black,
+      //     showSelectedLabels: false,
+      //     showUnselectedLabels: false,
+      //     onTap: (int index) {
+      //       setState(() {
+      //         _selectedIndex = index;
+      //         openPaymentHistory = false;
+      //       });
+      //     },
+      //     currentIndex: _selectedIndex!,
+      //     items: [
+      //       BottomNavigationBarItem(
+      //         icon: new Icon(
+      //           Icons.home_outlined,
+      //           color: Colors.black.withOpacity(0.5),
+      //         ),
+      //         activeIcon: Icon(
+      //           Icons.home,
+      //           color: Colors.black,
+      //         ),
+      //         label: 'Home',
+      //       ),
+      //       BottomNavigationBarItem(
+      //         icon: new Icon(Icons.store_outlined,
+      //             color: Colors.black.withOpacity(0.5)),
+      //         activeIcon: Icon(
+      //           Icons.store,
+      //           color: Colors.black,
+      //         ),
+      //         label: 'Store',
+      //       ),
+      //       BottomNavigationBarItem(
+      //         icon: new Icon(Icons.chat_bubble_outline_sharp,
+      //             color: Colors.black.withOpacity(0.5)),
+      //         activeIcon: Icon(
+      //           Icons.chat_bubble_outline_sharp,
+      //           color: Colors.black,
+      //         ),
+      //         label: 'Chat',
+      //       ),
+      //     ],
+      //     type: BottomNavigationBarType.fixed,
+      //   ),
+      // ),
     );
   }
 }

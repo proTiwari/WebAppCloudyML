@@ -15,6 +15,7 @@ import 'package:cloudyml_app2/payments_history.dart';
 import 'package:cloudyml_app2/privacy_policy.dart';
 import 'package:cloudyml_app2/screens/assignment_tab_screen.dart';
 import 'package:cloudyml_app2/screens/exlusive_offer/seasons_offer_screen.dart';
+import 'package:cloudyml_app2/screens/groups_list.dart';
 import 'package:cloudyml_app2/screens/image_page.dart';
 import 'package:cloudyml_app2/store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -224,8 +225,6 @@ class _HomeState extends State<Home> {
         Provider.of<UserProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context);
     final size = MediaQuery.of(context).size;
-    final height = size.height;
-    final width = size.width;
     List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -403,6 +402,40 @@ class _HomeState extends State<Home> {
                   ),
                   InkWell(
                     child: ListTile(
+                      title: Text('Store'),
+                      leading: Icon(
+                        Icons.store,
+                        color: HexColor('691EC8'),
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => StoreScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  // InkWell(
+                  //   child: ListTile(
+                  //     title: Text('Messages'),
+                  //     leading: Icon(
+                  //       Icons.chat_bubble_outline_sharp,
+                  //       color: HexColor('691EC8'),
+                  //     ),
+                  //   ),
+                  //   onTap: () {
+                  //     Navigator.pushReplacement(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => GroupsList(),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                  InkWell(
+                    child: ListTile(
                       title: Text(''
                           'My Account'),
                       leading: Icon(
@@ -462,34 +495,34 @@ class _HomeState extends State<Home> {
                   Divider(
                     thickness: 2,
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PrivacyPolicy()));
-                    },
-                    child: ListTile(
-                      title: Text('Privacy policy'),
-                      leading: Icon(
-                        Icons.privacy_tip,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    child: ListTile(
-                      title: Text('About Us'),
-                      leading: Icon(
-                        Icons.info,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () async {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => AboutUs()));
-                    },
-                  ),
+                  // InkWell(
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => PrivacyPolicy()));
+                  //   },
+                  //   child: ListTile(
+                  //     title: Text('Privacy policy'),
+                  //     leading: Icon(
+                  //       Icons.privacy_tip,
+                  //       color: HexColor('691EC8'),
+                  //     ),
+                  //   ),
+                  // ),
+                  // InkWell(
+                  //   child: ListTile(
+                  //     title: Text('About Us'),
+                  //     leading: Icon(
+                  //       Icons.info,
+                  //       color: HexColor('691EC8'),
+                  //     ),
+                  //   ),
+                  //   onTap: () async {
+                  //     Navigator.push(context,
+                  //         MaterialPageRoute(builder: (context) => AboutUs()));
+                  //   },
+                  // ),
                   // InkWell(
                   //   child: ListTile(
                   //     title: Text('Notification Local'),
@@ -520,6 +553,18 @@ class _HomeState extends State<Home> {
                   //     // );
                   //   },
                   // ),
+                  InkWell(
+                    onTap: () {
+                      logOut(context);
+                    },
+                    child: ListTile(
+                      title: Text('LogOut'),
+                      leading: Icon(
+                        Icons.logout_rounded,
+                        color: HexColor('691EC8'),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               Positioned(
@@ -584,19 +629,19 @@ class _HomeState extends State<Home> {
                             style: textStyle,
                           ),
                           // offernavigation
-                          TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SeasonOffer(
-                                              days: days,
-                                              seconds: seconds,
-                                              hours: hours,
-                                              minutes: minutes,
-                                            )));
-                              },
-                              child: Text('Sizzling Offers')),
+                          // TextButton(
+                          //     onPressed: () {
+                          //       Navigator.push(
+                          //           context,
+                          //           MaterialPageRoute(
+                          //               builder: (context) => SeasonOffer(
+                          //                     days: days,
+                          //                     seconds: seconds,
+                          //                     hours: hours,
+                          //                     minutes: minutes,
+                          //                   )));
+                          //     },
+                          //     child: Text('Sizzling Offers')),
 
                           SizedBox(
                             width: horizontalScale * 250,
@@ -703,274 +748,226 @@ class _HomeState extends State<Home> {
                       )),
                       courses.length > 0
                           ? Container(
-                              width: screenWidth / 2.5,
-                              height: screenHeight / 5.5,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.black26,
-                                      offset: Offset(
-                                        2, // Move to right 10  horizontally
-                                        2.0, // Move to bottom 10 Vertically
-                                      ),
-                                      blurRadius: 40)
-                                ],
-                                border: Border.all(
-                                  color: HexColor('440F87'),
-                                  width: 1.5,
+                        width: screenWidth / 2.5,
+                        height: screenHeight / 5.5,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black26,
+                                offset: Offset(
+                                  2, // Move to right 10  horizontally
+                                  2.0, // Move to bottom 10 Vertically
                                 ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                // shrinkWrap: true,
-                                itemCount: course.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  if (course[index].courseName == "null") {
-                                    return Container();
+                                blurRadius: 40)
+                          ],
+                          border: Border.all(
+                            color: HexColor('440F87'),
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          // shrinkWrap: true,
+                          itemCount: course.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            if (course[index].courseName == "null") {
+                              return Container();
+                            }
+                            if (courses
+                                .contains(course[index].courseId)) {
+                              return InkWell(
+                                onTap: (() {
+                                  // setModuleId(snapshot.data!.docs[index].id);
+                                  getCourseName();
+                                  if (navigateToCatalogueScreen(
+                                      course[index].courseId) &&
+                                      !(userMap['payInPartsDetails']
+                                      [course[index].courseId]
+                                      ['outStandingAmtPaid'])) {
+                                    if (!course[index].isItComboCourse) {
+                                      Navigator.push(
+                                        context,
+                                        PageTransition(
+                                          duration: Duration(milliseconds: 400),
+                                          curve: Curves.bounceInOut,
+                                          type:
+                                          PageTransitionType.rightToLeftWithFade,
+                                          child: VideoScreen(
+                                            isDemo: true,
+                                            courseName: course[index].courseName,
+                                            sr: 1,
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      Navigator.push(
+                                        context,
+                                        PageTransition(
+                                          duration: Duration(milliseconds: 100),
+                                          curve: Curves.bounceInOut,
+                                          type:
+                                          PageTransitionType.rightToLeftWithFade,
+                                          child: ComboStore(
+                                            courses: course[index].courses,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    if (!course[index].isItComboCourse) {
+                                      if (course[index].courseContent == 'pdf') {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            duration: Duration(milliseconds: 400),
+                                            curve: Curves.bounceInOut,
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child: PdfCourseScreen(
+                                              curriculum: course[index].curriculum
+                                              as Map<String, dynamic>,
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            duration: Duration(milliseconds: 400),
+                                            curve: Curves.bounceInOut,
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child: VideoScreen(
+                                              isDemo: true,
+                                              courseName: course[index].courseName,
+                                              sr: 1,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    } else {
+                                      ComboCourse.comboId.value =
+                                          course[index].courseId;
+                                      Navigator.push(
+                                        context,
+                                        PageTransition(
+                                          duration: Duration(milliseconds: 400),
+                                          curve: Curves.bounceInOut,
+                                          type:
+                                          PageTransitionType.rightToLeftWithFade,
+                                          child: ComboCourse(
+                                            courses: course[index].courses,
+                                          ),
+                                        ),
+                                      );
+                                    }
                                   }
-                                  if (courses
-                                      .contains(course[index].courseId)) {
-                                    return InkWell(
-                                      onTap: (() {
-                                        // setModuleId(snapshot.data!.docs[index].id);
-                                        getCourseName();
-                                        if (navigateToCatalogueScreen(
-                                                course[index].courseId) &&
-                                            !(userMap['payInPartsDetails']
-                                                    [course[index].courseId]
-                                                ['outStandingAmtPaid'])) {
-                                          if (!course[index].isItComboCourse) {
-                                            Navigator.push(
-                                              context,
-                                              PageTransition(
-                                                duration:
-                                                    Duration(milliseconds: 400),
-                                                curve: Curves.bounceInOut,
-                                                type: PageTransitionType
-                                                    .rightToLeftWithFade,
-                                                child: VideoScreen(
-                                                  isDemo: true,
-                                                  courseName:
-                                                      course[index].courseName,
-                                                  sr: 1,
-                                                ),
-                                              ),
-                                            );
-                                          } else {
-                                            Navigator.push(
-                                              context,
-                                              PageTransition(
-                                                duration:
-                                                    Duration(milliseconds: 100),
-                                                curve: Curves.bounceInOut,
-                                                type: PageTransitionType
-                                                    .rightToLeftWithFade,
-                                                child: ComboStore(
-                                                  courses:
-                                                      course[index].courses,
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        } else {
-                                          if (!course[index].isItComboCourse) {
-                                            if (course[index].courseContent ==
-                                                'pdf') {
-                                              Navigator.push(
-                                                context,
-                                                PageTransition(
-                                                  duration: Duration(
-                                                      milliseconds: 400),
-                                                  curve: Curves.bounceInOut,
-                                                  type: PageTransitionType
-                                                      .rightToLeftWithFade,
-                                                  child: PdfCourseScreen(
-                                                    curriculum: course[index]
-                                                            .curriculum
-                                                        as Map<String, dynamic>,
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              Navigator.push(
-                                                context,
-                                                PageTransition(
-                                                  duration: Duration(
-                                                      milliseconds: 400),
-                                                  curve: Curves.bounceInOut,
-                                                  type: PageTransitionType
-                                                      .rightToLeftWithFade,
-                                                  child: VideoScreen(
-                                                    isDemo: true,
-                                                    courseName: course[index]
-                                                        .courseName,
-                                                    sr: 1,
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          } else {
-                                            ComboCourse.comboId.value =
-                                                course[index].courseId;
-                                            Navigator.push(
-                                              context,
-                                              PageTransition(
-                                                duration:
-                                                    Duration(milliseconds: 400),
-                                                curve: Curves.bounceInOut,
-                                                type: PageTransitionType
-                                                    .rightToLeftWithFade,
-                                                child: ComboCourse(
-                                                  courses:
-                                                      course[index].courses,
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        }
-                                        setState(() {
-                                          courseId =
-                                              course[index].courseDocumentId;
-                                        });
-                                      }),
-                                      child: Container(
-                                        width: screenWidth / 2.5,
-                                        height: screenHeight / 5.5,
-                                        child: Stack(
+                                  setState(() {
+                                    courseId = course[index].courseDocumentId;
+
+                                  });
+                                }),
+                                child: Container(
+                                  width: screenWidth / 2.5,
+                                  height: screenHeight / 5.5,
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                        const EdgeInsets.all(8.0),
+                                        child: Row(
                                           children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    width: 60 * horizontalScale,
-                                                    height: screenHeight / 5.5,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: Colors
-                                                                .transparent),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
-                                                        image: DecorationImage(
-                                                            image:
-                                                                CachedNetworkImageProvider(
-                                                              course[index]
-                                                                  .courseImageUrl,
-                                                            ),
-                                                            fit: BoxFit.fill)),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Expanded(
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.topCenter,
-                                                      child: Column(
-                                                        children: [
-                                                          Text(
-                                                            course[index]
-                                                                .courseName,
-                                                            style: TextStyle(
-                                                                color: HexColor(
-                                                                    "2C2C2C"),
-                                                                fontFamily:
-                                                                    'Medium',
-                                                                fontSize: 16,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                height: 1),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 5.0,
-                                                                    bottom: 5),
-                                                            child: Align(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .topLeft,
-                                                              child:
-                                                                  Image.asset(
-                                                                'assets/Rating.png',
-                                                                fit:
-                                                                    BoxFit.fill,
-                                                                height: 10,
-                                                                width: 100,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Align(
-                                                            alignment: Alignment
-                                                                .topLeft,
-                                                            child: Text(
-                                                              "${course[index].courseLanguage} || ${course[index].numOfVideos} Videos",
-                                                              style: TextStyle(
-                                                                  color: HexColor(
-                                                                      "2C2C2C"),
-                                                                  fontFamily:
-                                                                      'Medium',
-                                                                  fontSize: 12,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  height: 1),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              SizedBox(
-                                                                height: 5,
-                                                                width: 150,
-                                                                child:
-                                                                    LinearProgressIndicator(
-                                                                  value: 0.65,
-                                                                  color: HexColor(
-                                                                      "8346E1"),
-                                                                  backgroundColor:
-                                                                      HexColor(
-                                                                          'E3E3E3'),
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width: 5,
-                                                              ),
-                                                              Expanded(
-                                                                child: Text(
-                                                                  "${((course.length / int.parse(course[index].numOfVideos)) * 100).roundToDouble()}%",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          10),
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ],
+                                            Container(
+                                              width: 60 * horizontalScale,
+                                              height: screenHeight / 5.5,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors
+                                                          .transparent),
+                                                  borderRadius:
+                                                  BorderRadius
+                                                      .circular(5),
+                                                  image: DecorationImage(
+                                                      image:
+                                                      CachedNetworkImageProvider(
+                                                        course[index]
+                                                            .courseImageUrl,
+                                                      ),
+                                                      fit: BoxFit.fill)),
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Expanded(
+                                              child: Align(
+                                                alignment:
+                                                Alignment.topCenter,
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      course[index]
+                                                          .courseName,
+                                                      style: TextStyle(
+                                                          color: HexColor(
+                                                              "2C2C2C"),
+                                                          fontFamily:
+                                                          'Medium',
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .w500,
+                                                          height: 1),
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(top: 5.0, bottom: 5),
+                                                      child: Align(
+                                                        alignment:
+                                                        Alignment.topLeft,
+                                                        child: Image.asset(
+                                                          'assets/Rating.png',
+                                                          fit: BoxFit.fill,
+                                                          height: 10,
+                                                          width: screenWidth/16,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
+                                                    Align(
+                                                      alignment: Alignment.topLeft,
+                                                      child: Text(
+                                                        "${course[index]
+                                                            .courseLanguage} || ${course[index]
+                                                            .numOfVideos} Videos",
+                                                        style: TextStyle(
+                                                            color: HexColor(
+                                                                "2C2C2C"),
+                                                            fontFamily:
+                                                            'Medium',
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500,
+                                                            height: 1),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                    );
-                                  } else {
-                                    return Container();
-                                  }
-                                },
-                              ),
-                            )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                      )
                           : Container(
                               child: Text('There are zero courses'),
                             ),
@@ -1080,12 +1077,13 @@ class _HomeState extends State<Home> {
                 ),
                 Container(
                   width: screenWidth,
+                  height: screenHeight/1.25,
                   color: Colors.white,
                   child: Stack(
                     children: [
                       Image.network(
                         'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FfeatureBG.png?alt=media&token=f350c99d-a928-48b6-9eff-983ad8797de9',
-                        fit: BoxFit.fitWidth,
+                        fit: BoxFit.fill,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 30.0),
@@ -1101,244 +1099,243 @@ class _HomeState extends State<Home> {
                               ),
                             )),
                       ),
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(top: 75, bottom: 50),
-                          height: screenHeight / 2,
-                          child: Center(
-                            child: ListView.builder(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: course.length,
-                                itemBuilder: (BuildContext context, index) {
-                                  if (course[index].courseName == "null") {
-                                    return Container();
-                                  }
-                                  return InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        courseId =
-                                            course[index].courseDocumentId;
-                                      });
-                                      print(courseId);
-                                      if (course[index].isItComboCourse) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => ComboStore(
-                                              courses: course[index].courses,
+                      Container(
+                        margin: EdgeInsets.only(top: 75, bottom: 50),
+                        height: screenHeight / 2,
+                        child: Center(
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: course.length,
+                              itemBuilder: (BuildContext context, index) {
+                                if (course[index].courseName == "null") {
+                                  return Container();
+                                }
+                                return InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      courseId =
+                                          course[index].courseDocumentId;
+                                    });
+                                    print(courseId);
+                                    if (course[index].isItComboCourse) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ComboStore(
+                                            courses: course[index].courses,
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const CatelogueScreen(),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: course[index].isItComboCourse
+                                      ? Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Container(
+                                            width: screenWidth / 5,
+                                            height: screenHeight / 2,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black26,
+                                                  offset: Offset(0, 2),
+                                                  blurRadius: 40,
+                                                ),
+                                              ],
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              border: Border.all(
+                                                  width: 0.5,
+                                                  color: HexColor("440F87")),
                                             ),
-                                          ),
-                                        );
-                                      } else {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const CatelogueScreen(),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    child: course[index].isItComboCourse
-                                        ? Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Container(
-                                              width: screenWidth / 5,
-                                              height: screenHeight / 2,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black26,
-                                                    offset: Offset(0, 2),
-                                                    blurRadius: 40,
-                                                  ),
-                                                ],
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                border: Border.all(
-                                                    width: 0.5,
-                                                    color: HexColor("440F87")),
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                    width: screenWidth / 5,
-                                                    height: screenHeight / 6,
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                              topLeft: Radius
-                                                                  .circular(15),
-                                                              topRight: Radius
-                                                                  .circular(
-                                                                      15)),
-                                                      child: Image.network(
-                                                        course[index]
-                                                            .courseImageUrl,
-                                                        fit: BoxFit.fill,
-                                                      ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  width: screenWidth / 5,
+                                                  height: screenHeight / 6,
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                            topLeft: Radius
+                                                                .circular(15),
+                                                            topRight: Radius
+                                                                .circular(
+                                                                    15)),
+                                                    child: Image.network(
+                                                      course[index]
+                                                          .courseImageUrl,
+                                                      fit: BoxFit.fill,
                                                     ),
                                                   ),
-                                                  Container(
-                                                    height: screenHeight / 5.5,
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Column(
-                                                            children: [
-                                                              Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                                child: Text(
-                                                                  course[index]
-                                                                      .courseName,
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontFamily:
-                                                                          'Medium',
-                                                                      fontSize:
-                                                                          14,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                      height:
-                                                                          1),
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                                child: Text(
-                                                                  "- ${course[index].courseLanguage} Language",
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontSize:
-                                                                          10),
-                                                                ),
-                                                              ),
-                                                              Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                                child: Text(
-                                                                  "- ${course[index].numOfVideos} Videos",
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontSize:
-                                                                          10),
-                                                                ),
-                                                              ),
-                                                              Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                                child: Text(
-                                                                  "- Lifetime Access",
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontSize:
-                                                                          10),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Column(
+                                                ),
+                                                Container(
+                                                  height: screenHeight / 5.5,
+                                                  child: Column(
                                                     children: [
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .only(
-                                                                bottom: 10.0),
-                                                        child: ElevatedButton(
-                                                            onPressed: () {},
-                                                            style:
-                                                                ElevatedButton
-                                                                    .styleFrom(
-                                                              backgroundColor:
-                                                                  HexColor(
-                                                                      "8346E1"),
-                                                              shape: RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5)),
+                                                                .all(8.0),
+                                                        child: Column(
+                                                          children: [
+                                                            Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .topLeft,
+                                                              child: Text(
+                                                                course[index]
+                                                                    .courseName,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontFamily:
+                                                                        'Medium',
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    height:
+                                                                        1),
+                                                              ),
                                                             ),
-                                                            child: Text(
-                                                              "${course[index].coursePrice}",
-                                                              style: TextStyle(
-                                                                  fontSize: 12,
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            )),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                right: 15.0),
-                                                        child: Align(
-                                                          alignment: Alignment
-                                                              .bottomRight,
-                                                          child: Image.asset(
-                                                            'assets/Rating.png',
-                                                            fit: BoxFit.fill,
-                                                            height: 11,
-                                                            width: 50,
-                                                          ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .topLeft,
+                                                              child: Text(
+                                                                "- ${course[index].courseLanguage} Language",
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        10),
+                                                              ),
+                                                            ),
+                                                            Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .topLeft,
+                                                              child: Text(
+                                                                "- ${course[index].numOfVideos} Videos",
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        10),
+                                                              ),
+                                                            ),
+                                                            Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .topLeft,
+                                                              child: Text(
+                                                                "- Lifetime Access",
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        10),
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets
+                                                                  .only(
+                                                              bottom: 10.0),
+                                                      child: ElevatedButton(
+                                                          onPressed: () {},
+                                                          style:
+                                                              ElevatedButton
+                                                                  .styleFrom(
+                                                            backgroundColor:
+                                                                HexColor(
+                                                                    "8346E1"),
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5)),
+                                                          ),
+                                                          child: Text(
+                                                            "${course[index].coursePrice}",
+                                                            style: TextStyle(
+                                                                fontSize: 12,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          )),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets
+                                                                  .only(
+                                                              right: 15.0),
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .bottomRight,
+                                                        child: Image.asset(
+                                                          'assets/Rating.png',
+                                                          fit: BoxFit.fill,
+                                                          height: 11,
+                                                          width: 50,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
-                                          )
-                                        : Container(),
-                                  );
-                                }),
-                          ),
+                                          ),
+                                        )
+                                      : Container(),
+                                );
+                              }),
                         ),
                       ),
                     ],
                   ),
+                ),
+                Container(
+                  height: screenHeight/16,
+                  width: screenWidth,
                 ),
                 // Container(
                 //   width: screenWidth,

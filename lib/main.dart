@@ -333,6 +333,7 @@ class _MyAppState extends State<MyApp> {
             initialRoute: '/',
             routes: {
               "/": (context) =>
+              // HomeScreen(),
                   // SeasonOffer(),
                   Authenticate(),
               "/courses": (context) => const HomeScreen(),

@@ -29,6 +29,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
   TextEditingController noteText = TextEditingController();
   late Future<List<FirebaseFile>> futureAssignments;
   late Future<List<FirebaseFile>> futureSolutions;
+  late Future<List<FirebaseFile>> futureDataSets;
 
   String urlIPYNB =
       "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/Assignments%2FPython_Withoutcode.ipynb?alt=media&token=9172c5b5-9350-4e66-bb4a-077181d04607";
@@ -96,18 +97,10 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
         FirebaseApi.listAll('courses/${widget.courseName}/assignment');
     futureSolutions =
         FirebaseApi.listAll('courses/${widget.courseName}/solution');
+    futureDataSets =
+        FirebaseApi.listAll('courses/${widget.courseName}/dataset');
   }
 
-  Future getAssignmentFromStore() async {
-    var storageRef = await FirebaseStorage.instance
-        .ref()
-        .child('courses')
-        .child('python')
-        .child('data structure')
-        .child('assignment');
-
-    storageRef.getDownloadURL();
-  }
 
   Future submissionTask() async {
     try {
@@ -140,8 +133,9 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<List<FirebaseFile>>(
-          future: futureAssignments,
+      body:
+      FutureBuilder<List<FirebaseFile>>(
+          future: futureSolutions,
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
@@ -153,7 +147,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                     'Some error occurred!',
                   ));
                 } else {
-                  final assignments = snapshot.data!;
+                  final solutions = snapshot.data!;
                   return Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: SingleChildScrollView(
@@ -222,12 +216,18 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                                 InkWell(
                                                     onTap: () {
                                                       final file =
-                                                          assignments[widget.selectedSection!];
+                                                          solutions[widget.selectedSection!];
                                                       launch(file.url);
-                                                      print('file name : ${file.name}');
+
+                                                      if (file.name != null) {
+                                                        print('file name : ${file.name}');
+                                                      } else {
+                                                        print('there is no file');
+                                                      }
+
                                                     },
-                                                    child: Text(file!.name,
-                                                      // 'Python_output.pdf',
+                                                    child: Text('Reference pdf.'
+                                                      ,
                                                       style: TextStyle(
                                                           color: Colors
                                                               .deepPurpleAccent),
@@ -235,11 +235,11 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                               ],
                                             ),
                                             SizedBox(
-                                              height: 20,
+                                              height: 10,
                                             ),
-                                            //future builder for solutions
+                                            //future builder for asignments
                                             FutureBuilder<List<FirebaseFile>>(
-                                                future: futureSolutions,
+                                                future: futureAssignments,
                                                 builder: (context, snapshot) {
                                                   switch (snapshot
                                                       .connectionState) {
@@ -255,20 +255,76 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                                           'Some error occurred!',
                                                         ));
                                                       } else {
-                                                        final solutions =
+                                                        final assignments =
                                                             snapshot.data!;
-                                                        return InkWell(
-                                                            onTap: () {
-                                                              final file =
-                                                                  solutions[widget.selectedSection];
-                                                              launch(file.url);
-                                                            },
-                                                            child: Text(
-                                                              'Python_Withoutcode.ipynb (650.23 KB)',
+                                                        return Row(
+                                                          children: [
+                                                            Text(
+                                                              'Click to download ',
                                                               style: TextStyle(
-                                                                  color: Colors
-                                                                      .deepPurpleAccent),
+                                                                  ),
+                                                            ),
+                                                            InkWell(
+                                                              onTap: () {
+                                                                final file =
+                                                                assignments[widget.selectedSection];
+                                                                launch(file.url);
+                                                              },
+                                                              child: Text(
+                                                                'Assignment file.',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .deepPurpleAccent),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      }
+                                                  }
+                                                }),
+                                            //future builder for DataSets
+                                            FutureBuilder<List<FirebaseFile>>(
+                                                future: futureDataSets,
+                                                builder: (context, snapshot) {
+                                                  switch (snapshot
+                                                      .connectionState) {
+                                                    case ConnectionState
+                                                        .waiting:
+                                                      return Center(
+                                                          child:
+                                                          CircularProgressIndicator());
+                                                    default:
+                                                      if (snapshot.hasError) {
+                                                        return Center(
+                                                            child: Text(
+                                                              'Some error occurred!',
                                                             ));
+                                                      } else {
+                                                        final dataSets =
+                                                        snapshot.data!;
+                                                        return Padding(
+                                                          padding: const EdgeInsets.only(top: 8.0),
+                                                          child: Row(
+                                                            children: [
+                                                              Text(
+                                                                'Click to download ',
+                                                              ),
+                                                              InkWell(
+                                                                onTap: () {
+                                                                  final file =
+                                                                  dataSets[widget.selectedSection];
+                                                                  launch(file.url);
+                                                                },
+                                                                child: Text(
+                                                                  'DataSet file.',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .deepPurpleAccent),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
                                                       }
                                                   }
                                                 }),
@@ -293,7 +349,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                         Row(
                                           children: [
                                             Text(
-                                              "Assignment upload ",
+                                              "Upload Assignment",
                                               style: TextStyle(
                                                   color: Colors.black54,
                                                   fontSize: 18,
@@ -387,7 +443,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                           child: TextField(
                                             controller: noteText,
                                             decoration: InputDecoration(
-                                              hintText: 'Write your note here',
+                                              hintText: 'Please write note here...',
                                               border: InputBorder.none,
                                             ),
                                             maxLines: 10,

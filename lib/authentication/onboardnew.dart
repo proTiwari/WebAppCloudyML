@@ -223,25 +223,25 @@ class _OnboardewState extends State<Onboardew> {
                                 fontWeight: FontWeight.w600,
                                 fontSize: 10),
                           ),
-                          Text(
-                            "account, else click on create account.",
-                            style: TextStyle(
-                                color: HexColor("2C2C2C"),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 10),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: Text(
+                              "account, else click on create account.",
+                              style: TextStyle(
+                                  color: HexColor("2C2C2C"),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 10),
+                            ),
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            "Email",
-                            style: TextStyle(
-                                color: HexColor("2C2C2C"),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14),
-                          ),
-                          SizedBox(
-                            height: 5,
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 5.0),
+                            child: Text(
+                              "Email",
+                              style: TextStyle(
+                                  color: HexColor("2C2C2C"),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14),
+                            ),
                           ),
                           Form(
                             key: _loginkey,
@@ -541,143 +541,142 @@ class _OnboardewState extends State<Onboardew> {
                               ],
                             ),
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          _isLoading ? Loading() : ElevatedButton(
-                            child: Center(
-                              child: Text(
-                                'Log in',
-                                textScaleFactor:
-                                    min(horizontalScale, verticalScale),
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w600),
+                          _isLoading ? Loading() : Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: ElevatedButton(
+                              child: Center(
+                                child: Text(
+                                  'Log in',
+                                  textScaleFactor:
+                                      min(horizontalScale, verticalScale),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w600),
+                                ),
                               ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              primary: HexColor('8346E1'),
-                            ),
-                            onPressed: () {
-                              if(email.text.isEmpty || pass.text.isEmpty) {
-                                Fluttertoast.showToast(msg: "Please enter email or password");
-                              }
+                              style: ElevatedButton.styleFrom(
+                                primary: HexColor('8346E1'),
+                              ),
+                              onPressed: () {
+                                if(email.text.isEmpty || pass.text.isEmpty) {
+                                  Fluttertoast.showToast(msg: "Please enter email or password");
+                                }
 
-                              if (_loginkey.currentState!.validate()) {
-                                setState(() {
-                                  _isLoading = true;
-                                });
-                                logIn(email.text, pass.text).then((user) async {
-                                  if (user != null) {
-                                    print(user);
-                                    showToast('Logged in Successfully');
-                                    Navigator.pushAndRemoveUntil(
-                                        context,
-                                        PageTransition(
-                                            duration:
-                                                Duration(milliseconds: 200),
-                                            curve: Curves.bounceInOut,
-                                            type: PageTransitionType
-                                                .rightToLeftWithFade,
-                                            child: HomePage()),
-                                        (route) => false);
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                  } else {
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                    {
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                                title: Center(
-                                                  child: Text(
-                                                    'Error',
+                                if (_loginkey.currentState!.validate()) {
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+                                  logIn(email.text, pass.text).then((user) async {
+                                    if (user != null) {
+                                      print(user);
+                                      showToast('Logged in Successfully');
+                                      Navigator.pushAndRemoveUntil(
+                                          context,
+                                          PageTransition(
+                                              duration:
+                                                  Duration(milliseconds: 200),
+                                              curve: Curves.bounceInOut,
+                                              type: PageTransitionType
+                                                  .rightToLeftWithFade,
+                                              child: HomePage()),
+                                          (route) => false);
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                      {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                  title: Center(
+                                                    child: Text(
+                                                      'Error',
+                                                      textScaleFactor: min(
+                                                          horizontalScale,
+                                                          verticalScale),
+                                                      style: TextStyle(
+                                                          color: Colors.red,
+                                                          fontSize: 24,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ),
+                                                  content: Text(
+                                                    '       There is no user record \n corresponding to the identifier.',
                                                     textScaleFactor: min(
                                                         horizontalScale,
                                                         verticalScale),
-                                                    style: TextStyle(
-                                                        color: Colors.red,
-                                                        fontSize: 24,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                    style:
+                                                        TextStyle(fontSize: 16),
                                                   ),
-                                                ),
-                                                content: Text(
-                                                  '       There is no user record \n corresponding to the identifier.',
-                                                  textScaleFactor: min(
-                                                      horizontalScale,
-                                                      verticalScale),
-                                                  style:
-                                                      TextStyle(fontSize: 16),
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                      child: Text('Retry'),
-                                                      onPressed: () {
-                                                        Navigator.pop(
-                                                            context, true);
-                                                      })
-                                                ]);
-                                          });
+                                                  actions: [
+                                                    TextButton(
+                                                        child: Text('Retry'),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context, true);
+                                                        })
+                                                  ]);
+                                            });
+                                      }
+                                      showToast('Login failed');
                                     }
-                                    showToast('Login failed');
-                                  }
-                                });
-                              }
-                            },
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Don’t have an account? ',
-                                  textScaleFactor:
-                                      min(horizontalScale, verticalScale),
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      formVisible = true;
-                                      _formIndex = 2;
-                                    });
-                                  },
-                                  child: Center(
-                                    child: Text(
-                                      'Sign Up',
-                                      textScaleFactor:
-                                          min(horizontalScale, verticalScale),
-                                      style: TextStyle(
-                                          fontFamily: 'SemiBold',
-                                          color: HexColor('5E1EC0'),
-                                          fontSize: 20),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                  });
+                                }
+                              },
                             ),
                           ),
-                          SizedBox(
-                            height: 10,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Don’t have an account? ',
+                                    textScaleFactor:
+                                        min(horizontalScale, verticalScale),
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        formVisible = true;
+                                        _formIndex = 2;
+                                      });
+                                    },
+                                    child: Center(
+                                      child: Text(
+                                        'Sign Up',
+                                        textScaleFactor:
+                                            min(horizontalScale, verticalScale),
+                                        style: TextStyle(
+                                            fontFamily: 'SemiBold',
+                                            color: HexColor('5E1EC0'),
+                                            fontSize: 20),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          Expanded(
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
                             child: Container(
                               child: Row(
                                 children: [
                                   Expanded(
-                                      child: Divider(
-                                    color: Colors.black,
-                                    thickness: 2,
-                                  )),
+                                    child: Divider(
+                                      color: Colors.black,
+                                      thickness: 2,
+                                    ),
+                                  ),
                                   SizedBox(
                                     width: horizontalScale * 10,
                                   ),
@@ -693,40 +692,39 @@ class _OnboardewState extends State<Onboardew> {
                                     width: horizontalScale * 10,
                                   ),
                                   Expanded(
-                                      child: Divider(
-                                    color: Colors.black,
-                                    thickness: 2,
-                                  )),
+                                    child: Divider(
+                                      color: Colors.black,
+                                      thickness: 2,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          InkWell(
-                            onTap: () async {
-                              try {
-                                setState(() {
-                                  googleloading = true;
-                                });
-                                await provider.googleLogin(
-                                  context,
-                                   // listOfAllExistingUser,
-                                );
-                                print(provider);
-                                setState(() {
-                                  googleloading = false;
-                                });
-                              } catch (e) {
-                                print("Google error is here : ${e.toString()}");
-                              }
-                            },
-                            child:
-                            googleloading! ?
-                            Center(child: CircularProgressIndicator()) :
-                            Expanded(
-                              child: Container(
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15.0),
+                            child: InkWell(
+                              onTap: () async {
+                                try {
+                                  setState(() {
+                                    googleloading = true;
+                                  });
+                                  await provider.googleLogin(
+                                    context,
+                                     // listOfAllExistingUser,
+                                  );
+                                  print(provider);
+                                  setState(() {
+                                    googleloading = false;
+                                  });
+                                } catch (e) {
+                                  print("Google error is here : ${e.toString()}");
+                                }
+                              },
+                              child:
+                              googleloading! ?
+                              Center(child: CircularProgressIndicator()) :
+                              Container(
                                 height: 30,
                                 decoration: BoxDecoration(
                                   color: Colors.white,

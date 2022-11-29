@@ -187,6 +187,40 @@ class _StoreScreenState extends State<StoreScreen> {
                   ),
                   InkWell(
                     child: ListTile(
+                      title: Text('Store'),
+                      leading: Icon(
+                        Icons.store,
+                        color: HexColor('691EC8'),
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => StoreScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  // InkWell(
+                  //   child: ListTile(
+                  //     title: Text('Messages'),
+                  //     leading: Icon(
+                  //       Icons.chat_bubble_outline_sharp,
+                  //       color: HexColor('691EC8'),
+                  //     ),
+                  //   ),
+                  //   onTap: () {
+                  //     Navigator.pushReplacement(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => GroupsList(),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                  InkWell(
+                    child: ListTile(
                       title: Text(''
                           'My Account'),
                       leading: Icon(
@@ -210,20 +244,12 @@ class _StoreScreenState extends State<StoreScreen> {
                       ),
                     ),
                     onTap: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
-                        ),
-                      );
+                      Navigator.pushNamed(context, '/courses');
                     },
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PaymentHistory()));
+                      Navigator.pushNamed(context, '/paymenthistory');
                     },
                     child: ListTile(
                       title: Text('Payment History'),
@@ -236,34 +262,34 @@ class _StoreScreenState extends State<StoreScreen> {
                   Divider(
                     thickness: 2,
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PrivacyPolicy()));
-                    },
-                    child: ListTile(
-                      title: Text('Privacy policy'),
-                      leading: Icon(
-                        Icons.privacy_tip,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    child: ListTile(
-                      title: Text('About Us'),
-                      leading: Icon(
-                        Icons.info,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () async {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => AboutUs()));
-                    },
-                  ),
+                  // InkWell(
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => PrivacyPolicy()));
+                  //   },
+                  //   child: ListTile(
+                  //     title: Text('Privacy policy'),
+                  //     leading: Icon(
+                  //       Icons.privacy_tip,
+                  //       color: HexColor('691EC8'),
+                  //     ),
+                  //   ),
+                  // ),
+                  // InkWell(
+                  //   child: ListTile(
+                  //     title: Text('About Us'),
+                  //     leading: Icon(
+                  //       Icons.info,
+                  //       color: HexColor('691EC8'),
+                  //     ),
+                  //   ),
+                  //   onTap: () async {
+                  //     Navigator.push(context,
+                  //         MaterialPageRoute(builder: (context) => AboutUs()));
+                  //   },
+                  // ),
                   // InkWell(
                   //   child: ListTile(
                   //     title: Text('Notification Local'),

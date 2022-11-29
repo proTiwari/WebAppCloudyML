@@ -7,6 +7,7 @@ import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/models/offline_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/widgets/assignment_bottomsheet.dart';
+import 'package:cloudyml_app2/widgets/message_tile.dart';
 import 'package:cloudyml_app2/widgets/settings_bottomsheet.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -225,12 +226,17 @@ class _VideoScreenState extends State<VideoScreen> {
   }
 
   var courseData;
-
   String courseName = '';
+  var curriculumdata;
+  var sectionName = [];
+
 
   Map<String, List> datamap = {};
 
   List<VideoDetails> _videodetails = [];
+  var listData = [];
+  var listOfVideo = [];
+
   Future<void> getCourseData() async {
     setState(() {
       loading = true;
@@ -239,6 +245,7 @@ class _VideoScreenState extends State<VideoScreen> {
     // CourseDetails? dfs;
     // final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
     // _fireStore.doc
+
     print(
         "LLLLLLL ${FirebaseAuth.instance.currentUser!.uid} ${courseId}");
 
@@ -251,80 +258,176 @@ class _VideoScreenState extends State<VideoScreen> {
 
       val = value.data();
 
-      var curriculumdata = val["curriculum"];
+
+      curriculumdata = val["curriculum"];
+
       courseName = val['name'];
+      sectionName = curriculumdata['sectionsName'];
+
+
+      sectionName.forEach((element) async {
+        print('element = $element');
+        curriculumdata.entries.forEach((entry) async {
+
+          print('entry entry = ${entry.value}');
+
+          if (element.toString() == entry.key) {
+            print('value value = ${entry.value}');
+            print('element value = ${element}');
+            entry.value.forEach((name) async {
+              print('name = $name');
+              await FirebaseFirestore.instance
+                  .collection('courses')
+                  .doc(courseId)
+                  .collection('Modules')
+                  .doc(moduleId)
+                  .collection('Topics')
+                  .where("name", isEqualTo: "${name.toString()}")
+                  .get()
+                  .then(
+                    (value) async {
+                  print('this is value ${value.docs}');
+                  for (var video in value.docs) {
+
+                    listData.add(
+                      await VideoDetails(
+                        videoId: video.data()['id'] ?? '',
+                        type: video.data()['type'] ?? '',
+                        canSaveOffline: video.data()['Offline'] ?? true,
+                        serialNo: video.data()['sr'].toString(),
+                        videoTitle: video.data()['name'] ?? '',
+                        videoUrl: video.data()['url'] ?? '',
+                      ),
+                    );
+                    datamap[element] = listData;
+
+                    print('listdata p =  $listData');
+
+                    // print(video.data()['id']);
+                    // print(video.data()['type']);
+                    // print(video.data()['Offline']);
+                    // print(video.data()['sr'].toString());
+                    // print(video.data()['name']);
+                    // print(video.data()['url']);
+                  }
+                  print('listdata =  $listData');
+                  // var planets = <String, List>{entry.key: _videodetails};
+
+                  // datamap.entries.forEach((entry) {
+                  //   print(
+                  //       'Kdddddddddddddddddddddddddddddey = ${entry.key} : Vaddddddddddddddddddddddddddddddddlue = ${entry.value}');
+                  // });
+                },
+              );
+            });
+
+          for(var value in entry.value) {
+            print('only value = ${value}');
+
+
+          }
+          // listOfVideo.add({element: listData});
+          print('list of video = ${listOfVideo}');
+            // datamap[element] = listData;
+            print('datamap = $datamap');
+            // print('listdata = $listData');
+            print('listdata length =  ${listData.length}');
+            print('element = $element');
+            listData = [];
+           }
+
+        });
+      });
+
+      print('this is $sectionName');
 
       curriculumdata.remove("sectionsName");
-      // print(curriculumdata);
-      curriculumdata.entries.forEach((entry) async {
-        // print('${entry.key}:${entry.value}');
-        // print("\n");
-        // print("\n");
-        // print("\n");
-        // print("\n");
-        try {
-          for (var i in entry.value) {
-            // print(i);
 
-            await FirebaseFirestore.instance
-                .collection('courses')
-                .doc(courseId)
-                .collection('Modules')
-                .doc(moduleId)
-                .collection('Topics')
-                .where("name", isEqualTo: "${i.toString().trim()}")
-                .get()
-                .then(
-                  (value) async {
-                // print(value.docs);
-                for (var video in value.docs) {
-                  _videodetails.add(
-                    await VideoDetails(
-                      videoId: video.data()['id'] ?? '',
-                      type: video.data()['type'] ?? '',
-                      canSaveOffline: video.data()['Offline'] ?? true,
-                      serialNo: video.data()['sr'].toString(),
-                      videoTitle: video.data()['name'] ?? '',
-                      videoUrl: video.data()['url'] ?? '',
-                    ),
-                  );
-                  // print(video.data()['id']);
-                  // print(video.data()['type']);
-                  // print(video.data()['Offline']);
-                  // print(video.data()['sr'].toString());
-                  // print(video.data()['name']);
-                  // print(video.data()['url']);
-                }
-                // var planets = <String, List>{entry.key: _videodetails};
 
-                // datamap.entries.forEach((entry) {
-                //   print(
-                //       'Kdddddddddddddddddddddddddddddey = ${entry.key} : Vaddddddddddddddddddddddddddddddddlue = ${entry.value}');
-                // });
-              },
-            );
-          }
-        } catch (e) {
-          print(e.toString());
-        }
 
-        try {
-          print(
-              'Kdddddddddddddddddddddddddddddey = ${entry.key} : Vaddddddddddddddddddddddddddddddddlue = ${entry.value}');
-          print(entry.key);
-          datamap[entry.key] = _videodetails.toList();
+      for (var i in curriculumdata.entries) {
+        final key = i.key;
+        print("this is pogba - $key");
+      }
 
-          _videodetails.clear();
-        } catch (e) {
-          print(1);
-          print(e);
-        }
 
-        //     datamap.entries.forEach((entry) {
-        //   print(
-        //       'Kdddddddddddddddddddddddddddddey = ${entry.key} : Vaddddddddddddddddddddddddddddddddlue = ${entry.value}');
-        // });
-      });
+      print("this is srinivas $curriculumdata");
+
+      // curriculumdata.entries.forEach((entry) async {
+      //   // print('${entry.key}:${entry.value}');
+      //   // print("\n");
+      //   // print("\n");
+      //   // print("\n");
+      //   // print("\n");
+      //   try {
+      //     for (var i in entry.value) {
+      //       print("Srinivas");
+      //
+      //       // await FirebaseFirestore.instance
+      //       //     .collection('courses')
+      //       //     .doc(courseId)
+      //       //     .collection('Modules')
+      //       //     .doc(moduleId)
+      //       //     .collection('Topics')
+      //       //     .where("name", isEqualTo: "${i.toString().trim()}")
+      //       //     .get()
+      //       //     .then(
+      //       //       (value) async {
+      //       //     // print(value.docs);
+      //       //     for (var video in value.docs) {
+      //       //       _videodetails.add(
+      //       //         await VideoDetails(
+      //       //           videoId: video.data()['id'] ?? '',
+      //       //           type: video.data()['type'] ?? '',
+      //       //           canSaveOffline: video.data()['Offline'] ?? true,
+      //       //           serialNo: video.data()['sr'].toString(),
+      //       //           videoTitle: video.data()['name'] ?? '',
+      //       //           videoUrl: video.data()['url'] ?? '',
+      //       //         ),
+      //       //       );
+      //       //       // print(video.data()['id']);
+      //       //       // print(video.data()['type']);
+      //       //       // print(video.data()['Offline']);
+      //       //       // print(video.data()['sr'].toString());
+      //       //       // print(video.data()['name']);
+      //       //       // print(video.data()['url']);
+      //       //     }
+      //       //     // var planets = <String, List>{entry.key: _videodetails};
+      //       //
+      //       //     // datamap.entries.forEach((entry) {
+      //       //     //   print(
+      //       //     //       'Kdddddddddddddddddddddddddddddey = ${entry.key} : Vaddddddddddddddddddddddddddddddddlue = ${entry.value}');
+      //       //     // });
+      //       //   },
+      //       // );
+      //     }
+      //   } catch (e) {
+      //     print("srinu error ${e.toString()}");
+      //   }
+      //
+      //   try {
+      //     print(
+      //         'Kdddddddddddddddddddddddddddddey = ${entry.key}  '
+      //             ': Vaddddddddddddddddddddddddddddddddlue = ${entry.value}');
+      //     print(entry.key);
+      //
+      //     // datamap[entry.key] = _videodetails.toList();
+      //
+      //     // datamap[entry.value] = _videodetails.toList();
+      //
+      //     _videodetails.clear();
+      //   } catch (e) {
+      //     print(1);
+      //     print(e);
+      //   }
+      //
+      //   //     datamap.entries.forEach((entry) {
+      //   //   print(
+      //   //       'Kdddddddddddddddddddddddddddddey = ${entry.key} : Vaddddddddddddddddddddddddddddddddlue = ${entry.value}');
+      //   // });
+      // });
+
+
       try {
         courseData = datamap;
         courseData = courseData;
@@ -433,6 +536,7 @@ class _VideoScreenState extends State<VideoScreen> {
 
     getData();
     getCourseData();
+
 
     Future.delayed(Duration(milliseconds: 500), () {
       initializeVidController(_listOfVideoDetails[0].videoUrl);
@@ -940,8 +1044,12 @@ class _VideoScreenState extends State<VideoScreen> {
               itemCount: courseData?.length,
               itemBuilder: (BuildContext context, int index) {
                 // return Container();
+
                 print("this is index : ${index}");
+
                 var count = -1;
+
+
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                   child: Column(
@@ -992,7 +1100,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                 textAlign: TextAlign.start,),
                                           ),
                                           onTap: () {
-                                            print(value.videoTitle);
+                                            print("this is messsie ${value.videoTitle}");
 
                                             VideoScreen.currentSpeed.value = 1.0;
 
@@ -1011,12 +1119,13 @@ class _VideoScreenState extends State<VideoScreen> {
                               ),
                             ),
                           )),
+
                       InkWell(
                         onTap: () {
                           setState(() {
                             selectedSection = index;
                             print('$index and section is $selectedSection');
-                            showAssignment = true;
+                            showAssignment = !showAssignment;
                             _videoController!.pause();
                             enablePauseScreen = !enablePauseScreen;
                           });
@@ -1025,7 +1134,7 @@ class _VideoScreenState extends State<VideoScreen> {
                           width: screenWidth/3.1,
                           height: screenHeight/20,
                           decoration: BoxDecoration(
-                            color: Colors.purpleAccent[200],
+                            color: Colors.purpleAccent[100],
                             borderRadius: BorderRadius.circular(25),
                           ),
                           child: Align(
