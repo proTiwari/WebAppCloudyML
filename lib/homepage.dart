@@ -628,7 +628,7 @@ class _HomeState extends State<Home> {
                             "CloudyML",
                             style: textStyle,
                           ),
-                          // offernavigation
+                          // offer navigation
                           // TextButton(
                           //     onPressed: () {
                           //       Navigator.push(
