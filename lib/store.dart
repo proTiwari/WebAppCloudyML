@@ -448,23 +448,29 @@ class _StoreScreenState extends State<StoreScreen> {
                             ),
                           ],
                         ),
-                        SizedBox(width: screenWidth/5,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                                "Our Courses comes with Lifetime access, Live",
-                                style: TextStyle(
-                                  color: HexColor("000000"),
-                                  fontSize: 12,)
+                        Spacer(),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 70.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    "Our Courses comes with Lifetime access, Live",
+                                    style: TextStyle(
+                                      color: HexColor("000000"),
+                                      fontSize: 14,)
+                                ),
+                                Text(
+                                    "chat support & internship opportunity.",
+                                    style: TextStyle(
+                                      color: HexColor("000000"),
+                                      fontSize: 14,)
+                                ),
+                              ],
                             ),
-                            Text(
-                                "chat support & internship opportunity.",
-                                style: TextStyle(
-                                  color: HexColor("000000"),
-                                  fontSize: 12,)
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),

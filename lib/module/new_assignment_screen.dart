@@ -14,12 +14,15 @@ import '../globals.dart';
 import '../models/firebase_file.dart';
 
 class AssignmentScreen extends StatefulWidget {
-  const AssignmentScreen({Key? key, this.courseData, this.courseName, this.selectedSection})
+  const AssignmentScreen({Key? key, this.courseData, this.courseName, this.selectedSection, this.assignmentUrl, this.solutionUrl})
       : super(key: key);
 
   final courseData;
   final courseName;
   final selectedSection;
+  final assignmentUrl;
+  final solutionUrl;
+
 
   @override
   State<AssignmentScreen> createState() => _AssignmentScreenState();
@@ -27,6 +30,7 @@ class AssignmentScreen extends StatefulWidget {
 
 class _AssignmentScreenState extends State<AssignmentScreen> {
   TextEditingController noteText = TextEditingController();
+
   late Future<List<FirebaseFile>> futureAssignments;
   late Future<List<FirebaseFile>> futureSolutions;
   late Future<List<FirebaseFile>> futureDataSets;
@@ -99,6 +103,8 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
         FirebaseApi.listAll('courses/${widget.courseName}/solution');
     futureDataSets =
         FirebaseApi.listAll('courses/${widget.courseName}/dataset');
+
+    print('this is ${futureAssignments.then((value) => print(value.first.name))}');
   }
 
 
@@ -215,16 +221,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                                     "Reference PDF for output "),
                                                 InkWell(
                                                     onTap: () {
-                                                      final file =
-                                                          solutions[widget.selectedSection!];
-                                                      launch(file.url);
-
-                                                      if (file.name != null) {
-                                                        print('file name : ${file.name}');
-                                                      } else {
-                                                        print('there is no file');
-                                                      }
-
+                                                      launch(widget.solutionUrl);
                                                     },
                                                     child: Text('Reference pdf.'
                                                       ,
@@ -237,51 +234,27 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                             SizedBox(
                                               height: 10,
                                             ),
-                                            //future builder for asignments
-                                            FutureBuilder<List<FirebaseFile>>(
-                                                future: futureAssignments,
-                                                builder: (context, snapshot) {
-                                                  switch (snapshot
-                                                      .connectionState) {
-                                                    case ConnectionState
-                                                        .waiting:
-                                                      return Center(
-                                                          child:
-                                                              CircularProgressIndicator());
-                                                    default:
-                                                      if (snapshot.hasError) {
-                                                        return Center(
-                                                            child: Text(
-                                                          'Some error occurred!',
-                                                        ));
-                                                      } else {
-                                                        final assignments =
-                                                            snapshot.data!;
-                                                        return Row(
-                                                          children: [
-                                                            Text(
-                                                              'Click to download ',
-                                                              style: TextStyle(
-                                                                  ),
-                                                            ),
-                                                            InkWell(
-                                                              onTap: () {
-                                                                final file =
-                                                                assignments[widget.selectedSection];
-                                                                launch(file.url);
-                                                              },
-                                                              child: Text(
-                                                                'Assignment file.',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .deepPurpleAccent),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      }
-                                                  }
-                                                }),
+                                            //for assignments
+                                              Row(
+                                          children: [
+                                            Text(
+                                              'Click to download ',
+                                              style: TextStyle(
+                                              ),
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                launch(widget.assignmentUrl);
+                                              },
+                                              child: Text(
+                                                'Assignment file.',
+                                                style: TextStyle(
+                                                    color: Colors
+                                                        .deepPurpleAccent),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                             //future builder for DataSets
                                             FutureBuilder<List<FirebaseFile>>(
                                                 future: futureDataSets,

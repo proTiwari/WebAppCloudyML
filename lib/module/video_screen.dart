@@ -20,7 +20,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:html' as html;
+import '../api/firebase_api.dart';
 import '../models/course_details.dart';
+import '../models/firebase_file.dart';
 import 'new_assignment_screen.dart';
 
 class VideoScreen extends StatefulWidget {
@@ -38,6 +40,10 @@ class VideoScreen extends StatefulWidget {
 }
 
 class _VideoScreenState extends State<VideoScreen> {
+  late List<FirebaseFile> futureAssignments;
+  late List<FirebaseFile> futureSolutions;
+  late List<FirebaseFile> futureDataSets;
+
   VideoPlayerController? _videoController;
   bool? downloading = false;
   bool downloaded = false;
@@ -169,11 +175,42 @@ class _VideoScreenState extends State<VideoScreen> {
       _currentVideoIndex.value++;
       initializeVidController(
         _listOfVideoDetails[_currentVideoIndex.value].videoUrl,
+        _listOfVideoDetails[_currentVideoIndex.value].videoTitle,
       );
     }
     var duration = _duration;
     if (duration == null) return;
-    setState(() {});
+    if (sectionName.length != 0 && videoPercentageList.length != 0) {
+      for (int i = 0; i < sectionName.length; i++) {
+        print('ii = $i');
+        for (int j = 0;
+            j < videoPercentageList[i][sectionName[i]].length;
+            j++) {
+          print('jjj = $j $i  }');
+          try {
+            print('video $videoTitle');
+            print(
+                'ssss ${videoPercentageList[i][sectionName[i]][j].toString()}');
+            print('length of == ${videoTitle.toString().length}');
+            if (videoPercentageList[i][sectionName[i]][j][videoTitle.toString()]
+                    .toString() !=
+                'null') {
+              videoPercentageList[i][sectionName[i]][j][videoTitle.toString()] =
+                  ((currentPosition / totalDuration) * 100).toInt();
+            }
+            print(
+                'dd ${videoPercentageList[i][sectionName[i]][j][videoTitle.toString()].toString()}');
+          } catch (e) {
+            print('I am error ${e.toString()}');
+          }
+        }
+      }
+    }
+
+    setState(() {
+      currentPosition = _videoController!.value.position.inSeconds.toInt();
+      videoPercentageList;
+    });
 
     var position = _videoController?.value.position;
     setState(() {
@@ -194,7 +231,11 @@ class _VideoScreenState extends State<VideoScreen> {
     _isPlaying = playing;
   }
 
-  void initializeVidController(String url) async {
+  int totalDuration = 0;
+  int currentPosition = 0;
+
+  void initializeVidController(String url, String name) async {
+    print('this is -- $url ');
     try {
       final oldVideoController = _videoController;
       if (oldVideoController != null) {
@@ -208,6 +249,12 @@ class _VideoScreenState extends State<VideoScreen> {
       });
       playVideo = _localVideoController.initialize().then((value) {
         setState(() {
+          print('this is -- $name ');
+
+          videoTitle = name.toString();
+          totalDuration =
+              _localVideoController.value.duration.inSeconds.toInt();
+          selectedVideoIndexName = url.toString();
           _localVideoController.addListener(_onVideoControllerUpdate);
           _localVideoController.play();
           _duration = _localVideoController.value.duration;
@@ -230,206 +277,133 @@ class _VideoScreenState extends State<VideoScreen> {
   var curriculumdata;
   var sectionName = [];
 
-
   Map<String, List> datamap = {};
 
   List<VideoDetails> _videodetails = [];
   var listData = [];
   var listOfVideo = [];
+  var dataList = [];
+  var videoPercentageList = [];
+  var totalPercentageList = {};
+
+  Future<Map<String, dynamic>> getDataFrom(sectionName, curriculumdata) async {
+    var data = {};
+    await sectionName.entries.forEach((element) async {
+      curriculumdata.entries.forEach((entry) {
+        if (element.key.toString() == entry.key) {
+          entry.value.forEach((name) {
+            listOfVideo.add(name);
+          });
+          data[element] = listOfVideo.toList();
+          dataList.add({element: listOfVideo.toList()});
+          listOfVideo = [];
+        }
+      });
+    });
+    Map<String, dynamic> done = {};
+
+    for (var t in data.entries) {
+      print("t = ${t.key}");
+      for (var name in t.value) {
+        print("Name = == = ${name}");
+        await FirebaseFirestore.instance
+            .collection('courses')
+            .doc(courseId)
+            .collection('Modules')
+            .doc(moduleId)
+            .collection('Topics')
+            .where("name", isEqualTo: "${name.toString()}")
+            .get()
+            .then((value) {
+          print("YY");
+          print(value.docs.length);
+          for (var video in value.docs) {
+            listOfVideo.add(VideoDetails(
+              videoId: video.data()['id'] ?? '',
+              type: video.data()['type'] ?? '',
+              canSaveOffline: video.data()['Offline'] ?? true,
+              serialNo: video.data()['sr'].toString(),
+              videoTitle: video.data()['name'] ?? '',
+              videoUrl: video.data()['url'] ?? '',
+            ));
+            print("oo");
+            String str = t.key.toString();
+            str = str.replaceRange(0, 9, "");
+            var st = "";
+            for (int i = 0; i < str.length; i++) {
+              if (str[i] == ":") {
+                break;
+              }
+              st += str[i];
+            }
+            done[st] = listOfVideo.toList();
+            print("oopp");
+          }
+          // print(value.docs.length);
+        });
+      }
+      listOfVideo = [];
+    }
+    print("done = $done");
+    print("length= = ${dataList.length}");
+
+    print("yes");
+    print(listOfVideo.length);
+    return done;
+  }
+
+  var dataa;
 
   Future<void> getCourseData() async {
     setState(() {
       loading = true;
     });
+
     var val;
-    // CourseDetails? dfs;
-    // final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
-    // _fireStore.doc
 
-    print(
-        "LLLLLLL ${FirebaseAuth.instance.currentUser!.uid} ${courseId}");
+    print("LLLLLLL ${FirebaseAuth.instance.currentUser!.uid} ${courseId}");
 
-    var data = await FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('courses')
         .doc(courseId)
         .get()
-        .then((value) {
+        .then((value) async {
       print(value.data());
 
       val = value.data();
-
 
       curriculumdata = val["curriculum"];
 
       courseName = val['name'];
       sectionName = curriculumdata['sectionsName'];
-
-
-      sectionName.forEach((element) async {
-        print('element = $element');
-        curriculumdata.entries.forEach((entry) async {
-
-          print('entry entry = ${entry.value}');
-
-          if (element.toString() == entry.key) {
-            print('value value = ${entry.value}');
-            print('element value = ${element}');
-            entry.value.forEach((name) async {
-              print('name = $name');
-              await FirebaseFirestore.instance
-                  .collection('courses')
-                  .doc(courseId)
-                  .collection('Modules')
-                  .doc(moduleId)
-                  .collection('Topics')
-                  .where("name", isEqualTo: "${name.toString()}")
-                  .get()
-                  .then(
-                    (value) async {
-                  print('this is value ${value.docs}');
-                  for (var video in value.docs) {
-
-                    listData.add(
-                      await VideoDetails(
-                        videoId: video.data()['id'] ?? '',
-                        type: video.data()['type'] ?? '',
-                        canSaveOffline: video.data()['Offline'] ?? true,
-                        serialNo: video.data()['sr'].toString(),
-                        videoTitle: video.data()['name'] ?? '',
-                        videoUrl: video.data()['url'] ?? '',
-                      ),
-                    );
-                    datamap[element] = listData;
-
-                    print('listdata p =  $listData');
-
-                    // print(video.data()['id']);
-                    // print(video.data()['type']);
-                    // print(video.data()['Offline']);
-                    // print(video.data()['sr'].toString());
-                    // print(video.data()['name']);
-                    // print(video.data()['url']);
-                  }
-                  print('listdata =  $listData');
-                  // var planets = <String, List>{entry.key: _videodetails};
-
-                  // datamap.entries.forEach((entry) {
-                  //   print(
-                  //       'Kdddddddddddddddddddddddddddddey = ${entry.key} : Vaddddddddddddddddddddddddddddddddlue = ${entry.value}');
-                  // });
-                },
-              );
-            });
-
-          for(var value in entry.value) {
-            print('only value = ${value}');
-
-
-          }
-          // listOfVideo.add({element: listData});
-          print('list of video = ${listOfVideo}');
-            // datamap[element] = listData;
-            print('datamap = $datamap');
-            // print('listdata = $listData');
-            print('listdata length =  ${listData.length}');
-            print('element = $element');
-            listData = [];
-           }
-
-        });
-      });
-
-      print('this is $sectionName');
-
-      curriculumdata.remove("sectionsName");
-
-
-
-      for (var i in curriculumdata.entries) {
-        final key = i.key;
-        print("this is pogba - $key");
+      var dic = {};
+      print(sectionName);
+      for (var i in sectionName) {
+        dic[i] = i;
       }
 
-
+      dataa = await getDataFrom(dic, curriculumdata);
+      for (var i in dataa.entries) {
+        print('i == dip ${i.key}');
+        print('i == dip ${i.value[0].videoTitle}');
+        var sectionList = [];
+        for (var k = 0; k < i.value.length; k++) {
+          sectionList.add({
+            i.value[k].videoTitle.toString(): 0,
+          });
+        }
+        videoPercentageList.add({i.key.toString(): sectionList});
+      }
+      print('videoPercentage = $videoPercentageList');
+      setState(() {
+        videoPercentageList;
+      });
+      print('this is $sectionName');
+      print("datamap = $datamap");
+      curriculumdata.remove("sectionsName");
       print("this is srinivas $curriculumdata");
-
-      // curriculumdata.entries.forEach((entry) async {
-      //   // print('${entry.key}:${entry.value}');
-      //   // print("\n");
-      //   // print("\n");
-      //   // print("\n");
-      //   // print("\n");
-      //   try {
-      //     for (var i in entry.value) {
-      //       print("Srinivas");
-      //
-      //       // await FirebaseFirestore.instance
-      //       //     .collection('courses')
-      //       //     .doc(courseId)
-      //       //     .collection('Modules')
-      //       //     .doc(moduleId)
-      //       //     .collection('Topics')
-      //       //     .where("name", isEqualTo: "${i.toString().trim()}")
-      //       //     .get()
-      //       //     .then(
-      //       //       (value) async {
-      //       //     // print(value.docs);
-      //       //     for (var video in value.docs) {
-      //       //       _videodetails.add(
-      //       //         await VideoDetails(
-      //       //           videoId: video.data()['id'] ?? '',
-      //       //           type: video.data()['type'] ?? '',
-      //       //           canSaveOffline: video.data()['Offline'] ?? true,
-      //       //           serialNo: video.data()['sr'].toString(),
-      //       //           videoTitle: video.data()['name'] ?? '',
-      //       //           videoUrl: video.data()['url'] ?? '',
-      //       //         ),
-      //       //       );
-      //       //       // print(video.data()['id']);
-      //       //       // print(video.data()['type']);
-      //       //       // print(video.data()['Offline']);
-      //       //       // print(video.data()['sr'].toString());
-      //       //       // print(video.data()['name']);
-      //       //       // print(video.data()['url']);
-      //       //     }
-      //       //     // var planets = <String, List>{entry.key: _videodetails};
-      //       //
-      //       //     // datamap.entries.forEach((entry) {
-      //       //     //   print(
-      //       //     //       'Kdddddddddddddddddddddddddddddey = ${entry.key} : Vaddddddddddddddddddddddddddddddddlue = ${entry.value}');
-      //       //     // });
-      //       //   },
-      //       // );
-      //     }
-      //   } catch (e) {
-      //     print("srinu error ${e.toString()}");
-      //   }
-      //
-      //   try {
-      //     print(
-      //         'Kdddddddddddddddddddddddddddddey = ${entry.key}  '
-      //             ': Vaddddddddddddddddddddddddddddddddlue = ${entry.value}');
-      //     print(entry.key);
-      //
-      //     // datamap[entry.key] = _videodetails.toList();
-      //
-      //     // datamap[entry.value] = _videodetails.toList();
-      //
-      //     _videodetails.clear();
-      //   } catch (e) {
-      //     print(1);
-      //     print(e);
-      //   }
-      //
-      //   //     datamap.entries.forEach((entry) {
-      //   //   print(
-      //   //       'Kdddddddddddddddddddddddddddddey = ${entry.key} : Vaddddddddddddddddddddddddddddddddlue = ${entry.value}');
-      //   // });
-      // });
-
-
       try {
-        courseData = datamap;
+        courseData = dataa;
         courseData = courseData;
         print("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy ");
         print(curriculumdata.length);
@@ -444,7 +418,7 @@ class _VideoScreenState extends State<VideoScreen> {
         print("LLLLLLLLLLLLLLLLLLyyyyyyyyyyyyyy ");
       } catch (e) {
         print('2');
-        if (courseData == datamap) {
+        if (courseData == dataa) {
           setState(() {
             loading = false;
             courseData;
@@ -453,7 +427,7 @@ class _VideoScreenState extends State<VideoScreen> {
         print(e);
       }
     });
-    if (courseData == datamap) {
+    if (courseData == dataa) {
       setState(() {
         loading = false;
         courseData;
@@ -524,28 +498,47 @@ class _VideoScreenState extends State<VideoScreen> {
     super.dispose();
     AutoOrientation.portraitUpMode();
     _disposed = true;
-
     _videoController!.dispose();
     _videoController = null;
+  }
+
+  getFiles() async {
+    futureAssignments =
+        await FirebaseApi.listAll('courses/${widget.courseName}/assignment');
+    futureSolutions =
+        await FirebaseApi.listAll('courses/${widget.courseName}/solution');
+    futureDataSets =
+        await FirebaseApi.listAll('courses/${widget.courseName}/dataset');
+
+    setState(() {
+      futureAssignments;
+      futureDataSets;
+      futureSolutions;
+    });
   }
 
   @override
   void initState() {
     html.window.document.onContextMenu.listen((evt) => evt.preventDefault());
+
     VideoScreen.currentSpeed.value = 1.0;
 
     getData();
     getCourseData();
-
-
+    getFiles();
     Future.delayed(Duration(milliseconds: 500), () {
-      initializeVidController(_listOfVideoDetails[0].videoUrl);
+      initializeVidController(
+        _listOfVideoDetails[0].videoUrl,
+        _listOfVideoDetails[0].videoTitle,
+      );
     });
 
     super.initState();
   }
 
   bool menuClicked = false;
+  String solutionUrl = '';
+  String assignmentUrl = '';
 
   @override
   Widget build(BuildContext context) {
@@ -562,154 +555,167 @@ class _VideoScreenState extends State<VideoScreen> {
           final isPortrait = orientation == Orientation.portrait;
           return Row(
             children: [
-              menuClicked ?
-              isPortrait
-                  ? Container()
-                  : SizedBox() :
-              Expanded(
-                flex: 1,
-                child: Column(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                Icon(Icons.arrow_back_ios),
-                                Text(
-                                  'Back to courses',
-                                  style:
-                                  TextStyle(fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                          )),
-                    ),
-                    // Expanded(
-                    //   flex: 0,
-                    //     child: _buildPartition(
-                    //   context,
-                    //   horizontalScale,
-                    //   verticalScale,
-                    // ),),
-                    Expanded(
-                      child: _buildVideoDetailsListTiles(
-                        horizontalScale,
-                        verticalScale,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child:
-                showAssignment ?
-                AssignmentScreen(
-                  selectedSection: selectedSection,
-                  courseData: courseData,
-                  courseName: widget.courseName,
-
-                    ) :
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FutureBuilder(
-                      future: playVideo,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<dynamic> snapshot) {
-                        if (ConnectionState.done ==
-                            snapshot.connectionState) {
-                          return Stack(
-                            children: [
-                              Container(
-                                height: menuClicked ? screenHeight : screenHeight/1.2,
-                                child: Center(
-                                  child: AspectRatio(
-                                    aspectRatio: 16 / 9,
-                                    child:
-                                    VideoPlayer(_videoController!),
-                                  ),
-                                ),
-                              ),
-                              InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      enablePauseScreen = !enablePauseScreen;
-                                      print('Container of column clicked');
-                                    });
-                                  },
-                                  child: Container(
-                                    height: menuClicked ? screenHeight : screenHeight/1.2,
-                                    width: screenWidth,
-                                  )),
-                              enablePauseScreen
-                                  ? Container(
-                                height: menuClicked ? screenHeight : screenHeight/1.2,
-                                    child: _buildControls(
-                                        context,
-                                        isPortrait,
-                                        horizontalScale,
-                                        verticalScale,
-                                      ),
+              menuClicked
+                  ? isPortrait
+                      ? Container()
+                      : SizedBox()
+                  : Expanded(
+                      flex: 1,
+                      child: Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                                child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.arrow_back_ios),
+                                  Text(
+                                    'Back to courses',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
                                   )
-                                  : SizedBox(),
-                              _isBuffering && !enablePauseScreen
-                                  ? Center(
-                                      heightFactor: 6.2,
-                                      child: Container(
-                                        width: 60,
-                                        height: 60,
-                                        child: CircularProgressIndicator(
-                                          color: Color.fromARGB(
-                                            114,
-                                            255,
-                                            255,
-                                            255,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : Container(),
-                            ],
-                          );
-                        } else {
-                          return Center(
-                            child: CircularProgressIndicator(
-                              color: Color(0xFF7860DC),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                    menuClicked ? Container() : Padding(
-                      padding: const EdgeInsets.only(top: 15.0),
-                      child: Text(
-                        _listOfVideoDetails[_currentVideoIndex.value].videoTitle,
-                      style: TextStyle(fontSize: 18, fontFamily: 'SemiBold'),),
-                    ),
-                    isPortrait
-                        ? _buildPartition(
-                            context,
-                            horizontalScale,
-                            verticalScale,
-                          )
-                        : SizedBox(),
-                    isPortrait
-                        ? Expanded(
-                            flex: 2,
-                            child: _buildVideoDetailsListTile(
+                                ],
+                              ),
+                            )),
+                          ),
+                          // Expanded(
+                          //   flex: 0,
+                          //     child: _buildPartition(
+                          //   context,
+                          //   horizontalScale,
+                          //   verticalScale,
+                          // ),),
+                          Expanded(
+                            child: _buildVideoDetailsListTiles(
                               horizontalScale,
                               verticalScale,
                             ),
-                          )
-                        : SizedBox(),
-                  ],
-                ),
+                          ),
+                        ],
+                      ),
+                    ),
+              Expanded(
+                flex: 2,
+                child: showAssignment
+                    ? AssignmentScreen(
+                        selectedSection: selectedSection,
+                        courseData: courseData,
+                        courseName: widget.courseName,
+                        assignmentUrl: assignmentUrl,
+                        solutionUrl: solutionUrl,
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          FutureBuilder(
+                            future: playVideo,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<dynamic> snapshot) {
+                              if (ConnectionState.done ==
+                                  snapshot.connectionState) {
+                                return Stack(
+                                  children: [
+                                    Container(
+                                      height: menuClicked
+                                          ? screenHeight
+                                          : screenHeight / 1.2,
+                                      child: Center(
+                                        child: AspectRatio(
+                                          aspectRatio: 16 / 9,
+                                          child: VideoPlayer(_videoController!),
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            enablePauseScreen =
+                                                !enablePauseScreen;
+                                            print(
+                                                'Container of column clicked');
+                                          });
+                                        },
+                                        child: Container(
+                                          height: menuClicked
+                                              ? screenHeight
+                                              : screenHeight / 1.2,
+                                          width: screenWidth,
+                                        )),
+                                    enablePauseScreen
+                                        ? Container(
+                                            height: menuClicked
+                                                ? screenHeight
+                                                : screenHeight / 1.2,
+                                            child: _buildControls(
+                                              context,
+                                              isPortrait,
+                                              horizontalScale,
+                                              verticalScale,
+                                            ),
+                                          )
+                                        : SizedBox(),
+                                    _isBuffering && !enablePauseScreen
+                                        ? Center(
+                                            heightFactor: 6.2,
+                                            child: Container(
+                                              width: 60,
+                                              height: 60,
+                                              child: CircularProgressIndicator(
+                                                color: Color.fromARGB(
+                                                  114,
+                                                  255,
+                                                  255,
+                                                  255,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
+                                );
+                              } else {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: Color(0xFF7860DC),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          menuClicked
+                              ? Container()
+                              : Padding(
+                                  padding: const EdgeInsets.only(top: 15.0),
+                                  child: Text(
+                                    videoTitle.toString() != 'null'
+                                        ? videoTitle.toString()
+                                        : '',
+                                    style: TextStyle(
+                                        fontSize: 18, fontFamily: 'SemiBold'),
+                                  ),
+                                ),
+                          isPortrait
+                              ? _buildPartition(
+                                  context,
+                                  horizontalScale,
+                                  verticalScale,
+                                )
+                              : SizedBox(),
+                          isPortrait
+                              ? Expanded(
+                                  flex: 2,
+                                  child: _buildVideoDetailsListTile(
+                                    horizontalScale,
+                                    verticalScale,
+                                  ),
+                                )
+                              : SizedBox(),
+                        ],
+                      ),
               ),
             ],
           );
@@ -739,18 +745,18 @@ class _VideoScreenState extends State<VideoScreen> {
               leading: isPortrait
                   ? null
                   : IconButton(
-                onPressed: () {
-                  setState(() {
-                    menuClicked = !menuClicked;
-                  });
-                   },
-                icon: Icon(
-                  Icons.menu,
-                  color: Colors.white,
-                ),
-              ),
+                      onPressed: () {
+                        setState(() {
+                          menuClicked = !menuClicked;
+                        });
+                      },
+                      icon: Icon(
+                        Icons.menu,
+                        color: Colors.white,
+                      ),
+                    ),
               title: Text(
-                _listOfVideoDetails[_currentVideoIndex.value].videoTitle,
+                videoTitle.toString() != 'null' ? videoTitle.toString() : '',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
@@ -796,6 +802,8 @@ class _VideoScreenState extends State<VideoScreen> {
                               initializeVidController(
                                 _listOfVideoDetails[_currentVideoIndex.value]
                                     .videoUrl,
+                                _listOfVideoDetails[_currentVideoIndex.value]
+                                    .videoTitle,
                               );
                             },
                             child: Icon(
@@ -847,6 +855,8 @@ class _VideoScreenState extends State<VideoScreen> {
                               initializeVidController(
                                 _listOfVideoDetails[_currentVideoIndex.value]
                                     .videoUrl,
+                                _listOfVideoDetails[_currentVideoIndex.value]
+                                    .videoTitle,
                               );
                             },
                             child: Icon(
@@ -1004,12 +1014,13 @@ class _VideoScreenState extends State<VideoScreen> {
     );
   }
 
-
   int? selectedSection;
+  int? selectedIndexOfVideo;
+  String? selectedVideoIndexName;
+  String? videoTitle;
 
   Widget _buildVideoDetailsListTiles(
       double horizontalScale, double verticalScale) {
-
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.width;
 
@@ -1030,353 +1041,297 @@ class _VideoScreenState extends State<VideoScreen> {
         child: Container(
           child: loading
               ? Center(
-            child: Container(
-              height: 40,
-              width: 40,
-              child: Center(
-                child: CircularProgressIndicator(
-                  backgroundColor: Color.fromARGB(255, 0, 0, 0),
-                ),
-              ),
-            ),
-          )
-              : ListView.builder(
-              itemCount: courseData?.length,
-              itemBuilder: (BuildContext context, int index) {
-                // return Container();
-
-                print("this is index : ${index}");
-
-                var count = -1;
-
-
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                  child: Column(
-                    children: [
-                      Container(
-                          margin: const EdgeInsets.all(5.0),
-                          padding: const EdgeInsets.all(3.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Color(0xFF7860DC),
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(
-                                25.0) //                 <--- border radius here
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                            child: ButtonTheme(
-                              alignedDropdown: true,
-                              child: DropdownButton(
-                                alignment: Alignment.center,
-                                elevation: 8,
-                                isExpanded: true,
-                                borderRadius: BorderRadius.circular(23),
-                                underline: SizedBox(),
-                                icon: Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: Colors.black,
-                                ),
-                                hint:
-                                Text(courseData.entries.elementAt(index).key),
-                                items: courseData.entries
-                                    .elementAt(index)
-                                    .value
-                                    .map<DropdownMenuItem<String>>(
-                                        (dynamic value) {
-                                      count += 1;
-                                      return DropdownMenuItem<String>(
-                                        value: value.videoTitle,
-                                        child: GestureDetector(
-                                          child: Container(
-                                            child: Text(value.videoTitle,
-                                                style: TextStyle(
-                                                    color: Color(0xFF7860DC),
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 14),
-                                                maxLines: 3,
-                                                textAlign: TextAlign.start,),
-                                          ),
-                                          onTap: () {
-                                            print("this is messsie ${value.videoTitle}");
-
-                                            VideoScreen.currentSpeed.value = 1.0;
-
-                                            initializeVidController(
-                                              value.videoUrl,
-                                            );
-                                            // _currentVideoIndex.value = index;
-                                          },
-                                        ),
-                                      );
-                                    }).toList(),
-                                onChanged: (val) {
-                                  print(val);
-                                },
-                                // items: [],
-                              ),
-                            ),
-                          )),
-
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            selectedSection = index;
-                            print('$index and section is $selectedSection');
-                            showAssignment = !showAssignment;
-                            _videoController!.pause();
-                            enablePauseScreen = !enablePauseScreen;
-                          });
-                        },
-                        child: Container(
-                          width: screenWidth/3.1,
-                          height: screenHeight/20,
-                          decoration: BoxDecoration(
-                            color: Colors.purpleAccent[100],
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          child: Align(
-                            alignment: Alignment.center,
-                              child: Text('${index+1} Assignment',)),
-                        ),
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: Color.fromARGB(255, 0, 0, 0),
                       ),
-                    ],
+                    ),
                   ),
-                );
+                )
+              : ListView.builder(
+                  itemCount: courseData?.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    // return Container();
 
-                // return Padding(
-                //   padding: const EdgeInsets.all(8.0),
-                //   child: Container(
-                //     child: Column(
-                //       children: <Widget>[
-                //         Container(
-                //           padding: const EdgeInsets.symmetric(
-                //               horizontal: 15, vertical: 17),
-                //           decoration: new BoxDecoration(
-                //             borderRadius: BorderRadius.circular(20.0),
-                //             color: Colors.white,
-                //             boxShadow: [
-                //               BoxShadow(
-                //                   blurRadius: 10,
-                //                   color: Colors.black26,
-                //                   offset: Offset(0, 2))
-                //             ],
-                //           ),
-                //           child: new Row(
-                //             mainAxisSize: MainAxisSize.max,
-                //             crossAxisAlignment: CrossAxisAlignment.center,
-                //             children: <Widget>[
-                //               // Icon(Icons.card_travel, color: Color(0xFF307DF1),),
-                //               SizedBox(
-                //                 width: 10,
-                //               ),
-                //               Expanded(
-                //                 child: GestureDetector(
-                //                   onTap: () {
-                //                     this.isShow = !this.isShow;
-                //                     _runExpandCheck(context);
-                //                     print(
-                //                         "1111111111111111111111111111111111111111111");
-                //                     setState(() {});
-                //                   },
-                //                   child: Text(
-                //                     datamap.entries.elementAt(index).key,
-                //                     style: TextStyle(
-                //                         color: Color(0xFF307DF1), fontSize: 16),
-                //                   ),
-                //                 ),
-                //               ),
-                //               Align(
-                //                 alignment: Alignment(1, 0),
-                //                 child: Icon(
-                //                   isShow
-                //                       ? Icons.arrow_drop_down
-                //                       : Icons.arrow_right,
-                //                   color: Color(0xFF307DF1),
-                //                   size: 15,
-                //                 ),
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //         SizeTransition(
-                //             axisAlignment: 1.0,
-                //             sizeFactor: animation,
-                //             child: Center(
-                //               child: Container(
-                //                   margin: const EdgeInsets.only(bottom: 10),
-                //                   padding: const EdgeInsets.only(bottom: 10),
-                //                   decoration: new BoxDecoration(
-                //                     borderRadius: BorderRadius.only(
-                //                         bottomLeft: Radius.circular(20),
-                //                         bottomRight: Radius.circular(20)),
-                //                     color: Colors.white,
-                //                     boxShadow: [
-                //                       BoxShadow(
-                //                           blurRadius: 4,
-                //                           color: Colors.black26,
-                //                           offset: Offset(0, 4))
-                //                     ],
-                //                   ),
-                //                   child: SizedBox(
-                //                     width:
-                //                         MediaQuery.of(context).size.width * 0.87,
-                //                     child: _buildDropListOptions(
-                //                         dropListModel.listOptionItems, context),
-                //                   )),
-                //             )),
-                //         Divider(
-                //           color: Colors.grey.shade300,
-                //           height: 1,
-                //         )
-                //       ],
-                //     ),
-                //   ),
-                // );
-                // getValueData(0);
-                // new GestureDetector(
-                //   onTap: () async {
-                //     // await getValueData(index);
-                //     print(index);
-                //   },
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: Center(
-                //         child: SelectDropList(
-                //       OptionItem(
-                //           id: 'null', title: datamap.entries.elementAt(index).key),
-                //       DropListModel(resultValue),
-                //       (optionItem) {
-                //         optionItemSelected = optionItem;
-                //         setState(() {});
-                //       },
-                //     )),
-                //   ),
-                // );
-              }),
+                    print("this is index : ${index}");
+                    var sectionList = [];
+                    var count = -1;
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                      child: Column(
+                        children: [
+                          Container(
+                            child: ExpansionTile(
+                                title: Text(
+                                  '${index + 1}. ' +
+                                      courseData.entries.elementAt(index).key,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                children: List.generate(
+                                    courseData.entries
+                                        .elementAt(index)
+                                        .value
+                                        .length, (index1) {
+                                  sectionList.add({
+                                    courseData.entries
+                                        .elementAt(index)
+                                        .value[index1]
+                                        .toString(): 0
+                                  });
 
-          // child: StreamBuilder(
-          //   stream: FirebaseFirestore.instance
-          //       .collection('courses')
-          //       .doc(courseId)
-          //       .collection('Modules')
-          //       .doc(moduleId)
-          //       .collection('Topics')
-          //       .orderBy('sr')
-          //       .snapshots(),
-          //   builder: (BuildContext context, AsyncSnapshot snapshot) {
-          //     if (snapshot.hasData) {
-          //       return ListView.builder(
-          //           shrinkWrap: true,
-          //           itemCount: snapshot.data!.docs.length,
-          //           itemBuilder: (context, index) {
-          //             Map<String, dynamic> map = snapshot.data!.docs[index].data();
-          //             return Card(
-          //               elevation: 0,
-          //               color: _currentVideoIndex.value == index
-          //                   ? Color(0xFFDDD2FB)
-          //                   : Colors.white,
-          //               child: ListTile(
-          //                 onTap: () {
-          //                   VideoScreen.currentSpeed.value = 1.0;
-          //                   intializeVidController(
-          //                     _listOfVideoDetails[index].videoUrl,
-          //                   );
-          //                   _currentVideoIndex.value = index;
-          //                 },
-          //                 leading: Padding(
-          //                   padding: const EdgeInsets.all(8.0),
-          //                   child: Text('${index + 1}'),
-          //                 ),
-          //                 title: Text(
-          //                   map['name'],
-          //                   textScaleFactor: min(
-          //                     horizontalScale,
-          //                     verticalScale,
-          //                   ),
-          //                   style: TextStyle(
-          //                     fontWeight: FontWeight.w500,
-          //                     fontSize: 17,
-          //                     fontFamily: "Medium",
-          //                   ),
-          //                 ),
-          //                 trailing:
-          //                 // InkWell(
-          //                 //   onTap: () async {
-          //                 //     var directory =
-          //                 //         await getApplicationDocumentsDirectory();
-          //                 //     _currentVideoIndex.value = index;
-          //                 //     if (stopdownloading == true) {
-          //                 //       download(
-          //                 //           dio: Dio(),
-          //                 //           fileName: map['name'],
-          //                 //           url: map['url'],
-          //                 //           savePath:
-          //                 //               "${directory.path}/${map['name'].replaceAll(' ', '')}.mp4",
-          //                 //           topicName: map['name'],
-          //                 //           courseName: widget.courseName);
-          //                 //       setState(() {
-          //                 //         stopdownloading = false;
-          //                 //       });
-          //                 //     }
-          //                 //   },
-          //                 //   child: SelectDropList(
-          //                 //     this.optionItemSelected,
-          //                 //     this.dropListModel,
-          //                 //     (optionItem) {
-          //                 //       optionItemSelected = optionItem;
-          //                 //       setState(() {});
-          //                 //     },
-          //                 //   ),
-          //                 //   // child: _currentVideoIndex.value == index
-          //                 //   // ?
-          //                 //   // ? Stack(
-          //                 //   //     children: [
-          //                 //   //       Positioned(
-          //                 //   //         bottom: 0,
-          //                 //   //         left: 0,
-          //                 //   //         right: 0,
-          //                 //   //         top: 0,
-          //                 //   //         child: Icon(
-          //                 //   //           Icons.download_for_offline_rounded,
-          //                 //   //         ),
-          //                 //   //       ),
-          //                 //   //       SizedBox(
-          //                 //   //         height: 30,
-          //                 //   //         width: 30,
-          //                 //   //         child: CircularProgressIndicator(
-          //                 //   //           value: _downloadProgress.value,
-          //                 //   //           color: Color(0xFF7860DC),
-          //                 //   //           backgroundColor: Color(0xFFDDD2FB),
-          //                 //   //         ),
-          //                 //   //       )
-          //                 //   //     ],
-          //                 //   //   )
-          //                 //   // : Icon(
-          //                 //   //     Icons.download_for_offline_rounded,
-          //                 //   //   ),
-          //                 // ),
-          //                 SelectDropList(
-          //                     this.optionItemSelected,
-          //                     this.dropListModel,
-          //                     (optionItem) {
-          //                       optionItemSelected = optionItem;
-          //                       setState(() {});
-          //                     },
-          //                   ),
-          //               ),
-          //             );
-          //           });
-          // } else {
-          //   return Padding(
-          //     padding: const EdgeInsets.all(20),
-          //     child: Lottie.asset('assets/load-shimmer.json',
-          //         fit: BoxFit.fill, reverse: true),
-          //   );
-          // }
-          // },
+                                  return Column(
+                                    children: [
+                                      // videoPercentageList.length != 0 ?
+                                      // Text(videoPercentageList[index][courseData.entries.elementAt(index).key][courseData.entries.elementAt(index).value[index1].videoTitle].toString()) : SizedBox(),
+                                      GestureDetector(
+                                          onTap: () {
+                                            print('vdo = $videoPercentageList');
+
+                                            showAssignment = false;
+                                            setState(() {
+                                              currentPosition = 0;
+                                              videoTitle = courseData.entries
+                                                  .elementAt(index)
+                                                  .value[index1]
+                                                  .videoTitle
+                                                  .toString();
+                                              totalDuration = 0;
+                                            });
+
+                                            selectedIndexOfVideo = index1;
+                                            VideoScreen.currentSpeed.value =
+                                                1.0;
+                                            initializeVidController(
+                                                courseData.entries
+                                                    .elementAt(index)
+                                                    .value[index1]
+                                                    .videoUrl
+                                                    .toString(),
+                                                courseData.entries
+                                                    .elementAt(index)
+                                                    .value[index1]
+                                                    .videoTitle
+                                                    .toString());
+                                          },
+                                          child: Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 60,
+                                                  top: 15,
+                                                  bottom: 15),
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  courseData.entries
+                                                      .elementAt(index)
+                                                      .value[index1]
+                                                      .videoTitle
+                                                      .toString(),
+                                                  textAlign: TextAlign.start,
+                                                ),
+                                              ))),
+                                      totalDuration != 0 &&
+                                              courseData.entries
+                                                      .elementAt(index)
+                                                      .value[index1]
+                                                      .videoUrl
+                                                      .toString() ==
+                                                  selectedVideoIndexName
+                                                      .toString()
+                                          ? Text(((currentPosition /
+                                                          totalDuration) *
+                                                      100)
+                                                  .toInt()
+                                                  .toString() +
+                                              "%")
+                                          : Text("0%"),
+                                      LinearProgressIndicator(
+                                        color: Colors.blue,
+                                        valueColor:
+                                            new AlwaysStoppedAnimation<Color>(
+                                                Colors.red),
+                                        value: totalDuration != 0 &&
+                                                courseData.entries
+                                                        .elementAt(index)
+                                                        .value[index1]
+                                                        .videoUrl
+                                                        .toString() ==
+                                                    selectedVideoIndexName
+                                                        .toString()
+                                            ? ((currentPosition /
+                                                        totalDuration) *
+                                                    100) /
+                                                100
+                                            : 0,
+                                      ),
+                                      index1 ==
+                                              courseData.entries
+                                                      .elementAt(index)
+                                                      .value
+                                                      .length -
+                                                  1
+                                          ? Column(
+                                              children: List.generate(
+                                                courseData.entries
+                                                    .elementAt(index)
+                                                    .value
+                                                    .length,
+                                                (firstIndex) => Column(
+                                                  children: List.generate(
+                                                      futureAssignments.length,
+                                                      (fileIndex) {
+                                                    print(courseData.entries
+                                                        .elementAt(index)
+                                                        .key);
+                                                    print('dipen');
+                                                    print(courseData.entries
+                                                            .elementAt(index)
+                                                            .key
+                                                            .toString() +
+                                                        '${fileIndex + 1}' +
+                                                        '.ipynb');
+
+                                                    print(courseData.entries
+                                                            .elementAt(index)
+                                                            .key
+                                                            .toString() +
+                                                        '${fileIndex + 1}' +
+                                                        '.pdf');
+
+                                                    if ((futureAssignments[
+                                                                    fileIndex]
+                                                                .name
+                                                                .toString() ==
+                                                            courseData.entries
+                                                                    .elementAt(
+                                                                        index)
+                                                                    .key
+                                                                    .toString() +
+                                                                '${index + 1}.' +
+                                                                '${firstIndex}' +
+                                                                '.ipynb')
+                                                        // ||
+                                                        //     (futureSolutions[fileIndex].name.toString() ==
+                                                        //         courseData.entries.elementAt(index).key.toString() + '${index+1}.' + '${firstIndex}' + '.pdf')
+                                                        ) {
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                top: 10.0),
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            for (int i = 0;
+                                                                i <
+                                                                    futureSolutions
+                                                                        .length;
+                                                                i++) {
+                                                              if (futureSolutions[
+                                                                          i]
+                                                                      .name
+                                                                      .toString() ==
+                                                                  courseData
+                                                                          .entries
+                                                                          .elementAt(
+                                                                              index)
+                                                                          .key
+                                                                          .toString() +
+                                                                      '${index + 1}.' +
+                                                                      '${firstIndex}' +
+                                                                      '.pdf') {
+                                                                solutionUrl =
+                                                                    futureSolutions[
+                                                                            i]
+                                                                        .url;
+                                                              }
+                                                            }
+                                                            setState(() {
+                                                              solutionUrl;
+                                                              assignmentUrl =
+                                                                  futureAssignments[
+                                                                          fileIndex]
+                                                                      .url;
+                                                              selectedSection =
+                                                                  fileIndex;
+                                                              print(
+                                                                  '$index and section is $selectedSection');
+                                                              showAssignment =
+                                                                  !showAssignment;
+                                                              _videoController!
+                                                                  .pause();
+                                                              enablePauseScreen =
+                                                                  !enablePauseScreen;
+                                                              print(
+                                                                  futureAssignments);
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                            width: screenWidth /
+                                                                3.1,
+                                                            height:
+                                                                screenHeight /
+                                                                    20,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              border: Border.all(
+                                                                  width: 2.0,
+                                                                  color: Colors
+                                                                      .black),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          25),
+                                                            ),
+                                                            child: Align(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                child: Text(
+                                                                    'Assignment ${index + 1}.$firstIndex')),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
+                                                    return SizedBox();
+                                                  }),
+                                                ),
+                                              ),
+                                            )
+                                          : SizedBox(),
+                                    ],
+                                  );
+                                })),
+                          ),
+                          Text(videoPercentageList.toString()),
+                          // InkWell(
+                          //   onTap: () {
+                          //     setState(() {
+                          //       selectedSection = index;
+                          //       print('$index and section is $selectedSection');
+                          //       showAssignment = !showAssignment;
+                          //       _videoController!.pause();
+                          //       enablePauseScreen = !enablePauseScreen;
+                          //       print(futureAssignments);
+                          //     });
+                          //   },
+                          //   child: Container(
+                          //     width: screenWidth/3.1,
+                          //     height: screenHeight/20,
+                          //     decoration: BoxDecoration(
+                          //       color: Colors.purpleAccent[100],
+                          //       borderRadius: BorderRadius.circular(25),
+                          //     ),
+                          //     child: Align(
+                          //       alignment: Alignment.center,
+                          //         child: Text(futureAssignments[index].name.toString(),)),
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    );
+                  }),
         ),
       ),
     );
@@ -1413,10 +1368,11 @@ class _VideoScreenState extends State<VideoScreen> {
                             VideoScreen.currentSpeed.value = 1.0;
                             initializeVidController(
                               _listOfVideoDetails[index].videoUrl,
+                              _listOfVideoDetails[index].videoTitle,
                             );
                             _currentVideoIndex.value = index;
                             showAssignment = false;
-                            },
+                          },
                           leading: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text('${index + 1}'),
@@ -1481,7 +1437,8 @@ class _VideoScreenState extends State<VideoScreen> {
                             enablePauseScreen = !enablePauseScreen;
                           },
                           leading: Icon(Icons.assignment_ind_outlined),
-                          title: Text('Assignment 1.${index + 1}',
+                          title: Text(
+                            'Assignment 1.${index + 1}',
                             textScaleFactor: min(
                               horizontalScale,
                               verticalScale,
@@ -1490,7 +1447,8 @@ class _VideoScreenState extends State<VideoScreen> {
                               fontWeight: FontWeight.w500,
                               fontSize: 17,
                               fontFamily: "Medium",
-                            ),),
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -1562,9 +1520,11 @@ class fastForward10 extends StatelessWidget {
 }
 
 class fullScreenIcon extends StatelessWidget {
+  final menuClicked;
   const fullScreenIcon({
     Key? key,
     required this.isPortrait,
+    this.menuClicked,
   }) : super(key: key);
 
   final bool isPortrait;

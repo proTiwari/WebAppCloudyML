@@ -223,7 +223,7 @@ class _ComboCourseState extends State<ComboCourse> {
                                               child: CachedNetworkImage(
                                                 imageUrl:course[index].courseImageUrl,
                                                 placeholder: (context, url) =>
-                                                    CircularProgressIndicator(),
+                                                    Center(child: CircularProgressIndicator()),
                                                 errorWidget:
                                                     (context, url, error) =>
                                                         Icon(Icons.error),

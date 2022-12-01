@@ -642,36 +642,21 @@ class _HomeState extends State<Home> {
                           //                   )));
                           //     },
                           //     child: Text('Sizzling Offers')),
-
-                          SizedBox(
-                            width: horizontalScale * 250,
-                          ),
-                          constraints.maxWidth < 800
-                              ? Expanded(
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        logOut(context);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: HexColor("8346E1"),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                        ),
+                          Spacer(),
+                           SizedBox(
+                             width: screenWidth/9,
+                             child: ElevatedButton(
+                                    onPressed: () {
+                                      logOut(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: HexColor("8346E1"),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
                                       ),
-                                      child: Text("Log out", style: textStyle)),
-                                )
-                              : ElevatedButton(
-                                  onPressed: () {
-                                    logOut(context);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: HexColor("8346E1"),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50),
                                     ),
-                                  ),
-                                  child: Text("Log out", style: textStyle)),
+                                    child: Text("Log out", style: textStyle)),
+                           ),
                         ],
                       ),
                       Positioned(
