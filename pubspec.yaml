@@ -103,6 +103,7 @@ dependencies:
   badges: ^2.0.3
   better_player: ^0.0.83
   firestore_ui: ^1.24.0
+  flutter_widget_from_html: ^0.8.5
 
   
 dev_dependencies:
