@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:auto_orientation/auto_orientation.dart';
@@ -15,7 +14,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -60,11 +58,8 @@ class _VideoScreenState extends State<VideoScreen> {
   bool loading = false;
   bool enablePauseScreen = false;
   bool _isBuffering = false;
-  List pathwaydata = [];
   Duration? _duration;
   Duration? _position;
-  late String htmltext;
-  bool htmlbool = false;
   bool switchTOAssignment = false;
   bool stopdownloading = true;
   bool showAssignSol = false;
@@ -163,11 +158,11 @@ class _VideoScreenState extends State<VideoScreen> {
     _delayToInvokeonControlUpdate = now + 500;
     final controller = _videoController;
     if (controller == null) {
-      // debugPrint("The video controller is null");
+      debugPrint("The video controller is null");
       return;
     }
     if (!controller.value.isInitialized) {
-      // debugPrint("The video controller cannot be initialized");
+      debugPrint("The video controller cannot be initialized");
       return;
     }
     if (_duration == null) {
@@ -187,26 +182,26 @@ class _VideoScreenState extends State<VideoScreen> {
     if (duration == null) return;
     if (sectionName.length != 0 && videoPercentageList.length != 0) {
       for (int i = 0; i < sectionName.length; i++) {
-        // print('ii = $i');
+        print('ii = $i');
         for (int j = 0;
             j < videoPercentageList[i][sectionName[i]].length;
             j++) {
-          // print('jjj = $j $i  }');
+          print('jjj = $j $i  }');
           try {
-            // print('video $videoTitle');
-            // print(
-            //     'ssss ${videoPercentageList[i][sectionName[i]][j].toString()}');
-            // print('length of == ${videoTitle.toString().length}');
+            print('video $videoTitle');
+            print(
+                'ssss ${videoPercentageList[i][sectionName[i]][j].toString()}');
+            print('length of == ${videoTitle.toString().length}');
             if (videoPercentageList[i][sectionName[i]][j][videoTitle.toString()]
                     .toString() !=
                 'null') {
               videoPercentageList[i][sectionName[i]][j][videoTitle.toString()] =
                   ((currentPosition / totalDuration) * 100).toInt();
             }
-            // print(
-            //     'dd ${videoPercentageList[i][sectionName[i]][j][videoTitle.toString()].toString()}');
+            print(
+                'dd ${videoPercentageList[i][sectionName[i]][j][videoTitle.toString()].toString()}');
           } catch (e) {
-            // print('I am error ${e.toString()}');
+            print('I am error ${e.toString()}');
           }
         }
       }
@@ -240,7 +235,7 @@ class _VideoScreenState extends State<VideoScreen> {
   int currentPosition = 0;
 
   void initializeVidController(String url, String name) async {
-    // print('this is -- $url ');
+    print('this is -- $url ');
     try {
       final oldVideoController = _videoController;
       if (oldVideoController != null) {
@@ -254,7 +249,7 @@ class _VideoScreenState extends State<VideoScreen> {
       });
       playVideo = _localVideoController.initialize().then((value) {
         setState(() {
-          // print('this is -- $name ');
+          print('this is -- $name ');
 
           videoTitle = name.toString();
           totalDuration =
@@ -308,9 +303,9 @@ class _VideoScreenState extends State<VideoScreen> {
     Map<String, dynamic> done = {};
 
     for (var t in data.entries) {
-      // print("t = ${t.key}");
+      print("t = ${t.key}");
       for (var name in t.value) {
-        // print("Name = == = ${name}");
+        print("Name = == = ${name}");
         await FirebaseFirestore.instance
             .collection('courses')
             .doc(courseId)
@@ -320,8 +315,8 @@ class _VideoScreenState extends State<VideoScreen> {
             .where("name", isEqualTo: "${name.toString()}")
             .get()
             .then((value) {
-          // print("YY");
-          // print(value.docs.length);
+          print("YY");
+          print(value.docs.length);
           for (var video in value.docs) {
             listOfVideo.add(VideoDetails(
               videoId: video.data()['id'] ?? '',
@@ -331,7 +326,7 @@ class _VideoScreenState extends State<VideoScreen> {
               videoTitle: video.data()['name'] ?? '',
               videoUrl: video.data()['url'] ?? '',
             ));
-            // print("oo");
+            print("oo");
             String str = t.key.toString();
             str = str.replaceRange(0, 9, "");
             var st = "";
@@ -342,18 +337,18 @@ class _VideoScreenState extends State<VideoScreen> {
               st += str[i];
             }
             done[st] = listOfVideo.toList();
-            // print("oopp");
+            print("oopp");
           }
           // print(value.docs.length);
         });
       }
       listOfVideo = [];
     }
-    // print("done = $done");
-    // print("length= = ${dataList.length}");
+    print("done = $done");
+    print("length= = ${dataList.length}");
 
-    // print("yes");
-    // print(listOfVideo.length);
+    print("yes");
+    print(listOfVideo.length);
     return done;
   }
 
@@ -366,14 +361,14 @@ class _VideoScreenState extends State<VideoScreen> {
 
     var val;
 
-    // print("LLLLLLL ${FirebaseAuth.instance.currentUser!.uid} ${courseId}");
+    print("LLLLLLL ${FirebaseAuth.instance.currentUser!.uid} ${courseId}");
 
     await FirebaseFirestore.instance
         .collection('courses')
         .doc(courseId)
         .get()
         .then((value) async {
-      // print(value.data());
+      print(value.data());
 
       val = value.data();
 
@@ -382,15 +377,15 @@ class _VideoScreenState extends State<VideoScreen> {
       courseName = val['name'];
       sectionName = curriculumdata['sectionsName'];
       var dic = {};
-      // print(sectionName);
+      print(sectionName);
       for (var i in sectionName) {
         dic[i] = i;
       }
 
       dataa = await getDataFrom(dic, curriculumdata);
       for (var i in dataa.entries) {
-        // print('i == dip ${i.key}');
-        // print('i == dip ${i.value[0].videoTitle}');
+        print('i == dip ${i.key}');
+        print('i == dip ${i.value[0].videoTitle}');
         var sectionList = [];
         for (var k = 0; k < i.value.length; k++) {
           sectionList.add({
@@ -399,20 +394,20 @@ class _VideoScreenState extends State<VideoScreen> {
         }
         videoPercentageList.add({i.key.toString(): sectionList});
       }
-      // print('videoPercentage = $videoPercentageList');
+      print('videoPercentage = $videoPercentageList');
       setState(() {
         videoPercentageList;
       });
-      // print('this is $sectionName');
-      // print("datamap = $datamap");
+      print('this is $sectionName');
+      print("datamap = $datamap");
       curriculumdata.remove("sectionsName");
-      // print("this is srinivas $curriculumdata");
+      print("this is srinivas $curriculumdata");
       try {
         courseData = dataa;
         courseData = courseData;
-        // print("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy ");
-        // print(curriculumdata.length);
-        // print(courseData);
+        print("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy ");
+        print(curriculumdata.length);
+        print(courseData);
         if (courseData == datamap) {
           setState(() {
             loading = false;
@@ -420,16 +415,16 @@ class _VideoScreenState extends State<VideoScreen> {
           });
         }
 
-        // print("LLLLLLLLLLLLLLLLLLyyyyyyyyyyyyyy ");
+        print("LLLLLLLLLLLLLLLLLLyyyyyyyyyyyyyy ");
       } catch (e) {
-        // print('2');
+        print('2');
         if (courseData == dataa) {
           setState(() {
             loading = false;
             courseData;
           });
         }
-        // print(e);
+        print(e);
       }
     });
     if (courseData == dataa) {
@@ -446,7 +441,7 @@ class _VideoScreenState extends State<VideoScreen> {
     //   print(resultValue);
     // }
 
-    // print("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL ");
+    print("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL ");
   }
 
   Future download({
@@ -476,10 +471,10 @@ class _VideoScreenState extends State<VideoScreen> {
           },
         ),
       );
-      // print(response.headers);
+      print(response.headers);
       File file = File(savePath!);
       var raf = file.openSync(mode: FileMode.write);
-      // print('savePath--$savePath');
+      print('savePath--$savePath');
 
       raf.writeFromSync(response.data);
       await raf.close();
@@ -494,7 +489,7 @@ class _VideoScreenState extends State<VideoScreen> {
         downloaded = true;
       });
     } catch (e) {
-      // print('e::$e');
+      print('e::$e');
     }
   }
 
@@ -531,7 +526,6 @@ class _VideoScreenState extends State<VideoScreen> {
     getData();
     getCourseData();
     getFiles();
-    getpathway(widget.courseName);
     Future.delayed(Duration(milliseconds: 500), () {
       initializeVidController(
         _listOfVideoDetails[0].videoUrl,
@@ -604,144 +598,125 @@ class _VideoScreenState extends State<VideoScreen> {
                         ],
                       ),
                     ),
-              !htmlbool
-                  ? Expanded(
-                      flex: 2,
-                      child: showAssignment
-                          ? AssignmentScreen(
-                              selectedSection: selectedSection,
-                              courseData: courseData,
-                              courseName: widget.courseName,
-                              assignmentUrl: assignmentUrl,
-                              solutionUrl: solutionUrl,
-                            )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                FutureBuilder(
-                                  future: playVideo,
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<dynamic> snapshot) {
-                                    if (ConnectionState.done ==
-                                        snapshot.connectionState) {
-                                      return Stack(
-                                        children: [
-                                          Container(
+              Expanded(
+                flex: 2,
+                child: showAssignment
+                    ? AssignmentScreen(
+                        selectedSection: selectedSection,
+                        courseData: courseData,
+                        courseName: widget.courseName,
+                        assignmentUrl: assignmentUrl,
+                        solutionUrl: solutionUrl,
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          FutureBuilder(
+                            future: playVideo,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<dynamic> snapshot) {
+                              if (ConnectionState.done ==
+                                  snapshot.connectionState) {
+                                return Stack(
+                                  children: [
+                                    Container(
+                                      height: menuClicked
+                                          ? screenHeight
+                                          : screenHeight / 1.2,
+                                      child: Center(
+                                        child: AspectRatio(
+                                          aspectRatio: 16 / 9,
+                                          child: VideoPlayer(_videoController!),
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            enablePauseScreen =
+                                                !enablePauseScreen;
+                                            print(
+                                                'Container of column clicked');
+                                          });
+                                        },
+                                        child: Container(
+                                          height: menuClicked
+                                              ? screenHeight
+                                              : screenHeight / 1.2,
+                                          width: screenWidth,
+                                        )),
+                                    enablePauseScreen
+                                        ? Container(
                                             height: menuClicked
                                                 ? screenHeight
                                                 : screenHeight / 1.2,
-                                            child: Center(
-                                              child: AspectRatio(
-                                                aspectRatio: 16 / 9,
-                                                child: VideoPlayer(
-                                                    _videoController!),
+                                            child: _buildControls(
+                                              context,
+                                              isPortrait,
+                                              horizontalScale,
+                                              verticalScale,
+                                            ),
+                                          )
+                                        : SizedBox(),
+                                    _isBuffering && !enablePauseScreen
+                                        ? Center(
+                                            heightFactor: 6.2,
+                                            child: Container(
+                                              width: 60,
+                                              height: 60,
+                                              child: CircularProgressIndicator(
+                                                color: Color.fromARGB(
+                                                  114,
+                                                  255,
+                                                  255,
+                                                  255,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  enablePauseScreen =
-                                                      !enablePauseScreen;
-                                                  // print(
-                                                  //     'Container of column clicked');
-                                                });
-                                              },
-                                              child: Container(
-                                                height: menuClicked
-                                                    ? screenHeight
-                                                    : screenHeight / 1.2,
-                                                width: screenWidth,
-                                              )),
-                                          enablePauseScreen
-                                              ? Container(
-                                                  height: menuClicked
-                                                      ? screenHeight
-                                                      : screenHeight / 1.2,
-                                                  child: _buildControls(
-                                                    context,
-                                                    isPortrait,
-                                                    horizontalScale,
-                                                    verticalScale,
-                                                  ),
-                                                )
-                                              : SizedBox(),
-                                          _isBuffering && !enablePauseScreen
-                                              ? Center(
-                                                  heightFactor: 6.2,
-                                                  child: Container(
-                                                    width: 60,
-                                                    height: 60,
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                      color: Color.fromARGB(
-                                                        114,
-                                                        255,
-                                                        255,
-                                                        255,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              : Container(),
-                                        ],
-                                      );
-                                    } else {
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          color: Color(0xFF7860DC),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                                menuClicked
-                                    ? Container()
-                                    : Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 15.0),
-                                        child: Text(
-                                          videoTitle.toString() != 'null'
-                                              ? videoTitle.toString()
-                                              : '',
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontFamily: 'SemiBold'),
-                                        ),
-                                      ),
-                                isPortrait
-                                    ? _buildPartition(
-                                        context,
-                                        horizontalScale,
-                                        verticalScale,
-                                      )
-                                    : SizedBox(),
-                                isPortrait
-                                    ? Expanded(
-                                        flex: 2,
-                                        child: _buildVideoDetailsListTile(
-                                          horizontalScale,
-                                          verticalScale,
-                                        ),
-                                      )
-                                    : SizedBox(),
-                              ],
-                            ),
-                    )
-                  : Expanded(
-                      flex: 2,
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.all(50.0),
-                          child: SingleChildScrollView(
-                            child: HtmlWidget('''
-                                            $htmltext
-                                            '''),
+                                          )
+                                        : Container(),
+                                  ],
+                                );
+                              } else {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: Color(0xFF7860DC),
+                                  ),
+                                );
+                              }
+                            },
                           ),
-                        ),
+                          menuClicked
+                              ? Container()
+                              : Padding(
+                                  padding: const EdgeInsets.only(top: 15.0),
+                                  child: Text(
+                                    videoTitle.toString() != 'null'
+                                        ? videoTitle.toString()
+                                        : '',
+                                    style: TextStyle(
+                                        fontSize: 18, fontFamily: 'SemiBold'),
+                                  ),
+                                ),
+                          isPortrait
+                              ? _buildPartition(
+                                  context,
+                                  horizontalScale,
+                                  verticalScale,
+                                )
+                              : SizedBox(),
+                          isPortrait
+                              ? Expanded(
+                                  flex: 2,
+                                  child: _buildVideoDetailsListTile(
+                                    horizontalScale,
+                                    verticalScale,
+                                  ),
+                                )
+                              : SizedBox(),
+                        ],
                       ),
-                    ),
+              ),
             ],
           );
         },
@@ -1044,57 +1019,22 @@ class _VideoScreenState extends State<VideoScreen> {
   String? selectedVideoIndexName;
   String? videoTitle;
 
-  Future<void> getpathway(String? courseName) async {
-    List path;
-    String jsonString;
-    var d;
-    try {
-      // print("1");
-      await FirebaseFirestore.instance
-          .collection('courses')
-          .where("name", isEqualTo: "${courseName}")
-          .get()
-          .then((value) async => {
-                // print("2"),
-                path = await value.docs[0]['pathway'],
-                // print("3"),
-                for (var i in path)
-                  {
-                    // print("4"),
-                    jsonString = jsonEncode(i),
-                    // print("5"),
-                    pathwaydata.add(jsonString),
-                    // print("6"),
-                  },
-                // htmltext = pathwaydata[1]['data'],
-                d = jsonDecode(pathwaydata[1]),
-                htmltext = d['data'],
-                // print("7"),
-                // print("llll $htmltext")
-              });
-      // print("pathwaydata ${pathwaydata}");
-    } catch (e) {
-      // print("pathwaydata -- ${e}");
-    }
-    ;
-  }
-
   Widget _buildVideoDetailsListTiles(
       double horizontalScale, double verticalScale) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.width;
 
-    // print('sddddddddddddddddddddddddddddddddddddddddd');
-    // print(courseData?.length);
-    // print('sddddddddddddddddddddddddddddddddddddddddd');
+    print('sddddddddddddddddddddddddddddddddddddddddd');
+    print(courseData?.length);
+    print('sddddddddddddddddddddddddddddddddddddddddd');
     // return Container();
     return InkWell(
       onTap: () {
-        // print('sddddddddddddddddddddddddddddddddddddddddd');
+        print('sddddddddddddddddddddddddddddddddddddddddd');
 
-        // print(courseData?.length);
+        print(courseData?.length);
 
-        // print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+        print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
       },
       child: Padding(
         padding: const EdgeInsets.all(3.0),
@@ -1116,265 +1056,13 @@ class _VideoScreenState extends State<VideoScreen> {
                   itemBuilder: (BuildContext context, int index) {
                     // return Container();
 
-                    // print("this is index : ${index}");
+                    print("this is index : ${index}");
                     var sectionList = [];
                     var count = -1;
                     return Padding(
                       padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                       child: Column(
                         children: [
-                          index == 0
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        child: ExpansionTile(
-                                          title: Text(
-                                            'Important Instructions',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          children: List.generate(
-                                            pathwaydata.length,
-                                            (index1) {
-                                              Map valueMap = json
-                                                  .decode(pathwaydata[index1]);
-                                              print("ppppp ${valueMap}");
-                                              // sectionList.add({
-                                              //   courseData.entries
-                                              //       .elementAt(index)
-                                              //       .value[index1]
-                                              //       .toString(): 0
-                                              // });
-
-                                              return Column(
-                                                children: [
-                                                  // videoPercentageList.length != 0 ?
-                                                  // Text(videoPercentageList[index][courseData.entries.elementAt(index).key][courseData.entries.elementAt(index).value[index1].videoTitle].toString()) : SizedBox(),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      print(valueMap['name']);
-                                                      showAssignment = false;
-                                                      setState(() {
-                                                        currentPosition = 0;
-                                                        videoTitle =
-                                                            valueMap['name'];
-                                                        totalDuration = 0;
-                                                      });
-                                                      if (valueMap['type'] ==
-                                                          "video") {
-                                                        setState(() {
-                                                          htmlbool = false;
-                                                          enablePauseScreen =
-                                                              false;
-                                                        });
-
-                                                        selectedIndexOfVideo =
-                                                            index1;
-                                                        VideoScreen.currentSpeed
-                                                            .value = 1.0;
-
-                                                        initializeVidController(
-                                                            valueMap['data'],
-                                                            valueMap['name']);
-                                                      } else {
-                                                        setState(() {
-                                                          htmltext =
-                                                              valueMap['data'];
-                                                          enablePauseScreen =
-                                                              false;
-                                                          htmlbool = true;
-                                                        });
-                                                      }
-                                                    },
-                                                    child: Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: 60,
-                                                          top: 15,
-                                                          bottom: 15),
-                                                      child: Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: Text(
-                                                          valueMap['name'],
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  // totalDuration != 0 &&
-                                                  //         courseData.entries
-                                                  //                 .elementAt(
-                                                  //                     index)
-                                                  //                 .value[index1]
-                                                  //                 .videoUrl
-                                                  //                 .toString() ==
-                                                  //             selectedVideoIndexName
-                                                  //                 .toString()
-                                                  //     ? Text(((currentPosition /
-                                                  //                     totalDuration) *
-                                                  //                 100)
-                                                  //             .toInt()
-                                                  //             .toString() +
-                                                  //         "%")
-                                                  //     : Text("0%"),
-                                                  // LinearProgressIndicator(
-                                                  //   color: Colors.blue,
-                                                  //   valueColor:
-                                                  //       new AlwaysStoppedAnimation<
-                                                  //           Color>(Colors.red),
-                                                  //   value: totalDuration != 0 &&
-                                                  //           courseData.entries
-                                                  //                   .elementAt(
-                                                  //                       index)
-                                                  //                   .value[
-                                                  //                       index1]
-                                                  //                   .videoUrl
-                                                  //                   .toString() ==
-                                                  //               selectedVideoIndexName
-                                                  //                   .toString()
-                                                  //       ? ((currentPosition /
-                                                  //                   totalDuration) *
-                                                  //               100) /
-                                                  //           100
-                                                  //       : 0,
-                                                  // ),
-                                                  // index1 ==
-                                                  //         courseData.entries
-                                                  //                 .elementAt(
-                                                  //                     index)
-                                                  //                 .value
-                                                  //                 .length -
-                                                  //             1
-                                                  //     ? Column(
-                                                  //         children:
-                                                  //             List.generate(
-                                                  //           courseData.entries
-                                                  //               .elementAt(
-                                                  //                   index)
-                                                  //               .value
-                                                  //               .length,
-                                                  //           (firstIndex) =>
-                                                  //               Column(
-                                                  //             children: List.generate(
-                                                  //                 futureAssignments
-                                                  //                     .length,
-                                                  //                 (fileIndex) {
-                                                  //               print(courseData
-                                                  //                   .entries
-                                                  //                   .elementAt(
-                                                  //                       index)
-                                                  //                   .key);
-                                                  //               print('dipen');
-                                                  //               print(courseData
-                                                  //                       .entries
-                                                  //                       .elementAt(
-                                                  //                           index)
-                                                  //                       .key
-                                                  //                       .toString() +
-                                                  //                   '${fileIndex + 1}' +
-                                                  //                   '.ipynb');
-
-                                                  //               print(courseData
-                                                  //                       .entries
-                                                  //                       .elementAt(
-                                                  //                           index)
-                                                  //                       .key
-                                                  //                       .toString() +
-                                                  //                   '${fileIndex + 1}' +
-                                                  //                   '.pdf');
-
-                                                  //               if ((futureAssignments[fileIndex]
-                                                  //                           .name
-                                                  //                           .toString() ==
-                                                  //                       courseData.entries.elementAt(index).key.toString() +
-                                                  //                           '${index + 1}.' +
-                                                  //                           '${firstIndex}' +
-                                                  //                           '.ipynb')
-                                                  //                   // ||
-                                                  //                   //     (futureSolutions[fileIndex].name.toString() ==
-                                                  //                   //         courseData.entries.elementAt(index).key.toString() + '${index+1}.' + '${firstIndex}' + '.pdf')
-                                                  //                   ) {
-                                                  //                 return Padding(
-                                                  //                   padding: const EdgeInsets
-                                                  //                           .only(
-                                                  //                       top:
-                                                  //                           10.0),
-                                                  //                   child:
-                                                  //                       InkWell(
-                                                  //                     onTap:
-                                                  //                         () {
-                                                  //                       for (int i =
-                                                  //                               0;
-                                                  //                           i < futureSolutions.length;
-                                                  //                           i++) {
-                                                  //                         if (futureSolutions[i].name.toString() ==
-                                                  //                             courseData.entries.elementAt(index).key.toString() + '${index + 1}.' + '${firstIndex}' + '.pdf') {
-                                                  //                           solutionUrl =
-                                                  //                               futureSolutions[i].url;
-                                                  //                         }
-                                                  //                       }
-                                                  //                       setState(
-                                                  //                           () {
-                                                  //                         solutionUrl;
-                                                  //                         assignmentUrl =
-                                                  //                             futureAssignments[fileIndex].url;
-                                                  //                         selectedSection =
-                                                  //                             fileIndex;
-                                                  //                         print(
-                                                  //                             '$index and section is $selectedSection');
-                                                  //                         showAssignment =
-                                                  //                             !showAssignment;
-                                                  //                         _videoController!
-                                                  //                             .pause();
-                                                  //                         enablePauseScreen =
-                                                  //                             !enablePauseScreen;
-                                                  //                         print(
-                                                  //                             futureAssignments);
-                                                  //                       });
-                                                  //                     },
-                                                  //                     child:
-                                                  //                         Container(
-                                                  //                       width: screenWidth /
-                                                  //                           3.1,
-                                                  //                       height:
-                                                  //                           screenHeight /
-                                                  //                               20,
-                                                  //                       decoration:
-                                                  //                           BoxDecoration(
-                                                  //                         border: Border.all(
-                                                  //                             width: 2.0,
-                                                  //                             color: Colors.black),
-                                                  //                         borderRadius:
-                                                  //                             BorderRadius.circular(25),
-                                                  //                       ),
-                                                  //                       child: Align(
-                                                  //                           alignment:
-                                                  //                               Alignment.center,
-                                                  //                           child: Text('Assignment ${index + 1}.$firstIndex')),
-                                                  //                     ),
-                                                  //                   ),
-                                                  //                 );
-                                                  //               }
-                                                  //               return SizedBox();
-                                                  //             }),
-                                                  //           ),
-                                                  //         ),
-                                                  //       )
-                                                  //     : SizedBox(),
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Container(),
                           Container(
                             child: ExpansionTile(
                                 title: Text(
@@ -1400,10 +1088,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                       // Text(videoPercentageList[index][courseData.entries.elementAt(index).key][courseData.entries.elementAt(index).value[index1].videoTitle].toString()) : SizedBox(),
                                       GestureDetector(
                                           onTap: () {
-                                            setState(() {
-                                              htmlbool = false;
-                                            });
-                                            // print('vdo = $videoPercentageList');
+                                            print('vdo = $videoPercentageList');
 
                                             showAssignment = false;
                                             setState(() {
@@ -1497,23 +1182,23 @@ class _VideoScreenState extends State<VideoScreen> {
                                                   children: List.generate(
                                                       futureAssignments.length,
                                                       (fileIndex) {
-                                                    // print(courseData.entries
-                                                    //     .elementAt(index)
-                                                    //     .key);
-                                                    // print('dipen');
-                                                    // print(courseData.entries
-                                                    //         .elementAt(index)
-                                                    //         .key
-                                                    //         .toString() +
-                                                    //     '${fileIndex + 1}' +
-                                                    //     '.ipynb');
+                                                    print(courseData.entries
+                                                        .elementAt(index)
+                                                        .key);
+                                                    print('dipen');
+                                                    print(courseData.entries
+                                                            .elementAt(index)
+                                                            .key
+                                                            .toString() +
+                                                        '${fileIndex + 1}' +
+                                                        '.ipynb');
 
-                                                    // print(courseData.entries
-                                                    //         .elementAt(index)
-                                                    //         .key
-                                                    //         .toString() +
-                                                    //     '${fileIndex + 1}' +
-                                                    //     '.pdf');
+                                                    print(courseData.entries
+                                                            .elementAt(index)
+                                                            .key
+                                                            .toString() +
+                                                        '${fileIndex + 1}' +
+                                                        '.pdf');
 
                                                     if ((futureAssignments[
                                                                     fileIndex]
@@ -1538,9 +1223,6 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                 top: 10.0),
                                                         child: InkWell(
                                                           onTap: () {
-                                                            setState(() {
-                                                              htmlbool = false;
-                                                            });
                                                             for (int i = 0;
                                                                 i <
                                                                     futureSolutions
@@ -1573,16 +1255,16 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                       .url;
                                                               selectedSection =
                                                                   fileIndex;
-                                                              // print(
-                                                              //     '$index and section is $selectedSection');
+                                                              print(
+                                                                  '$index and section is $selectedSection');
                                                               showAssignment =
                                                                   !showAssignment;
                                                               _videoController!
                                                                   .pause();
                                                               enablePauseScreen =
                                                                   !enablePauseScreen;
-                                                              // print(
-                                                              //     futureAssignments);
+                                                              print(
+                                                                  futureAssignments);
                                                             });
                                                           },
                                                           child: Container(
@@ -1622,7 +1304,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                   );
                                 })),
                           ),
-                          // Text(videoPercentageList.toString()),
+                          Text(videoPercentageList.toString()),
                           // InkWell(
                           //   onTap: () {
                           //     setState(() {
