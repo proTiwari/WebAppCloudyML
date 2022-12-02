@@ -90,7 +90,7 @@ class _OnboardewState extends State<Onboardew> {
     print(width);
     return Scaffold(body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      if (constraints.maxWidth >= 515) {
+      if (constraints.maxWidth >= 600) {
         return Stack(
           children: [
             Container(
@@ -202,16 +202,36 @@ class _OnboardewState extends State<Onboardew> {
                       ],
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(50.0),
+                      padding: const EdgeInsets.only(top: 25.0, right: 50, left: 50),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Log in",
-                            style: TextStyle(
-                                color: HexColor("2C2C2C"),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 22),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Log in",
+                                style: TextStyle(
+                                    color: HexColor("2C2C2C"),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 22),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    formVisible = true;
+                                    _formIndex = 2;
+                                  });
+                                },
+                                child: Text(
+                                  'Sign Up',
+                                  style: TextStyle(
+                                      color: HexColor('5E1EC0'),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                              ),
+                            ],
                           ),
                           SizedBox(
                             height: 5,
@@ -541,6 +561,8 @@ class _OnboardewState extends State<Onboardew> {
                               ],
                             ),
                           ),
+
+
                           _isLoading ? Loading() : Padding(
                             padding: const EdgeInsets.only(top: 10.0),
                             child: ElevatedButton(
@@ -632,43 +654,40 @@ class _OnboardewState extends State<Onboardew> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: const EdgeInsets.only(top: 10.0),
                             child: Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Don’t have an account? ',
-                                    textScaleFactor:
-                                        min(horizontalScale, verticalScale),
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        formVisible = true;
-                                        _formIndex = 2;
-                                      });
-                                    },
-                                    child: Center(
-                                      child: Text(
-                                        'Sign Up',
-                                        textScaleFactor:
-                                            min(horizontalScale, verticalScale),
-                                        style: TextStyle(
-                                            fontFamily: 'SemiBold',
-                                            color: HexColor('5E1EC0'),
-                                            fontSize: 20),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              height: 25,
+                              child: InkWell(
+                                onTap: () async {
+                                  final Uri params = Uri(
+                                      scheme: 'mailto',
+                                      path: 'app.support@cloudyml.com',
+                                      query:
+                                      'subject=Query about App');
+                                  var mailurl =
+                                  params.toString();
+                                  if (await canLaunch(
+                                      mailurl)) {
+                                    await launch(mailurl);
+                                  } else {
+                                    throw 'Could not launch $mailurl';
+                                  }
+                                },
+                                child: Text(
+                                  'Need Help with Login?',
+                                  textScaleFactor: min(horizontalScale, verticalScale),
+                                  style: TextStyle(
+                                      fontFamily: 'Regular',
+                                      fontSize: 19,
+                                      color: Colors.black),
+                                ),
                               ),
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
+                            padding: const EdgeInsets.only(top: 5.0),
                             child: Container(
+                              height: 15,
                               child: Row(
                                 children: [
                                   Expanded(
@@ -1672,6 +1691,7 @@ class _OnboardewState extends State<Onboardew> {
                             ),
                           )
                     : null),
+
             // AnimatedSwitcher(
             //     duration: Duration(milliseconds: 200),
             //     child: (phoneVisible)
