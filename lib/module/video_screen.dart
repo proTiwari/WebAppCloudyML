@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'dart:math';
 import 'package:auto_orientation/auto_orientation.dart';
 import 'package:cloudyml_app2/models/video_details.dart';
@@ -7,7 +8,6 @@ import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/models/offline_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/widgets/assignment_bottomsheet.dart';
-import 'package:cloudyml_app2/widgets/message_tile.dart';
 import 'package:cloudyml_app2/widgets/settings_bottomsheet.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,6 +45,8 @@ class _VideoScreenState extends State<VideoScreen> {
   late List<FirebaseFile> futureDataSets;
 
   VideoPlayerController? _videoController;
+  late String htmltext;
+  List pathwaydata = [];
   bool? downloading = false;
   bool downloaded = false;
   Map<String, dynamic>? data;
@@ -147,7 +149,7 @@ class _VideoScreenState extends State<VideoScreen> {
     );
   }
 
-  void _onVideoControllerUpdate() {
+  void _onVideoControllerUpdate() async {
     if (_disposed) {
       return;
     }
@@ -172,6 +174,7 @@ class _VideoScreenState extends State<VideoScreen> {
             _videoController!.value.position) &&
         !_videoController!.value.isPlaying) {
       VideoScreen.currentSpeed.value = 1.0;
+      updateCourseCompletionPercentage(videoPercentageList);
       _currentVideoIndex.value++;
       initializeVidController(
         _listOfVideoDetails[_currentVideoIndex.value].videoUrl,
@@ -180,12 +183,13 @@ class _VideoScreenState extends State<VideoScreen> {
     }
     var duration = _duration;
     if (duration == null) return;
+
     if (sectionName.length != 0 && videoPercentageList.length != 0) {
       for (int i = 0; i < sectionName.length; i++) {
         print('ii = $i');
         for (int j = 0;
-            j < videoPercentageList[i][sectionName[i]].length;
-            j++) {
+        j < videoPercentageList[i][sectionName[i]].length;
+        j++) {
           print('jjj = $j $i  }');
           try {
             print('video $videoTitle');
@@ -193,7 +197,7 @@ class _VideoScreenState extends State<VideoScreen> {
                 'ssss ${videoPercentageList[i][sectionName[i]][j].toString()}');
             print('length of == ${videoTitle.toString().length}');
             if (videoPercentageList[i][sectionName[i]][j][videoTitle.toString()]
-                    .toString() !=
+                .toString() !=
                 'null') {
               videoPercentageList[i][sectionName[i]][j][videoTitle.toString()] =
                   ((currentPosition / totalDuration) * 100).toInt();
@@ -207,10 +211,39 @@ class _VideoScreenState extends State<VideoScreen> {
       }
     }
 
+    // if (sectionName.length != 0 && videoPercentageList.length != 0) {
+    //   for (int i = 0; i < sectionName.length; i++) {
+    //     print('ii = $i');
+    //     for (int j = 0;
+    //         j < videoPercentageList[i][sectionName[i]].length;
+    //         j++) {
+    //       print('jjj = $j $i  }');
+    //       try {
+    //         print('video $videoTitle');
+    //         print(
+    //             'ssss ${videoPercentageList[i][sectionName[i]][j].toString()}');
+    //         print('length of == ${videoTitle.toString().length}');
+    //         if (videoPercentageList[i][sectionName[i]][j][videoTitle.toString()]
+    //                 .toString() !=
+    //             'null') {
+    //           videoPercentageList[i][sectionName[i]][j][videoTitle.toString()] =
+    //               ((currentPosition / totalDuration) * 100).toInt();
+    //         }
+    //         print(
+    //             'dd ${videoPercentageList[i][sectionName[i]][j][videoTitle.toString()].toString()}');
+    //       } catch (e) {
+    //         print('I am error ${e.toString()}');
+    //       }
+    //     }
+    //   }
+    // }
+
     setState(() {
       currentPosition = _videoController!.value.position.inSeconds.toInt();
       videoPercentageList;
     });
+
+    updateCourseCompletionPercentage(videoPercentageList);
 
     var position = _videoController?.value.position;
     setState(() {
@@ -227,6 +260,8 @@ class _VideoScreenState extends State<VideoScreen> {
         _progress = position!.inMilliseconds.ceilToDouble() /
             duration.inMilliseconds.ceilToDouble();
       });
+    } else {
+      updateCourseCompletionPercentage(videoPercentageList);
     }
     _isPlaying = playing;
   }
@@ -383,6 +418,20 @@ class _VideoScreenState extends State<VideoScreen> {
       }
 
       dataa = await getDataFrom(dic, curriculumdata);
+      // await FirebaseFirestore.instance.collection('courseprogress')
+      //     .doc(_auth.currentUser!.uid).get().then((value) async {
+      //   if(value.exists) {
+      //     var progressData = await FirebaseFirestore.instance.collection('courseprogress')
+      //         .doc(_auth.currentUser!.uid).get();
+      //     print('progressdata ${progressData.get(courseName)}');
+      //     var restData = progressData.data();
+      //     print('restdata = ${restData!['Machine Learning']}');
+      //
+      //     // videoPercentageList = progressData.data();
+      //   } else {
+      //
+      //   }
+      // });
       for (var i in dataa.entries) {
         print('i == dip ${i.key}');
         print('i == dip ${i.value[0].videoTitle}');
@@ -394,6 +443,7 @@ class _VideoScreenState extends State<VideoScreen> {
         }
         videoPercentageList.add({i.key.toString(): sectionList});
       }
+
       print('videoPercentage = $videoPercentageList');
       setState(() {
         videoPercentageList;
@@ -492,6 +542,37 @@ class _VideoScreenState extends State<VideoScreen> {
       print('e::$e');
     }
   }
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+  updateCourseCompletionPercentage(videoPercentageListUpdate) async {
+
+    // await FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid).update({
+    //   courseName : videoPercentageListUpdate,
+    // }).then((value) => print(videoPercentageListUpdate)).catchError((error) => print('dipen = $error'));
+    // print('I am uid = ${FirebaseAuth.instance.currentUser!.uid}');
+
+    await FirebaseFirestore.instance.collection('courseprogress').doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) async {
+      print('srinivas ${value.data().toString()}');
+      if(value.exists) {
+        await FirebaseFirestore.instance.collection('courseprogress').doc(_auth.currentUser!.uid).update({
+          courseName: videoPercentageListUpdate,
+          'email': _auth.currentUser!.email,
+        }).catchError((onError) {print('srinnn = $onError');});
+      } else {
+        await FirebaseFirestore.instance.collection('courseprogress').doc(_auth.currentUser!.uid).set(
+            {
+              courseName : videoPercentageListUpdate,
+              'email': FirebaseAuth.instance.currentUser!.email,
+            });
+      }
+    }).catchError((onError) { print('srinu $onError');});
+
+    // await FirebaseFirestore.instance.collection('courseprogress').doc().set(
+    //     {
+    //       courseName : videoPercentageListUpdate,
+    //       'email': FirebaseAuth.instance.currentUser!.email,
+    //     });
+  }
 
   @override
   void dispose() {
@@ -520,9 +601,7 @@ class _VideoScreenState extends State<VideoScreen> {
   @override
   void initState() {
     html.window.document.onContextMenu.listen((evt) => evt.preventDefault());
-
     VideoScreen.currentSpeed.value = 1.0;
-
     getData();
     getCourseData();
     getFiles();
@@ -607,6 +686,7 @@ class _VideoScreenState extends State<VideoScreen> {
                         courseName: widget.courseName,
                         assignmentUrl: assignmentUrl,
                         solutionUrl: solutionUrl,
+                  dataSetUrl: dataSetUrl,
                       )
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -724,6 +804,10 @@ class _VideoScreenState extends State<VideoScreen> {
     ));
   }
 
+  void goFullScreen() {
+
+  }
+
   Widget _buildControls(
     BuildContext context,
     bool isPortrait,
@@ -742,19 +826,6 @@ class _VideoScreenState extends State<VideoScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ListTile(
-              leading: isPortrait
-                  ? null
-                  : IconButton(
-                      onPressed: () {
-                        setState(() {
-                          menuClicked = !menuClicked;
-                        });
-                      },
-                      icon: Icon(
-                        Icons.menu,
-                        color: Colors.white,
-                      ),
-                    ),
               title: Text(
                 videoTitle.toString() != 'null' ? videoTitle.toString() : '',
                 textAlign: TextAlign.center,
@@ -900,8 +971,22 @@ class _VideoScreenState extends State<VideoScreen> {
                           ),
                         ],
                       ),
-                      fullScreenIcon(
-                        isPortrait: isPortrait,
+                      IconButton(
+                        onPressed: () {
+                          setState((){
+                            menuClicked = !menuClicked;
+                          });
+                          if (menuClicked) {
+                            html.document.documentElement?.requestFullscreen();
+                          } else {
+                            html.document.exitFullscreen();
+                          }
+
+                        },
+                        icon: Icon(
+                          menuClicked ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
+                          color: Colors.white,
+                        ),
                       ),
                     ],
                   ),
@@ -1018,6 +1103,42 @@ class _VideoScreenState extends State<VideoScreen> {
   int? selectedIndexOfVideo;
   String? selectedVideoIndexName;
   String? videoTitle;
+  String dataSetUrl = '';
+
+  Future<void> getpathway(String? courseName) async {
+    List path;
+    String jsonString;
+    var d;
+    try {
+      // print("1");
+      await FirebaseFirestore.instance
+          .collection('courses')
+          .where("name", isEqualTo: "${courseName}")
+          .get()
+          .then((value) async => {
+        // print("2"),
+        path = await value.docs[0]['pathway'],
+        // print("3"),
+        for (var i in path)
+          {
+            // print("4"),
+            jsonString = jsonEncode(i),
+            // print("5"),
+            pathwaydata.add(jsonString),
+            // print("6"),
+          },
+        // htmltext = pathwaydata[1]['data'],
+        d = jsonDecode(pathwaydata[1]),
+        htmltext = d['data'],
+        // print("7"),
+        // print("llll $htmltext")
+      });
+      // print("pathwaydata ${pathwaydata}");
+    } catch (e) {
+      // print("pathwaydata -- ${e}");
+    }
+    ;
+  }
 
   Widget _buildVideoDetailsListTiles(
       double horizontalScale, double verticalScale) {
@@ -1084,9 +1205,7 @@ class _VideoScreenState extends State<VideoScreen> {
 
                                   return Column(
                                     children: [
-                                      // videoPercentageList.length != 0 ?
-                                      // Text(videoPercentageList[index][courseData.entries.elementAt(index).key][courseData.entries.elementAt(index).value[index1].videoTitle].toString()) : SizedBox(),
-                                      GestureDetector(
+                                       GestureDetector(
                                           onTap: () {
                                             print('vdo = $videoPercentageList');
 
@@ -1132,40 +1251,40 @@ class _VideoScreenState extends State<VideoScreen> {
                                                   textAlign: TextAlign.start,
                                                 ),
                                               ))),
-                                      totalDuration != 0 &&
-                                              courseData.entries
-                                                      .elementAt(index)
-                                                      .value[index1]
-                                                      .videoUrl
-                                                      .toString() ==
-                                                  selectedVideoIndexName
-                                                      .toString()
-                                          ? Text(((currentPosition /
-                                                          totalDuration) *
-                                                      100)
-                                                  .toInt()
-                                                  .toString() +
-                                              "%")
-                                          : Text("0%"),
-                                      LinearProgressIndicator(
-                                        color: Colors.blue,
-                                        valueColor:
-                                            new AlwaysStoppedAnimation<Color>(
-                                                Colors.red),
-                                        value: totalDuration != 0 &&
-                                                courseData.entries
-                                                        .elementAt(index)
-                                                        .value[index1]
-                                                        .videoUrl
-                                                        .toString() ==
-                                                    selectedVideoIndexName
-                                                        .toString()
-                                            ? ((currentPosition /
-                                                        totalDuration) *
-                                                    100) /
-                                                100
-                                            : 0,
-                                      ),
+                                      // totalDuration != 0 &&
+                                      //         courseData.entries
+                                      //                 .elementAt(index)
+                                      //                 .value[index1]
+                                      //                 .videoUrl
+                                      //                 .toString() ==
+                                      //             selectedVideoIndexName
+                                      //                 .toString()
+                                      //     ? Text(((currentPosition /
+                                      //                     totalDuration) *
+                                      //                 100)
+                                      //             .toInt()
+                                      //             .toString() +
+                                      //         "%")
+                                      //     : Text("0%"),
+                                      // LinearProgressIndicator(
+                                      //   color: Colors.blue,
+                                      //   valueColor:
+                                      //       new AlwaysStoppedAnimation<Color>(
+                                      //           Colors.red),
+                                      //   value: totalDuration != 0 &&
+                                      //           courseData.entries
+                                      //                   .elementAt(index)
+                                      //                   .value[index1]
+                                      //                   .videoUrl
+                                      //                   .toString() ==
+                                      //               selectedVideoIndexName
+                                      //                   .toString()
+                                      //       ? ((currentPosition /
+                                      //                   totalDuration) *
+                                      //               100) /
+                                      //           100
+                                      //       : 0,
+                                      // ),
                                       index1 ==
                                               courseData.entries
                                                       .elementAt(index)
@@ -1247,7 +1366,33 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                         .url;
                                                               }
                                                             }
+
+                                                            for (int i = 0;
+                                                            i <
+                                                                futureDataSets
+                                                                    .length;
+                                                            i++) {
+                                                              if (futureDataSets[
+                                                              i]
+                                                                  .name
+                                                                  .toString() ==
+                                                                  courseData
+                                                                      .entries
+                                                                      .elementAt(
+                                                                      index)
+                                                                      .key
+                                                                      .toString() +
+                                                                      '${index + 1}.' +
+                                                                      '${firstIndex}' +
+                                                                      '.csv') {
+                                                                dataSetUrl =
+                                                                    futureDataSets[
+                                                                    i]
+                                                                        .url;
+                                                              }
+                                                            }
                                                             setState(() {
+                                                              dataSetUrl;
                                                               solutionUrl;
                                                               assignmentUrl =
                                                                   futureAssignments[
@@ -1269,27 +1414,19 @@ class _VideoScreenState extends State<VideoScreen> {
                                                           },
                                                           child: Container(
                                                             width: screenWidth /
-                                                                3.1,
+                                                                3,
                                                             height:
                                                                 screenHeight /
-                                                                    20,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              border: Border.all(
-                                                                  width: 2.0,
-                                                                  color: Colors
-                                                                      .black),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          25),
+                                                                    24,
+                                                            child: Row(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                Icon(Icons.assignment),
+                                                                SizedBox(width: 5),
+                                                                Text(
+                                                                    'Assignment ${index + 1}.$firstIndex'),
+                                                              ],
                                                             ),
-                                                            child: Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center,
-                                                                child: Text(
-                                                                    'Assignment ${index + 1}.$firstIndex')),
                                                           ),
                                                         ),
                                                       );
@@ -1304,30 +1441,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                   );
                                 })),
                           ),
-                          Text(videoPercentageList.toString()),
-                          // InkWell(
-                          //   onTap: () {
-                          //     setState(() {
-                          //       selectedSection = index;
-                          //       print('$index and section is $selectedSection');
-                          //       showAssignment = !showAssignment;
-                          //       _videoController!.pause();
-                          //       enablePauseScreen = !enablePauseScreen;
-                          //       print(futureAssignments);
-                          //     });
-                          //   },
-                          //   child: Container(
-                          //     width: screenWidth/3.1,
-                          //     height: screenHeight/20,
-                          //     decoration: BoxDecoration(
-                          //       color: Colors.purpleAccent[100],
-                          //       borderRadius: BorderRadius.circular(25),
-                          //     ),
-                          //     child: Align(
-                          //       alignment: Alignment.center,
-                          //         child: Text(futureAssignments[index].name.toString(),)),
-                          //   ),
-                          // ),
+                          // Text(videoPercentageList.toString()),
                         ],
                       ),
                     );
@@ -1520,11 +1634,10 @@ class fastForward10 extends StatelessWidget {
 }
 
 class fullScreenIcon extends StatelessWidget {
-  final menuClicked;
-  const fullScreenIcon({
+    const fullScreenIcon({
     Key? key,
     required this.isPortrait,
-    this.menuClicked,
+
   }) : super(key: key);
 
   final bool isPortrait;
