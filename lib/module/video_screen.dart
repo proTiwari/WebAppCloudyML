@@ -14,6 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -46,6 +47,7 @@ class _VideoScreenState extends State<VideoScreen> {
 
   VideoPlayerController? _videoController;
   late String htmltext;
+  bool htmlbool = false;
   List pathwaydata = [];
   bool? downloading = false;
   bool downloaded = false;
@@ -605,6 +607,7 @@ class _VideoScreenState extends State<VideoScreen> {
     getData();
     getCourseData();
     getFiles();
+    getpathway(widget.courseName);
     Future.delayed(Duration(milliseconds: 500), () {
       initializeVidController(
         _listOfVideoDetails[0].videoUrl,
@@ -677,125 +680,144 @@ class _VideoScreenState extends State<VideoScreen> {
                         ],
                       ),
                     ),
-              Expanded(
+              !htmlbool
+                  ? Expanded(
                 flex: 2,
                 child: showAssignment
                     ? AssignmentScreen(
-                        selectedSection: selectedSection,
-                        courseData: courseData,
-                        courseName: widget.courseName,
-                        assignmentUrl: assignmentUrl,
-                        solutionUrl: solutionUrl,
+                  selectedSection: selectedSection,
+                  courseData: courseData,
+                  courseName: widget.courseName,
+                  assignmentUrl: assignmentUrl,
                   dataSetUrl: dataSetUrl,
-                      )
+                  solutionUrl: solutionUrl,
+                )
                     : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          FutureBuilder(
-                            future: playVideo,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<dynamic> snapshot) {
-                              if (ConnectionState.done ==
-                                  snapshot.connectionState) {
-                                return Stack(
-                                  children: [
-                                    Container(
-                                      height: menuClicked
-                                          ? screenHeight
-                                          : screenHeight / 1.2,
-                                      child: Center(
-                                        child: AspectRatio(
-                                          aspectRatio: 16 / 9,
-                                          child: VideoPlayer(_videoController!),
-                                        ),
-                                      ),
-                                    ),
-                                    InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            enablePauseScreen =
-                                                !enablePauseScreen;
-                                            print(
-                                                'Container of column clicked');
-                                          });
-                                        },
-                                        child: Container(
-                                          height: menuClicked
-                                              ? screenHeight
-                                              : screenHeight / 1.2,
-                                          width: screenWidth,
-                                        )),
-                                    enablePauseScreen
-                                        ? Container(
-                                            height: menuClicked
-                                                ? screenHeight
-                                                : screenHeight / 1.2,
-                                            child: _buildControls(
-                                              context,
-                                              isPortrait,
-                                              horizontalScale,
-                                              verticalScale,
-                                            ),
-                                          )
-                                        : SizedBox(),
-                                    _isBuffering && !enablePauseScreen
-                                        ? Center(
-                                            heightFactor: 6.2,
-                                            child: Container(
-                                              width: 60,
-                                              height: 60,
-                                              child: CircularProgressIndicator(
-                                                color: Color.fromARGB(
-                                                  114,
-                                                  255,
-                                                  255,
-                                                  255,
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        : Container(),
-                                  ],
-                                );
-                              } else {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: Color(0xFF7860DC),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                          menuClicked
-                              ? Container()
-                              : Padding(
-                                  padding: const EdgeInsets.only(top: 15.0),
-                                  child: Text(
-                                    videoTitle.toString() != 'null'
-                                        ? videoTitle.toString()
-                                        : '',
-                                    style: TextStyle(
-                                        fontSize: 18, fontFamily: 'SemiBold'),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FutureBuilder(
+                      future: playVideo,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<dynamic> snapshot) {
+                        if (ConnectionState.done ==
+                            snapshot.connectionState) {
+                          return Stack(
+                            children: [
+                              Container(
+                                height: menuClicked
+                                    ? screenHeight
+                                    : screenHeight / 1.2,
+                                child: Center(
+                                  child: AspectRatio(
+                                    aspectRatio: 16 / 9,
+                                    child: VideoPlayer(
+                                        _videoController!),
                                   ),
                                 ),
-                          isPortrait
-                              ? _buildPartition(
+                              ),
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      enablePauseScreen =
+                                      !enablePauseScreen;
+                                      // print(
+                                      //     'Container of column clicked');
+                                    });
+                                  },
+                                  child: Container(
+                                    height: menuClicked
+                                        ? screenHeight
+                                        : screenHeight / 1.2,
+                                    width: screenWidth,
+                                  )),
+                              enablePauseScreen
+                                  ? Container(
+                                height: menuClicked
+                                    ? screenHeight
+                                    : screenHeight / 1.2,
+                                child: _buildControls(
                                   context,
+                                  isPortrait,
                                   horizontalScale,
                                   verticalScale,
-                                )
-                              : SizedBox(),
-                          isPortrait
-                              ? Expanded(
-                                  flex: 2,
-                                  child: _buildVideoDetailsListTile(
-                                    horizontalScale,
-                                    verticalScale,
+                                ),
+                              )
+                                  : SizedBox(),
+                              _isBuffering && !enablePauseScreen
+                                  ? Center(
+                                heightFactor: 6.2,
+                                child: Container(
+                                  width: 60,
+                                  height: 60,
+                                  child:
+                                  CircularProgressIndicator(
+                                    color: Color.fromARGB(
+                                      114,
+                                      255,
+                                      255,
+                                      255,
+                                    ),
                                   ),
-                                )
-                              : SizedBox(),
-                        ],
+                                ),
+                              )
+                                  : Container(),
+                            ],
+                          );
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xFF7860DC),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    menuClicked
+                        ? Container()
+                        : Padding(
+                      padding:
+                      const EdgeInsets.only(top: 15.0),
+                      child: Text(
+                        videoTitle.toString() != 'null'
+                            ? videoTitle.toString()
+                            : '',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: 'SemiBold'),
                       ),
+                    ),
+                    isPortrait
+                        ? _buildPartition(
+                      context,
+                      horizontalScale,
+                      verticalScale,
+                    )
+                        : SizedBox(),
+                    isPortrait
+                        ? Expanded(
+                      flex: 2,
+                      child: _buildVideoDetailsListTile(
+                        horizontalScale,
+                        verticalScale,
+                      ),
+                    )
+                        : SizedBox(),
+                  ],
+                ),
+              )
+                  : Expanded(
+                flex: 2,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.all(50.0),
+                    child: SingleChildScrollView(
+                      child: HtmlWidget('''
+                                            $htmltext
+                                            '''),
+                    ),
+                  ),
+                ),
               ),
             ],
           );
@@ -804,9 +826,7 @@ class _VideoScreenState extends State<VideoScreen> {
     ));
   }
 
-  void goFullScreen() {
 
-  }
 
   Widget _buildControls(
     BuildContext context,
@@ -1184,6 +1204,91 @@ class _VideoScreenState extends State<VideoScreen> {
                       padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                       child: Column(
                         children: [
+                          index == 0
+                              ? Padding(
+                            padding:
+                            const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                            child: Column(
+                              children: [
+                                Container(
+                                  child: ExpansionTile(
+                                    title: Text(
+                                      'Important Instructions',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    children: List.generate(
+                                      pathwaydata.length,
+                                          (index1) {
+                                        Map valueMap = json
+                                            .decode(pathwaydata[index1]);
+                                        print("ppppp ${valueMap}");
+                                        return Column(
+                                          children: [
+                                            // videoPercentageList.length != 0 ?
+                                            // Text(videoPercentageList[index][courseData.entries.elementAt(index).key][courseData.entries.elementAt(index).value[index1].videoTitle].toString()) : SizedBox(),
+                                            GestureDetector(
+                                              onTap: () {
+                                                print(valueMap['name']);
+                                                showAssignment = false;
+                                                setState(() {
+                                                  currentPosition = 0;
+                                                  videoTitle =
+                                                  valueMap['name'];
+                                                  totalDuration = 0;
+                                                });
+                                                if (valueMap['type'] ==
+                                                    "video") {
+                                                  setState(() {
+                                                    htmlbool = false;
+                                                    enablePauseScreen =
+                                                    false;
+                                                  });
+
+                                                  selectedIndexOfVideo =
+                                                      index1;
+                                                  VideoScreen.currentSpeed
+                                                      .value = 1.0;
+
+                                                  initializeVidController(
+                                                      valueMap['data'],
+                                                      valueMap['name']);
+                                                } else {
+                                                  setState(() {
+                                                    htmltext =
+                                                    valueMap['data'];
+                                                    enablePauseScreen =
+                                                    false;
+                                                    htmlbool = true;
+                                                  });
+                                                }
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 60,
+                                                    top: 15,
+                                                    bottom: 15),
+                                                child: Align(
+                                                  alignment: Alignment
+                                                      .centerLeft,
+                                                  child: Text(
+                                                    valueMap['name'],
+                                                    textAlign:
+                                                    TextAlign.start,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                              : Container(),
                           Container(
                             child: ExpansionTile(
                                 title: Text(
@@ -1208,7 +1313,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                        GestureDetector(
                                           onTap: () {
                                             print('vdo = $videoPercentageList');
-
+                                            htmlbool = false;
                                             showAssignment = false;
                                             setState(() {
                                               currentPosition = 0;
@@ -1342,6 +1447,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                 top: 10.0),
                                                         child: InkWell(
                                                           onTap: () {
+                                                            htmlbool = false;
                                                             for (int i = 0;
                                                                 i <
                                                                     futureSolutions
@@ -1628,36 +1734,6 @@ class fastForward10 extends StatelessWidget {
         Icons.forward_10,
         size: 40,
         color: Colors.white,
-      ),
-    );
-  }
-}
-
-class fullScreenIcon extends StatelessWidget {
-    const fullScreenIcon({
-    Key? key,
-    required this.isPortrait,
-
-  }) : super(key: key);
-
-  final bool isPortrait;
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: IconButton(
-        onPressed: () {
-          if (isPortrait) {
-            AutoOrientation.landscapeRightMode();
-          } else {
-            AutoOrientation.portraitUpMode();
-          }
-        },
-        icon: Icon(
-          isPortrait ? Icons.fullscreen_rounded : Icons.fullscreen_exit_rounded,
-          color: Colors.white,
-          size: 30,
-        ),
       ),
     );
   }
