@@ -126,9 +126,55 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     fetchCourses();
     dbCheckerForPayInParts();
+    getPercentageOfCourse();
     getCourseName();
     userData();
     // dbCheckerForDaysLeftForLimitedAccess();
+  }
+  var coursePercent = {};
+  getPercentageOfCourse()
+  async {
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((value) async{
+      courses = value.data()!['paidCourseNames'];
+    });
+
+    var data =  await FirebaseFirestore.instance.collection("courseprogress").doc(FirebaseAuth.instance.currentUser!.uid).get();
+    var getData = data.data();
+    for(var courseId in courses)
+    {
+      print("ID = = ${courseId}");
+      int count = 0;
+      try{
+        await FirebaseFirestore.instance.collection("courses").where("id", isEqualTo: courseId).get().then(
+                (value)async{
+              if(value.docs.first.exists)
+              {
+                var coursesName = value.docs.first.data()["courses name"];
+                for(var name in coursesName)
+                {
+                  double num = (getData![name+"percentage"]!=null)?getData[name+"percentage"]:0;
+                  count+=num.toInt();
+                  print("Count = $count");
+                  coursePercent[courseId] = count~/(value.docs.first.data()["courses name"].length);
+                }
+              }
+            }
+        ).catchError((err)=>print("Error"));
+      }
+      catch(err)
+      {
+        print(err);
+      }
+    }
+    print("donw");
+    setState(() {
+      coursePercent;
+    });
+    print(coursePercent);
   }
 
   var textStyle = TextStyle(
@@ -642,8 +688,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 });
                               }),
                               child: Container(
-                                width: screenWidth / 2.5,
-                                height: screenHeight / 5.5,
+                                width: 450,
+                                height: 115,
                                 child: Stack(
                                   children: [
                                     Padding(
@@ -678,19 +724,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                               Alignment.topCenter,
                                               child: Column(
                                                 children: [
-                                                  Text(
-                                                    course[index]
-                                                        .courseName,
-                                                    style: TextStyle(
-                                                        color: HexColor(
-                                                            "2C2C2C"),
-                                                        fontFamily:
-                                                        'Medium',
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .w500,
-                                                        height: 1),
+                                                  Expanded(
+                                                    child: Text(
+                                                      course[index]
+                                                          .courseName,
+                                                      style: TextStyle(
+                                                          color: HexColor(
+                                                              "2C2C2C"),
+                                                          fontFamily:
+                                                          'Medium',
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .w500,
+                                                          height: 1),
+                                                    ),
                                                   ),
                                                   Padding(
                                                     padding: const EdgeInsets.only(top: 5.0, bottom: 5),
@@ -722,6 +770,33 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               .w500,
                                                           height: 1),
                                                     ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        height: 5,
+                                                        width: 150,
+                                                        child:
+                                                        LinearProgressIndicator(
+                                                          value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
+                                                          color: HexColor(
+                                                              "8346E1"),
+                                                          backgroundColor:
+                                                          HexColor(
+                                                              'E3E3E3'),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),),
+                                                      )
+                                                    ],
                                                   ),
                                                 ],
                                               ),

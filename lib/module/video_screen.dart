@@ -189,9 +189,7 @@ class _VideoScreenState extends State<VideoScreen> {
     if (sectionName.length != 0 && videoPercentageList.length != 0) {
       for (int i = 0; i < sectionName.length; i++) {
         print('ii = $i');
-        for (int j = 0;
-        j < videoPercentageList[i][sectionName[i]].length;
-        j++) {
+        for (int j = 0; j < videoPercentageList[i][sectionName[i]].length; j++) {
           print('jjj = $j $i  }');
           try {
             print('video $videoTitle');
@@ -201,8 +199,12 @@ class _VideoScreenState extends State<VideoScreen> {
             if (videoPercentageList[i][sectionName[i]][j][videoTitle.toString()]
                 .toString() !=
                 'null') {
-              videoPercentageList[i][sectionName[i]][j][videoTitle.toString()] =
-                  ((currentPosition / totalDuration) * 100).toInt();
+              if(((currentPosition / totalDuration) * 100).toInt()>=videoPercentageList[i][sectionName[i]][j][videoTitle.toString()])
+              {
+                print("True-----------------");
+                videoPercentageList[i][sectionName[i]][j][videoTitle.toString()] =
+                    ((currentPosition / totalDuration) * 100).toInt();
+              }
             }
             print(
                 'dd ${videoPercentageList[i][sectionName[i]][j][videoTitle.toString()].toString()}');
