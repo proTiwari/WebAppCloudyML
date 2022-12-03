@@ -2,6 +2,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/authentication/onboardnew.dart';
+import 'package:cloudyml_app2/authentication_screens/otp_page.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/models/existing_user.dart';
@@ -14,6 +15,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+
+import '../authentication_screens/login_email.dart';
+import '../authentication_screens/login_username.dart';
+import '../authentication_screens/phone_auth.dart';
+import '../authentication_screens/signin_password.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -32,7 +38,7 @@ class Authenticate extends StatelessWidget {
     if (_auth.currentUser != null) {
       return HomePage();
     } else {
-      return Onboardew();
+      return LoginPage();
     }
   }
 }
@@ -94,7 +100,7 @@ Future logOut(BuildContext context) async {
       await _auth.signOut().then((value) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Onboardew()),
+          MaterialPageRoute(builder: (context) => LoginPage()),
         );
       });
     }
@@ -244,7 +250,7 @@ class GoogleSignInProvider extends ChangeNotifier {
             duration: Duration(milliseconds: 200),
             curve: Curves.bounceInOut,
             type: PageTransitionType.rightToLeftWithFade,
-            child: Onboardew()),
+            child: LoginPage()),
         (route) => false);
   }
 }
