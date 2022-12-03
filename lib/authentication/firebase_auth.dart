@@ -16,6 +16,7 @@ import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
+import '../authentication_screens/google_auth.dart';
 import '../authentication_screens/login_email.dart';
 import '../authentication_screens/login_username.dart';
 import '../authentication_screens/phone_auth.dart';

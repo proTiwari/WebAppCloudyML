@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +22,7 @@ class _SigninPasswordPageState extends State<SigninPasswordPage> {
   TextEditingController passwordController = TextEditingController();
   bool loading = false;
   late bool _passwordVisible;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -29,6 +33,10 @@ class _SigninPasswordPageState extends State<SigninPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    var verticalScale = height / mockUpHeight;
+    var horizontalScale = width / mockUpWidth;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -222,7 +230,145 @@ class _SigninPasswordPageState extends State<SigninPasswordPage> {
                               ),
                             ),
                           ),
-                          
+                          Padding(
+                                        padding: const EdgeInsets.fromLTRB(8.0,8,18,8),
+                                        child: InkWell(
+                                  onTap: () {
+                                    if (widget.email.isNotEmpty) {
+                                        _auth.sendPasswordResetEmail(
+                                            email: widget.email);
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              Future.delayed(
+                                                  Duration(seconds: 13), () {
+                                                Navigator.of(context).pop(true);
+                                              });
+                                              return AlertDialog(
+                                                title: Center(
+                                                  child: Column(
+                                                    children: [
+                                                      Lottie.asset(
+                                                          'assets/email.json',
+                                                          height: height * 0.15,
+                                                          width: width * 0.5),
+                                                      Text(
+                                                        'Reset Password',
+                                                        textScaleFactor: min(
+                                                            horizontalScale,
+                                                            verticalScale),
+                                                        style: TextStyle(
+                                                            color: Colors.red,
+                                                            fontSize: 22,
+                                                            fontWeight:
+                                                                FontWeight.bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                content: Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      'An email has been sent to ',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(),
+                                                    ),
+                                                    Text(
+                                                      '${widget.email}',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      'Click the link in the email to change password.',
+                                                      textAlign: TextAlign.center,
+                                                    ),
+                                                    SizedBox(
+                                                      height: verticalScale * 10,
+                                                    ),
+                                                    Text(
+                                                      'Didn\'t get the email?',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      'Check entered email or check spam folder.',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(),
+                                                    ),
+                                                    TextButton(
+                                                        child: Text(
+                                                          'Retry',
+                                                          textScaleFactor: min(
+                                                              horizontalScale,
+                                                              verticalScale),
+                                                          style: TextStyle(
+                                                            fontSize: 20,
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context, true);
+                                                        }),
+                                                  ],
+                                                ),
+                                              );
+                                            });
+                                    } else {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                  title: Center(
+                                                    child: Text(
+                                                      'Error',
+                                                      textScaleFactor: min(
+                                                          horizontalScale,
+                                                          verticalScale),
+                                                      style: TextStyle(
+                                                          color: Colors.red,
+                                                          fontSize: 24,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ),
+                                                  content: Text(
+                                                    'Enter email in the email field or check if the email is valid.',
+                                                    textAlign: TextAlign.center,
+                                                    textScaleFactor: min(
+                                                        horizontalScale,
+                                                        verticalScale),
+                                                    style:
+                                                        TextStyle(fontSize: 16),
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                        child: Text('Retry'),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context, true);
+                                                        })
+                                                  ]);
+                                            });
+                                    }
+                                  },
+                                  child: Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Text(
+                                        'Forgot Password?',
+                                        textScaleFactor:
+                                            min(horizontalScale, verticalScale),
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(
+                                            color: HexColor('8346E1'),
+                                            fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                                      ),
                           GestureDetector(
                             onTap: () async {
                               if (passwordController.text.isNotEmpty) {
@@ -505,6 +651,145 @@ class _SigninPasswordPageState extends State<SigninPasswordPage> {
                               ),
                             ),
                           ),
+                          Padding(
+                                        padding: const EdgeInsets.fromLTRB(8.0,8,18,8),
+                                        child: InkWell(
+                                  onTap: () {
+                                    if (widget.email.isNotEmpty) {
+                                        _auth.sendPasswordResetEmail(
+                                            email: widget.email);
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              Future.delayed(
+                                                  Duration(seconds: 13), () {
+                                                Navigator.of(context).pop(true);
+                                              });
+                                              return AlertDialog(
+                                                title: Center(
+                                                  child: Column(
+                                                    children: [
+                                                      Lottie.asset(
+                                                          'assets/email.json',
+                                                          height: height * 0.15,
+                                                          width: width * 0.5),
+                                                      Text(
+                                                        'Reset Password',
+                                                        textScaleFactor: min(
+                                                            horizontalScale,
+                                                            verticalScale),
+                                                        style: TextStyle(
+                                                            color: Colors.red,
+                                                            fontSize: 22,
+                                                            fontWeight:
+                                                                FontWeight.bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                content: Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      'An email has been sent to ',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(),
+                                                    ),
+                                                    Text(
+                                                      '${widget.email}',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      'Click the link in the email to change password.',
+                                                      textAlign: TextAlign.center,
+                                                    ),
+                                                    SizedBox(
+                                                      height: verticalScale * 10,
+                                                    ),
+                                                    Text(
+                                                      'Didn\'t get the email?',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      'Check entered email or check spam folder.',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(),
+                                                    ),
+                                                    TextButton(
+                                                        child: Text(
+                                                          'Retry',
+                                                          textScaleFactor: min(
+                                                              horizontalScale,
+                                                              verticalScale),
+                                                          style: TextStyle(
+                                                            fontSize: 20,
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context, true);
+                                                        }),
+                                                  ],
+                                                ),
+                                              );
+                                            });
+                                    } else {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                  title: Center(
+                                                    child: Text(
+                                                      'Error',
+                                                      textScaleFactor: min(
+                                                          horizontalScale,
+                                                          verticalScale),
+                                                      style: TextStyle(
+                                                          color: Colors.red,
+                                                          fontSize: 24,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ),
+                                                  content: Text(
+                                                    'Enter email in the email field or check if the email is valid.',
+                                                    textAlign: TextAlign.center,
+                                                    textScaleFactor: min(
+                                                        horizontalScale,
+                                                        verticalScale),
+                                                    style:
+                                                        TextStyle(fontSize: 16),
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                        child: Text('Retry'),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context, true);
+                                                        })
+                                                  ]);
+                                            });
+                                    }
+                                  },
+                                  child: Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Text(
+                                        'Forgot Password?',
+                                        textScaleFactor:
+                                            min(horizontalScale, verticalScale),
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(
+                                            color: HexColor('8346E1'),
+                                            fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                                      ),
                           SizedBox(
                             height: 10,
                           ),
