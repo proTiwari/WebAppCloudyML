@@ -2,8 +2,10 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/globals.dart';
+import 'package:cloudyml_app2/homepage.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/module/video_screen.dart';
+import 'package:cloudyml_app2/my_Courses.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -112,7 +114,7 @@ class _ComboCourseState extends State<ComboCourse> {
         elevation: 0,
         leading: InkWell(
           onTap: () {
-            Navigator.pop(context);
+            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home()));
           },
           child: Padding(
             padding: EdgeInsets.only(left: 15.0, bottom: 5),
