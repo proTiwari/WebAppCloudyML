@@ -213,32 +213,7 @@ class _VideoScreenState extends State<VideoScreen> {
       }
     }
 
-    // if (sectionName.length != 0 && videoPercentageList.length != 0) {
-    //   for (int i = 0; i < sectionName.length; i++) {
-    //     print('ii = $i');
-    //     for (int j = 0;
-    //         j < videoPercentageList[i][sectionName[i]].length;
-    //         j++) {
-    //       print('jjj = $j $i  }');
-    //       try {
-    //         print('video $videoTitle');
-    //         print(
-    //             'ssss ${videoPercentageList[i][sectionName[i]][j].toString()}');
-    //         print('length of == ${videoTitle.toString().length}');
-    //         if (videoPercentageList[i][sectionName[i]][j][videoTitle.toString()]
-    //                 .toString() !=
-    //             'null') {
-    //           videoPercentageList[i][sectionName[i]][j][videoTitle.toString()] =
-    //               ((currentPosition / totalDuration) * 100).toInt();
-    //         }
-    //         print(
-    //             'dd ${videoPercentageList[i][sectionName[i]][j][videoTitle.toString()].toString()}');
-    //       } catch (e) {
-    //         print('I am error ${e.toString()}');
-    //       }
-    //     }
-    //   }
-    // }
+
 
     setState(() {
       currentPosition = _videoController!.value.position.inSeconds.toInt();
@@ -420,31 +395,65 @@ class _VideoScreenState extends State<VideoScreen> {
       }
 
       dataa = await getDataFrom(dic, curriculumdata);
-      // await FirebaseFirestore.instance.collection('courseprogress')
-      //     .doc(_auth.currentUser!.uid).get().then((value) async {
-      //   if(value.exists) {
-      //     var progressData = await FirebaseFirestore.instance.collection('courseprogress')
-      //         .doc(_auth.currentUser!.uid).get();
-      //     print('progressdata ${progressData.get(courseName)}');
-      //     var restData = progressData.data();
-      //     print('restdata = ${restData!['Machine Learning']}');
-      //
-      //     // videoPercentageList = progressData.data();
-      //   } else {
-      //
-      //   }
-      // });
-      for (var i in dataa.entries) {
-        print('i == dip ${i.key}');
-        print('i == dip ${i.value[0].videoTitle}');
-        var sectionList = [];
-        for (var k = 0; k < i.value.length; k++) {
-          sectionList.add({
-            i.value[k].videoTitle.toString(): 0,
-          });
+      await FirebaseFirestore.instance.collection('courseprogress')
+          .doc(_auth.currentUser!.uid).get().then((value) async {
+        if(value.exists) {
+          var progressData = await FirebaseFirestore.instance.collection('courseprogress')
+              .doc(_auth.currentUser!.uid).get();
+          print("poppp");
+          print('progressdata ${progressData.data()!.containsKey(courseName)}');
+          // var restData = progressData.data();
+          print("sss");
+          if(progressData.data()!.containsKey(courseName))
+          {
+            print("pp");
+            if(progressData.get(courseName).length!=0)
+            {
+              videoPercentageList = progressData.get(courseName);
+            }
+            else
+            {
+              for (var i in dataa.entries) {
+                print('i == dip ${i.key}');
+                print('i == dip ${i.value[0].videoTitle}');
+                var sectionList = [];
+                for (var k = 0; k < i.value.length; k++) {
+                  sectionList.add({
+                    i.value[k].videoTitle.toString(): 0,
+                  });
+                }
+                videoPercentageList.add({i.key.toString(): sectionList});
+              }
+            }
+          }
+          else{
+            for (var i in dataa.entries) {
+              print('i == dip ${i.key}');
+              print('i == dip ${i.value[0].videoTitle}');
+              var sectionList = [];
+              for (var k = 0; k < i.value.length; k++) {
+                sectionList.add({
+                  i.value[k].videoTitle.toString(): 0,
+                });
+              }
+              videoPercentageList.add({i.key.toString(): sectionList});
+            }
+          }
         }
-        videoPercentageList.add({i.key.toString(): sectionList});
-      }
+        else {
+          for (var i in dataa.entries) {
+            print('i == dip ${i.key}');
+            print('i == dip ${i.value[0].videoTitle}');
+            var sectionList = [];
+            for (var k = 0; k < i.value.length; k++) {
+              sectionList.add({
+                i.value[k].videoTitle.toString(): 0,
+              });
+            }
+            videoPercentageList.add({i.key.toString(): sectionList});
+          }
+        }
+      });
 
       print('videoPercentage = $videoPercentageList');
       setState(() {
@@ -552,22 +561,51 @@ class _VideoScreenState extends State<VideoScreen> {
     //   courseName : videoPercentageListUpdate,
     // }).then((value) => print(videoPercentageListUpdate)).catchError((error) => print('dipen = $error'));
     // print('I am uid = ${FirebaseAuth.instance.currentUser!.uid}');
+    print("Videosssssssssssss ${videoPercentageList.length}");
+    int total = 0;
+    int count = 0;
+    if(videoPercentageListUpdate.length!=0)
+    {
+      print("ppop = ${videoPercentageListUpdate}");
+      for(int i=0;i<videoPercentageListUpdate.length;i++)
+      {
+        print("999999999999");
+        print("dddddddddd ${videoPercentageListUpdate[i].toString()}");
+        for(int j=0;j<videoPercentageListUpdate[i][sectionName[i]]!.length;j++)
+        {
+          print("lllllllllllllllllllllllll");
+          for(var kv in videoPercentageListUpdate[i][sectionName[i]]![j].entries)
+          {
+            print("ppppppppppppppppppppppppppp");
+            print(kv.value);
+            total+=int.parse(kv.value.toString());
+            count+=1;
+          }
+        }
+      }
+    }
 
-    await FirebaseFirestore.instance.collection('courseprogress').doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) async {
+    videoPercentageListUpdate!=null?await FirebaseFirestore.instance.collection('courseprogress').doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) async {
       print('srinivas ${value.data().toString()}');
-      if(value.exists) {
+      if(value.exists && videoPercentageListUpdate.length!=0) {
         await FirebaseFirestore.instance.collection('courseprogress').doc(_auth.currentUser!.uid).update({
           courseName: videoPercentageListUpdate,
           'email': _auth.currentUser!.email,
+          courseName.toString()+"percentage": total!=0 && count!=0?total/count:0
         }).catchError((onError) {print('srinnn = $onError');});
-      } else {
+      }
+      else {
+        videoPercentageListUpdate.length!=0?
         await FirebaseFirestore.instance.collection('courseprogress').doc(_auth.currentUser!.uid).set(
             {
               courseName : videoPercentageListUpdate,
               'email': FirebaseAuth.instance.currentUser!.email,
-            });
+              courseName.toString()+"percentage": total!=0 && count!=0?(total/count).toInt():0
+            }):null;
       }
-    }).catchError((onError) { print('srinu $onError');});
+    }).catchError((onError) { print('srinu $onError');}):null;
+
+
 
     // await FirebaseFirestore.instance.collection('courseprogress').doc().set(
     //     {
