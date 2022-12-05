@@ -158,11 +158,11 @@ class _OnboardewState extends State<Onboardew> {
                                   fontSize: 22),
                             ),
                             Text(
-                              "Data Science Together!",
+                              "Data Science & Analytics together!",
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 34),
+                                  fontSize: 26),
                             ),
                             SizedBox(
                               height: 30,

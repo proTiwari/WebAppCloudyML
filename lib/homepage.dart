@@ -17,6 +17,7 @@ import 'package:cloudyml_app2/screens/assignment_tab_screen.dart';
 import 'package:cloudyml_app2/screens/exlusive_offer/seasons_offer_screen.dart';
 import 'package:cloudyml_app2/screens/groups_list.dart';
 import 'package:cloudyml_app2/screens/image_page.dart';
+import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
 import 'package:cloudyml_app2/store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -483,7 +484,7 @@ class _HomeState extends State<Home> {
                   // ),
                   InkWell(
                     child: ListTile(
-                      title: Text(''
+                      title: Text(
                           'My Account'),
                       leading: Icon(
                         Icons.person,
@@ -600,6 +601,21 @@ class _HomeState extends State<Home> {
                   //     // );
                   //   },
                   // ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ReviewsScreen()));
+                    },
+                    child: ListTile(
+                      title: Text('Reviews'),
+                      leading: Icon(
+                        Icons.rate_review_rounded,
+                        color: HexColor('691EC8'),
+                      ),
+                    ),
+                  ),
                   InkWell(
                     onTap: () {
                       logOut(context);
@@ -1396,155 +1412,6 @@ class _HomeState extends State<Home> {
                   height: screenHeight/16,
                   width: screenWidth,
                 ),
-                // Container(
-                //   width: screenWidth,
-                //   height: screenHeight / 3,
-                //   color: Colors.white,
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children: [
-                //       Container(
-                //         width: screenWidth / 2.4,
-                //         height: screenHeight / 5.5,
-                //         decoration: BoxDecoration(
-                //             color: HexColor("FFF4CB"),
-                //             border: Border.all(
-                //               color: HexColor('BE9400'),
-                //               width: 1,
-                //             ),
-                //             borderRadius: BorderRadius.circular(10)),
-                //         child: Row(
-                //           children: [
-                //             Padding(
-                //               padding: const EdgeInsets.only(
-                //                   top: 10, bottom: 10, left: 20, right: 20),
-                //               child: Image.network(
-                //                 "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FdownloadLogo.png?alt=media&token=031e6f59-cbc4-4c6a-a735-db14da7ec1fd",
-                //                 fit: BoxFit.fill,
-                //               ),
-                //             ),
-                //             Padding(
-                //               padding:
-                //                   const EdgeInsets.only(top: 10.0, right: 20),
-                //               child: Column(
-                //                 crossAxisAlignment: CrossAxisAlignment.start,
-                //                 children: [
-                //                   Text(
-                //                     'Download The App Now!',
-                //                     style: TextStyle(
-                //                         color: HexColor("C19700"),
-                //                         fontFamily: 'Poppins',
-                //                         fontWeight: FontWeight.bold,
-                //                         fontSize: 16),
-                //                   ),
-                //                   SizedBox(height: 8,),
-                //                   Text(
-                //                     'Learn new skill anywhere any time',
-                //                     style: TextStyle(
-                //                         color: HexColor("231F20"),
-                //                         fontFamily: 'Poppins',
-                //                         fontSize: 12),
-                //                   ),
-                //                   SizedBox(height: 10,),
-                //                   Row(
-                //                     children: [
-                //                       Container(
-                //                         child: Image.network(
-                //                           "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FplaystoreIcon.png?alt=media&token=526c9fc9-0ec4-4b89-b991-cb42e272a1bd",
-                //                           fit: BoxFit.fill,
-                //                         ),
-                //                       ),
-                //                       SizedBox(width: 5,),
-                //                       Container(
-                //                         child: Image.network(
-                //                           "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FappStoreLogo.png?alt=media&token=bc836ab8-451e-402b-9c48-cb16d02e9861",
-                //                           fit: BoxFit.fill,
-                //                         ),
-                //                       ),
-                //                     ],
-                //                   ),
-                //                 ],
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //       SizedBox(
-                //         width: 20,
-                //       ),
-                //       Container(
-                //         width: screenWidth / 2.4,
-                //         height: screenHeight / 5.5,
-                //         decoration: BoxDecoration(
-                //             color: HexColor("CBE9FF"),
-                //             border: Border.all(
-                //               color: HexColor('007EDA'),
-                //               width: 1,
-                //             ),
-                //             borderRadius: BorderRadius.circular(10)),
-                //         child: Row(
-                //           children: [
-                //             Padding(
-                //               padding: const EdgeInsets.only(
-                //                   top: 10, bottom: 10, left: 20, right: 20),
-                //               child: Image.network(
-                //                 "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Freward.png?alt=media&token=4266fe1f-8875-4c52-8e83-42e65a08fb4c",
-                //                 fit: BoxFit.fill,
-                //               ),
-                //             ),
-                //             Padding(
-                //               padding:
-                //               const EdgeInsets.only(top: 10.0, right: 20),
-                //               child: Column(
-                //                 crossAxisAlignment: CrossAxisAlignment.start,
-                //                 children: [
-                //                   Text(
-                //                     'Learn, Sell & Earn',
-                //                     style: TextStyle(
-                //                         color: HexColor("007EDA"),
-                //                         fontFamily: 'Poppins',
-                //                         fontWeight: FontWeight.bold,
-                //                         fontSize: 16),
-                //                   ),
-                //                   SizedBox(height: 8,),
-                //                   Text(
-                //                     'Join our affiliate program and grow with us',
-                //                     style: TextStyle(
-                //                         color: HexColor("231F20"),
-                //                         fontFamily: 'Poppins',
-                //                         fontSize: 10),
-                //                   ),
-                //                   SizedBox(height: 10,),
-                //                   Container(
-                //                     decoration: BoxDecoration(
-                //                       border: Border.all(
-                //                         width: 1.5,
-                //                       ),
-                //                       borderRadius: BorderRadius.circular(25),
-                //                     ),
-                //                     child: ElevatedButton(
-                //                         onPressed: () {},
-                //                         style: ElevatedButton.styleFrom(
-                //                           backgroundColor: HexColor('CBE9FF'),
-                //                           shape: RoundedRectangleBorder(
-                //                             borderRadius: BorderRadius.circular(25),
-                //                           )
-                //                         ),
-                //                         child: Text("Explore More",
-                //                           style:  TextStyle(
-                //                             fontSize: 12,
-                //                       color: HexColor("2C2C2C"),
-                //                     ),)),
-                //                   )
-                //                 ],
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
               ],
             ),
           );

@@ -375,7 +375,7 @@ class _VideoScreenState extends State<VideoScreen> {
 
     var val;
 
-    print("LLLLLLL ${FirebaseAuth.instance.currentUser!.uid} ${courseId}");
+    // print("LLLLLLL ${FirebaseAuth.instance.currentUser!.uid} ${courseId}");
 
     await FirebaseFirestore.instance
         .collection('courses')
@@ -402,13 +402,13 @@ class _VideoScreenState extends State<VideoScreen> {
         if(value.exists) {
           var progressData = await FirebaseFirestore.instance.collection('courseprogress')
               .doc(_auth.currentUser!.uid).get();
-          print("poppp");
-          print('progressdata ${progressData.data()!.containsKey(courseName)}');
-          // var restData = progressData.data();
-          print("sss");
+          // print("poppp");
+          // print('progressdata ${progressData.data()!.containsKey(courseName)}');
+          // // var restData = progressData.data();
+          // print("sss");
           if(progressData.data()!.containsKey(courseName))
           {
-            print("pp");
+            // print("pp");
             if(progressData.get(courseName).length!=0)
             {
               videoPercentageList = progressData.get(courseName);
@@ -416,8 +416,8 @@ class _VideoScreenState extends State<VideoScreen> {
             else
             {
               for (var i in dataa.entries) {
-                print('i == dip ${i.key}');
-                print('i == dip ${i.value[0].videoTitle}');
+                // print('i == dip ${i.key}');
+                // print('i == dip ${i.value[0].videoTitle}');
                 var sectionList = [];
                 for (var k = 0; k < i.value.length; k++) {
                   sectionList.add({
@@ -496,15 +496,6 @@ class _VideoScreenState extends State<VideoScreen> {
         courseData;
       });
     }
-    // for (var i = 0; i < datamap.length; i++) {
-    //   var value = datamap.entries.elementAt(i).value;
-    //   for (var i in value) {
-    //     resultValue.add(OptionItem(id: 'null', title: i.videoTitle));
-    //   }
-    //   print(resultValue);
-    // }
-
-    print("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL ");
   }
 
   Future download({
@@ -606,14 +597,6 @@ class _VideoScreenState extends State<VideoScreen> {
             }):null;
       }
     }).catchError((onError) { print('srinu $onError');}):null;
-
-
-
-    // await FirebaseFirestore.instance.collection('courseprogress').doc().set(
-    //     {
-    //       courseName : videoPercentageListUpdate,
-    //       'email': FirebaseAuth.instance.currentUser!.email,
-    //     });
   }
 
   @override
@@ -744,9 +727,8 @@ class _VideoScreenState extends State<VideoScreen> {
                           return Stack(
                             children: [
                               Container(
-                                height: menuClicked
-                                    ? screenHeight
-                                    : screenHeight / 1.2,
+                                height:
+                                    screenHeight / 1.2,
                                 child: Center(
                                   child: AspectRatio(
                                     aspectRatio: 16 / 9,
@@ -772,9 +754,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                   )),
                               enablePauseScreen
                                   ? Container(
-                                height: menuClicked
-                                    ? screenHeight
-                                    : screenHeight / 1.2,
+                                height:  screenHeight / 1.2,
                                 child: _buildControls(
                                   context,
                                   isPortrait,
@@ -804,9 +784,13 @@ class _VideoScreenState extends State<VideoScreen> {
                             ],
                           );
                         } else {
-                          return Center(
-                            child: CircularProgressIndicator(
-                              color: Color(0xFF7860DC),
+                          return Container(
+                            height:
+                            screenHeight / 1.2,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Color(0xFF7860DC),
+                              ),
                             ),
                           );
                         }
@@ -1548,8 +1532,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                   fileIndex;
                                                               print(
                                                                   '$index and section is $selectedSection');
-                                                              showAssignment =
-                                                                  !showAssignment;
+                                                              showAssignment = true;
                                                               _videoController!
                                                                   .pause();
                                                               enablePauseScreen =
