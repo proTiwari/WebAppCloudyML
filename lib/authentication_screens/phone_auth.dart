@@ -1494,31 +1494,89 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> getCodeWithPhoneNumber(
       BuildContext context, String phoneNumber) async {
+    // try {
+    //   final userCredential = await FirebaseAuth.instance.signInAnonymously();
+    //   print("Signed in with temporary account.");
+    // } on FirebaseAuthException catch (e) {
+    //   switch (e.code) {
+    //     case "operation-not-allowed":
+    //       print("Anonymous auth hasn't been enabled for this project.");
+    //       break;
+    //     default:
+    //       print("Unknown error.");
+    //   }
+    // }
+
+    final docSnapshot = await FirebaseFirestore.instance
+        .collection('UserData')
+        .doc()
+        .set({"phone": phoneNumber, "date": DateTime.now()});
+
+    setState(() {
+      loading = true;
+    });
     List<dynamic> items = [];
+    var docSnapshots;
     try {
-      final docSnapshots = await FirebaseFirestore.instance
+      print("1");
+      docSnapshots = await FirebaseFirestore.instance
           .collection('Users')
           .where('mobilenumber', isEqualTo: phoneController.text.toString())
           .get();
-
-      var doc = await FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection('Users')
           .where('mobilenumber', isEqualTo: phoneController.text.toString())
           .get()
           .then((QuerySnapshot snapshot) {
         snapshot.docs.forEach((f) => items.add(f.data()));
       });
+      print("2");
+
+      print("1sdkfffffj$docSnapshots");
+
+      if (docSnapshots == null) {
+        print("3");
+        docSnapshots = await FirebaseFirestore.instance
+            .collection('Users')
+            .where('mobilenumber',
+            isEqualTo: "+91${phoneController.text.toString()}")
+            .get();
+
+        items.clear();
+        print("4");
+
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .where('mobilenumber', isEqualTo: phoneController.text.toString())
+            .get()
+            .then((QuerySnapshot snapshot) {
+          snapshot.docs.forEach((f) => items.add(f.data()));
+        });
+        print("2sdkfffffj$docSnapshots");
+      }
+      print("5");
+
+      // docSnapshots.then((QuerySnapshot snapshot) {
+      //   snapshot.docs.forEach((f) => items.add(f.data()));
+      // });
+      print("6");
       // print(doc.contains("linked"));
       // print(items[0]);
       Map data = items[0];
       globals.googleAuth = data.containsValue("googleAuth").toString();
       globals.linked = data.containsKey("linked").toString();
+      print("ddddddddddddddd");
+      print(globals.googleAuth);
+      print(globals.linked);
+      print("dsdssssssssssssssssss");
+      print("7");
 
       // print(doc.keys.contains("email"));
       // print(doc.containsValue("true"));
       // print(doc.containsKey("email"));
 
       final userSnapshot = docSnapshots.docs.first;
+      print("8");
       globals.phoneNumberexists = userSnapshot.exists.toString();
       // print("------------------------------------------------");
       // print(docSnapshots.docs.contains("email"));
@@ -1531,6 +1589,7 @@ class _LoginPageState extends State<LoginPage> {
       // }
     } catch (e) {
       print(e);
+      print("9");
     }
 
     // try {
@@ -1546,7 +1605,9 @@ class _LoginPageState extends State<LoginPage> {
     // }
 
     // showToast(phoneNumber);
+    print("10");
     if (true) {
+      print("11");
       setState(() {
         loading = true;
       });
@@ -1555,9 +1616,11 @@ class _LoginPageState extends State<LoginPage> {
           timeout: const Duration(seconds: 60),
           verificationCompleted: (AuthCredential auth) async {
             await _auth.signInWithCredential(auth).then((dynamic value) {
+              print("1");
               if (value != null && value.user != null) {
                 setState(() {
                   loading = false;
+                  print("2");
                 });
                 print('Authentication successful');
 
@@ -1574,6 +1637,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(color: Colors.white),
                   ),
                 );
+                print("3");
               }
             }).catchError((error) {
               setState(() {

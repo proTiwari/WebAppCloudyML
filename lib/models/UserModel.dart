@@ -35,15 +35,22 @@ class UserModel{
 
 
   UserModel.fromSnapShot(DocumentSnapshot<Map<String,dynamic>> snapshot){
-    _name=(snapshot.data()![NAME]=='')?'Enter name':snapshot.data()![NAME];
-    _email=(snapshot.data()![EMAIL]=='')?'Enter email':snapshot.data()![EMAIL];
-    _mobile=(snapshot.data()![MOBILE]=='')?'__________':snapshot.data()![MOBILE].toString();
-    _id=snapshot.data()![ID];
-    _authType=snapshot.data()![AUTHTYPE];
-    _role=snapshot.data()!['role'];
-    _phoneVerified=snapshot.data()![PHONEVERIFIED];
-    _image=(snapshot.data()![IMAGE]=='')?'https://stratosphere.co.in/img/user.jpg':snapshot.data()![IMAGE];
-    userNotificationList=_convertNotificationItems(snapshot.data()?[USERNOTIFICATIONS]??[]);
+
+    try{
+      _name=(snapshot.data()![NAME]=='')?'Enter name':snapshot.data()![NAME];
+      _email=(snapshot.data()![EMAIL]=='')?'Enter email':snapshot.data()![EMAIL];
+      _mobile=(snapshot.data()![MOBILE]=='')?'__________':snapshot.data()![MOBILE].toString();
+      _id=snapshot.data()![ID];
+      _authType=snapshot.data()![AUTHTYPE];
+      _role=snapshot.data()!['role'];
+      _phoneVerified=snapshot.data()![PHONEVERIFIED];
+      _image=(snapshot.data()![IMAGE]=='')?'https://stratosphere.co.in/img/user.jpg':snapshot.data()![IMAGE];
+      userNotificationList=_convertNotificationItems(snapshot.data()?[USERNOTIFICATIONS]??[]);
+    }catch(e){
+      print('usermodelll ${e.toString()}');
+    }
+
+
   }
 
   List<UserNotificationModel>? _convertNotificationItems(List userNotificationList) {

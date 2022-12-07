@@ -138,6 +138,70 @@ class _HomeState extends State<Home> {
   //   }
   // }
 
+  var coursePercent = {};
+
+  getPercentageOfCourse()
+  async {
+
+    try{
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((value) async{
+        try {
+          courses = value.data()!['paidCourseNames'];
+        } catch(e){
+          print('donggg ${e.toString()}');
+        }
+      });
+    }catch(e){
+      print(e.toString());
+    }
+
+    try{
+      var data = await FirebaseFirestore.instance.collection("courseprogress")
+          .doc(FirebaseAuth.instance.currentUser!.uid).get();
+      var getData = data.data();
+
+      for(var courseId in courses)
+      {
+        print("ID = = ${courseId}");
+        int count = 0;
+        try{
+          await FirebaseFirestore.instance.collection("courses").where("id", isEqualTo: courseId).get().then(
+                  (value)async{
+                if(value.docs.first.exists)
+                {
+                  var coursesName = value.docs.first.data()["courses name"];
+                  for(var name in coursesName)
+                  {
+                    double num = (getData![name+"percentage"]!=null)?getData[name+"percentage"]:0;
+                    count+=num.toInt();
+                    print("Count = $count");
+                    coursePercent[courseId] = count~/(value.docs.first.data()["courses name"].length);
+                  }
+                }
+              }
+          ).catchError((err)=>print("Error"));
+        }
+        catch(err)
+        {
+          print(err);
+        }
+      }
+
+    }catch(e){
+      print('my courses error ${e.toString()}');
+    }
+
+    print("done");
+    setState(() {
+      coursePercent;
+    });
+    print(coursePercent);
+  }
+
   @override
   void initState() {
     // showNotification();
@@ -146,6 +210,7 @@ class _HomeState extends State<Home> {
     super.initState();
     futureFiles = FirebaseApi.listAll('reviews/');
     getCourseName();
+    getPercentageOfCourse();
     fetchCourses();
     dbCheckerForPayInParts();
     userData();
@@ -197,6 +262,7 @@ class _HomeState extends State<Home> {
           .get();
 
       print(ref.data()!["role"]);
+
     } catch (e) {
       print("kkkkkkk${e}");
     }
@@ -509,7 +575,10 @@ class _HomeState extends State<Home> {
                       : Container(),
                   InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, '/paymenthistory');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PaymentHistory()));
                     },
                     child: ListTile(
                       title: Text('Payment History'),
@@ -582,7 +651,7 @@ class _HomeState extends State<Home> {
                   // ),
                   InkWell(
                     child: ListTile(
-                      title: Text('My Courses'),
+                      title: Text('Reviews'),
                       leading: Icon(
                         Icons.reviews_rounded,
                         color: HexColor('691EC8'),
@@ -688,7 +757,7 @@ class _HomeState extends State<Home> {
                                 //     child: Text('Sizzling Offers')),
 
                                 SizedBox(
-                                  width: horizontalScale * 250,
+                                  width: horizontalScale * 275,
                                 ),
                                 constraints.maxWidth < 800
                                     ? Expanded(
@@ -1048,6 +1117,31 @@ class _HomeState extends State<Home> {
                                                                   height:
                                                                   1),
                                                             ),
+                                                          ),
+                                                          SizedBox(height: 10,),
+                                                          Row(
+                                                            children: [
+                                                              SizedBox(
+                                                                height: 5,
+                                                                width: 150,
+                                                                child:
+                                                                LinearProgressIndicator(
+                                                                  value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
+                                                                  color: HexColor(
+                                                                      "8346E1"),
+                                                                  backgroundColor:
+                                                                  HexColor(
+                                                                      'E3E3E3'),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Expanded(
+                                                                child: Text(
+                                                                  "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),),
+                                                              )
+                                                            ],
                                                           ),
                                                         ],
                                                       ),

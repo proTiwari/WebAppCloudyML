@@ -6,6 +6,7 @@ import 'package:cloudyml_app2/authentication_screens/otp_page.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/models/existing_user.dart';
+import 'package:cloudyml_app2/my_Courses.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ import '../authentication_screens/login_email.dart';
 import '../authentication_screens/login_username.dart';
 import '../authentication_screens/phone_auth.dart';
 import '../authentication_screens/signin_password.dart';
+import '../homepage.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -37,7 +39,7 @@ class Authenticate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (_auth.currentUser != null) {
-      return HomePage();
+      return Home();
     } else {
       return LoginPage();
     }
@@ -265,23 +267,30 @@ void userprofile({
   required bool phoneVerified,
   List<String?>? listOfCourses,
 }) async {
-  await FirebaseFirestore.instance
-      .collection("Users")
-      .doc(FirebaseAuth.instance.currentUser!.uid)
-      .set({
-    "name": name,
-    "mobilenumber": mobilenumber,
-    "email": email,
-    "paidCourseNames": listOfCourses,
-    "authType": authType,
-    "phoneVerified": phoneVerified,
-    "courseBuyID": "0", //course id will be displayed
-    "paid": "False",
-    "id": _auth.currentUser!.uid,
-    "password": "is it needed",
-    "role": "student",
-    "couponCodeDetails": {},
-    "payInPartsDetails": {},
-    "image": image,
-  });
+
+  try{
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set({
+      "name": name,
+      "mobilenumber": mobilenumber,
+      "email": email,
+      "paidCourseNames": listOfCourses,
+      "authType": authType,
+      "phoneVerified": phoneVerified,
+      "courseBuyID": "0", //course id will be displayed
+      "paid": "False",
+      "id": _auth.currentUser!.uid,
+      "password": "is it needed",
+      "role": "student",
+      "couponCodeDetails": {},
+      "payInPartsDetails": {},
+      "image": image,
+    });
+  }catch(e){
+    print(e.toString());
+  }
+
+
 }

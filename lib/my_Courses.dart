@@ -6,17 +6,16 @@ import 'package:cloudyml_app2/combo/combo_store.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/module/video_screen.dart';
-import 'package:cloudyml_app2/payments_history.dart';
-import 'package:cloudyml_app2/privacy_policy.dart';
+import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'MyAccount/myaccount.dart';
 import 'Providers/UserProvider.dart';
-import 'aboutus.dart';
+import 'authentication/firebase_auth.dart';
 import 'catalogue_screen.dart';
 import 'home.dart';
 import 'module/pdf_course.dart';
@@ -32,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String searchString = "";
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   // bool? whetherSubScribedToPayInParts = false;
+
   String id = "";
 
   // String daysLeftOfLimitedAccess = "";
@@ -39,88 +39,122 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Map userMap = Map<String, dynamic>();
 
-  bool? load = true;
+  bool load = true;
 
-  void fetchCourses() async {
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((value) {
-      setState(() {
-        courses = value.data()!['paidCourseNames'];
-        load = false;
+  fetchCourses() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((value) {
+        setState(() {
+          if(value.data()!['paidCourseNames'] == null || value.data()!['paidCourseNames'] == []){
+            courses = [];
+          }else{
+            courses = value.data()!['paidCourseNames'];
+          }
+
+          load = false;
+        });
       });
-    });
+    } catch (e) {
+      print("dddddd ${e.toString()}");
+    }
   }
 
-  String? name = '';
+  String name = '';
 
-  void getCourseName() async {
-    await FirebaseFirestore.instance
-        .collection('courses')
-        .doc(courseId)
-        .get()
-        .then((value) {
-      setState(() {
-        name = value.data()!['name'];
-        print('ufbufb--$name');
-        print('ufbufb--$courseId');
+  getCourseName() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('courses')
+          .doc(courseId)
+          .get()
+          .then((value) {
+        setState(() {
+          name = value.data()!['name'];
+          print('ufbufb--$name');
+          print('ufbufb--$courseId');
+        });
       });
-    });
+    } catch (e) {
+      print("ddddinggg$e");
+    }
   }
 
   void dbCheckerForPayInParts() async {
-    DocumentSnapshot userDocs = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
-    // print(map['payInPartsDetails'][id]['outStandingAmtPaid']);
-    setState(() {
-      userMap = userDocs.data() as Map<String, dynamic>;
-      // whetherSubScribedToPayInParts =
-      //     !(!(map['payInPartsDetails']['outStandingAmtPaid'] == null));
-    });
+
+    try{
+      DocumentSnapshot userDocs = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      // print(map['payInPartsDetails'][id]['outStandingAmtPaid']);
+      setState(() {
+        userMap = userDocs.data() as Map<String, dynamic>;
+        // whetherSubScribedToPayInParts =
+        //     !(!(map['payInPartsDetails']['outStandingAmtPaid'] == null));
+      });
+    }catch(e){
+      print(e.toString());
+    }
   }
 
   bool navigateToCatalogueScreen(String id) {
-    if (userMap['payInPartsDetails'][id] != null) {
-      final daysLeft = (DateTime.parse(
-              userMap['payInPartsDetails'][id]['endDateOfLimitedAccess'])
-          .difference(DateTime.now())
-          .inDays);
-      print(daysLeft);
-      return daysLeft < 1;
-    } else {
+
+    try{
+      if (userMap['payInPartsDetails'][id] != null) {
+        final daysLeft = (DateTime.parse(
+            userMap['payInPartsDetails'][id]['endDateOfLimitedAccess'])
+            .difference(DateTime.now())
+            .inDays);
+        print(daysLeft);
+        return daysLeft < 1;
+      } else {
+        return false;
+      }
+    }catch(e){
+      print('dipdipdip ${e.toString()}');
       return false;
     }
   }
 
   bool statusOfPayInParts(String id) {
-    if (!(userMap['payInPartsDetails'][id] == null)) {
-      if (userMap['payInPartsDetails'][id]['outStandingAmtPaid']) {
-        return false;
+
+    try{
+      if (!(userMap['payInPartsDetails'][id] == null)) {
+        if (userMap['payInPartsDetails'][id]['outStandingAmtPaid']) {
+          return false;
+        } else {
+          return true;
+        }
       } else {
-        return true;
+        return false;
       }
-    } else {
+    }catch(e) {
+      Fluttertoast.showToast(msg: e.toString());
       return false;
     }
   }
 
   var ref;
 
-  userData() async {
-    ref = await FirebaseFirestore.instance
-        .collection("Users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
+  userData() async  {
+    try {
+      ref = await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
 
-    print(ref.data()!["role"]);
+      print(ref.data()!["role"]);
+    } catch (e) {
+      print("ddddd${e}");
+    }
   }
 
-  static final FlutterLocalNotificationsPlugin
-      _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  // static final FlutterLocalNotificationsPlugin
+  //     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   @override
   void initState() {
     super.initState();
@@ -129,48 +163,65 @@ class _HomeScreenState extends State<HomeScreen> {
     getPercentageOfCourse();
     getCourseName();
     userData();
-    // dbCheckerForDaysLeftForLimitedAccess();
   }
   var coursePercent = {};
+
   getPercentageOfCourse()
   async {
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((value) async{
-      courses = value.data()!['paidCourseNames'];
-    });
 
-    var data =  await FirebaseFirestore.instance.collection("courseprogress").doc(FirebaseAuth.instance.currentUser!.uid).get();
-    var getData = data.data();
-    for(var courseId in courses)
-    {
-      print("ID = = ${courseId}");
-      int count = 0;
-      try{
-        await FirebaseFirestore.instance.collection("courses").where("id", isEqualTo: courseId).get().then(
-                (value)async{
-              if(value.docs.first.exists)
-              {
-                var coursesName = value.docs.first.data()["courses name"];
-                for(var name in coursesName)
+    try{
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((value) async{
+            try {
+              courses = value.data()!['paidCourseNames'];
+            } catch(e){
+              print('donggg ${e.toString()}');
+            }
+      });
+    }catch(e){
+      print(e.toString());
+    }
+
+    try{
+      var data = await FirebaseFirestore.instance.collection("courseprogress")
+          .doc(FirebaseAuth.instance.currentUser!.uid).get();
+      var getData = data.data();
+
+      for(var courseId in courses)
+      {
+        print("ID = = ${courseId}");
+        int count = 0;
+        try{
+          await FirebaseFirestore.instance.collection("courses").where("id", isEqualTo: courseId).get().then(
+                  (value)async{
+                if(value.docs.first.exists)
                 {
-                  double num = (getData![name+"percentage"]!=null)?getData[name+"percentage"]:0;
-                  count+=num.toInt();
-                  print("Count = $count");
-                  coursePercent[courseId] = count~/(value.docs.first.data()["courses name"].length);
+                  var coursesName = value.docs.first.data()["courses name"];
+                  for(var name in coursesName)
+                  {
+                    double num = (getData![name+"percentage"]!=null)?getData[name+"percentage"]:0;
+                    count+=num.toInt();
+                    print("Count = $count");
+                    coursePercent[courseId] = count~/(value.docs.first.data()["courses name"].length);
+                  }
                 }
               }
-            }
-        ).catchError((err)=>print("Error"));
+          ).catchError((err)=>print("Error"));
+        }
+        catch(err)
+        {
+          print(err);
+        }
       }
-      catch(err)
-      {
-        print(err);
-      }
+
+    }catch(e){
+      print('my courses error ${e.toString()}');
     }
-    print("donw");
+
+    print("done");
     setState(() {
       coursePercent;
     });
@@ -367,21 +418,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     //Assignments tab for mentors only
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PaymentHistory()));
-                      },
-                      child: ListTile(
-                        title: Text('Payment History'),
-                        leading: Icon(
-                          Icons.payment_rounded,
-                          color: HexColor('691EC8'),
-                        ),
-                      ),
-                    ),
+                    // InkWell(
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (context) => PaymentHistory()));
+                    //   },
+                    //   child: ListTile(
+                    //     title: Text('Payment History'),
+                    //     leading: Icon(
+                    //       Icons.payment_rounded,
+                    //       color: HexColor('691EC8'),
+                    //     ),
+                    //   ),
+                    // ),
                     Divider(
                       thickness: 2,
                     ),
@@ -443,6 +494,34 @@ class _HomeScreenState extends State<HomeScreen> {
                     //     // );
                     //   },
                     // ),
+
+                    InkWell(
+                      child: ListTile(
+                        title: Text('Reviews'),
+                        leading: Icon(
+                          Icons.reviews_rounded,
+                          color: HexColor('691EC8'),
+                        ),
+                      ),
+                      onTap: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ReviewsScreen()));
+                      },
+                    ),
+                    InkWell(
+                      onTap: () {
+                        logOut(context);
+                      },
+                      child: ListTile(
+                        title: Text('LogOut'),
+                        leading: Icon(
+                          Icons.logout_rounded,
+                          color: HexColor('691EC8'),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 Positioned(
@@ -541,6 +620,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Text(
+                          ref.data()!["name"] == null ? '' :
                         "Welcome back ${ref.data()!["name"]}, Continue learning",
                         style: TextStyle(
                             color: HexColor("231F20"),
@@ -882,13 +962,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     height: screenHeight / 2,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      // boxShadow: [
-                                      //   BoxShadow(
-                                      //     color: Colors.black26,
-                                      //     offset: Offset(0, 2),
-                                      //     blurRadius: 40,
-                                      //   ),
-                                      // ],
                                       borderRadius:
                                       BorderRadius.circular(15),
                                       border: Border.all(

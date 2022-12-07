@@ -9,6 +9,7 @@ import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/payments_history.dart';
 import 'package:cloudyml_app2/privacy_policy.dart';
 import 'package:cloudyml_app2/screens/assignment_tab_screen.dart';
+import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -17,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'MyAccount/myaccount.dart';
 import 'Providers/UserProvider.dart';
 import 'aboutus.dart';
+import 'authentication/firebase_auth.dart';
 import 'my_Courses.dart';
 
 class StoreScreen extends StatefulWidget {
@@ -244,12 +246,22 @@ class _StoreScreenState extends State<StoreScreen> {
                       ),
                     ),
                     onTap: () async {
-                      Navigator.pushNamed(context, '/courses');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeScreen(),
+                        ),
+                      );
                     },
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, '/paymenthistory');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaymentHistory(),
+                        ),
+                      );
                     },
                     child: ListTile(
                       title: Text('Payment History'),
@@ -261,6 +273,33 @@ class _StoreScreenState extends State<StoreScreen> {
                   ),
                   Divider(
                     thickness: 2,
+                  ),
+                  InkWell(
+                    child: ListTile(
+                      title: Text('Reviews'),
+                      leading: Icon(
+                        Icons.reviews_rounded,
+                        color: HexColor('691EC8'),
+                      ),
+                    ),
+                    onTap: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ReviewsScreen()));
+                    },
+                  ),
+                  InkWell(
+                    onTap: () {
+                      logOut(context);
+                    },
+                    child: ListTile(
+                      title: Text('LogOut'),
+                      leading: Icon(
+                        Icons.logout_rounded,
+                        color: HexColor('691EC8'),
+                      ),
+                    ),
                   ),
                   // InkWell(
                   //   onTap: () {
