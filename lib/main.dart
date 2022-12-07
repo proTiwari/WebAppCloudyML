@@ -15,6 +15,7 @@ import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:cloudyml_app2/payments_history.dart';
 import 'package:cloudyml_app2/screens/chat_screen.dart';
 import 'package:cloudyml_app2/screens/exlusive_offer/seasons_offer_screen.dart';
+import 'package:cloudyml_app2/screens/splash.dart';
 import 'package:cloudyml_app2/services/local_notificationservice.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -112,21 +113,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  Map<String, dynamic> courseMap = {};
-  String coursePrice = "";
 
-  void getCourseName() async {
-    await FirebaseFirestore.instance
-        .collection('courses')
-        .doc(courseId)
-        .get()
-        .then((value) {
-      setState(() {
-        courseMap = value.data()!;
-        coursePrice = value.data()!['Course Price'];
-      });
-    });
-  }
 
 
 
@@ -134,7 +121,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getCourseName();
   }
 
   @override
@@ -332,13 +318,9 @@ class _MyAppState extends State<MyApp> {
             ),
             initialRoute: '/',
             routes: {
-              "/": (context) =>
-              // HomeScreen(),
-                  // SeasonOffer(),
+              '/': (context) => splash(),
+              "/authenticate": (context) =>
                   Authenticate(),
-              "/courses": (context) => const HomeScreen(),
-              "/paymentscreen" : (context) => PaymentScreen(map: courseMap, isItComboCourse: false),
-              "/paymenthistory" : (context) => PaymentHistory(),
             },
           ),
         ),

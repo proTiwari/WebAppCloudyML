@@ -727,7 +727,7 @@ class _VideoScreenState extends State<VideoScreen> {
                           return Stack(
                             children: [
                               Container(
-                                height:
+                                height: menuClicked ? screenHeight :
                                     screenHeight / 1.2,
                                 child: Center(
                                   child: AspectRatio(
@@ -754,7 +754,9 @@ class _VideoScreenState extends State<VideoScreen> {
                                   )),
                               enablePauseScreen
                                   ? Container(
-                                height:  screenHeight / 1.2,
+                               height: menuClicked
+                        ? screenHeight
+                            : screenHeight / 1.2,
                                 child: _buildControls(
                                   context,
                                   isPortrait,
@@ -1143,7 +1145,7 @@ class _VideoScreenState extends State<VideoScreen> {
     );
   }
 
-  int? selectedSection;
+  String selectedSection = '';
   int? selectedIndexOfVideo;
   String? selectedVideoIndexName;
   String? videoTitle;
@@ -1317,8 +1319,8 @@ class _VideoScreenState extends State<VideoScreen> {
                             child: ExpansionTile(
                                 title: Text(
                                   '${index + 1}. ' +
-                                      courseData.entries.elementAt(index).key,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                    courseData.entries.elementAt(index).key,
+                                    style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 children: List.generate(
                                     courseData.entries
@@ -1331,7 +1333,6 @@ class _VideoScreenState extends State<VideoScreen> {
                                         .value[index1]
                                         .toString(): 0
                                   });
-
                                   return Column(
                                     children: [
                                        GestureDetector(
@@ -1460,9 +1461,6 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                 '${index + 1}.' +
                                                                 '${firstIndex}' +
                                                                 '.ipynb')
-                                                        // ||
-                                                        //     (futureSolutions[fileIndex].name.toString() ==
-                                                        //         courseData.entries.elementAt(index).key.toString() + '${index+1}.' + '${firstIndex}' + '.pdf')
                                                         ) {
                                                       return Padding(
                                                         padding:
@@ -1528,11 +1526,11 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                   futureAssignments[
                                                                           fileIndex]
                                                                       .url;
-                                                              selectedSection =
-                                                                  fileIndex;
+                                                              selectedSection = '${index + 1}. ' +
+                                                                  courseData.entries.elementAt(index).key;
                                                               print(
                                                                   '$index and section is $selectedSection');
-                                                              showAssignment = true;
+                                                              showAssignment = !showAssignment;
                                                               _videoController!
                                                                   .pause();
                                                               enablePauseScreen =

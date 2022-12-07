@@ -1,16 +1,11 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudyml_app2/api/firebase_api.dart';
-import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:path/path.dart' as path;
 import 'package:url_launcher/url_launcher.dart';
-
-import '../globals.dart';
 import '../models/firebase_file.dart';
 
 class AssignmentScreen extends StatefulWidget {
@@ -27,22 +22,12 @@ class AssignmentScreen extends StatefulWidget {
   final solutionUrl;
   final dataSetUrl;
 
-
   @override
   State<AssignmentScreen> createState() => _AssignmentScreenState();
 }
 
 class _AssignmentScreenState extends State<AssignmentScreen> {
   TextEditingController noteText = TextEditingController();
-
-  late Future<List<FirebaseFile>> futureAssignments;
-  late Future<List<FirebaseFile>> futureSolutions;
-  late Future<List<FirebaseFile>> futureDataSets;
-
-  String urlIPYNB =
-      "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/Assignments%2FPython_Withoutcode.ipynb?alt=media&token=9172c5b5-9350-4e66-bb4a-077181d04607";
-  String outputPDF =
-      "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/OuputPDF%2FCML115.pdf?alt=media&token=683d514c-336f-4b16-8352-0467152bed6d";
 
   Uint8List? uploadedFile;
 
@@ -101,14 +86,6 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
   void initState() {
     super.initState();
     getModuleId();
-    futureAssignments =
-        FirebaseApi.listAll('courses/${widget.courseName}/assignment');
-    futureSolutions =
-        FirebaseApi.listAll('courses/${widget.courseName}/solution');
-    futureDataSets =
-        FirebaseApi.listAll('courses/${widget.courseName}/dataset');
-
-    print('this is ${futureAssignments.then((value) => print(value.first.name))}');
   }
 
 
@@ -155,14 +132,24 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Text(
-                        'Assignment Instructions',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 28,
-                        ),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Assignment Instructions',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 28,
+                            ),
+                          ),
+                          // Text('${widget.selectedSection}',
+                          //   style: TextStyle(
+                          //   color: Colors.grey,
+                          //   fontWeight: FontWeight.bold,
+                          //   fontSize: 22,
+                          // ),),
+                        ],
                       ),
                     ),
                     Padding(
@@ -255,7 +242,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                       InkWell(
                                         onTap: () {
                                           launch(widget.dataSetUrl);
-                                          print('datasett = ${widget.dataSetUrl} ${widget.dataSetUrl.toString()}');
+                                          print('dataset = ${widget.dataSetUrl} ${widget.dataSetUrl.toString()}');
                                         },
                                         child: Text(
                                           'DataSet file.',

@@ -176,43 +176,6 @@ class _LoginPageState extends State<LoginPage> {
                         child: Center(
                           child: Column(
                             children: <Widget>[
-                              // Center(
-                              //   child: Center(
-                              //     child: Column(
-                              //       children: <Widget>[
-                              //         // Container(
-                              //         //   margin: const EdgeInsets.symmetric(
-                              //         //       horizontal: 20, vertical: 20),
-                              //         //   child: Stack(
-                              //         //     children: <Widget>[
-                              //         //       Center(
-                              //         //         child: Container(
-                              //         //             constraints: const BoxConstraints(
-                              //         //                 maxHeight: 300),
-                              //         //             margin:
-                              //         //                 const EdgeInsets.symmetric(
-                              //         //                     horizontal: 8),
-                              //         //             child: Image.asset(
-                              //         //                 'assets/signin-.png')), //assets/logingif.json
-                              //         //       ),
-                              //         //     ],
-                              //         //   ),
-                              //         // ),
-                              //         // SizedBox(
-                              //         //   height: 40,
-                              //         // ),
-                              //         // Container(
-                              //         //     margin: const EdgeInsets.symmetric(
-                              //         //         horizontal: 10),
-                              //         //     child: Text('CloudyML',
-                              //         //         style: TextStyle(
-                              //         //             color: MyColors.primaryColor,
-                              //         //             fontSize: 25,
-                              //         //             fontWeight: FontWeight.w800),),)
-                              //       ],
-                              //     ),
-                              //   ),
-                              // ),
                               Expanded(
                                 flex: 0,
                                 child: Column(
@@ -231,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
                                           textAlign: TextAlign.center,
                                           text: TextSpan(children: <TextSpan>[
                                             TextSpan(
-                                                text: 'We will send you an ',
+                                                text: 'We will send you a ',
                                                 style: TextStyle(
                                                     color:
                                                         MyColors.primaryColor,
@@ -287,16 +250,8 @@ class _LoginPageState extends State<LoginPage> {
                                               phoneController.text.toString();
                                           getCodeWithPhoneNumber(context,
                                               "${'+91' + phoneController.text.toString()}");
-                                        } else {
-                                          SnackBar(
-                                            behavior: SnackBarBehavior.floating,
-                                            backgroundColor: Colors.red,
-                                            content: Text(
-                                              'Please enter a phone number',
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                          );
+                                        } else if (phoneController.text.isEmpty) {
+                                          Fluttertoast.showToast(msg: 'Please enter a phone number');
                                         }
                                       },
                                       child: Container(

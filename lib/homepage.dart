@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:cloudyml_app2/fun.dart';
 import 'package:cloudyml_app2/models/firebase_file.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:hive/hive.dart';
 import 'package:page_transition/page_transition.dart';
@@ -55,33 +56,26 @@ class _HomeState extends State<Home> {
   bool? load = true;
   Map userMap = Map<String, dynamic>();
 
-  void fetchCourses() async {
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((value) {
-      setState(() {
-        courses = value.data()!['paidCourseNames'];
-        load = false;
-      });
-    });
-  }
+
 
   String? name = '';
 
-  void getCourseName() async {
-    await FirebaseFirestore.instance
-        .collection('courses')
-        .doc(courseId)
-        .get()
-        .then((value) {
-      setState(() {
-        name = value.data()!['name'];
-        print('ufbufb--$name');
-        print('ufbufb--$courseId');
+  getCourseName() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('courses')
+          .doc(courseId)
+          .get()
+          .then((value) {
+        setState(() {
+          name = value.data()!['name'];
+          print('ufbufb--$name');
+          print('ufbufb--$courseId');
+        });
       });
-    });
+    } catch (e) {
+      print("llooooooooooooo$e");
+    }
   }
 
   List<Icon> list = [];
@@ -89,7 +83,7 @@ class _HomeState extends State<Home> {
   bool navigateToCatalogueScreen(String id) {
     if (userMap['payInPartsDetails'][id] != null) {
       final daysLeft = (DateTime.parse(
-              userMap['payInPartsDetails'][id]['endDateOfLimitedAccess'])
+          userMap['payInPartsDetails'][id]['endDateOfLimitedAccess'])
           .difference(DateTime.now())
           .inDays);
       print(daysLeft);
@@ -112,16 +106,20 @@ class _HomeState extends State<Home> {
   }
 
   void dbCheckerForPayInParts() async {
-    DocumentSnapshot userDocs = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
-    // print(map['payInPartsDetails'][id]['outStandingAmtPaid']);
-    setState(() {
-      userMap = userDocs.data() as Map<String, dynamic>;
-      // whetherSubScribedToPayInParts =
-      //     !(!(map['payInPartsDetails']['outStandingAmtPaid'] == null));
-    });
+    try {
+      DocumentSnapshot userDocs = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      // print(map['payInPartsDetails'][id]['outStandingAmtPaid']);
+      setState(() {
+        userMap = userDocs.data() as Map<String, dynamic>;
+        // whetherSubScribedToPayInParts =
+        //     !(!(map['payInPartsDetails']['outStandingAmtPaid'] == null));
+      });
+    } catch (e) {
+      print("ggggggggggg$e");
+    }
   }
 
   late ScrollController _controller;
@@ -140,69 +138,45 @@ class _HomeState extends State<Home> {
   //   }
   // }
 
-  var coursePercent = {};
-  getPercentageOfCourse()
-  async {
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((value) async{
-      courses = value.data()!['paidCourseNames'];
-    });
-
-    var data =  await FirebaseFirestore.instance.collection("courseprogress").doc(FirebaseAuth.instance.currentUser!.uid).get();
-    var getData = data.data();
-    for(var courseId in courses)
-    {
-      print("ID = = ${courseId}");
-      int count = 0;
-      try{
-        await FirebaseFirestore.instance.collection("courses").where("id", isEqualTo: courseId).get().then(
-                (value)async{
-              if(value.docs.first.exists)
-              {
-                var coursesName = value.docs.first.data()["courses name"];
-                for(var name in coursesName)
-                {
-                  double num = (getData![name+"percentage"]!=null)?getData[name+"percentage"]:0;
-                  count+=num.toInt();
-                  print("Count = $count");
-                  coursePercent[courseId] = count~/(value.docs.first.data()["courses name"].length);
-                }
-              }
-            }
-        ).catchError((err)=>print("Error"));
-      }
-      catch(err)
-      {
-        print(err);
-      }
-    }
-    print("donw");
-    setState(() {
-      coursePercent;
-    });
-    print(coursePercent);
-  }
-
   @override
   void initState() {
     // showNotification();
-    fetchCourses();
+
     _controller = ScrollController();
     super.initState();
     futureFiles = FirebaseApi.listAll('reviews/');
     getCourseName();
+    fetchCourses();
     dbCheckerForPayInParts();
     userData();
     startTimer();
-    getPercentageOfCourse();
 
     if (myDuration.inDays == 0) {
       stopTimer();
     } else {
       return null;
+    }
+  }
+
+  fetchCourses() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((value) {
+        setState(() {
+          if(value.data()!['paidCourseNames'] == null || value.data()!['paidCourseNames'] == []){
+            courses = [];
+          }else{
+            courses = value.data()!['paidCourseNames'];
+          }
+
+          load = false;
+        });
+      });
+    } catch (e) {
+      print("kkkk$e");
     }
   }
 
@@ -213,16 +187,19 @@ class _HomeState extends State<Home> {
     fontFamily: "Semibold",
   );
 
-
   var ref;
 
   userData() async {
-    ref = await FirebaseFirestore.instance
-        .collection("Users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
+    try {
+      ref = await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
 
-    print(ref.data()!["role"]);
+      print(ref.data()!["role"]);
+    } catch (e) {
+      print("kkkkkkk${e}");
+    }
   }
 
   void startTimer() {
@@ -255,22 +232,21 @@ class _HomeState extends State<Home> {
       }
     });
   }
-  String strDigits(int n) => n.toString().padLeft(2, '0');
 
+  String strDigits(int n) => n.toString().padLeft(2, '0');
 
   Timer? countDownTimer;
   Duration myDuration = Duration(days: 5);
 
   @override
   Widget build(BuildContext context) {
-
     final days = strDigits(myDuration.inDays);
     final hours = strDigits(myDuration.inHours.remainder(24));
     final minutes = strDigits(myDuration.inMinutes.remainder(60));
     final seconds = strDigits(myDuration.inSeconds.remainder(60));
 
     final providerNotification =
-        Provider.of<UserProvider>(context, listen: false);
+    Provider.of<UserProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context);
     final size = MediaQuery.of(context).size;
     List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
@@ -335,7 +311,7 @@ class _HomeState extends State<Home> {
                           userProvider.userModel?.email.toString() == ''
                               ? userProvider.userModel?.mobile.toString() ?? ''
                               : userProvider.userModel?.email.toString() ??
-                                  'Enter email',
+                              'Enter email',
                         ),
                         currentAccountPicture: GestureDetector(
                           onTap: () {
@@ -484,7 +460,7 @@ class _HomeState extends State<Home> {
                   // ),
                   InkWell(
                     child: ListTile(
-                      title: Text(
+                      title: Text(''
                           'My Account'),
                       leading: Icon(
                         Icons.person,
@@ -507,26 +483,29 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     onTap: () async {
-                      Navigator.pushNamed(context, '/courses');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomeScreen()));
                     },
                   ),
                   //Assignments tab for mentors only
                   ref.data() != null && ref.data()!["role"] == 'mentor'
                       ? InkWell(
-                          child: ListTile(
-                            title: Text('Assignments'),
-                            leading: Icon(
-                              Icons.assignment_ind_outlined,
-                              color: HexColor('691EC8'),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Assignments()));
-                          },
-                        )
+                    child: ListTile(
+                      title: Text('Assignments'),
+                      leading: Icon(
+                        Icons.assignment_ind_outlined,
+                        color: HexColor('691EC8'),
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Assignments()));
+                    },
+                  )
                       : Container(),
                   InkWell(
                     onTap: () {
@@ -602,19 +581,19 @@ class _HomeState extends State<Home> {
                   //   },
                   // ),
                   InkWell(
-                    onTap: () {
+                    child: ListTile(
+                      title: Text('My Courses'),
+                      leading: Icon(
+                        Icons.reviews_rounded,
+                        color: HexColor('691EC8'),
+                      ),
+                    ),
+                    onTap: () async {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => ReviewsScreen()));
                     },
-                    child: ListTile(
-                      title: Text('Reviews'),
-                      leading: Icon(
-                        Icons.rate_review_rounded,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
                   ),
                   InkWell(
                     onTap: () {
@@ -654,567 +633,639 @@ class _HomeState extends State<Home> {
       ),
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-        if (constraints.maxWidth >= 515) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  width: screenWidth,
-                  height: screenHeight / 1.2,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage('assets/homepage/newBGImage.png'),
-                        fit: BoxFit.fill),
-                  ),
-                  child: Stack(
+            if (constraints.maxWidth >= 515) {
+              try {
+                return SingleChildScrollView(
+                  child: Column(
                     children: [
-                      Row(
-                        children: [
-                          IconButton(
-                              onPressed: () {
-                                Scaffold.of(context).openDrawer();
-                                menuClicked = true;
-                              },
-                              icon: Icon(
-                                Icons.menu,
-                                color: Colors.white,
-                              )),
-                          SizedBox(
-                            width: horizontalScale * 15,
-                          ),
-                          Image.asset(
-                            "assets/logo2.png",
-                            width: 30,
-                            height: 30,
-                          ),
-                          Text(
-                            "CloudyML",
-                            style: textStyle,
-                          ),
-                          // offer navigation
-                          // TextButton(
-                          //     onPressed: () {
-                          //       Navigator.push(
-                          //           context,
-                          //           MaterialPageRoute(
-                          //               builder: (context) => SeasonOffer(
-                          //                     days: days,
-                          //                     seconds: seconds,
-                          //                     hours: hours,
-                          //                     minutes: minutes,
-                          //                   )));
-                          //     },
-                          //     child: Text('Sizzling Offers')),
-                          Spacer(),
-                           SizedBox(
-                             width: screenWidth/9,
-                             child: ElevatedButton(
+                      Container(
+                        width: screenWidth,
+                        height: screenHeight / 1.2,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage(
+                                  'assets/homepage/newBGImage.png'),
+                              fit: BoxFit.fill),
+                        ),
+                        child: Stack(
+                          children: [
+                            Row(
+                              children: [
+                                IconButton(
+                                    onPressed: () {
+                                      Scaffold.of(context).openDrawer();
+                                      menuClicked = true;
+                                    },
+                                    icon: Icon(
+                                      Icons.menu,
+                                      color: Colors.white,
+                                    )),
+                                SizedBox(
+                                  width: horizontalScale * 15,
+                                ),
+                                Image.asset(
+                                  "assets/logo2.png",
+                                  width: 30,
+                                  height: 30,
+                                ),
+                                Text(
+                                  "CloudyML",
+                                  style: textStyle,
+                                ),
+                                // offernavigation
+                                // TextButton(
+                                //     onPressed: () {
+                                //       Navigator.push(
+                                //           context,
+                                //           MaterialPageRoute(
+                                //               builder: (context) => SeasonOffer(
+                                //                     days: days,
+                                //                     seconds: seconds,
+                                //                     hours: hours,
+                                //                     minutes: minutes,
+                                //                   )));
+                                //     },
+                                //     child: Text('Sizzling Offers')),
+
+                                SizedBox(
+                                  width: horizontalScale * 250,
+                                ),
+                                constraints.maxWidth < 800
+                                    ? Expanded(
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        logOut(context);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                        HexColor("8346E1"),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(50),
+                                        ),
+                                      ),
+                                      child: Text("Log out",
+                                          style: textStyle)),
+                                )
+                                    : ElevatedButton(
                                     onPressed: () {
                                       logOut(context);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: HexColor("8346E1"),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(50),
+                                        borderRadius:
+                                        BorderRadius.circular(50),
                                       ),
                                     ),
-                                    child: Text("Log out", style: textStyle)),
-                           ),
-                        ],
-                      ),
-                      Positioned(
-                        top: 50,
-                        right: 75,
-                        child: Container(
-                            height: screenHeight / 1.5,
-                            width: screenWidth / 2.5,
-                            child: Image.asset(
-                              'assets/homepage/Webgraphics21.png',
-                              fit: BoxFit.fill,
-                            )),
-                      ),
-                      Positioned(
-                        top: 125,
-                        left: 75,
-                        child: Container(
-                            height: screenHeight / 3.5,
-                            width: screenWidth / 2.5,
-                            child: Image.network(
-                              'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FGroup%20162.png?alt=media&token=6e3f0646-61b4-4897-ae9d-9ef3600676e1',
-                              fit: BoxFit.fill,
-                            )),
-                      ),
-                      // Positioned(
-                      //   top: 400,
-                      //   left: 78,
-                      //   child: Container(
-                      //     child: ElevatedButton(
-                      //       onPressed: () {
-                      //         Scaffold.of(context).openDrawer();
-                      //       },
-                      //       style: ElevatedButton.styleFrom(
-                      //         backgroundColor: HexColor("8346E1"),
-                      //       ),
-                      //       child: Row(
-                      //         children: [
-                      //           Text(
-                      //             "View Courses",
-                      //             style: textStyle,
-                      //           ),
-                      //           SizedBox(
-                      //             width: 10,
-                      //           ),
-                      //           CircleAvatar(
-                      //               maxRadius: 10,
-                      //               backgroundColor: Colors.white,
-                      //               child: Icon(
-                      //                 Icons.arrow_forward_outlined,
-                      //                 color: Colors.black,
-                      //                 size: 14,
-                      //               )),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                ),
-                Container(
-                  child: Column(
-                    children: [
-                      Center(
-                          child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15.0),
-                        child: Text(
-                          "My Enrolled Courses",
-                          style: TextStyle(
-                              fontFamily: 'Medium',
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      )),
-                      courses.length > 0
-                          ? Container(
-                        width: screenWidth / 2.5,
-                        height: screenHeight / 5.5,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black26,
-                                offset: Offset(
-                                  2, // Move to right 10  horizontally
-                                  2.0, // Move to bottom 10 Vertically
-                                ),
-                                blurRadius: 40)
-                          ],
-                          border: Border.all(
-                            color: HexColor('440F87'),
-                            width: 1.5,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          // shrinkWrap: true,
-                          itemCount: course.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            if (course[index].courseName == "null") {
-                              return Container();
-                            }
-                            if (courses
-                                .contains(course[index].courseId)) {
-                              return InkWell(
-                                onTap: (() {
-                                  // setModuleId(snapshot.data!.docs[index].id);
-                                  getCourseName();
-                                  if (navigateToCatalogueScreen(
-                                      course[index].courseId) &&
-                                      !(userMap['payInPartsDetails']
-                                      [course[index].courseId]
-                                      ['outStandingAmtPaid'])) {
-                                    if (!course[index].isItComboCourse) {
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                          duration: Duration(milliseconds: 400),
-                                          curve: Curves.bounceInOut,
-                                          type:
-                                          PageTransitionType.rightToLeftWithFade,
-                                          child: VideoScreen(
-                                            isDemo: true,
-                                            courseName: course[index].courseName,
-                                            sr: 1,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                          duration: Duration(milliseconds: 100),
-                                          curve: Curves.bounceInOut,
-                                          type:
-                                          PageTransitionType.rightToLeftWithFade,
-                                          child: ComboStore(
-                                            courses: course[index].courses,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  } else {
-                                    if (!course[index].isItComboCourse) {
-                                      if (course[index].courseContent == 'pdf') {
-                                        Navigator.push(
-                                          context,
-                                          PageTransition(
-                                            duration: Duration(milliseconds: 400),
-                                            curve: Curves.bounceInOut,
-                                            type: PageTransitionType
-                                                .rightToLeftWithFade,
-                                            child: PdfCourseScreen(
-                                              curriculum: course[index].curriculum
-                                              as Map<String, dynamic>,
-                                            ),
-                                          ),
-                                        );
-                                      } else {
-                                        Navigator.push(
-                                          context,
-                                          PageTransition(
-                                            duration: Duration(milliseconds: 400),
-                                            curve: Curves.bounceInOut,
-                                            type: PageTransitionType
-                                                .rightToLeftWithFade,
-                                            child: VideoScreen(
-                                              isDemo: true,
-                                              courseName: course[index].courseName,
-                                              sr: 1,
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    } else {
-                                      ComboCourse.comboId.value =
-                                          course[index].courseId;
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                          duration: Duration(milliseconds: 400),
-                                          curve: Curves.bounceInOut,
-                                          type:
-                                          PageTransitionType.rightToLeftWithFade,
-                                          child: ComboCourse(
-                                            courses: course[index].courses,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  }
-                                  setState(() {
-                                    courseId = course[index].courseDocumentId;
-
-                                  });
-                                }),
-                                child: Container(
+                                    child: Text("Log out",
+                                        style: textStyle)),
+                              ],
+                            ),
+                            Positioned(
+                              top: 50,
+                              right: 75,
+                              child: Container(
+                                  height: screenHeight / 1.5,
                                   width: screenWidth / 2.5,
-                                  height: screenHeight / 5.5,
-                                  child: Stack(
-                                    children: [
-                                      Padding(
-                                        padding:
-                                        const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              width: 60 * horizontalScale,
-                                              height: screenHeight / 5.5,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: Colors
-                                                          .transparent),
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(5),
-                                                  image: DecorationImage(
-                                                      image:
-                                                      CachedNetworkImageProvider(
-                                                        course[index]
-                                                            .courseImageUrl,
-                                                      ),
-                                                      fit: BoxFit.fill)),
-                                            ),
-                                            SizedBox(
-                                              width: 5,
-                                            ),
-                                            Expanded(
-                                              child: Align(
-                                                alignment:
-                                                Alignment.topCenter,
-                                                child: Column(
-                                                  children: [
-                                                    Text(
-                                                      course[index]
-                                                          .courseName,
-                                                      style: TextStyle(
-                                                          color: HexColor(
-                                                              "2C2C2C"),
-                                                          fontFamily:
-                                                          'Medium',
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .w500,
-                                                          height: 1),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 5.0, bottom: 5),
-                                                      child: Align(
-                                                        alignment:
-                                                        Alignment.topLeft,
-                                                        child: Image.asset(
-                                                          'assets/Rating.png',
-                                                          fit: BoxFit.fill,
-                                                          height: 10,
-                                                          width: screenWidth/16,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Align(
-                                                      alignment: Alignment.topLeft,
-                                                      child: Text(
-                                                        "${course[index]
-                                                            .courseLanguage} || ${course[index]
-                                                            .numOfVideos} Videos",
-                                                        style: TextStyle(
-                                                            color: HexColor(
-                                                                "2C2C2C"),
-                                                            fontFamily:
-                                                            'Medium',
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                            FontWeight
-                                                                .w500,
-                                                            height: 1),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        SizedBox(
-                                                          height: 5,
-                                                          width: 150,
-                                                          child:
-                                                          LinearProgressIndicator(
-                                                            value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
-                                                            color: HexColor(
-                                                                "8346E1"),
-                                                            backgroundColor:
-                                                            HexColor(
-                                                                'E3E3E3'),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 5,
-                                                        ),
-                                                        Expanded(
-                                                          child: Text(
-                                                            "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ],
+                                  child: Image.asset(
+                                    'assets/homepage/Webgraphics21.png',
+                                    fit: BoxFit.fill,
+                                  )),
+                            ),
+                            Positioned(
+                              top: 125,
+                              left: 75,
+                              child: Container(
+                                  height: screenHeight / 3.5,
+                                  width: screenWidth / 2.5,
+                                  child: Image.network(
+                                    'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FGroup%20162.png?alt=media&token=6e3f0646-61b4-4897-ae9d-9ef3600676e1',
+                                    fit: BoxFit.fill,
+                                  )),
+                            ),
+                            // Positioned(
+                            //   top: 400,
+                            //   left: 78,
+                            //   child: Container(
+                            //     child: ElevatedButton(
+                            //       onPressed: () {
+                            //         Scaffold.of(context).openDrawer();
+                            //       },
+                            //       style: ElevatedButton.styleFrom(
+                            //         backgroundColor: HexColor("8346E1"),
+                            //       ),
+                            //       child: Row(
+                            //         children: [
+                            //           Text(
+                            //             "View Courses",
+                            //             style: textStyle,
+                            //           ),
+                            //           SizedBox(
+                            //             width: 10,
+                            //           ),
+                            //           CircleAvatar(
+                            //               maxRadius: 10,
+                            //               backgroundColor: Colors.white,
+                            //               child: Icon(
+                            //                 Icons.arrow_forward_outlined,
+                            //                 color: Colors.black,
+                            //                 size: 14,
+                            //               )),
+                            //         ],
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: Column(
+                          children: [
+                            Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 15.0),
+                                  child: Text(
+                                    "My Enrolled Courses",
+                                    style: TextStyle(
+                                        fontFamily: 'Medium',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                )),
+
+                            courses.length > 0
+                                ? Container(
+                              width: screenWidth / 2.5,
+                              height: screenHeight / 5.5,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black26,
+                                      offset: Offset(
+                                        2, // Move to right 10  horizontally
+                                        2.0, // Move to bottom 10 Vertically
+                                      ),
+                                      blurRadius: 40)
+                                ],
+                                border: Border.all(
+                                  color: HexColor('440F87'),
+                                  width: 1.5,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child:ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                // shrinkWrap: true,
+                                itemCount: course.length,
+                                itemBuilder:
+                                    (BuildContext context, int index) {
+                                  if (course[index].courseName ==
+                                      "null") {
+                                    return Container();
+                                  }
+                                  if (courses.contains(
+                                      course[index].courseId)) {
+                                    return InkWell(
+                                      onTap: (() async {
+                                        // setModuleId(snapshot.data!.docs[index].id);
+                                        await getCourseName();
+                                        if (navigateToCatalogueScreen(
+                                            course[index]
+                                                .courseId) &&
+                                            !(userMap['payInPartsDetails']
+                                            [course[index]
+                                                .courseId][
+                                            'outStandingAmtPaid'])) {
+                                          if (!course[index]
+                                              .isItComboCourse) {
+                                            Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                duration: Duration(
+                                                    milliseconds: 400),
+                                                curve:
+                                                Curves.bounceInOut,
+                                                type: PageTransitionType
+                                                    .rightToLeftWithFade,
+                                                child: VideoScreen(
+                                                  isDemo: true,
+                                                  courseName:
+                                                  course[index]
+                                                      .courseName,
+                                                  sr: 1,
                                                 ),
+                                              ),
+                                            );
+                                          } else {
+                                            Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                duration: Duration(
+                                                    milliseconds: 100),
+                                                curve:
+                                                Curves.bounceInOut,
+                                                type: PageTransitionType
+                                                    .rightToLeftWithFade,
+                                                child: ComboStore(
+                                                  courses: course[index]
+                                                      .courses,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        } else {
+                                          if (!course[index]
+                                              .isItComboCourse) {
+                                            if (course[index]
+                                                .courseContent ==
+                                                'pdf') {
+                                              Navigator.push(
+                                                context,
+                                                PageTransition(
+                                                  duration: Duration(
+                                                      milliseconds:
+                                                      400),
+                                                  curve: Curves
+                                                      .bounceInOut,
+                                                  type: PageTransitionType
+                                                      .rightToLeftWithFade,
+                                                  child:
+                                                  PdfCourseScreen(
+                                                    curriculum: course[
+                                                    index]
+                                                        .curriculum
+                                                    as Map<String,
+                                                        dynamic>,
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              Navigator.push(
+                                                context,
+                                                PageTransition(
+                                                  duration: Duration(
+                                                      milliseconds:
+                                                      400),
+                                                  curve: Curves
+                                                      .bounceInOut,
+                                                  type: PageTransitionType
+                                                      .rightToLeftWithFade,
+                                                  child: VideoScreen(
+                                                    isDemo: true,
+                                                    courseName:
+                                                    course[index]
+                                                        .courseName,
+                                                    sr: 1,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          } else {
+                                            ComboCourse.comboId.value =
+                                                course[index].courseId;
+                                            Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                duration: Duration(
+                                                    milliseconds: 400),
+                                                curve:
+                                                Curves.bounceInOut,
+                                                type: PageTransitionType
+                                                    .rightToLeftWithFade,
+                                                child: ComboCourse(
+                                                  courses: course[index]
+                                                      .courses,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                        setState(() {
+                                          courseId = course[index]
+                                              .courseDocumentId;
+                                        });
+                                      }),
+                                      child: Container(
+                                        width: screenWidth / 2.5,
+                                        height: screenHeight / 5.5,
+                                        child: Stack(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                              const EdgeInsets.all(
+                                                  8.0),
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    width: 60 *
+                                                        horizontalScale,
+                                                    height:
+                                                    screenHeight /
+                                                        5.5,
+                                                    decoration:
+                                                    BoxDecoration(
+                                                        border: Border.all(
+                                                            color: Colors
+                                                                .transparent),
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(5),
+                                                        image: DecorationImage(
+                                                            image: CachedNetworkImageProvider(
+                                                              course[index]
+                                                                  .courseImageUrl,
+                                                            ),
+                                                            fit: BoxFit.fill)),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Expanded(
+                                                    child: Align(
+                                                      alignment:
+                                                      Alignment
+                                                          .topCenter,
+                                                      child: Column(
+                                                        children: [
+                                                          Text(
+                                                            course[index]
+                                                                .courseName,
+                                                            style: TextStyle(
+                                                                color: HexColor(
+                                                                    "2C2C2C"),
+                                                                fontFamily:
+                                                                'Medium',
+                                                                fontSize:
+                                                                16,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w500,
+                                                                height:
+                                                                1),
+                                                          ),
+                                                          Padding(
+                                                            padding: const EdgeInsets
+                                                                .only(
+                                                                top:
+                                                                5.0,
+                                                                bottom:
+                                                                5),
+                                                            child:
+                                                            Align(
+                                                              alignment:
+                                                              Alignment
+                                                                  .topLeft,
+                                                              child: Image
+                                                                  .asset(
+                                                                'assets/Rating.png',
+                                                                fit: BoxFit
+                                                                    .fill,
+                                                                height:
+                                                                10,
+                                                                width: screenWidth /
+                                                                    16,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Align(
+                                                            alignment:
+                                                            Alignment
+                                                                .topLeft,
+                                                            child: Text(
+                                                              "${course[index].courseLanguage} || ${course[index].numOfVideos} Videos",
+                                                              style: TextStyle(
+                                                                  color: HexColor(
+                                                                      "2C2C2C"),
+                                                                  fontFamily:
+                                                                  'Medium',
+                                                                  fontSize:
+                                                                  12,
+                                                                  fontWeight: FontWeight
+                                                                      .w500,
+                                                                  height:
+                                                                  1),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return Container();
-                            }
-                          },
-                        ),
-                      )
-                          : Container(
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                },
+                              ),
+                            )
+                                : Container(
                               child: Text('There are zero courses'),
                             ),
-                      SizedBox(height: 40),
-                      // Padding(
-                      //   padding: const EdgeInsets.all(15.0),
-                      //   child: Container(
-                      //     child: ElevatedButton(
-                      //         onPressed: () {}, child: Text("View More")),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: screenHeight / 1.9,
-                  width: screenWidth,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
-                      stops: [0, 0.4, 0.9],
-                      colors: [
-                        HexColor("FFFFFF"),
-                        HexColor("B079FF"),
-                        HexColor("FFFFFF"),
-                      ],
-                    ),
-                  ),
-                  child: ListView(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Reviews',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'Poppins',
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                            SizedBox(height: 40),
+                            // Padding(
+                            //   padding: const EdgeInsets.all(15.0),
+                            //   child: Container(
+                            //     child: ElevatedButton(
+                            //         onPressed: () {}, child: Text("View More")),
+                            //   ),
+                            // ),
+                          ],
                         ),
                       ),
-                      FutureBuilder<List<FirebaseFile>>(
-                        future: futureFiles,
-                        builder: (context, snapshot) {
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.waiting :
-                              return Center(child: CircularProgressIndicator());
-                            default:
-                              if (snapshot.hasError) {
-                                return Center(
-                                    child: Text(
-                                  'Some error occurred!',
-                                  textScaleFactor:
-                                      min(horizontalScale, verticalScale),
-                                ));
-                              } else {
-                                final files = snapshot.data!;
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    height: screenHeight / 2.3,
-                                    child: CarouselSlider.builder(
-                                      itemCount: files.length,
-                                      itemBuilder: (BuildContext context,
-                                              int index, int pageNo) =>
-                                          ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  final file = files[index];
-                                                  Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ImagePage(file: file),
-                                                    ),
-                                                  );
-                                                },
-                                                child: Image.network(
-                                                    files[index].url),
-                                              )),
-                                      options: CarouselOptions(
-                                        autoPlay: true,
-                                        enableInfiniteScroll: true,
-                                        enlargeCenterPage: true,
-                                        viewportFraction: 0.8,
-                                        aspectRatio: 1.0,
-                                        initialPage: 0,
-                                        autoPlayCurve: Curves.fastOutSlowIn,
-                                        autoPlayAnimationDuration:
-                                            Duration(milliseconds: 1000),
-                                      ),
-                                    ),
+                      Container(
+                        height: screenHeight / 1.9,
+                        width: screenWidth,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
+                            stops: [0, 0.4, 0.9],
+                            colors: [
+                              HexColor("FFFFFF"),
+                              HexColor("B079FF"),
+                              HexColor("FFFFFF"),
+                            ],
+                          ),
+                        ),
+                        child: ListView(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Reviews',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: 'Poppins',
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                );
-                              }
-                          }
-                        },
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  width: screenWidth,
-                  height: screenHeight/1.25,
-                  color: Colors.white,
-                  child: Stack(
-                    children: [
-                      Image.network(
-                        'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FfeatureBG.png?alt=media&token=f350c99d-a928-48b6-9eff-983ad8797de9',
-                        fit: BoxFit.fill,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30.0),
-                        child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Text(
-                              "Feature Courses",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: 'Poppins',
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            )),
+                            ),
+                            FutureBuilder<List<FirebaseFile>>(
+                              future: futureFiles,
+                              builder: (context, snapshot) {
+                                try {
+                                  switch (snapshot.connectionState) {
+                                    case ConnectionState.waiting:
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    default:
+                                      if (snapshot.hasError) {
+                                        return Center(
+                                            child: Text(
+                                              'Some error occurred!',
+                                              textScaleFactor: min(
+                                                  horizontalScale, verticalScale),
+                                            ));
+                                      } else {
+                                        final files = snapshot.data!;
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Container(
+                                            height: screenHeight / 2.3,
+                                            child: CarouselSlider.builder(
+                                              itemCount: files.length,
+                                              itemBuilder: (BuildContext
+                                              context,
+                                                  int index,
+                                                  int pageNo) =>
+                                                  ClipRRect(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(12),
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          final file =
+                                                          files[index];
+                                                          Navigator.of(
+                                                              context)
+                                                              .push(
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  ImagePage(
+                                                                      file:
+                                                                      file),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Image.network(
+                                                            files[index].url),
+                                                      )),
+                                              options: CarouselOptions(
+                                                autoPlay: true,
+                                                enableInfiniteScroll: true,
+                                                enlargeCenterPage: true,
+                                                viewportFraction: 0.8,
+                                                aspectRatio: 1.0,
+                                                initialPage: 0,
+                                                autoPlayCurve:
+                                                Curves.fastOutSlowIn,
+                                                autoPlayAnimationDuration:
+                                                Duration(
+                                                    milliseconds: 1000),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                  }
+                                } catch (e) {
+                                  print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
+
+                                  Fluttertoast.showToast(msg: e.toString());
+                                  return Center(
+                                      child: Text(
+                                        'Some error occurred!',
+                                        textScaleFactor:
+                                        min(horizontalScale, verticalScale),
+                                      ));
+                                }
+                              },
+                            )
+                          ],
+                        ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(top: 75, bottom: 50),
-                        height: screenHeight / 2,
-                        child: Center(
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemCount: course.length,
-                              itemBuilder: (BuildContext context, index) {
-                                if (course[index].courseName == "null") {
-                                  return Container();
-                                }
-                                return InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      courseId =
-                                          course[index].courseDocumentId;
-                                    });
-                                    print(courseId);
-                                    if (course[index].isItComboCourse) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ComboStore(
-                                            courses: course[index].courses,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const CatelogueScreen(),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  child: course[index].isItComboCourse
-                                      ? Padding(
-                                          padding: const EdgeInsets.all(10.0),
+                        width: screenWidth,
+                        height: screenHeight / 1.25,
+                        color: Colors.white,
+                        child: Stack(
+                          children: [
+                            Image.network(
+                              'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FfeatureBG.png?alt=media&token=f350c99d-a928-48b6-9eff-983ad8797de9',
+                              fit: BoxFit.fill,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 30.0),
+                              child: Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Text(
+                                    "Feature Courses",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontFamily: 'Poppins',
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 75, bottom: 50),
+                              height: screenHeight / 2,
+                              child: Center(
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: course.length,
+                                    itemBuilder:
+                                        (BuildContext context, index) {
+                                      if (course[index].courseName ==
+                                          "null") {
+                                        return Container();
+                                      }
+                                      return InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            courseId = course[index]
+                                                .courseDocumentId;
+                                          });
+                                          print(courseId);
+                                          if (course[index].isItComboCourse) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ComboStore(
+                                                      courses:
+                                                      course[index].courses,
+                                                    ),
+                                              ),
+                                            );
+                                          } else {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                const CatelogueScreen(),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        child: course[index].isItComboCourse
+                                            ? Padding(
+                                          padding: const EdgeInsets.all(
+                                              10.0),
                                           child: Container(
                                             width: screenWidth / 5,
                                             height: screenHeight / 2,
@@ -1228,27 +1279,33 @@ class _HomeState extends State<Home> {
                                                 ),
                                               ],
                                               borderRadius:
-                                                  BorderRadius.circular(15),
+                                              BorderRadius.circular(
+                                                  15),
                                               border: Border.all(
                                                   width: 0.5,
-                                                  color: HexColor("440F87")),
+                                                  color: HexColor(
+                                                      "440F87")),
                                             ),
                                             child: Column(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                              CrossAxisAlignment
+                                                  .center,
                                               children: [
                                                 Container(
-                                                  width: screenWidth / 5,
-                                                  height: screenHeight / 6,
+                                                  width:
+                                                  screenWidth / 5,
+                                                  height:
+                                                  screenHeight / 6,
                                                   child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                            topLeft: Radius
-                                                                .circular(15),
-                                                            topRight: Radius
-                                                                .circular(
-                                                                    15)),
-                                                    child: Image.network(
+                                                    borderRadius: BorderRadius.only(
+                                                        topLeft: Radius
+                                                            .circular(
+                                                            15),
+                                                        topRight: Radius
+                                                            .circular(
+                                                            15)),
+                                                    child:
+                                                    Image.network(
                                                       course[index]
                                                           .courseImageUrl,
                                                       fit: BoxFit.fill,
@@ -1256,34 +1313,35 @@ class _HomeState extends State<Home> {
                                                   ),
                                                 ),
                                                 Container(
-                                                  height: screenHeight / 5.5,
+                                                  height: screenHeight /
+                                                      5.5,
                                                   child: Column(
                                                     children: [
                                                       Padding(
                                                         padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
+                                                        const EdgeInsets
+                                                            .all(
+                                                            8.0),
                                                         child: Column(
                                                           children: [
                                                             Align(
                                                               alignment:
-                                                                  Alignment
-                                                                      .topLeft,
-                                                              child: Text(
+                                                              Alignment
+                                                                  .topLeft,
+                                                              child:
+                                                              Text(
                                                                 course[index]
                                                                     .courseName,
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .black,
                                                                     fontFamily:
-                                                                        'Medium',
+                                                                    'Medium',
                                                                     fontSize:
-                                                                        12,
+                                                                    12,
                                                                     fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                    height:
-                                                                        1),
+                                                                    FontWeight.w500,
+                                                                    height: 1),
                                                               ),
                                                             ),
                                                             SizedBox(
@@ -1291,50 +1349,44 @@ class _HomeState extends State<Home> {
                                                             ),
                                                             Align(
                                                               alignment:
-                                                                  Alignment
-                                                                      .topLeft,
-                                                              child: Text(
+                                                              Alignment
+                                                                  .topLeft,
+                                                              child:
+                                                              Text(
                                                                 "- ${course[index].courseLanguage} Language",
                                                                 style: TextStyle(
                                                                     fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontSize:
-                                                                        10),
+                                                                    FontWeight.bold,
+                                                                    color: Colors.black,
+                                                                    fontSize: 10),
                                                               ),
                                                             ),
                                                             Align(
                                                               alignment:
-                                                                  Alignment
-                                                                      .topLeft,
-                                                              child: Text(
+                                                              Alignment
+                                                                  .topLeft,
+                                                              child:
+                                                              Text(
                                                                 "- ${course[index].numOfVideos} Videos",
                                                                 style: TextStyle(
                                                                     fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontSize:
-                                                                        10),
+                                                                    FontWeight.bold,
+                                                                    color: Colors.black,
+                                                                    fontSize: 10),
                                                               ),
                                                             ),
                                                             Align(
                                                               alignment:
-                                                                  Alignment
-                                                                      .topLeft,
-                                                              child: Text(
+                                                              Alignment
+                                                                  .topLeft,
+                                                              child:
+                                                              Text(
                                                                 "- Lifetime Access",
                                                                 style: TextStyle(
                                                                     fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontSize:
-                                                                        10),
+                                                                    FontWeight.bold,
+                                                                    color: Colors.black,
+                                                                    fontSize: 10),
                                                               ),
                                                             ),
                                                           ],
@@ -1350,45 +1402,47 @@ class _HomeState extends State<Home> {
                                                   children: [
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsets
-                                                                  .only(
-                                                              bottom: 10.0),
-                                                      child: ElevatedButton(
-                                                          onPressed: () {},
-                                                          style:
-                                                              ElevatedButton
-                                                                  .styleFrom(
+                                                      const EdgeInsets
+                                                          .only(
+                                                          bottom:
+                                                          10.0),
+                                                      child:
+                                                      ElevatedButton(
+                                                          onPressed:
+                                                              () {},
+                                                          style: ElevatedButton
+                                                              .styleFrom(
                                                             backgroundColor:
-                                                                HexColor(
-                                                                    "8346E1"),
+                                                            HexColor("8346E1"),
                                                             shape: RoundedRectangleBorder(
                                                                 borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5)),
+                                                                BorderRadius.circular(5)),
                                                           ),
-                                                          child: Text(
+                                                          child:
+                                                          Text(
                                                             "${course[index].coursePrice}",
                                                             style: TextStyle(
-                                                                fontSize: 12,
-                                                                color: Colors
-                                                                    .white,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
+                                                                fontSize:
+                                                                12,
+                                                                color:
+                                                                Colors.white,
+                                                                fontWeight: FontWeight.bold),
                                                           )),
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsets
-                                                                  .only(
-                                                              right: 15.0),
+                                                      const EdgeInsets
+                                                          .only(
+                                                          right:
+                                                          15.0),
                                                       child: Align(
                                                         alignment: Alignment
                                                             .bottomRight,
-                                                        child: Image.asset(
+                                                        child:
+                                                        Image.asset(
                                                           'assets/Rating.png',
-                                                          fit: BoxFit.fill,
+                                                          fit: BoxFit
+                                                              .fill,
                                                           height: 11,
                                                           width: 50,
                                                         ),
@@ -1400,541 +1454,705 @@ class _HomeState extends State<Home> {
                                             ),
                                           ),
                                         )
-                                      : Container(),
-                                );
-                              }),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: screenHeight/16,
-                  width: screenWidth,
-                ),
-              ],
-            ),
-          );
-        } else {
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: screenWidth,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                          color: Color.fromRGBO(
-                            0,
-                            0,
-                            0,
-                            0.35,
-                          ),
-                          offset: Offset(5, 5),
-                          blurRadius: 52)
-                    ],
-                  ),
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: 414 * horizontalScale,
-                        height: 280 * verticalScale,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(15),
-                            bottomRight: Radius.circular(15),
-                          ),
-                          image: DecorationImage(
-                            alignment: Alignment.center,
-                            image: AssetImage('assets/HomeImage.png'),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                          top: 30 * verticalScale,
-                          left: 10 * horizontalScale,
-                          child: Container(
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                    Scaffold.of(context).openDrawer();
-                                  },
-                                  icon: Icon(
-                                    Icons.menu,
-                                    size: 30 *
-                                        min(horizontalScale, verticalScale),
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10 * horizontalScale,
-                                ),
-                                Text(
-                                  'Home',
-                                  textScaleFactor:
-                                      min(horizontalScale, verticalScale),
-                                  style: TextStyle(
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                                )
-                              ],
+                                            : Container(),
+                                      );
+                                    }),
+                              ),
                             ),
-                          )),
-                      Positioned(
-                          top: 31 * verticalScale,
-                          right: 2 * horizontalScale,
-                          child: Consumer<UserProvider>(
-                            builder: (context, data, child) {
-                              return StreamBuilder(
-                                  stream: FirebaseFirestore.instance
-                                      .collection("Notifications")
-                                      .snapshots(),
-                                  builder: (context,
-                                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                                    print(
-                                        "-------------${notificationBox.values}");
-                                    if (snapshot.data!.docs.length <
-                                        data.countNotification) {
-                                      notificationBox.put(1, {
-                                        "count": (snapshot.data!.docs.length)
-                                      });
-                                      providerNotification
-                                          .showNotificationHomeScreen(
-                                              notificationBox
-                                                  .values.first["count"]);
-                                    }
-                                    return Badge(
-                                      showBadge: data.countNotification ==
-                                                  snapshot.data!.docs.length ||
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: screenHeight / 16,
+                        width: screenWidth,
+                      ),
+                      // Container(
+                      //   width: screenWidth,
+                      //   height: screenHeight / 3,
+                      //   color: Colors.white,
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.center,
+                      //     children: [
+                      //       Container(
+                      //         width: screenWidth / 2.4,
+                      //         height: screenHeight / 5.5,
+                      //         decoration: BoxDecoration(
+                      //             color: HexColor("FFF4CB"),
+                      //             border: Border.all(
+                      //               color: HexColor('BE9400'),
+                      //               width: 1,
+                      //             ),
+                      //             borderRadius: BorderRadius.circular(10)),
+                      //         child: Row(
+                      //           children: [
+                      //             Padding(
+                      //               padding: const EdgeInsets.only(
+                      //                   top: 10, bottom: 10, left: 20, right: 20),
+                      //               child: Image.network(
+                      //                 "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FdownloadLogo.png?alt=media&token=031e6f59-cbc4-4c6a-a735-db14da7ec1fd",
+                      //                 fit: BoxFit.fill,
+                      //               ),
+                      //             ),
+                      //             Padding(
+                      //               padding:
+                      //                   const EdgeInsets.only(top: 10.0, right: 20),
+                      //               child: Column(
+                      //                 crossAxisAlignment: CrossAxisAlignment.start,
+                      //                 children: [
+                      //                   Text(
+                      //                     'Download The App Now!',
+                      //                     style: TextStyle(
+                      //                         color: HexColor("C19700"),
+                      //                         fontFamily: 'Poppins',
+                      //                         fontWeight: FontWeight.bold,
+                      //                         fontSize: 16),
+                      //                   ),
+                      //                   SizedBox(height: 8,),
+                      //                   Text(
+                      //                     'Learn new skill anywhere any time',
+                      //                     style: TextStyle(
+                      //                         color: HexColor("231F20"),
+                      //                         fontFamily: 'Poppins',
+                      //                         fontSize: 12),
+                      //                   ),
+                      //                   SizedBox(height: 10,),
+                      //                   Row(
+                      //                     children: [
+                      //                       Container(
+                      //                         child: Image.network(
+                      //                           "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FplaystoreIcon.png?alt=media&token=526c9fc9-0ec4-4b89-b991-cb42e272a1bd",
+                      //                           fit: BoxFit.fill,
+                      //                         ),
+                      //                       ),
+                      //                       SizedBox(width: 5,),
+                      //                       Container(
+                      //                         child: Image.network(
+                      //                           "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FappStoreLogo.png?alt=media&token=bc836ab8-451e-402b-9c48-cb16d02e9861",
+                      //                           fit: BoxFit.fill,
+                      //                         ),
+                      //                       ),
+                      //                     ],
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //       SizedBox(
+                      //         width: 20,
+                      //       ),
+                      //       Container(
+                      //         width: screenWidth / 2.4,
+                      //         height: screenHeight / 5.5,
+                      //         decoration: BoxDecoration(
+                      //             color: HexColor("CBE9FF"),
+                      //             border: Border.all(
+                      //               color: HexColor('007EDA'),
+                      //               width: 1,
+                      //             ),
+                      //             borderRadius: BorderRadius.circular(10)),
+                      //         child: Row(
+                      //           children: [
+                      //             Padding(
+                      //               padding: const EdgeInsets.only(
+                      //                   top: 10, bottom: 10, left: 20, right: 20),
+                      //               child: Image.network(
+                      //                 "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Freward.png?alt=media&token=4266fe1f-8875-4c52-8e83-42e65a08fb4c",
+                      //                 fit: BoxFit.fill,
+                      //               ),
+                      //             ),
+                      //             Padding(
+                      //               padding:
+                      //               const EdgeInsets.only(top: 10.0, right: 20),
+                      //               child: Column(
+                      //                 crossAxisAlignment: CrossAxisAlignment.start,
+                      //                 children: [
+                      //                   Text(
+                      //                     'Learn, Sell & Earn',
+                      //                     style: TextStyle(
+                      //                         color: HexColor("007EDA"),
+                      //                         fontFamily: 'Poppins',
+                      //                         fontWeight: FontWeight.bold,
+                      //                         fontSize: 16),
+                      //                   ),
+                      //                   SizedBox(height: 8,),
+                      //                   Text(
+                      //                     'Join our affiliate program and grow with us',
+                      //                     style: TextStyle(
+                      //                         color: HexColor("231F20"),
+                      //                         fontFamily: 'Poppins',
+                      //                         fontSize: 10),
+                      //                   ),
+                      //                   SizedBox(height: 10,),
+                      //                   Container(
+                      //                     decoration: BoxDecoration(
+                      //                       border: Border.all(
+                      //                         width: 1.5,
+                      //                       ),
+                      //                       borderRadius: BorderRadius.circular(25),
+                      //                     ),
+                      //                     child: ElevatedButton(
+                      //                         onPressed: () {},
+                      //                         style: ElevatedButton.styleFrom(
+                      //                           backgroundColor: HexColor('CBE9FF'),
+                      //                           shape: RoundedRectangleBorder(
+                      //                             borderRadius: BorderRadius.circular(25),
+                      //                           )
+                      //                         ),
+                      //                         child: Text("Explore More",
+                      //                           style:  TextStyle(
+                      //                             fontSize: 12,
+                      //                       color: HexColor("2C2C2C"),
+                      //                     ),)),
+                      //                   )
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                );
+              } catch (e) {
+                print(e.toString());
+                print("sdjffsifsihsiodf${e}ifsiojfdiiiiiiiiiiiiiiiiiiii$e");
+                return Text("shubham tiwari");
+              }
+            } else {
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: screenWidth,
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                              color: Color.fromRGBO(
+                                0,
+                                0,
+                                0,
+                                0.35,
+                              ),
+                              offset: Offset(5, 5),
+                              blurRadius: 52)
+                        ],
+                      ),
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 414 * horizontalScale,
+                            height: 280 * verticalScale,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(15),
+                                bottomRight: Radius.circular(15),
+                              ),
+                              image: DecorationImage(
+                                alignment: Alignment.center,
+                                image: AssetImage('assets/HomeImage.png'),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                              top: 30 * verticalScale,
+                              left: 10 * horizontalScale,
+                              child: Container(
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        Scaffold.of(context).openDrawer();
+                                      },
+                                      icon: Icon(
+                                        Icons.menu,
+                                        size: 30 *
+                                            min(horizontalScale, verticalScale),
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10 * horizontalScale,
+                                    ),
+                                    Text(
+                                      'Home',
+                                      textScaleFactor:
+                                      min(horizontalScale, verticalScale),
+                                      style: TextStyle(
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    )
+                                  ],
+                                ),
+                              )),
+                          Positioned(
+                              top: 31 * verticalScale,
+                              right: 2 * horizontalScale,
+                              child: Consumer<UserProvider>(
+                                builder: (context, data, child) {
+                                  return StreamBuilder(
+                                      stream: FirebaseFirestore.instance
+                                          .collection("Notifications")
+                                          .snapshots(),
+                                      builder: (context,
+                                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                                        print(
+                                            "--------notificationBox.values-----${notificationBox.values}");
+                                        try {
+                                          if (snapshot.data!.docs.length <
+                                              data.countNotification) {
+                                            notificationBox.put(1, {
+                                              "count": (snapshot.data!.docs.length)
+                                            });
+                                            providerNotification
+                                                .showNotificationHomeScreen(
+                                                notificationBox
+                                                    .values.first["count"]);
+                                          }
+                                        } catch (e) {
+                                          print("oooooooooooooooooooo${e}");
+                                        }
+
+                                        return Badge(
+                                          showBadge: data.countNotification ==
+                                              snapshot.data!.docs.length ||
                                               snapshot.data!.docs.length <
                                                   data.countNotification
-                                          ? false
-                                          : true,
-                                      child: IconButton(
-                                        onPressed: () async {
-                                          await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    NotificationPage()),
-                                          );
-                                          await notificationBox.put(1, {
-                                            "count":
-                                                (snapshot.data!.docs.length)
-                                          });
-                                          await providerNotification
-                                              .showNotificationHomeScreen(
-                                                  notificationBox
-                                                      .values.first["count"]);
-                                          print(
-                                              "++++++++++++++++++++++++${notificationBox.values}");
-                                        },
-                                        icon: Icon(
-                                          Icons.notifications_active,
-                                          size: 30,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      badgeColor: Colors.red,
-                                      toAnimate: false,
-                                      badgeContent: Text(
-                                        snapshot.data!.docs.length -
-                                                    notificationBox.values
-                                                        .first["count"] >=
-                                                0
-                                            ? (snapshot.data!.docs.length -
+                                              ? false
+                                              : true,
+                                          child: IconButton(
+                                            onPressed: () async {
+                                              try {
+                                                await Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          NotificationPage()),
+                                                );
+                                                await notificationBox.put(1, {
+                                                  "count":
+                                                  (snapshot.data!.docs.length)
+                                                });
+                                                await providerNotification
+                                                    .showNotificationHomeScreen(
                                                     notificationBox
-                                                        .values.first["count"])
+                                                        .values.first["count"]);
+                                                print(
+                                                    "++++++++++++++++++++++++${notificationBox.values}");
+                                              } catch (e) {
+                                                print(
+                                                    "pppppppppppppppppppppppppp${e}");
+                                              }
+                                            },
+                                            icon: Icon(
+                                              Icons.notifications_active,
+                                              size: 30,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          badgeColor: Colors.red,
+                                          toAnimate: false,
+                                          badgeContent: Text(
+                                            snapshot.data!.docs.length -
+                                                notificationBox.values
+                                                    .first["count"] >=
+                                                0
+                                                ? (snapshot.data!.docs.length -
+                                                notificationBox
+                                                    .values.first["count"])
                                                 .toString()
-                                            : (notificationBox
-                                                        .values.first["count"] -
-                                                    snapshot.data!.docs.length)
+                                                : (notificationBox
+                                                .values.first["count"] -
+                                                snapshot.data!.docs.length)
                                                 .toString(),
-                                        style: TextStyle(
-                                            fontSize: 9,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      position: BadgePosition(
-                                        top: (2 -
+                                            style: TextStyle(
+                                                fontSize: 9,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          position: BadgePosition(
+                                            top: (2 -
                                                 2 *
                                                     (snapshot.data!.docs.length)
                                                         .toString()
                                                         .length) *
-                                            verticalScale,
-                                        end: data.countNotification >= 100
-                                            ? 2
-                                            : 7,
-                                        // (7+((snapshot.data!.docs.length).toString().length))
+                                                verticalScale,
+                                            end: data.countNotification >= 100
+                                                ? 2
+                                                : 7,
+                                            // (7+((snapshot.data!.docs.length).toString().length))
+                                          ),
+                                        );
+                                      });
+                                },
+                              )),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 5 * horizontalScale,
+                        top: 20 * verticalScale,
+                      ),
+                      child: Text(
+                        'Feature Courses',
+                        textScaleFactor: min(horizontalScale, verticalScale),
+                        style: TextStyle(
+                          color: Color.fromRGBO(0, 0, 0, 1),
+                          fontFamily: 'Poppins',
+                          fontSize: 23,
+                          letterSpacing:
+                          0 /*percentages not used in flutter. defaulting to zero*/,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: screenWidth,
+                      height: 430 * verticalScale,
+                      child: MediaQuery.removePadding(
+                        context: context,
+                        removeTop: true,
+                        removeBottom: true,
+                        removeLeft: true,
+                        removeRight: true,
+                        child: ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: course.length,
+                          itemBuilder: (BuildContext context, index) {
+                            if (course[index].FcSerialNumber != '') {
+                              return InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    courseId = course[index].courseDocumentId;
+                                  });
+
+                                  print(courseId);
+                                  if (course[index].isItComboCourse) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ComboStore(
+                                          courses: course[index].courses,
+                                        ),
                                       ),
                                     );
-                                  });
-                            },
-                          )),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 5 * horizontalScale,
-                    top: 20 * verticalScale,
-                  ),
-                  child: Text(
-                    'Feature Courses',
-                    textScaleFactor: min(horizontalScale, verticalScale),
-                    style: TextStyle(
-                      color: Color.fromRGBO(0, 0, 0, 1),
-                      fontFamily: 'Poppins',
-                      fontSize: 23,
-                      letterSpacing:
-                          0 /*percentages not used in flutter. defaulting to zero*/,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Container(
-                  width: screenWidth,
-                  height: 430 * verticalScale,
-                  child: MediaQuery.removePadding(
-                    context: context,
-                    removeTop: true,
-                    removeBottom: true,
-                    removeLeft: true,
-                    removeRight: true,
-                    child: ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: course.length,
-                      itemBuilder: (BuildContext context, index) {
-                        if (course[index].FcSerialNumber != '') {
-                          return InkWell(
-                            onTap: () {
-                              setState(() {
-                                courseId = course[index].courseDocumentId;
-                              });
-
-                              print(courseId);
-                              if (course[index].isItComboCourse) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ComboStore(
-                                      courses: course[index].courses,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
                                           const CatelogueScreen()),
-                                );
-                              }
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                left: 15,
-                                right: 15,
-                                top: 15,
-                              ),
-                              child: Container(
-                                width: 366 * horizontalScale,
-                                height: 122 * verticalScale,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(15),
-                                    topRight: Radius.circular(15),
-                                    bottomLeft: Radius.circular(15),
-                                    bottomRight: Radius.circular(15),
+                                    );
+                                  }
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 15,
+                                    right: 15,
+                                    top: 15,
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Color.fromRGBO(31, 31, 31, 0.2),
-                                        offset: Offset(0, 10),
-                                        blurRadius: 20)
-                                  ],
-                                  color: Color.fromRGBO(255, 255, 255, 1),
-                                ),
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(15),
-                                      child: CachedNetworkImage(
-                                        imageUrl: course[index].courseImageUrl,
-                                        placeholder: (context, url) =>
-                                            CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) =>
-                                            Icon(Icons.error),
-                                        fit: BoxFit.fill,
-                                        height: 100 * verticalScale,
-                                        width: 127 * horizontalScale,
+                                  child: Container(
+                                    width: 366 * horizontalScale,
+                                    height: 122 * verticalScale,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(15),
+                                        topRight: Radius.circular(15),
+                                        bottomLeft: Radius.circular(15),
+                                        bottomRight: Radius.circular(15),
                                       ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Color.fromRGBO(31, 31, 31, 0.2),
+                                            offset: Offset(0, 10),
+                                            blurRadius: 20)
+                                      ],
+                                      color: Color.fromRGBO(255, 255, 255, 1),
                                     ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                    child: Row(
                                       children: [
                                         SizedBox(
-                                          height: 10 * verticalScale,
+                                          width: 5,
                                         ),
-                                        Container(
-                                          width: 194,
-                                          child: Text(
-                                            course[index].courseName,
-                                            textScaleFactor: min(
-                                                horizontalScale, verticalScale),
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              color: Color.fromRGBO(0, 0, 0, 1),
-                                              fontFamily: 'Poppins',
-                                              fontSize: 18,
-                                              letterSpacing: 0,
-                                              fontWeight: FontWeight.bold,
-                                              height: 1,
-                                            ),
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(15),
+                                          child: CachedNetworkImage(
+                                            imageUrl: course[index].courseImageUrl,
+                                            placeholder: (context, url) =>
+                                                CircularProgressIndicator(),
+                                            errorWidget: (context, url, error) =>
+                                                Icon(Icons.error),
+                                            fit: BoxFit.fill,
+                                            height: 100 * verticalScale,
+                                            width: 127 * horizontalScale,
                                           ),
                                         ),
                                         SizedBox(
-                                          height: 20 * verticalScale,
+                                          width: 10,
                                         ),
-                                        Image.asset(
-                                          'assets/Rating.png',
-                                          fit: BoxFit.fill,
-                                          height: 11,
-                                          width: 71,
-                                        ),
-                                        SizedBox(
-                                          height: 20 * verticalScale,
-                                        ),
-                                        Row(
+                                        Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              'English  ||  ${course[index].numOfVideos} Videos',
-                                              textAlign: TextAlign.left,
-                                              textScaleFactor: min(
-                                                  horizontalScale,
-                                                  verticalScale),
-                                              style: TextStyle(
-                                                  color: Color.fromRGBO(
-                                                      88, 88, 88, 1),
-                                                  fontFamily: 'Poppins',
-                                                  fontSize: 12,
-                                                  letterSpacing:
-                                                      0 /*percentages not used in flutter. defaulting to zero*/,
-                                                  fontWeight: FontWeight.normal,
-                                                  height: 1),
-                                            ),
                                             SizedBox(
-                                              width: 20,
+                                              height: 10 * verticalScale,
                                             ),
-                                            Text(
-                                              course[index].coursePrice,
-                                              textScaleFactor: min(
-                                                  horizontalScale,
-                                                  verticalScale),
-                                              textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                  color: Color.fromRGBO(
-                                                      155, 117, 237, 1),
+                                            Container(
+                                              width: 194,
+                                              child: Text(
+                                                course[index].courseName,
+                                                textScaleFactor: min(
+                                                    horizontalScale, verticalScale),
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  color: Color.fromRGBO(0, 0, 0, 1),
                                                   fontFamily: 'Poppins',
                                                   fontSize: 18,
-                                                  letterSpacing:
-                                                      0 /*percentages not used in flutter. defaulting to zero*/,
+                                                  letterSpacing: 0,
                                                   fontWeight: FontWeight.bold,
-                                                  height: 1),
+                                                  height: 1,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 20 * verticalScale,
+                                            ),
+                                            Image.asset(
+                                              'assets/Rating.png',
+                                              fit: BoxFit.fill,
+                                              height: 11,
+                                              width: 71,
+                                            ),
+                                            SizedBox(
+                                              height: 20 * verticalScale,
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'English  ||  ${course[index].numOfVideos} Videos',
+                                                  textAlign: TextAlign.left,
+                                                  textScaleFactor: min(
+                                                      horizontalScale,
+                                                      verticalScale),
+                                                  style: TextStyle(
+                                                      color: Color.fromRGBO(
+                                                          88, 88, 88, 1),
+                                                      fontFamily: 'Poppins',
+                                                      fontSize: 12,
+                                                      letterSpacing:
+                                                      0 /*percentages not used in flutter. defaulting to zero*/,
+                                                      fontWeight: FontWeight.normal,
+                                                      height: 1),
+                                                ),
+                                                SizedBox(
+                                                  width: 20,
+                                                ),
+                                                Text(
+                                                  course[index].coursePrice,
+                                                  textScaleFactor: min(
+                                                      horizontalScale,
+                                                      verticalScale),
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                      color: Color.fromRGBO(
+                                                          155, 117, 237, 1),
+                                                      fontFamily: 'Poppins',
+                                                      fontSize: 18,
+                                                      letterSpacing:
+                                                      0 /*percentages not used in flutter. defaulting to zero*/,
+                                                      fontWeight: FontWeight.bold,
+                                                      height: 1),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
                                       ],
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                          );
-                        } else {
-                          return Container();
-                        }
-                      },
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 10,
-                    top: 10,
-                  ),
-                  child: Text(
-                    'Success Stories',
-                    textScaleFactor: min(horizontalScale, verticalScale),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Color.fromRGBO(0, 0, 0, 1),
-                        fontFamily: 'Poppins',
-                        fontSize: 23,
-                        letterSpacing:
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 10,
+                        top: 10,
+                      ),
+                      child: Text(
+                        'Success Stories',
+                        textScaleFactor: min(horizontalScale, verticalScale),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Color.fromRGBO(0, 0, 0, 1),
+                            fontFamily: 'Poppins',
+                            fontSize: 23,
+                            letterSpacing:
                             0 /*percentages not used in flutter. defaulting to zero*/,
-                        fontWeight: FontWeight.bold,
-                        height: 1),
-                  ),
-                ),
-                Container(
-                  height: screenHeight * 0.81 * verticalScale,
-                  width: screenWidth,
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  child: FutureBuilder<List<FirebaseFile>>(
-                    future: futureFiles,
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return Center(child: CircularProgressIndicator());
-                        default:
-                          if (snapshot.hasError) {
-                            return Center(
-                                child: Text(
-                              'Some error occurred!',
-                              textScaleFactor:
-                                  min(horizontalScale, verticalScale),
-                            ));
-                          } else {
-                            final files = snapshot.data!;
+                            fontWeight: FontWeight.bold,
+                            height: 1),
+                      ),
+                    ),
+                    Container(
+                      height: screenHeight * 0.81 * verticalScale,
+                      width: screenWidth,
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      child: FutureBuilder<List<FirebaseFile>>(
+                        future: futureFiles,
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.waiting:
+                              return Center(child: CircularProgressIndicator());
+                            default:
+                              if (snapshot.hasError) {
+                                return Center(
+                                    child: Text(
+                                      'Some error occurred!',
+                                      textScaleFactor:
+                                      min(horizontalScale, verticalScale),
+                                    ));
+                              } else {
+                                final files = snapshot.data;
 
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: GridView.builder(
-                                    scrollDirection: Axis.vertical,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemCount: files.length,
-                                    itemBuilder: (context, index) {
-                                      final file = files[index];
-                                      return buildFile(context, file);
-                                    },
-                                    gridDelegate:
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: GridView.builder(
+                                        scrollDirection: Axis.vertical,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: files!.length,
+                                        itemBuilder: (context, index) {
+                                          final file = files[index];
+                                          return buildFile(context, file);
+                                        },
+                                        gridDelegate:
                                         SliverGridDelegateWithFixedCrossAxisCount(
                                             crossAxisCount: 2,
                                             crossAxisSpacing: 1,
                                             mainAxisSpacing: 1),
-                                  ),
-                                ),
-                              ],
-                            );
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
                           }
-                      }
-                    },
-                  ),
-                ),
-                //SizedBox(height: 15,),
-                Container(
-                  width: 414 * horizontalScale,
-                  height: 250 * verticalScale,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      alignment: Alignment.center,
-                      image: AssetImage('assets/a1.png'),
-                      fit: BoxFit.fill,
+                        },
+                      ),
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 20,
-                    top: 20,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'About Me',
-                        textScaleFactor: min(horizontalScale, verticalScale),
-                        style: TextStyle(
-                            color: Color.fromRGBO(0, 0, 0, 1),
-                            fontFamily: 'Poppins',
-                            fontSize: 25,
-                            letterSpacing:
+                    //SizedBox(height: 15,),
+                    Container(
+                      width: 414 * horizontalScale,
+                      height: 250 * verticalScale,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          alignment: Alignment.center,
+                          image: AssetImage('assets/a1.png'),
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 20,
+                        top: 20,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'About Me',
+                            textScaleFactor: min(horizontalScale, verticalScale),
+                            style: TextStyle(
+                                color: Color.fromRGBO(0, 0, 0, 1),
+                                fontFamily: 'Poppins',
+                                fontSize: 25,
+                                letterSpacing:
                                 0 /*percentages not used in flutter. defaulting to zero*/,
-                            fontWeight: FontWeight.w500,
-                            height: 1),
-                      ),
-                      Container(
-                        width: 60 * horizontalScale,
-                        child: Divider(
-                            color: Color.fromRGBO(156, 91, 255, 1),
-                            thickness: 2),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 20, top: 10, bottom: 20),
-                  child: Text(
-                    'I have 3\+ years experience in Machine Learning\. I have done 4 industrial IoT Machine Learning projects which includes data\-preprocessing\, data cleaning\, feature selection\, model building\, optimization and deployment to AWS Sagemaker\.  Now\, I even started my YouTube channel for sharing my ML and AWS knowledge Currently, I work with Tredence Inc. as a Data Scientist for the AI CoE (Center of Excellence) team. Here I work on challenging R&D projects and building various PoCs for winning new client projects for the company.When I had put papers in previous company, I practically had no offer. First 2 months were very difficult and disappointing as I couldn’t land any offer. But things suddenly started working out in the last month and I was able to bag 8 offers from various banks, analytical companies and some startups.I made this website to use all my interview experiences to help people land their dream job\.',
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 20,
-                    bottom: 10,
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Color.fromARGB(255, 6, 240, 185),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 8.0,
-                            spreadRadius: .09,
-                            offset: Offset(1, 5),
-                          )
-                        ]),
-                    width: 300 * horizontalScale,
-                    height: 40 * verticalScale,
-                    child: Row(
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => StoreScreen()),
-                            );
-                          },
-                          child: Text(
-                            'My Recommended Courses',
-                            textScaleFactor:
-                                min(horizontalScale, verticalScale),
-                            style: TextStyle(fontSize: 16),
+                                fontWeight: FontWeight.w500,
+                                height: 1),
                           ),
-                        ),
-                        SizedBox(
-                          width: .01,
-                        ),
-                        Icon(
-                          Icons.arrow_circle_right,
-                          size: 30,
-                          color: Colors.white,
-                        ),
-                      ],
+                          Container(
+                            width: 60 * horizontalScale,
+                            child: Divider(
+                                color: Color.fromRGBO(156, 91, 255, 1),
+                                thickness: 2),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 20, top: 10, bottom: 20),
+                      child: Text(
+                        'I have 3\+ years experience in Machine Learning\. I have done 4 industrial IoT Machine Learning projects which includes data\-preprocessing\, data cleaning\, feature selection\, model building\, optimization and deployment to AWS Sagemaker\.  Now\, I even started my YouTube channel for sharing my ML and AWS knowledge Currently, I work with Tredence Inc. as a Data Scientist for the AI CoE (Center of Excellence) team. Here I work on challenging R&D projects and building various PoCs for winning new client projects for the company.When I had put papers in previous company, I practically had no offer. First 2 months were very difficult and disappointing as I couldn’t land any offer. But things suddenly started working out in the last month and I was able to bag 8 offers from various banks, analytical companies and some startups.I made this website to use all my interview experiences to help people land their dream job\.',
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 20,
+                        bottom: 10,
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: Color.fromARGB(255, 6, 240, 185),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey,
+                                blurRadius: 8.0,
+                                spreadRadius: .09,
+                                offset: Offset(1, 5),
+                              )
+                            ]),
+                        width: 300 * horizontalScale,
+                        height: 40 * verticalScale,
+                        child: Row(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => StoreScreen()),
+                                );
+                              },
+                              child: Text(
+                                'My Recommended Courses',
+                                textScaleFactor:
+                                min(horizontalScale, verticalScale),
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ),
+                            SizedBox(
+                              width: .01,
+                            ),
+                            Icon(
+                              Icons.arrow_circle_right,
+                              size: 30,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        }
-      }),
+              );
+            }
+          }),
     );
   }
 }

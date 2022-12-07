@@ -385,34 +385,34 @@ class _HomeScreenState extends State<HomeScreen> {
                     Divider(
                       thickness: 2,
                     ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PrivacyPolicy()));
-                      },
-                      child: ListTile(
-                        title: Text('Privacy policy'),
-                        leading: Icon(
-                          Icons.privacy_tip,
-                          color: HexColor('691EC8'),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      child: ListTile(
-                        title: Text('About Us'),
-                        leading: Icon(
-                          Icons.info,
-                          color: HexColor('691EC8'),
-                        ),
-                      ),
-                      onTap: () async {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => AboutUs()));
-                      },
-                    ),
+                    // InkWell(
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (context) => PrivacyPolicy()));
+                    //   },
+                    //   child: ListTile(
+                    //     title: Text('Privacy policy'),
+                    //     leading: Icon(
+                    //       Icons.privacy_tip,
+                    //       color: HexColor('691EC8'),
+                    //     ),
+                    //   ),
+                    // ),
+                    // InkWell(
+                    //   child: ListTile(
+                    //     title: Text('About Us'),
+                    //     leading: Icon(
+                    //       Icons.info,
+                    //       color: HexColor('691EC8'),
+                    //     ),
+                    //   ),
+                    //   onTap: () async {
+                    //     Navigator.push(context,
+                    //         MaterialPageRoute(builder: (context) => AboutUs()));
+                    //   },
+                    // ),
                     // InkWell(
                     //   child: ListTile(
                     //     title: Text('Notification Local'),

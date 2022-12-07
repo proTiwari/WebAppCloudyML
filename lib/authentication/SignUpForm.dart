@@ -18,6 +18,8 @@ import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
+import '../homepage.dart';
+
 class SignUpform extends StatefulWidget {
   // final List<ExistingUser> listOfAllExistingUser;
   const SignUpform({
