@@ -7,6 +7,7 @@ import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/module/video_screen.dart';
 import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
+import 'package:cloudyml_app2/store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -380,6 +381,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => HomePage(),
+                          ),
+                        );
+                      },
+                    ),
+                    InkWell(
+                      child: ListTile(
+                        title: Text('Store'),
+                        leading: Icon(
+                          Icons.store,
+                          color: HexColor('691EC8'),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StoreScreen(),
                           ),
                         );
                       },
