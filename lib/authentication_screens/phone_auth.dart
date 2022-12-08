@@ -1507,10 +1507,10 @@ class _LoginPageState extends State<LoginPage> {
     //   }
     // }
 
-    final docSnapshot = await FirebaseFirestore.instance
-        .collection('UserData')
-        .doc()
-        .set({"phone": phoneNumber, "date": DateTime.now()});
+    // final docSnapshot = await FirebaseFirestore.instance
+    //     .collection('UserData')
+    //     .doc()
+    //     .set({"phone": phoneNumber, "date": DateTime.now()});
 
     setState(() {
       loading = true;

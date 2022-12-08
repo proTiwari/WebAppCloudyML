@@ -1052,7 +1052,11 @@ class _HomeState extends State<Home> {
                                                   SizedBox(
                                                     width: 5,
                                                   ),
-                                                  Expanded(
+                                                  Container(
+                                                    width: screenWidth/4.5,
+                                                    height:
+                                                    screenHeight /
+                                                        5.5,
                                                     child: Align(
                                                       alignment:
                                                       Alignment
@@ -1068,7 +1072,7 @@ class _HomeState extends State<Home> {
                                                                 fontFamily:
                                                                 'Medium',
                                                                 fontSize:
-                                                                16,
+                                                                12,
                                                                 fontWeight:
                                                                 FontWeight
                                                                     .w500,
@@ -1118,30 +1122,31 @@ class _HomeState extends State<Home> {
                                                                   1),
                                                             ),
                                                           ),
-                                                          SizedBox(height: 10,),
-                                                          Row(
-                                                            children: [
-                                                              SizedBox(
-                                                                height: 5,
-                                                                width: 150,
-                                                                child:
-                                                                LinearProgressIndicator(
-                                                                  value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
-                                                                  color: HexColor(
-                                                                      "8346E1"),
-                                                                  backgroundColor:
-                                                                  HexColor(
-                                                                      'E3E3E3'),
+                                                          SizedBox(height: 5,),
+                                                          Container(
+                                                            height: 15,
+                                                            child: Row(
+                                                              children: [
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                  width: 150,
+                                                                  child:
+                                                                  LinearProgressIndicator(
+                                                                    value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
+                                                                    color: HexColor(
+                                                                        "8346E1"),
+                                                                    backgroundColor:
+                                                                    HexColor(
+                                                                        'E3E3E3'),
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                              SizedBox(
-                                                                width: 5,
-                                                              ),
-                                                              Expanded(
-                                                                child: Text(
-                                                                  "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),),
-                                                              )
-                                                            ],
+                                                                SizedBox(
+                                                                  width: 5,
+                                                                ),
+                                                                Text(
+                                                                  "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),)
+                                                              ],
+                                                            ),
                                                           ),
                                                         ],
                                                       ),

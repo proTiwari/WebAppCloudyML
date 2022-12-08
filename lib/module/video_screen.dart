@@ -1461,6 +1461,19 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                 '${index + 1}.' +
                                                                 '${firstIndex}' +
                                                                 '.ipynb')
+                                                    ||
+                                                        (futureAssignments[
+                                                        fileIndex]
+                                                            .name
+                                                            .toString() ==
+                                                            courseData.entries
+                                                                .elementAt(
+                                                                index)
+                                                                .key
+                                                                .toString() +
+                                                                '${index + 1}.' +
+                                                                '${firstIndex}' +
+                                                                '.docx')
                                                         ) {
                                                       return Padding(
                                                         padding:
