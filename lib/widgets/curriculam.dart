@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudyml_app2/helpers/file_handler.dart';
 import 'package:cloudyml_app2/widgets/demo_video.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:flutter/material.dart';
@@ -122,12 +121,17 @@ class _CurriculamState extends State<Curriculam> {
                                 style: TextStyle(
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                   fontFamily: 'Medium',
                                 ),
                               ),
                             ),
                           ],
                         ),
+                      ),
+                      Divider(
+                        thickness: 1.5,
+                        color: Color.fromRGBO(122, 98, 222, 1),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,10 +163,10 @@ class _CurriculamState extends State<Curriculam> {
                                           SizedBox(
                                             width: 20,
                                           ),
-                                          Expanded(
-                                            flex: 1, //
-                                            child: Text('${index + 1} : '),
-                                          ),
+                                          // Expanded(
+                                          //   flex: 1, //
+                                          //   child: Text('${index + 1} : '),
+                                          // ),
                                           Expanded(
                                             flex: 10,
                                             child: Text(

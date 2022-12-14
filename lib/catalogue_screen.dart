@@ -73,21 +73,27 @@ class _CatelogueScreenState extends State<CatelogueScreen>
   }
 
   void getCourseName() async {
-    await FirebaseFirestore.instance
-        .collection('courses')
-        .doc(courseId)
-        .get()
-        .then((value) {
-      setState(() {
-        courseMap = value.data()!;
-        coursePrice = value.data()!['Course Price'];
+
+    try{
+      await FirebaseFirestore.instance
+          .collection('courses')
+          .doc(courseId)
+          .get()
+          .then((value) {
+        setState(() {
+          courseMap = value.data()!;
+          coursePrice = value.data()!['Course Price'];
+        });
       });
-    });
+    }catch(e){
+      print('catalogue screen ${e.toString()} ');
+    }
+
   }
 
   void _scrollListener() {
     RenderBox? box =
-        _positionKey!.currentContext?.findRenderObject() as RenderBox;
+    _positionKey!.currentContext?.findRenderObject() as RenderBox;
     Offset position = box.localToGlobal(Offset.zero); //this is global position
     double pixels = position.dy;
     CatelogueScreen._closeBottomSheetAt.value = pixels;
@@ -149,197 +155,197 @@ class _CatelogueScreenState extends State<CatelogueScreen>
           SizedBox(height: 10),
           Expanded(
               child: ListView.builder(
-            controller: _scrollController,
-            itemCount: course.length,
-            itemBuilder: (BuildContext context, index) {
-              if (course[index].courseName == "null") {
-                return Container();
-              }
-              if (courseId == course[index].courseDocumentId) {
-                CatelogueScreen.coursePrice.value = course[index].coursePrice;
-                // CatelogueScreen.map!.value = map;
-                return Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 00.0, right: 18, left: 18, bottom: 10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Column(
+                controller: _scrollController,
+                itemCount: course.length,
+                itemBuilder: (BuildContext context, index) {
+                  if (course[index].courseName == "null") {
+                    return Container();
+                  }
+                  if (courseId == course[index].courseDocumentId) {
+                    CatelogueScreen.coursePrice.value = course[index].coursePrice;
+                    // CatelogueScreen.map!.value = map;
+                    return Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 00.0, right: 18, left: 18, bottom: 10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SingleChildScrollView(
+                                child: Column(
                                   children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(28),
-                                      child: Container(
-                                        height:
+                                    Column(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(28),
+                                          child: Container(
+                                            height:
                                             MediaQuery.of(context).size.height *
                                                 0.3,
-                                        width:
+                                            width:
                                             MediaQuery.of(context).size.height *
                                                 0.6,
-                                        child: CachedNetworkImage(
-                                          imageUrl:
+                                            child: CachedNetworkImage(
+                                              imageUrl:
                                               course[index].courseImageUrl,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) =>
-                                              CircularProgressIndicator(),
-                                          errorWidget: (context, url, error) =>
-                                              Icon(Icons.error),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.9,
-                                          child: Text(
-                                            course[index].courseName,
-                                            style: TextStyle(
-                                                fontFamily: 'Bold',
-                                                color: Colors.black,
-                                                fontSize: 20),
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) =>
+                                                  Center(child: CircularProgressIndicator()),
+                                              errorWidget: (context, url, error) =>
+                                                  Icon(Icons.error),
+                                            ),
                                           ),
                                         ),
                                         SizedBox(
-                                          height: 10,
+                                          height: 20,
                                         ),
-                                        Container(
-                                          width: MediaQuery.of(context)
+                                        Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              0.9,
-                                          child: Text(
-                                            course[index].courseDescription,
-                                            style: TextStyle(
-                                                fontFamily: 'Regular',
-                                                color: Colors.black,
-                                                fontSize: 14),
-                                          ),
+                                                  0.9,
+                                              child: Text(
+                                                course[index].courseName,
+                                                style: TextStyle(
+                                                    fontFamily: 'Bold',
+                                                    color: Colors.black,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  0.9,
+                                              child: Text(
+                                                course[index].courseDescription,
+                                                style: TextStyle(
+                                                    fontFamily: 'Regular',
+                                                    color: Colors.black,
+                                                    fontSize: 14),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 45,
-                          ),
-                          includes(context),
-                          Container(
-                            child: Curriculam(
-                              courseDetail: course[index],
-                            ),
-                          ),
-                          Container(
-                            key: _positionKey,
-                          ),
-                          Ribbon(
-                            nearLength: 1,
-                            farLength: .5,
-                            title: ' ',
-                            titleStyle: TextStyle(
-                                color: Colors.black,
-                                // Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                            color: Color.fromARGB(255, 11, 139, 244),
-                            location: RibbonLocation.topStart,
-                            child: Container(
-                              //  key:key,
-                              // width: width * .9,
-                              // height: height * .5,
-                              color: Color.fromARGB(255, 24, 4, 104),
-                              child: Padding(
-                                padding: const EdgeInsets.all(40.0),
-                                child: Column(
-                                  //  key:Gkey,
-                                  children: [
-                                    SizedBox(
-                                      height: height * .03,
-                                    ),
-                                    Text(
-                                      'Complete Course Fee',
-                                      style: TextStyle(
-                                          fontFamily: 'Bold',
-                                          fontSize: 21,
-                                          color: Colors.white),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      '( Everything with Lifetime Access )',
-                                      style: TextStyle(
-                                          fontFamily: 'Bold',
-                                          fontSize: 11,
-                                          color: Colors.white),
-                                    ),
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    Text(
-                                      course[index].coursePrice,
-                                      style: TextStyle(
-                                          fontFamily: 'Medium',
-                                          fontSize: 30,
-                                          color: Colors.white),
-                                    ),
-                                    SizedBox(height: 35),
-                                    InkWell(
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                          context, '/paymentscreen'
-                                        );
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(30),
-                                            color: Color.fromARGB(
-                                                255, 119, 191, 249),
-                                            gradient: gradient),
-                                        height: height * .08,
-                                        width: width * .6,
-                                        child: Center(
-                                          child: Text(
-                                            'Buy Now',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                              ),
+                              SizedBox(
+                                height: 45,
+                              ),
+                              includes(context),
+                              Container(
+                                child: Curriculam(
+                                  courseDetail: course[index],
                                 ),
                               ),
-                            ),
+                              Container(
+                                key: _positionKey,
+                              ),
+                              Ribbon(
+                                nearLength: 1,
+                                farLength: .5,
+                                title: ' ',
+                                titleStyle: TextStyle(
+                                    color: Colors.black,
+                                    // Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                                color: Color.fromARGB(255, 11, 139, 244),
+                                location: RibbonLocation.topStart,
+                                child: Container(
+                                  //  key:key,
+                                  // width: width * .9,
+                                  // height: height * .5,
+                                  color: Color.fromARGB(255, 24, 4, 104),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(40.0),
+                                    child: Column(
+                                      //  key:Gkey,
+                                      children: [
+                                        SizedBox(
+                                          height: height * .03,
+                                        ),
+                                        Text(
+                                          'Complete Course Fee',
+                                          style: TextStyle(
+                                              fontFamily: 'Bold',
+                                              fontSize: 21,
+                                              color: Colors.white),
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                          '( Everything with Lifetime Access )',
+                                          style: TextStyle(
+                                              fontFamily: 'Bold',
+                                              fontSize: 11,
+                                              color: Colors.white),
+                                        ),
+                                        SizedBox(
+                                          height: 30,
+                                        ),
+                                        Text(
+                                          course[index].coursePrice,
+                                          style: TextStyle(
+                                              fontFamily: 'Medium',
+                                              fontSize: 30,
+                                              color: Colors.white),
+                                        ),
+                                        SizedBox(height: 35),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                                context, '/paymentscreen'
+                                            );
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                BorderRadius.circular(30),
+                                                color: Color.fromARGB(
+                                                    255, 119, 191, 249),
+                                                gradient: gradient),
+                                            height: height * .08,
+                                            width: width * .6,
+                                            child: Center(
+                                              child: Text(
+                                                'Buy Now',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              } else {
-                return Container();
-              }
-            },
-          ))
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              ))
         ],
       ),
     );

@@ -184,18 +184,41 @@ Column includes(BuildContext context) {
         alignment: Alignment.topLeft,
         child: Padding(
           padding: const EdgeInsets.only(left: 10),
-          child: Text(
-            'Course Features!',
-            // textAlign: TextAlign.left,
-            textScaleFactor: min(horizontalScale, verticalScale),
-            style: TextStyle(
-                color: Color.fromRGBO(48, 48, 49, 1),
-                fontFamily: 'Poppins',
-                fontSize: 20,
-                letterSpacing:
-                    0 /*percentages not used in flutter. defaulting to zero*/,
-                fontWeight: FontWeight.bold,
-                height: 1),
+          child: Container(
+            padding: const EdgeInsets.only(left: 10),
+            width: 378 * horizontalScale,
+            height: 38 * verticalScale,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+                bottomLeft: Radius.circular(8),
+                bottomRight: Radius.circular(8),
+              ),
+              boxShadow: [
+                BoxShadow(
+                    color: Color.fromRGBO(31, 31, 31, 0.25),
+                    offset: Offset(0, 0),
+                    blurRadius: 5)
+              ],
+              color: Color.fromRGBO(122, 98, 222, 1),
+            ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Course Features!',
+                // textAlign: TextAlign.left,
+                textScaleFactor: min(horizontalScale, verticalScale),
+                style: TextStyle(
+                    color: Color.fromRGBO(255, 255, 255, 1),
+                    fontFamily: 'Poppins',
+                    fontSize: 20,
+                    letterSpacing:
+                        0 /*percentages not used in flutter. defaulting to zero*/,
+                    fontWeight: FontWeight.bold,
+                    height: 1),
+              ),
+            ),
           ),
         ),
       ),

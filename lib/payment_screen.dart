@@ -6,6 +6,7 @@ import 'package:cloudyml_app2/widgets/coupon_code.dart';
 import 'package:cloudyml_app2/widgets/payment_portal.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_line/dotted_line.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'models/offer_model.dart';
 
@@ -59,6 +60,31 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
   bool isMinAmountCheckerPressed = false;
 
   bool isOutStandingAmountCheckerPressed = false;
+
+  var gstAmount;
+  var totalAmount;
+
+  getAmounts() {
+    try{
+      if (widget.map!['gst'] != null) {
+        gstAmount = int.parse('${widget.map!['gst']}') * 0.01 * int.parse('${widget.map!['Course Price']}');
+        print('this is gst ${gstAmount.round()}');
+
+        totalAmount = (int.parse('${widget.map!['gst']}') * 0.01 * int.parse('${widget.map!['Course Price']}')) + int.parse('${widget.map!['Course Price']}');
+        print('this is totalAmount ${totalAmount.round()}');
+
+      }
+    } catch(e){
+      Fluttertoast.showToast(msg: e.toString());
+      print('amount error is here ${e.toString()}');
+    }
+  }
+
+  @override
+  void initState () {
+    super.initState();
+    getAmounts();
+  }
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -434,6 +460,42 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                           ),
                           Expanded(
                             child: Row(
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: Text(
+                                    'GST',
+                                    style: TextStyle(
+                                      color: Color.fromARGB(223, 48, 48, 49),
+                                      fontFamily: 'Poppins',
+                                      fontSize: 18,
+                                      letterSpacing:
+                                      0 /*percentages not used in flutter. defaulting to zero*/,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  // flex: 2,
+                                  child: Text(
+                                    widget.map!['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
+                                    style: TextStyle(
+                                        color: Color.fromARGB(223, 48, 48, 49),
+                                        fontFamily: 'Poppins',
+                                        fontSize: 18,
+                                        letterSpacing:
+                                        0 /*percentages not used in flutter. defaulting to zero*/,
+                                        fontWeight: FontWeight.w500,
+                                        height: 1),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
@@ -490,7 +552,9 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                 Expanded(
                                   child: Text(
                                     NoCouponApplied
-                                        ? '${widget.map!["Amount Payable"]}'
+                                        ?
+                                    widget.map!['gst'] != null ? '${totalAmount.round().toString()}' :
+                                    '${widget.map!["Amount Payable"]}'
                                         : finalAmountToDisplay,
                                     style: TextStyle(
                                         color: Color.fromARGB(223, 48, 48, 49),

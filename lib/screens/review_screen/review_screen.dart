@@ -483,7 +483,7 @@ class _Review1State extends State<ReviewsScreen> {
                                                                     fit: BoxFit.fill,
                                                                     placeholder: (context,
                                                                         url) =>
-                                                                        CircularProgressIndicator(),
+                                                                        Center(child: CircularProgressIndicator()),
                                                                   ),
                                                                 ),
                                                               ),
@@ -492,7 +492,7 @@ class _Review1State extends State<ReviewsScreen> {
                                             },
                                             child: CachedNetworkImage(
                                               placeholder: (context, url) =>
-                                                  CircularProgressIndicator(),
+                                                  Center(child: CircularProgressIndicator()),
                                               errorWidget: (context, url, error) =>
                                                   Icon(Icons.error),
                                               imageUrl: file.url,

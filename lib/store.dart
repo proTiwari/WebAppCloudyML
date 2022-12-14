@@ -187,6 +187,7 @@ class _StoreScreenState extends State<StoreScreen> {
                       );
                     },
                   ),
+                  //navigate to store
                   InkWell(
                     child: ListTile(
                       title: Text('Store'),
@@ -196,31 +197,22 @@ class _StoreScreenState extends State<StoreScreen> {
                       ),
                     ),
                     onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => StoreScreen(),
-                        ),
-                      );
+                      Navigator.pushNamed(context, '/Store');
                     },
                   ),
-                  // InkWell(
-                  //   child: ListTile(
-                  //     title: Text('Messages'),
-                  //     leading: Icon(
-                  //       Icons.chat_bubble_outline_sharp,
-                  //       color: HexColor('691EC8'),
-                  //     ),
-                  //   ),
-                  //   onTap: () {
-                  //     Navigator.pushReplacement(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => GroupsList(),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
+                  //navigate to messages
+                  InkWell(
+                    child: ListTile(
+                      title: Text('Chat with TA'),
+                      leading: Icon(
+                        Icons.chat_bubble_outline_sharp,
+                        color: HexColor('691EC8'),
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/Messages');
+                    },
+                  ),
                   InkWell(
                     child: ListTile(
                       title: Text(''
@@ -231,10 +223,7 @@ class _StoreScreenState extends State<StoreScreen> {
                       ),
                     ),
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyAccountPage()));
+                      Navigator.pushNamed(context, '/myAccount');
                     },
                   ),
                   InkWell(
@@ -246,22 +235,12 @@ class _StoreScreenState extends State<StoreScreen> {
                       ),
                     ),
                     onTap: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
-                        ),
-                      );
+                      Navigator.pushNamed(context, '/myCourses');
                     },
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PaymentHistory(),
-                        ),
-                      );
+                      Navigator.pushNamed(context, '/paymentHistory');
                     },
                     child: ListTile(
                       title: Text('Payment History'),
@@ -273,33 +252,6 @@ class _StoreScreenState extends State<StoreScreen> {
                   ),
                   Divider(
                     thickness: 2,
-                  ),
-                  InkWell(
-                    child: ListTile(
-                      title: Text('Reviews'),
-                      leading: Icon(
-                        Icons.reviews_rounded,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () async {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ReviewsScreen()));
-                    },
-                  ),
-                  InkWell(
-                    onTap: () {
-                      logOut(context);
-                    },
-                    child: ListTile(
-                      title: Text('LogOut'),
-                      leading: Icon(
-                        Icons.logout_rounded,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
                   ),
                   // InkWell(
                   //   onTap: () {
@@ -359,6 +311,30 @@ class _StoreScreenState extends State<StoreScreen> {
                   //     // );
                   //   },
                   // ),
+                  InkWell(
+                    child: ListTile(
+                      title: Text('Reviews'),
+                      leading: Icon(
+                        Icons.reviews_rounded,
+                        color: HexColor('691EC8'),
+                      ),
+                    ),
+                    onTap: () async {
+                      Navigator.pushNamed(context, '/reviews');
+                    },
+                  ),
+                  InkWell(
+                    onTap: () {
+                      logOut(context);
+                    },
+                    child: ListTile(
+                      title: Text('LogOut'),
+                      leading: Icon(
+                        Icons.logout_rounded,
+                        color: HexColor('691EC8'),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               Positioned(
@@ -390,6 +366,7 @@ class _StoreScreenState extends State<StoreScreen> {
               child: Column(
                 children: [
                   Container(
+                    width: screenWidth,
                     height: 45,
                     color: HexColor("440F87"),
                     child: Row(
@@ -417,83 +394,89 @@ class _StoreScreenState extends State<StoreScreen> {
                         SizedBox(
                           width: horizontalScale * 25,
                         ),
-                        SizedBox(
-                          height: 30,
-                          width: screenWidth / 3,
-                          child: TextField(
-                            style: TextStyle(
-                                color: HexColor("A7A7A7"), fontSize: 12),
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.all(5.0),
-                                hintText: "Search Courses",
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white, width: 1)),
-                                disabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white, width: 1)),
-                                hintStyle: TextStyle(
-                                    color: HexColor("A7A7A7"), fontSize: 12),
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white, width: 1)),
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white, width: 1)),
-                                prefixIcon: IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.search_outlined,
-                                      size: 14,
-                                      color: Colors.white,
-                                    ))),
-                          ),
-                        )
+                        // SizedBox(
+                        //   height: 30,
+                        //   width: screenWidth / 3,
+                        //   child: TextField(
+                        //     style: TextStyle(
+                        //         color: HexColor("A7A7A7"), fontSize: 12),
+                        //     decoration: InputDecoration(
+                        //         contentPadding: EdgeInsets.all(5.0),
+                        //         hintText: "Search Courses",
+                        //         focusedBorder: OutlineInputBorder(
+                        //             borderSide: BorderSide(
+                        //                 color: Colors.white, width: 1)),
+                        //         disabledBorder: OutlineInputBorder(
+                        //             borderSide: BorderSide(
+                        //                 color: Colors.white, width: 1)),
+                        //         hintStyle: TextStyle(
+                        //             color: HexColor("A7A7A7"), fontSize: 12),
+                        //         border: OutlineInputBorder(
+                        //             borderSide: BorderSide(
+                        //                 color: Colors.white, width: 1)),
+                        //         enabledBorder: OutlineInputBorder(
+                        //             borderSide: BorderSide(
+                        //                 color: Colors.white, width: 1)),
+                        //         prefixIcon: IconButton(
+                        //             onPressed: () {},
+                        //             icon: Icon(
+                        //               Icons.search_outlined,
+                        //               size: 14,
+                        //               color: Colors.white,
+                        //             ))),
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
                   Container(
+                    width: screenWidth,
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(left: 70, right: 60, top: 20),
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                    "Explore our hands on",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'SemiBold',
-                                      color: HexColor("000000"),
-                                      fontSize: 30,)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 60.0, top: 20, bottom: 20),
+                          child: Column(
+                            children: [
+                              Container(
+                                width: horizontalScale * 200,
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                      "Explore our hands on",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'SemiBold',
+                                        color: HexColor("000000"),
+                                        fontSize: 26,)
+                                  ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 60, right: 60, bottom: 20),
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                    "learning courses 🔥🔥🔥",
-                                    style: TextStyle(
-                                      color: HexColor("000000"),
-                                      fontFamily: 'SemiBold',
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 26,)
+                              Container(
+                                width: horizontalScale * 200,
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                      "learning courses 🔥🔥🔥",
+                                      style: TextStyle(
+                                        color: HexColor("000000"),
+                                        fontFamily: 'SemiBold',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 24,)
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                        Spacer(),
+                        // Container(width: horizontalScale * ,),
                         Align(
                           alignment: Alignment.bottomRight,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 70.0),
+                          child: Container(
+                            padding: EdgeInsets.only(right: 60),
+                            width: horizontalScale * 180,
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
                                     "Our Courses comes with Lifetime access, Live",
@@ -518,200 +501,196 @@ class _StoreScreenState extends State<StoreScreen> {
                     padding: const EdgeInsets.only(left: 60.0, right: 60),
                     child: Divider(thickness: 2,),
                   ),
-                  Padding(
+                  Container(
                     padding: const EdgeInsets.only(right: 60.0, left: 60.0),
-                    child: Container(
-                      height: screenHeight,
-                      child: GridView.builder(
-                          gridDelegate:
-                          SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                          ),
-                          scrollDirection: Axis.vertical,
-                          itemCount: course.length,
-                          itemBuilder: (BuildContext context, index) {
-                            if (course[index].courseName == "null") {
-                              return Container(
-                                child: Text('This is a container'),
-                              );
-                            }
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  courseId =
-                                      course[index].courseDocumentId;
-                                });
-                                print(courseId);
-                                if (course[index].isItComboCourse) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ComboStore(
-                                        courses: course[index].courses,
-                                      ),
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    child: GridView.builder(
+                        gridDelegate:
+                        SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: constraints.maxWidth >= 650 ? 3 : 2,
+                        ),
+                        scrollDirection: Axis.vertical,
+                        itemCount: course.length,
+                        itemBuilder: (BuildContext context, index) {
+                          if (course[index].courseName == "null") {
+                            return Container(
+                              child: Text('This is a container'),
+                            );
+                          }
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                courseId =
+                                    course[index].courseDocumentId;
+                              });
+                              print(courseId);
+                              if (course[index].isItComboCourse) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ComboStore(
+                                      courses: course[index].courses,
                                     ),
-                                  );
-                                } else {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                      const CatelogueScreen(),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                    BorderRadius.circular(15),
-                                    border: Border.all(
-                                        width: 0.5,
-                                        color: HexColor("440F87")),
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: screenWidth / 3.5,
-                                        height: screenHeight / 6,
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.only(
-                                              topLeft:
-                                              Radius.circular(15),
-                                              topRight:
-                                              Radius.circular(15)),
-                                          child: Image.network(
-                                            course[index].courseImageUrl,
-                                            fit: BoxFit.fill,
-                                          ),
+                                );
+                              } else {
+                                Navigator.pushNamed(context, '/catalogue');
+                              }
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Container(
+                                width: screenWidth,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                  BorderRadius.circular(15),
+                                  border: Border.all(
+                                      width: 0.5,
+                                      color: HexColor("440F87")),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: screenWidth / 3.5,
+                                      height: screenHeight / 6,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft:
+                                            Radius.circular(15),
+                                            topRight:
+                                            Radius.circular(15)),
+                                        child: Image.network(
+                                          course[index].courseImageUrl,
+                                          fit: BoxFit.fill,
                                         ),
                                       ),
-                                      Container(
-                                        height: 15,
-                                        color: HexColor('EEE1FF'),
-                                        child: Row(
+                                    ),
+                                    Container(
+                                      height: 15,
+                                      color: HexColor('EEE1FF'),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(width: 8,),
+                                          Image.asset(
+                                            'assets/Rating.png',
+                                            fit: BoxFit.fill,
+                                            height: 10,
+                                            width: 50,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      // height: verticalScale * 130,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Column(
                                           children: [
-                                            SizedBox(width: 8,),
-                                            Image.asset(
-                                              'assets/Rating.png',
-                                              fit: BoxFit.fill,
-                                              height: 10,
-                                              width: 50,
+                                            Align(
+                                              alignment:
+                                              Alignment.topLeft,
+                                              child: Text(
+                                                course[index]
+                                                    .courseName,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                    color: Colors
+                                                        .black,
+                                                    fontFamily:
+                                                    'Medium',
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                    FontWeight
+                                                        .w500),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: verticalScale * 5,
+                                            ),
+                                            Align(
+                                              alignment:
+                                              Alignment.topLeft,
+                                              child: Text(
+                                                "- ${course[index].courseLanguage} Language",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                    FontWeight
+                                                        .bold,
+                                                    color: Colors
+                                                        .black,
+                                                    fontSize: 8),
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment:
+                                              Alignment.topLeft,
+                                              child: Text(
+                                                "- ${course[index].numOfVideos} Videos",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                    FontWeight
+                                                        .bold,
+                                                    color: Colors
+                                                        .black,
+                                                    fontSize: 8),
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment:
+                                              Alignment.topLeft,
+                                              child: Text(
+                                                "- Lifetime Access",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                    FontWeight
+                                                        .bold,
+                                                    color: Colors
+                                                        .black,
+                                                    fontSize: 8),
+                                              ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                      Container(
-                                        height: screenHeight / 6.5,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Column(
-                                            children: [
-                                              Align(
-                                                alignment:
-                                                Alignment.topLeft,
-                                                child: Text(
-                                                  course[index]
-                                                      .courseName,
-                                                  style: TextStyle(
-                                                      color: Colors
-                                                          .black,
-                                                      fontFamily:
-                                                      'Medium',
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .w500,
-                                                      height: 1),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Align(
-                                                alignment:
-                                                Alignment.topLeft,
-                                                child: Text(
-                                                  "- ${course[index].courseLanguage} Language",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .bold,
-                                                      color: Colors
-                                                          .black,
-                                                      fontSize: 10),
-                                                ),
-                                              ),
-                                              Align(
-                                                alignment:
-                                                Alignment.topLeft,
-                                                child: Text(
-                                                  "- ${course[index].numOfVideos} Videos",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .bold,
-                                                      color: Colors
-                                                          .black,
-                                                      fontSize: 10),
-                                                ),
-                                              ),
-                                              Align(
-                                                alignment:
-                                                Alignment.topLeft,
-                                                child: Text(
-                                                  "- Lifetime Access",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .bold,
-                                                      color: Colors
-                                                          .black,
-                                                      fontSize: 10),
-                                                ),
-                                              ),
-                                            ],
+                                    ),
+                                    Container(
+                                      width: horizontalScale * 50,
+                                      height: 20,
+                                      child: ElevatedButton(
+                                          onPressed: () {},
+                                          style: ElevatedButton
+                                              .styleFrom(
+                                            backgroundColor:
+                                            HexColor(
+                                                "8346E1"),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    5)),
                                           ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: screenWidth / 4.5,
-                                        child: ElevatedButton(
-                                            onPressed: () {},
-                                            style: ElevatedButton
-                                                .styleFrom(
-                                              backgroundColor:
-                                              HexColor(
-                                                  "8346E1"),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(
-                                                      5)),
-                                            ),
-                                            child: Text(
-                                              "Enroll Now!",
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  color:
-                                                  Colors.white,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold),
-                                            )),
-                                      ),
-                                    ],
-                                  ),
+                                          child: Text(
+                                            "Enroll Now!",
+                                            style: TextStyle(
+                                                fontSize: 10,
+                                                color:
+                                                Colors.white,
+                                                fontWeight:
+                                                FontWeight
+                                                    .bold),
+                                          )),
+                                    ),
+                                    Spacer(),
+                                  ],
                                 ),
                               ),
-                            );
-                          }),
-                    ),
+                            ),
+                          );
+                        }),
                   ),
                 ],
               ),
@@ -839,12 +818,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                           ),
                                         );
                                       } else {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                              const CatelogueScreen()),
-                                        );
+                                        Navigator.pushNamed(context, '/catalogue');
                                       }
                                     },
                                     child: Container(

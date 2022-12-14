@@ -7,6 +7,8 @@ import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/models/existing_user.dart';
 import 'package:cloudyml_app2/my_Courses.dart';
+import 'package:cloudyml_app2/payments_history.dart';
+import 'package:cloudyml_app2/store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +41,7 @@ class Authenticate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (_auth.currentUser != null) {
-      return Home();
+      return StoreScreen();
     } else {
       return LoginPage();
     }

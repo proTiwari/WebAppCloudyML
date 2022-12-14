@@ -8,15 +8,20 @@ import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/Providers/chat_screen_provider.dart';
 import 'package:cloudyml_app2/Services/database_service.dart';
 import 'package:cloudyml_app2/authentication/firebase_auth.dart';
+import 'package:cloudyml_app2/catalogue_screen.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/models/video_details.dart';
 import 'package:cloudyml_app2/my_Courses.dart';
 import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:cloudyml_app2/payments_history.dart';
+import 'package:cloudyml_app2/screens/assignment_tab_screen.dart';
 import 'package:cloudyml_app2/screens/chat_screen.dart';
 import 'package:cloudyml_app2/screens/exlusive_offer/seasons_offer_screen.dart';
+import 'package:cloudyml_app2/screens/groups_list.dart';
+import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
 import 'package:cloudyml_app2/screens/splash.dart';
 import 'package:cloudyml_app2/services/local_notificationservice.dart';
+import 'package:cloudyml_app2/store.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +31,8 @@ import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:renderer_switcher/renderer_switcher.dart';
 import 'globals.dart';
+import 'homepage.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 
 
@@ -71,6 +78,7 @@ Future<void> main() async {
   await Hive.initFlutter();
   await Hive.openBox('myBox');
   await Hive.openBox("NotificationBox");
+  setPathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
 
 
@@ -321,6 +329,16 @@ class _MyAppState extends State<MyApp> {
               '/': (context) => splash(),
               "/authenticate": (context) =>
                   Authenticate(),
+              "/myCourses": (context) =>
+                  HomeScreen(),
+              '/Store': (context) => StoreScreen(),
+              '/Messages': (context) => GroupsList(),
+              '/myAccount': (context) => MyAccountPage(),
+              '/reviewAssignments': (context) => Assignments(),
+              '/paymentHistory': (context) => PaymentHistory(),
+              '/reviews': (context) => ReviewsScreen(),
+              '/catalogue': (context) => CatelogueScreen(),
+              '/home': (context) => Home(),
             },
           ),
         ),

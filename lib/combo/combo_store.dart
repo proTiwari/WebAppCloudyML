@@ -171,13 +171,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                                 setState(() {
                                   courseId = course[index].courseDocumentId;
                                 });
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CatelogueScreen(),
-                                  ),
-                                );
+                                Navigator.pushNamed(context, '/catalogue');
                               },
                               child: Container(
                                 width: 354 * horizontalScale,
