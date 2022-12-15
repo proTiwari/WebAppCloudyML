@@ -580,14 +580,17 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                     child: PaymentButton(
                       amountString: (
                           double.parse(
-                              NoCouponApplied
-                                  ? widget.map!['Amount_Payablepay']
+                              NoCouponApplied ?
+                              widget.map!['gst'] != null ? '${totalAmount.round().toString()}' :
+                                   widget.map!['Amount_Payablepay']
                                   : finalAmountToPay
                           ) *
                               100)
                           .toString(),
                       buttonText: NoCouponApplied
-                          ? 'Buy Now for ${widget.map!['Course Price']}'
+                          ?
+                      widget.map!['gst'] != null ? 'Buy Now for ${totalAmount.round().toString()}' :
+                      'Buy Now for ${widget.map!['Course Price']}'
                           : 'Buy Now for ${finalAmountToDisplay}',
                       buttonTextForCode: "Buy Now for $finalAmountToDisplay",
                       changeState: () {
