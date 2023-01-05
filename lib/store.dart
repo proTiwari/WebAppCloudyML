@@ -12,6 +12,7 @@ import 'package:cloudyml_app2/screens/assignment_tab_screen.dart';
 import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
@@ -43,7 +44,6 @@ class _StoreScreenState extends State<StoreScreen> {
   Widget build(BuildContext context) {
 
     List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
-    final userProvider = Provider.of<UserProvider>(context);
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     var verticalScale = screenHeight / mockUpHeight;
@@ -52,313 +52,7 @@ class _StoreScreenState extends State<StoreScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: Drawer(
-        child: Container(
-          child: Stack(
-            children: [
-              ListView(
-                padding: EdgeInsets.only(top: 0),
-                children: [
-                  Stack(
-                    children: [
-                      Container(
-                        child: Image.network(
-                            "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FRectangle%20133.png?alt=media&token=1c822b64-1f79-4654-9ebd-2bd0682c8e0f"),
-                      ),
-                      UserAccountsDrawerHeader(
-                        accountName: Text(
-                          userProvider.userModel?.name.toString() ??
-                              'Enter name',
-                        ),
-                        accountEmail: Text(
-                          userProvider.userModel?.email.toString() == ''
-                              ? userProvider.userModel?.mobile.toString() ?? ''
-                              : userProvider.userModel?.email.toString() ??
-                              'Enter email',
-                        ),
-                        currentAccountPicture: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MyAccountPage()));
-                          },
-                          child: CircleAvatar(
-                            foregroundColor: Colors.black,
-                            //foregroundImage: NetworkImage('https://stratosphere.co.in/img/user.jpg'),
-                            foregroundImage: NetworkImage(
-                                userProvider.userModel?.image ?? ''),
-                            backgroundColor: Colors.transparent,
-                            backgroundImage: CachedNetworkImageProvider(
-                              'https://stratosphere.co.in/img/user.jpg',
-                            ),
-                          ),
-                        ),
-                        decoration: BoxDecoration(color: Colors.transparent),
-                      ),
-                    ],
-                  ),
-                  // Container(
-                  //     height: height * 0.27,
-                  //     //decoration: BoxDecoration(gradient: gradient),
-                  //     color: HexColor('7B62DF'),
-                  //     child: StreamBuilder<QuerySnapshot>(
-                  //       stream: FirebaseFirestore.instance
-                  //           .collection("Users")
-                  //           .snapshots(),
-                  //       builder: (BuildContext context,
-                  //           AsyncSnapshot<QuerySnapshot> snapshot) {
-                  //         if (!snapshot.hasData) return const SizedBox.shrink();
-                  //         return ListView.builder(
-                  //           itemCount: snapshot.data!.docs.length,
-                  //           itemBuilder: (BuildContext context, index) {
-                  //             DocumentSnapshot document = snapshot.data!.docs[index];
-                  //             Map<String, dynamic> map = snapshot.data!.docs[index]
-                  //                 .data() as Map<String, dynamic>;
-                  //             if (map["id"].toString() ==
-                  //                 FirebaseAuth.instance.currentUser!.uid) {
-                  //               return Padding(
-                  //                 padding: EdgeInsets.all(width * 0.05),
-                  //                 child: Container(
-                  //                   child: Column(
-                  //                     crossAxisAlignment: CrossAxisAlignment.start,
-                  //                     mainAxisSize: MainAxisSize.min,
-                  //                     children: [
-                  //                       CircleAvatar(
-                  //                         radius: width * 0.089,
-                  //                         backgroundImage:
-                  //                             AssetImage('assets/user.jpg'),
-                  //                       ),
-                  //                       SizedBox(
-                  //                         height: height * 0.01,
-                  //                       ),
-                  //                       map['name'] != null
-                  //                           ? Text(
-                  //                               map['name'],
-                  //                               style: TextStyle(
-                  //                                   color: Colors.white,
-                  //                                   fontWeight: FontWeight.w500,
-                  //                                   fontSize: width * 0.049),
-                  //                             )
-                  //                           : Text(
-                  //                               map['mobilenumber'],
-                  //                               style: TextStyle(
-                  //                                   color: Colors.white,
-                  //                                   fontWeight: FontWeight.w500,
-                  //                                   fontSize: width * 0.049),
-                  //                             ),
-                  //                       SizedBox(
-                  //                         height: height * 0.007,
-                  //                       ),
-                  //                       map['email'] != null
-                  //                           ? Text(
-                  //                               map['email'],
-                  //                               style: TextStyle(
-                  //                                   color: Colors.white,
-                  //                                   fontSize: width * 0.038),
-                  //                             )
-                  //                           : Container(),
-                  //                     ],
-                  //                   ),
-                  //                 ),
-                  //               );
-                  //             } else {
-                  //               return Container();
-                  //             }
-                  //           },
-                  //         );
-                  //       },
-                  //     )
-                  // ),
-                  InkWell(
-                    child: ListTile(
-                      title: Text('Home'),
-                      leading: Icon(
-                        Icons.home,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(),
-                        ),
-                      );
-                    },
-                  ),
-                  //navigate to store
-                  InkWell(
-                    child: ListTile(
-                      title: Text('Store'),
-                      leading: Icon(
-                        Icons.store,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/Store');
-                    },
-                  ),
-                  //navigate to messages
-                  InkWell(
-                    child: ListTile(
-                      title: Text('Chat with TA'),
-                      leading: Icon(
-                        Icons.chat_bubble_outline_sharp,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/Messages');
-                    },
-                  ),
-                  InkWell(
-                    child: ListTile(
-                      title: Text(''
-                          'My Account'),
-                      leading: Icon(
-                        Icons.person,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/myAccount');
-                    },
-                  ),
-                  InkWell(
-                    child: ListTile(
-                      title: Text('My Courses'),
-                      leading: Icon(
-                        Icons.assignment,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () async {
-                      Navigator.pushNamed(context, '/myCourses');
-                    },
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/paymentHistory');
-                    },
-                    child: ListTile(
-                      title: Text('Payment History'),
-                      leading: Icon(
-                        Icons.payment_rounded,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                  ),
-                  Divider(
-                    thickness: 2,
-                  ),
-                  // InkWell(
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) => PrivacyPolicy()));
-                  //   },
-                  //   child: ListTile(
-                  //     title: Text('Privacy policy'),
-                  //     leading: Icon(
-                  //       Icons.privacy_tip,
-                  //       color: HexColor('691EC8'),
-                  //     ),
-                  //   ),
-                  // ),
-                  // InkWell(
-                  //   child: ListTile(
-                  //     title: Text('About Us'),
-                  //     leading: Icon(
-                  //       Icons.info,
-                  //       color: HexColor('691EC8'),
-                  //     ),
-                  //   ),
-                  //   onTap: () async {
-                  //     Navigator.push(context,
-                  //         MaterialPageRoute(builder: (context) => AboutUs()));
-                  //   },
-                  // ),
-                  // InkWell(
-                  //   child: ListTile(
-                  //     title: Text('Notification Local'),
-                  //     leading: Icon(
-                  //       Icons.book,
-                  //       color: HexColor('6153D3'),
-                  //     ),
-                  //   ),
-                  //   ),
-                  //   onTap: () async {
-                  //
-                  //     await AwesomeNotifications().createNotification(
-                  //         content:NotificationContent(
-                  //             id:  1234,
-                  //             channelKey: 'image',
-                  //           title: 'Welcome to CloudyML',
-                  //           body: 'It\'s great to have you on CloudyML',
-                  //           bigPicture: 'asset://assets/HomeImage.png',
-                  //           largeIcon: 'asset://assets/logo2.png',
-                  //           notificationLayout: NotificationLayout.BigPicture,
-                  //           displayOnForeground: true
-                  //         )
-                  //     );
-                  //     // LocalNotificationService.showNotificationfromApp(
-                  //     //   title: 'Welcome to CloudyML',
-                  //     //   body: 'It\'s great to have you on CloudyML',
-                  //     //   payload: 'account'
-                  //     // );
-                  //   },
-                  // ),
-                  InkWell(
-                    child: ListTile(
-                      title: Text('Reviews'),
-                      leading: Icon(
-                        Icons.reviews_rounded,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () async {
-                      Navigator.pushNamed(context, '/reviews');
-                    },
-                  ),
-                  InkWell(
-                    onTap: () {
-                      logOut(context);
-                    },
-                    child: ListTile(
-                      title: Text('LogOut'),
-                      leading: Icon(
-                        Icons.logout_rounded,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: CircleAvatar(
-                    maxRadius: 16,
-                    backgroundColor: Colors.white,
-                    child: Center(
-                      child: IconButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: Colors.black,
-                            size: 12,
-                          )),
-                    )),
-              ),
-            ],
-          ),
-        ),
-      ),
+      drawer: customDrawer(context),
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           if (constraints.maxWidth >= 515) {
@@ -457,12 +151,12 @@ class _StoreScreenState extends State<StoreScreen> {
                                 child: Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
-                                      "learning courses 🔥🔥🔥",
+                                      "Learning courses 🔥🔥🔥",
                                       style: TextStyle(
                                         color: HexColor("000000"),
                                         fontFamily: 'SemiBold',
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 24,)
+                                        fontSize: 26,)
                                   ),
                                 ),
                               ),
@@ -501,197 +195,422 @@ class _StoreScreenState extends State<StoreScreen> {
                     padding: const EdgeInsets.only(left: 60.0, right: 60),
                     child: Divider(thickness: 2,),
                   ),
+
                   Container(
-                    padding: const EdgeInsets.only(right: 60.0, left: 60.0),
-                    width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height,
-                    child: GridView.builder(
-                        gridDelegate:
-                        SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: constraints.maxWidth >= 650 ? 3 : 2,
+                    // padding: const EdgeInsets.only(right: 60.0, left: 60.0),
+                    child: GridView.custom(
+                      scrollDirection: Axis.vertical,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: constraints.maxWidth >= 900 ? 4 : 3,
+                          childAspectRatio: constraints.maxWidth >= 900 ? 1.10 : 1.20,
+
                         ),
-                        scrollDirection: Axis.vertical,
-                        itemCount: course.length,
-                        itemBuilder: (BuildContext context, index) {
-                          if (course[index].courseName == "null") {
-                            return Container(
-                              child: Text('This is a container'),
-                            );
-                          }
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                courseId =
-                                    course[index].courseDocumentId;
-                              });
-                              print(courseId);
-                              if (course[index].isItComboCourse) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ComboStore(
-                                      courses: course[index].courses,
-                                    ),
-                                  ),
+                        childrenDelegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              if (course[index].courseName == "null") {
+                                return Container(
+                                  child: Text('This is a container'),
                                 );
-                              } else {
-                                Navigator.pushNamed(context, '/catalogue');
                               }
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Container(
-                                width: screenWidth,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                  BorderRadius.circular(15),
-                                  border: Border.all(
-                                      width: 0.5,
-                                      color: HexColor("440F87")),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: screenWidth / 3.5,
-                                      height: screenHeight / 6,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft:
-                                            Radius.circular(15),
-                                            topRight:
-                                            Radius.circular(15)),
-                                        child: Image.network(
-                                          course[index].courseImageUrl,
-                                          fit: BoxFit.fill,
-                                        ),
+                              if (course[index].show == true)
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      courseId = course[index]
+                                          .courseDocumentId;
+                                    });
+                                    print(courseId);
+                                    if (course[index].isItComboCourse) {
+
+                                      final id = index.toString();
+                                      final courseName = course[index].courseName;
+                                      final courseP = course[index].coursePrice;
+                                      GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
+
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) =>
+                                      //         ComboStore(
+                                      //           courses:
+                                      //           course[index].courses,
+                                      //         ),
+                                      //   ),
+                                      // );
+
+                                    } else {
+                                      final id = index.toString();
+                                      GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Container(
+                                      height: screenHeight/4,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                        BorderRadius.circular(15),
+                                        border: Border.all(
+                                            width: 0.5,
+                                            color: HexColor("440F87")),
                                       ),
-                                    ),
-                                    Container(
-                                      height: 15,
-                                      color: HexColor('EEE1FF'),
-                                      child: Row(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                         children: [
-                                          SizedBox(width: 8,),
-                                          Image.asset(
-                                            'assets/Rating.png',
-                                            fit: BoxFit.fill,
-                                            height: 10,
-                                            width: 50,
+                                          Container(
+                                            width: screenWidth,
+                                            height: screenHeight / 8,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft:
+                                                  Radius.circular(15),
+                                                  topRight:
+                                                  Radius.circular(15)),
+                                              child: Image.network(
+                                                course[index].courseImageUrl,
+                                                fit: BoxFit.fill,
+                                              ),
+                                            ),
                                           ),
+                                          Container(
+                                            height: 15,
+                                            color: HexColor('EEE1FF'),
+                                            child: Row(
+                                              children: [
+                                                SizedBox(width: 8,),
+                                                Image.asset(
+                                                  'assets/Rating.png',
+                                                  fit: BoxFit.fill,
+                                                  height: 10,
+                                                  width: 50,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Container(
+                                            // height: verticalScale * 130,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8),
+                                              child: Column(
+                                                children: [
+                                                  Align(
+                                                    alignment:
+                                                    Alignment.topLeft,
+                                                    child: Text(
+                                                      course[index]
+                                                          .courseName,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          color: Colors
+                                                              .black,
+                                                          fontFamily:
+                                                          'Medium',
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .w500),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: verticalScale * 5,
+                                                  ),
+                                                  Align(
+                                                    alignment:
+                                                    Alignment.topLeft,
+                                                    child: Text(
+                                                      "- ${course[index].courseLanguage} Language",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold,
+                                                          color: Colors
+                                                              .black,
+                                                          fontSize: 8),
+                                                    ),
+                                                  ),
+                                                  Align(
+                                                    alignment:
+                                                    Alignment.topLeft,
+                                                    child: Text(
+                                                      "- ${course[index].numOfVideos} Videos",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold,
+                                                          color: Colors
+                                                              .black,
+                                                          fontSize: 8),
+                                                    ),
+                                                  ),
+                                                  Align(
+                                                    alignment:
+                                                    Alignment.topLeft,
+                                                    child: Text(
+                                                      "- Lifetime Access",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold,
+                                                          color: Colors
+                                                              .black,
+                                                          fontSize: 8),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            width: horizontalScale * 50,
+                                            height: 20,
+
+                                            decoration: BoxDecoration(
+                                              color: HexColor("8346E1"),
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                            // child: ElevatedButton(
+                                            //     onPressed: () {},
+                                            //     style: ElevatedButton
+                                            //         .styleFrom(
+                                            //       backgroundColor:
+                                            //       HexColor(
+                                            //           "8346E1"),
+                                            //       shape: RoundedRectangleBorder(
+                                            //           borderRadius:
+                                            //           BorderRadius
+                                            //               .circular(
+                                            //               5)),
+                                            //     ),
+                                                child: Center(
+                                                  child: Text(
+                                                    "Enroll Now 🔥",
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        color:
+                                                        Colors.white,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                )),
+                                          // ),
+                                          Spacer(),
                                         ],
                                       ),
                                     ),
-                                    Container(
-                                      // height: verticalScale * 130,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8),
-                                        child: Column(
-                                          children: [
-                                            Align(
-                                              alignment:
-                                              Alignment.topLeft,
-                                              child: Text(
-                                                course[index]
-                                                    .courseName,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    color: Colors
-                                                        .black,
-                                                    fontFamily:
-                                                    'Medium',
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                    FontWeight
-                                                        .w500),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: verticalScale * 5,
-                                            ),
-                                            Align(
-                                              alignment:
-                                              Alignment.topLeft,
-                                              child: Text(
-                                                "- ${course[index].courseLanguage} Language",
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight
-                                                        .bold,
-                                                    color: Colors
-                                                        .black,
-                                                    fontSize: 8),
-                                              ),
-                                            ),
-                                            Align(
-                                              alignment:
-                                              Alignment.topLeft,
-                                              child: Text(
-                                                "- ${course[index].numOfVideos} Videos",
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight
-                                                        .bold,
-                                                    color: Colors
-                                                        .black,
-                                                    fontSize: 8),
-                                              ),
-                                            ),
-                                            Align(
-                                              alignment:
-                                              Alignment.topLeft,
-                                              child: Text(
-                                                "- Lifetime Access",
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight
-                                                        .bold,
-                                                    color: Colors
-                                                        .black,
-                                                    fontSize: 8),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: horizontalScale * 50,
-                                      height: 20,
-                                      child: ElevatedButton(
-                                          onPressed: () {},
-                                          style: ElevatedButton
-                                              .styleFrom(
-                                            backgroundColor:
-                                            HexColor(
-                                                "8346E1"),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                    5)),
-                                          ),
-                                          child: Text(
-                                            "Enroll Now!",
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                color:
-                                                Colors.white,
-                                                fontWeight:
-                                                FontWeight
-                                                    .bold),
-                                          )),
-                                    ),
-                                    Spacer(),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
+                                  ),
+                                );
+                              return Container();
+                            },
+                          childCount: course.length,
+                        ))
                   ),
+                  // Container(
+                  //   padding: const EdgeInsets.only(right: 60.0, left: 60.0),
+                  //   width: MediaQuery.of(context).size.width,
+                  //   height: MediaQuery.of(context).size.height,
+                  //   child: GridView.builder(
+                  //       gridDelegate:
+                  //       SliverGridDelegateWithFixedCrossAxisCount(
+                  //         crossAxisCount: constraints.maxWidth >= 650 ? 3 : 2,
+                  //       ),
+                  //       scrollDirection: Axis.vertical,
+                  //       itemCount: course.length,
+                  //       itemBuilder: (BuildContext context, index) {
+                  //         if (course[index].courseName == "null") {
+                  //           return Container(
+                  //             child: Text('This is a container'),
+                  //           );
+                  //         }
+                  //         if (course[index].show == true)
+                  //           return GestureDetector(
+                  //             onTap: () {
+                  //               setState(() {
+                  //                 courseId = course[index]
+                  //                     .courseDocumentId;
+                  //               });
+                  //               print(courseId);
+                  //               if (course[index].isItComboCourse) {
+                  //
+                  //                 final id = index.toString();
+                  //                 final courseName = course[index].courseName;
+                  //                 final courseP = course[index].coursePrice;
+                  //                 GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
+                  //
+                  //                 // Navigator.push(
+                  //                 //   context,
+                  //                 //   MaterialPageRoute(
+                  //                 //     builder: (context) =>
+                  //                 //         ComboStore(
+                  //                 //           courses:
+                  //                 //           course[index].courses,
+                  //                 //         ),
+                  //                 //   ),
+                  //                 // );
+                  //
+                  //               } else {
+                  //                 final id = index.toString();
+                  //                 GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                  //               }
+                  //             },
+                  //             child: Padding(
+                  //               padding: const EdgeInsets.all(10.0),
+                  //               child: Container(
+                  //                 width: screenWidth,
+                  //                 decoration: BoxDecoration(
+                  //                   color: Colors.white,
+                  //                   borderRadius:
+                  //                   BorderRadius.circular(15),
+                  //                   border: Border.all(
+                  //                       width: 0.5,
+                  //                       color: HexColor("440F87")),
+                  //                 ),
+                  //                 child: Column(
+                  //                   crossAxisAlignment:
+                  //                   CrossAxisAlignment.center,
+                  //                   children: [
+                  //                     Container(
+                  //                       width: screenWidth / 3.5,
+                  //                       height: screenHeight / 6,
+                  //                       child: ClipRRect(
+                  //                         borderRadius: BorderRadius.only(
+                  //                             topLeft:
+                  //                             Radius.circular(15),
+                  //                             topRight:
+                  //                             Radius.circular(15)),
+                  //                         child: Image.network(
+                  //                           course[index].courseImageUrl,
+                  //                           fit: BoxFit.fill,
+                  //                         ),
+                  //                       ),
+                  //                     ),
+                  //                     Container(
+                  //                       height: 15,
+                  //                       color: HexColor('EEE1FF'),
+                  //                       child: Row(
+                  //                         children: [
+                  //                           SizedBox(width: 8,),
+                  //                           Image.asset(
+                  //                             'assets/Rating.png',
+                  //                             fit: BoxFit.fill,
+                  //                             height: 10,
+                  //                             width: 50,
+                  //                           ),
+                  //                         ],
+                  //                       ),
+                  //                     ),
+                  //                     Container(
+                  //                       // height: verticalScale * 130,
+                  //                       child: Padding(
+                  //                         padding: const EdgeInsets.all(8),
+                  //                         child: Column(
+                  //                           children: [
+                  //                             Align(
+                  //                               alignment:
+                  //                               Alignment.topLeft,
+                  //                               child: Text(
+                  //                                 course[index]
+                  //                                     .courseName,
+                  //                                 overflow: TextOverflow.ellipsis,
+                  //                                 style: TextStyle(
+                  //                                     color: Colors
+                  //                                         .black,
+                  //                                     fontFamily:
+                  //                                     'Medium',
+                  //                                     fontSize: 12,
+                  //                                     fontWeight:
+                  //                                     FontWeight
+                  //                                         .w500),
+                  //                               ),
+                  //                             ),
+                  //                             SizedBox(
+                  //                               height: verticalScale * 5,
+                  //                             ),
+                  //                             Align(
+                  //                               alignment:
+                  //                               Alignment.topLeft,
+                  //                               child: Text(
+                  //                                 "- ${course[index].courseLanguage} Language",
+                  //                                 style: TextStyle(
+                  //                                     fontWeight:
+                  //                                     FontWeight
+                  //                                         .bold,
+                  //                                     color: Colors
+                  //                                         .black,
+                  //                                     fontSize: 8),
+                  //                               ),
+                  //                             ),
+                  //                             Align(
+                  //                               alignment:
+                  //                               Alignment.topLeft,
+                  //                               child: Text(
+                  //                                 "- ${course[index].numOfVideos} Videos",
+                  //                                 style: TextStyle(
+                  //                                     fontWeight:
+                  //                                     FontWeight
+                  //                                         .bold,
+                  //                                     color: Colors
+                  //                                         .black,
+                  //                                     fontSize: 8),
+                  //                               ),
+                  //                             ),
+                  //                             Align(
+                  //                               alignment:
+                  //                               Alignment.topLeft,
+                  //                               child: Text(
+                  //                                 "- Lifetime Access",
+                  //                                 style: TextStyle(
+                  //                                     fontWeight:
+                  //                                     FontWeight
+                  //                                         .bold,
+                  //                                     color: Colors
+                  //                                         .black,
+                  //                                     fontSize: 8),
+                  //                               ),
+                  //                             ),
+                  //                           ],
+                  //                         ),
+                  //                       ),
+                  //                     ),
+                  //                     Container(
+                  //                       width: horizontalScale * 50,
+                  //                       height: 20,
+                  //                       child: ElevatedButton(
+                  //                           onPressed: () {},
+                  //                           style: ElevatedButton
+                  //                               .styleFrom(
+                  //                             backgroundColor:
+                  //                             HexColor(
+                  //                                 "8346E1"),
+                  //                             shape: RoundedRectangleBorder(
+                  //                                 borderRadius:
+                  //                                 BorderRadius
+                  //                                     .circular(
+                  //                                     5)),
+                  //                           ),
+                  //                           child: Text(
+                  //                             "Enroll Now!",
+                  //                             style: TextStyle(
+                  //                                 fontSize: 10,
+                  //                                 color:
+                  //                                 Colors.white,
+                  //                                 fontWeight:
+                  //                                 FontWeight
+                  //                                     .bold),
+                  //                           )),
+                  //                     ),
+                  //                     Spacer(),
+                  //                   ],
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           );
+                  //         return Container();
+                  //       }),
+                  // ),
                 ],
               ),
             );

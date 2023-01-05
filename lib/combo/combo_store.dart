@@ -9,18 +9,29 @@ import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/catalogue_screen.dart';
 import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:cloudyml_app2/widgets/pay_now_bottomsheet.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ribbon_widget/ribbon_widget.dart';
+import 'package:share_extend/share_extend.dart';
+
+import '../Services/code_generator.dart';
+import '../Services/deeplink_service.dart';
 
 class ComboStore extends StatefulWidget {
+  final String? id;
+  final String? cName;
+  final String? courseP;
+
   final List<dynamic>? courses;
+
   static ValueNotifier<String> coursePrice = ValueNotifier('');
   static ValueNotifier<Map<String, dynamic>>? map = ValueNotifier({});
   static ValueNotifier<double> _currentPosition = ValueNotifier<double>(0.0);
   static ValueNotifier<double> _closeBottomSheetAtInCombo =
       ValueNotifier<double>(0.0);
-  ComboStore({Key? key, this.courses}) : super(key: key);
+  ComboStore({Key? key, this.courses, this.id, this.cName, this.courseP}) : super(key: key);
 
   @override
   State<ComboStore> createState() => _ComboStoreState();
@@ -60,7 +71,36 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
   String discountedPrice = "";
 
   String name = "";
+
   GlobalKey _positionKey = GlobalKey();
+
+  var uid = FirebaseAuth.instance.currentUser!.uid;
+  var moneyrefcode;
+  var moneyreferalcode;
+  var moneyreferallink;
+
+  void lookformoneyref() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(uid)
+          .get()
+          .then((value) => {moneyrefcode = value.data()!["moneyrefcode"]});
+    } catch (e) {}
+    try {
+      print("moneyrefcode: ${moneyrefcode}");
+      moneyreferalcode = await CodeGenerator()
+          .generateCodeformoneyreward('moneyreward-$courseId');
+      moneyreferallink =
+      await DeepLinkService.instance?.createReferLink(moneyreferalcode);
+      print("this is the kings enargy: ${moneyreferallink}");
+      if (moneyrefcode == null) {
+        FirebaseFirestore.instance.collection("Users").doc(uid).update({
+          "moneyrefcode": "$moneyreferalcode",
+        });
+      }
+    } catch (e) {}
+  }
 
   void getCourseName() async {
     await FirebaseFirestore.instance
@@ -81,6 +121,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
   @override
   void initState() {
     super.initState();
+    lookformoneyref();
     getCourseName();
     _scrollController.addListener(_scrollListener);
   }
@@ -114,7 +155,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
     return Scaffold(
       bottomSheet: PayNowBottomSheet(
         currentPosition: ComboStore._currentPosition,
-        coursePrice: coursePrice,
+        coursePrice: '₹${widget.courseP!}/-',
         map: comboMap,
         popBottomSheetAt: ComboStore._closeBottomSheetAtInCombo,
         isItComboCourse: true,
@@ -126,9 +167,8 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
             child: Column(
               children: [
                 SizedBox(
-                  height: 217,
+                  height: 100,
                 ),
-
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
                   child: Align(
@@ -149,7 +189,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                 ),
                 Container(
                   width: screenWidth,
-                  height: 330 * verticalScale,
+                  height: 500 * verticalScale,
                   child: MediaQuery.removePadding(
                     context: context,
                     removeTop: true,
@@ -171,7 +211,8 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                                 setState(() {
                                   courseId = course[index].courseDocumentId;
                                 });
-                                Navigator.pushNamed(context, '/catalogue');
+                                final id = index.toString();
+                                GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
                               },
                               child: Container(
                                 width: 354 * horizontalScale,
@@ -219,7 +260,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                                           imageUrl:
                                               course[index].courseImageUrl,
                                           placeholder: (context, url) =>
-                                              CircularProgressIndicator(),
+                                              Center(child: CircularProgressIndicator()),
                                           errorWidget: (context, url, error) =>
                                               Icon(Icons.error),
                                         ),
@@ -236,17 +277,16 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                                         //   height: 10,
                                         // ),
                                         Container(
-                                          width: 170,
+                                          // width: 170,
                                           // height: 42,
                                           child: Text(
                                             course[index].courseName,
-                                            overflow: TextOverflow.ellipsis,
                                             textScaleFactor: min(
                                                 horizontalScale, verticalScale),
                                             style: TextStyle(
                                               color: Color.fromRGBO(0, 0, 0, 1),
                                               fontFamily: 'Poppins',
-                                              fontSize: 20,
+                                              fontSize: 26,
                                               letterSpacing: 0,
                                               fontWeight: FontWeight.bold,
                                               height: 1,
@@ -257,7 +297,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                                         //   height: 5,
                                         // ),
                                         Container(
-                                          width: 184 * horizontalScale,
+                                          width: 300 * horizontalScale,
                                           // height: 24.000001907348633,
                                           child: Text(
                                             course[index].courseDescription,
@@ -268,81 +308,81 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                                                 color:
                                                     Color.fromRGBO(0, 0, 0, 1),
                                                 fontFamily: 'Poppins',
-                                                fontSize: 10,
+                                                fontSize: 18,
                                                 letterSpacing:
                                                     0 /*percentages not used in flutter. defaulting to zero*/,
                                                 fontWeight: FontWeight.normal,
                                                 height: 1),
                                           ),
                                         ),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              course[index].coursePrice,
-                                              textAlign: TextAlign.left,
-                                              textScaleFactor: min(
-                                                  horizontalScale,
-                                                  verticalScale),
-                                              style: TextStyle(
-                                                  color: Color.fromRGBO(
-                                                      155, 117, 237, 1),
-                                                  fontFamily: 'Poppins',
-                                                  fontSize: 20,
-                                                  letterSpacing:
-                                                      0 /*percentages not used in flutter. defaulting to zero*/,
-                                                  fontWeight: FontWeight.bold,
-                                                  height: 1),
-                                            ),
-                                            SizedBox(
-                                              width: 40 * horizontalScale,
-                                            ),
-                                            Container(
-                                              width: 70 * horizontalScale,
-                                              height: 25 * verticalScale,
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(50),
-                                                  topRight: Radius.circular(50),
-                                                  bottomLeft:
-                                                      Radius.circular(50),
-                                                  bottomRight:
-                                                      Radius.circular(50),
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                      color: Color.fromRGBO(
-                                                          48,
-                                                          209,
-                                                          151,
-                                                          0.44999998807907104),
-                                                      offset: Offset(0, 10),
-                                                      blurRadius: 25)
-                                                ],
-                                                color: Color.fromRGBO(
-                                                    48, 209, 151, 1),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  'Enroll now',
-                                                  textAlign: TextAlign.left,
-                                                  textScaleFactor: min(
-                                                      horizontalScale,
-                                                      verticalScale),
-                                                  style: TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          255, 255, 255, 1),
-                                                      fontFamily: 'Poppins',
-                                                      fontSize: 10,
-                                                      letterSpacing:
-                                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      height: 1),
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        )
+                                        // Row(
+                                        //   children: [
+                                        //     Text(
+                                        //       course[index].coursePrice,
+                                        //       textAlign: TextAlign.left,
+                                        //       textScaleFactor: min(
+                                        //           horizontalScale,
+                                        //           verticalScale),
+                                        //       style: TextStyle(
+                                        //           color: Color.fromRGBO(
+                                        //               155, 117, 237, 1),
+                                        //           fontFamily: 'Poppins',
+                                        //           fontSize: 20,
+                                        //           letterSpacing:
+                                        //               0 /*percentages not used in flutter. defaulting to zero*/,
+                                        //           fontWeight: FontWeight.bold,
+                                        //           height: 1),
+                                        //     ),
+                                        //     SizedBox(
+                                        //       width: 40 * horizontalScale,
+                                        //     ),
+                                        //     Container(
+                                        //       width: 70 * horizontalScale,
+                                        //       height: 25 * verticalScale,
+                                        //       decoration: BoxDecoration(
+                                        //         borderRadius: BorderRadius.only(
+                                        //           topLeft: Radius.circular(50),
+                                        //           topRight: Radius.circular(50),
+                                        //           bottomLeft:
+                                        //               Radius.circular(50),
+                                        //           bottomRight:
+                                        //               Radius.circular(50),
+                                        //         ),
+                                        //         boxShadow: [
+                                        //           BoxShadow(
+                                        //               color: Color.fromRGBO(
+                                        //                   48,
+                                        //                   209,
+                                        //                   151,
+                                        //                   0.44999998807907104),
+                                        //               offset: Offset(0, 10),
+                                        //               blurRadius: 25)
+                                        //         ],
+                                        //         color: Color.fromRGBO(
+                                        //             48, 209, 151, 1),
+                                        //       ),
+                                        //       child: Center(
+                                        //         child: Text(
+                                        //           'Enroll now',
+                                        //           textAlign: TextAlign.left,
+                                        //           textScaleFactor: min(
+                                        //               horizontalScale,
+                                        //               verticalScale),
+                                        //           style: TextStyle(
+                                        //               color: Color.fromRGBO(
+                                        //                   255, 255, 255, 1),
+                                        //               fontFamily: 'Poppins',
+                                        //               fontSize: 10,
+                                        //               letterSpacing:
+                                        //                   0 /*percentages not used in flutter. defaulting to zero*/,
+                                        //               fontWeight:
+                                        //                   FontWeight.normal,
+                                        //               height: 1),
+                                        //         ),
+                                        //       ),
+                                        //     )
+                                        //   ],
+                                        // )
                                       ],
                                     ),
                                   ],
@@ -414,7 +454,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                             height: 30,
                           ),
                           Text(
-                            coursePrice,
+                            '₹${widget.courseP!}/-',
                             style: TextStyle(
                                 fontFamily: 'Medium',
                                 fontSize: 30,
@@ -423,15 +463,23 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                           SizedBox(height: 35),
                           InkWell(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PaymentScreen(
-                                    map: comboMap,
-                                    isItComboCourse: true,
-                                  ),
-                                ),
-                              );
+
+                              GoRouter.of(context)
+                                  .pushNamed(
+                                  'paymentScreen',
+                                  queryParams: {'isItComboCourse': true,
+                                    'courseMap': comboMap});
+
+
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => PaymentScreen(
+                              //       map: comboMap,
+                              //       isItComboCourse: true,
+                              //     ),
+                              //   ),
+                              // );
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -470,7 +518,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
           ),
           Container(
             width: 414 * horizontalScale,
-            height: 217 * verticalScale,
+            height: 100 * verticalScale,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(0),
@@ -511,8 +559,8 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                   ),
                 ),
                 Positioned(
-                  top: 100 * verticalScale,
-                  left: 30 * horizontalScale,
+                  top: 25 * verticalScale,
+                  left: 15 * horizontalScale,
                   child: Container(
                     // width: 230,
                     // height: 81,
@@ -520,7 +568,8 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                       children: [
                         InkWell(
                           onTap: () {
-                            Navigator.pop(context);
+                            Navigator.of(context).pop();
+                            // GoRouter.of(context).push('/home');
                           },
                           child: Icon(
                             Icons.arrow_back,
@@ -531,7 +580,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                         SizedBox(width: 10),
                         Center(
                           child: Text(
-                            name,
+                            widget.cName!,
                             textScaleFactor:
                                 min(horizontalScale, verticalScale),
                             style: TextStyle(
@@ -547,6 +596,20 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                     ),
                   ),
                 ),
+                Positioned(
+                  top: 25 * verticalScale,
+                  right: 15 * horizontalScale,
+                  child: IconButton(
+                  icon: const Icon(
+                    Icons.share,
+                    color: Colors.black,
+                  ),
+                  onPressed: () async {
+                    if (moneyreferallink.toString() != 'null') {
+                      ShareExtend.share(moneyreferallink.toString(), "text");
+                    }
+                  },
+                ),)
               ],
             ),
           ),

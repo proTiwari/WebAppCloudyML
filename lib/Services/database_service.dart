@@ -46,6 +46,7 @@ class DatabaseServices {
                   courseDescription: documentSnapshot.data()['description'],
                   FcSerialNumber: documentSnapshot.data()['FC'] ?? '',
                   courseContent: documentSnapshot.data()['courseContent'],
+                  show: documentSnapshot.data()['show'],
                 ),
               )
               .toList(),

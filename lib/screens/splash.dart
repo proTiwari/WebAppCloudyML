@@ -3,6 +3,7 @@ import 'package:cloudyml_app2/services/local_notificationservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../authentication/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -25,8 +26,13 @@ class _splashState extends State<splash> {
     super.initState();
     Timer(
         Duration(seconds: 5),
-            () => Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Authenticate())));
+            () => GoRouter.of(context).push('/login')
+                
+            //     Navigator.pushReplacement(
+            // context, MaterialPageRoute(builder: (context) => Authenticate()))
+
+    );
+
     //listnerNotifications();
     //gives you the message on which user taps and opens
     //the app from terminated state

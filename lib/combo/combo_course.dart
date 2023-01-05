@@ -8,13 +8,16 @@ import 'package:cloudyml_app2/module/video_screen.dart';
 import 'package:cloudyml_app2/my_Courses.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class ComboCourse extends StatefulWidget {
   final List<dynamic>? courses;
+  final String? id;
+  final String? courseName;
   // static String? comboId='';
   static ValueNotifier<String> comboId = ValueNotifier('');
-  const ComboCourse({Key? key, this.courses}) : super(key: key);
+  const ComboCourse({Key? key, this.courses, this.id, this.courseName}) : super(key: key);
 
   @override
   State<ComboCourse> createState() => _ComboCourseState();
@@ -114,7 +117,8 @@ class _ComboCourseState extends State<ComboCourse> {
         elevation: 0,
         leading: InkWell(
           onTap: () {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home()));
+            GoRouter.of(context).pushReplacement('/home');
+            // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home()));
           },
           child: Padding(
             padding: EdgeInsets.only(left: 15.0, bottom: 5),
@@ -151,8 +155,17 @@ class _ComboCourseState extends State<ComboCourse> {
                               if (course[index].courseName == "null") {
                                 return Container();
                               }
-                              if (widget.courses!
-                                  .contains(course[index].courseId)) {
+
+                              List courseList = [];
+                              for (var i in widget.courses!) {
+                                for (var j in course) {
+                                  if (i == j.courseId) {
+                                    courseList.add(j);
+                                  }
+                                }
+                              }
+
+                              if (courseList.length > index)  {
                                 return Padding(
                                   padding: const EdgeInsets.only(
                                       bottom: 10.0,
@@ -162,20 +175,21 @@ class _ComboCourseState extends State<ComboCourse> {
                                   child: InkWell(
                                     onTap: () {
                                       setState(() {
-                                        courseId =
-                                            course[index].courseDocumentId;
+                                        courseId = courseList[index].courseDocumentId;
                                       });
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => VideoScreen(
-                                            courseName:
-                                                course[index].courseName,
-                                            isDemo: null,
-                                            sr: null,
-                                          ),
-                                        ),
-                                      );
+                                      GoRouter.of(context).pushNamed('comboVideoScreen',
+                                          queryParams: {'courseName': courseList[index].courseName,});
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) => VideoScreen(
+                                      //       courseName:
+                                      //           course[index].courseName,
+                                      //       isDemo: null,
+                                      //       sr: null,
+                                      //     ),
+                                      //   ),
+                                      // );
                                     },
                                     child: Container(
                                       width: 354 * horizontalScale,
@@ -223,7 +237,7 @@ class _ComboCourseState extends State<ComboCourse> {
                                                     Radius.circular(15),
                                               )),
                                               child: CachedNetworkImage(
-                                                imageUrl:course[index].courseImageUrl,
+                                                imageUrl:courseList[index].courseImageUrl,
                                                 placeholder: (context, url) =>
                                                     Center(child: CircularProgressIndicator()),
                                                 errorWidget:
@@ -242,7 +256,7 @@ class _ComboCourseState extends State<ComboCourse> {
                                               Container(
                                                 width: 170,
                                                 child: Text(
-                                                  course[index].courseName,
+                                                  courseList[index].courseName,
                                                   textScaleFactor: min(
                                                     horizontalScale,
                                                     verticalScale,
@@ -261,7 +275,7 @@ class _ComboCourseState extends State<ComboCourse> {
                                               Container(
                                                 width: 220 * horizontalScale,
                                                 child: Text(
-                                                  course[index]
+                                                  courseList[index]
                                                       .courseDescription,
                                                   textScaleFactor: min(
                                                       horizontalScale,

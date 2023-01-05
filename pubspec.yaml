@@ -34,7 +34,11 @@ dependencies:
   hive:
   hive_flutter:
   renderer_switcher: ^0.1.0
+  firebase_dynamic_links:  #deep linking
+  share_extend:
+  shared_preferences: ^2.0.15
   url_strategy: ^0.2.0
+  go_router:
   firebase_core: ^1.24.0
   firebase_storage: ^10.3.11
   cloud_firestore: ^3.5.1
@@ -113,7 +117,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_native_splash: ^2.1.6
-
+  go_router_builder: ^1.0.15
   hive_generator:
   build_runner:
 

@@ -10,6 +10,7 @@ bool submitting = false;
 String? passwordttt;
 
 String? courseId;
+const String loggedInKey = 'LoggedIn';
 String? moduleId;
 String? topicId;
 

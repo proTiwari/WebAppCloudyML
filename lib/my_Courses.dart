@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/combo/combo_course.dart';
 import 'package:cloudyml_app2/combo/combo_store.dart';
+import 'package:cloudyml_app2/fun.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/module/video_screen.dart';
@@ -11,6 +12,7 @@ import 'package:cloudyml_app2/store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -51,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
           .then((value) {
         setState(() {
           if(value.data()!['paidCourseNames'] == null || value.data()!['paidCourseNames'] == []){
+
             courses = [];
           }else{
             courses = value.data()!['paidCourseNames'];
@@ -157,71 +160,71 @@ class _HomeScreenState extends State<HomeScreen> {
   // static final FlutterLocalNotificationsPlugin
   //     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  var coursePercent;
+  // var coursePercent;
 
-  getPercentageOfCourse()
-  async {
-
-    try{
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get()
-          .then((value) async{
-        try {
-          courses = value.data()!['paidCourseNames'];
-        } catch(e){
-          print('donggg ${e.toString()}');
-        }
-      });
-    }catch(e){
-      print(e.toString());
-    }
-
-    try{
-      var data = await FirebaseFirestore.instance.collection("courseprogress")
-          .doc(FirebaseAuth.instance.currentUser!.uid).get();
-      var getData = data.data();
-
-      for(var courseId in courses)
-      {
-        print("ID = = ${courseId}");
-        int count = 0;
-        try{
-          await FirebaseFirestore.instance.collection("courses").where("id", isEqualTo: courseId).get().then(
-                  (value)async{
-                if(value.docs.first.exists)
-                {
-                  var coursesName = value.docs.first.data()["courses name"];
-                  for(var name in coursesName)
-                  {
-                    double num = (getData![name+"percentage"]!=null)?getData[name+"percentage"]:0;
-                    count+=num.toInt();
-                    print("Count = $count");
-                    coursePercent[courseId] = count~/(value.docs.first.data()["courses name"].length);
-                  }
-                }
-              }
-          ).catchError((err)=>print("Error"));
-          print('user enrolled in number of courses ${courses.length}');
-        }
-        catch(err)
-        {
-          print('user enrolled in number of courses ${courses.length}');
-          print(err);
-        }
-      }
-
-    }catch(e){
-      print('my courses error ${e.toString()}');
-    }
-
-    print("done");
-    setState(() {
-      coursePercent;
-    });
-    print(coursePercent);
-  }
+  // getPercentageOfCourse()
+  // async {
+  //
+  //   try{
+  //     await FirebaseFirestore.instance
+  //         .collection('Users')
+  //         .doc(FirebaseAuth.instance.currentUser!.uid)
+  //         .get()
+  //         .then((value) async{
+  //       try {
+  //         courses = value.data()!['paidCourseNames'];
+  //       } catch(e){
+  //         print('donggg ${e.toString()}');
+  //       }
+  //     });
+  //   }catch(e){
+  //     print(e.toString());
+  //   }
+  //
+  //   try{
+  //     var data = await FirebaseFirestore.instance.collection("courseprogress")
+  //         .doc(FirebaseAuth.instance.currentUser!.uid).get();
+  //     var getData = data.data();
+  //
+  //     for(var courseId in courses)
+  //     {
+  //       print("ID = = ${courseId}");
+  //       int count = 0;
+  //       try{
+  //         await FirebaseFirestore.instance.collection("courses").where("id", isEqualTo: courseId).get().then(
+  //                 (value)async{
+  //               if(value.docs.first.exists)
+  //               {
+  //                 var coursesName = value.docs.first.data()["courses name"];
+  //                 for(var name in coursesName)
+  //                 {
+  //                   double num = (getData![name+"percentage"]!=null)?getData[name+"percentage"]:0;
+  //                   count+=num.toInt();
+  //                   print("Count = $count");
+  //                   coursePercent[courseId] = count~/(value.docs.first.data()["courses name"].length);
+  //                 }
+  //               }
+  //             }
+  //         ).catchError((err)=>print("Error"));
+  //         print('user enrolled in number of courses ${courses.length}');
+  //       }
+  //       catch(err)
+  //       {
+  //         print('user enrolled in number of courses ${courses.length}');
+  //         print(err);
+  //       }
+  //     }
+  //
+  //   }catch(e){
+  //     print('my courses error ${e.toString()}');
+  //   }
+  //
+  //   print("done");
+  //   setState(() {
+  //     coursePercent;
+  //   });
+  //   print(coursePercent);
+  // }
 
   var textStyle = TextStyle(
     fontWeight: FontWeight.bold,
@@ -243,316 +246,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
     List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
-    MediaQueryData queryData;
-    queryData = MediaQuery.of(context);
 
     return Scaffold(
         key: _scaffoldKey,
-        drawer: Drawer(
-          child: Container(
-            child: Stack(
-              children: [
-                ListView(
-                  padding: EdgeInsets.only(top: 0),
-                  children: [
-                    Stack(
-                      children: [
-                        Container(
-                          child: Image.network(
-                              "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FRectangle%20133.png?alt=media&token=1c822b64-1f79-4654-9ebd-2bd0682c8e0f"),
-                        ),
-                        UserAccountsDrawerHeader(
-                          accountName: Text(
-                            userProvider.userModel?.name.toString() ??
-                                'Enter name',
-                          ),
-                          accountEmail: Text(
-                            userProvider.userModel?.email.toString() == ''
-                                ? userProvider.userModel?.mobile.toString() ?? ''
-                                : userProvider.userModel?.email.toString() ??
-                                'Enter email',
-                          ),
-                          currentAccountPicture: GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/myAccount');
-                            },
-                            child: CircleAvatar(
-                              foregroundColor: Colors.black,
-                              //foregroundImage: NetworkImage('https://stratosphere.co.in/img/user.jpg'),
-                              foregroundImage: NetworkImage(
-                                  userProvider.userModel?.image ?? ''),
-                              backgroundColor: Colors.transparent,
-                              backgroundImage: CachedNetworkImageProvider(
-                                'https://stratosphere.co.in/img/user.jpg',
-                              ),
-                            ),
-                          ),
-                          decoration: BoxDecoration(color: Colors.transparent),
-                        ),
-                      ],
-                    ),
-                    // Container(
-                    //     height: height * 0.27,
-                    //     //decoration: BoxDecoration(gradient: gradient),
-                    //     color: HexColor('7B62DF'),
-                    //     child: StreamBuilder<QuerySnapshot>(
-                    //       stream: FirebaseFirestore.instance
-                    //           .collection("Users")
-                    //           .snapshots(),
-                    //       builder: (BuildContext context,
-                    //           AsyncSnapshot<QuerySnapshot> snapshot) {
-                    //         if (!snapshot.hasData) return const SizedBox.shrink();
-                    //         return ListView.builder(
-                    //           itemCount: snapshot.data!.docs.length,
-                    //           itemBuilder: (BuildContext context, index) {
-                    //             DocumentSnapshot document = snapshot.data!.docs[index];
-                    //             Map<String, dynamic> map = snapshot.data!.docs[index]
-                    //                 .data() as Map<String, dynamic>;
-                    //             if (map["id"].toString() ==
-                    //                 FirebaseAuth.instance.currentUser!.uid) {
-                    //               return Padding(
-                    //                 padding: EdgeInsets.all(width * 0.05),
-                    //                 child: Container(
-                    //                   child: Column(
-                    //                     crossAxisAlignment: CrossAxisAlignment.start,
-                    //                     mainAxisSize: MainAxisSize.min,
-                    //                     children: [
-                    //                       CircleAvatar(
-                    //                         radius: width * 0.089,
-                    //                         backgroundImage:
-                    //                             AssetImage('assets/user.jpg'),
-                    //                       ),
-                    //                       SizedBox(
-                    //                         height: height * 0.01,
-                    //                       ),
-                    //                       map['name'] != null
-                    //                           ? Text(
-                    //                               map['name'],
-                    //                               style: TextStyle(
-                    //                                   color: Colors.white,
-                    //                                   fontWeight: FontWeight.w500,
-                    //                                   fontSize: width * 0.049),
-                    //                             )
-                    //                           : Text(
-                    //                               map['mobilenumber'],
-                    //                               style: TextStyle(
-                    //                                   color: Colors.white,
-                    //                                   fontWeight: FontWeight.w500,
-                    //                                   fontSize: width * 0.049),
-                    //                             ),
-                    //                       SizedBox(
-                    //                         height: height * 0.007,
-                    //                       ),
-                    //                       map['email'] != null
-                    //                           ? Text(
-                    //                               map['email'],
-                    //                               style: TextStyle(
-                    //                                   color: Colors.white,
-                    //                                   fontSize: width * 0.038),
-                    //                             )
-                    //                           : Container(),
-                    //                     ],
-                    //                   ),
-                    //                 ),
-                    //               );
-                    //             } else {
-                    //               return Container();
-                    //             }
-                    //           },
-                    //         );
-                    //       },
-                    //     )
-                    // ),
-                    InkWell(
-                      child: ListTile(
-                        title: Text('Home'),
-                        leading: Icon(
-                          Icons.home,
-                          color: HexColor('691EC8'),
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(context, '/home');
-                      },
-                    ),
-                    //navigate to store
-                    InkWell(
-                      child: ListTile(
-                        title: Text('Store'),
-                        leading: Icon(
-                          Icons.store,
-                          color: HexColor('691EC8'),
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(context, '/Store');
-                      },
-                    ),
-                    //navigate to messages
-                    InkWell(
-                      child: ListTile(
-                        title: Text('Chat with TA'),
-                        leading: Icon(
-                          Icons.chat_bubble_outline_sharp,
-                          color: HexColor('691EC8'),
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(context, '/Messages');
-                      },
-                    ),
-                    InkWell(
-                      child: ListTile(
-                        title: Text(''
-                            'My Account'),
-                        leading: Icon(
-                          Icons.person,
-                          color: HexColor('691EC8'),
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(context, '/myAccount');
-                      },
-                    ),
-                    InkWell(
-                      child: ListTile(
-                        title: Text('My Courses'),
-                        leading: Icon(
-                          Icons.assignment,
-                          color: HexColor('691EC8'),
-                        ),
-                      ),
-                      onTap: () async {
-                        Navigator.pushNamed(context, '/myCourses');
-                      },
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/paymentHistory');
-                      },
-                      child: ListTile(
-                        title: Text('Payment History'),
-                        leading: Icon(
-                          Icons.payment_rounded,
-                          color: HexColor('691EC8'),
-                        ),
-                      ),
-                    ),
-                    Divider(
-                      thickness: 2,
-                    ),
-                    // InkWell(
-                    //   onTap: () {
-                    //     Navigator.push(
-                    //         context,
-                    //         MaterialPageRoute(
-                    //             builder: (context) => PrivacyPolicy()));
-                    //   },
-                    //   child: ListTile(
-                    //     title: Text('Privacy policy'),
-                    //     leading: Icon(
-                    //       Icons.privacy_tip,
-                    //       color: HexColor('691EC8'),
-                    //     ),
-                    //   ),
-                    // ),
-                    // InkWell(
-                    //   child: ListTile(
-                    //     title: Text('About Us'),
-                    //     leading: Icon(
-                    //       Icons.info,
-                    //       color: HexColor('691EC8'),
-                    //     ),
-                    //   ),
-                    //   onTap: () async {
-                    //     Navigator.push(context,
-                    //         MaterialPageRoute(builder: (context) => AboutUs()));
-                    //   },
-                    // ),
-                    // InkWell(
-                    //   child: ListTile(
-                    //     title: Text('Notification Local'),
-                    //     leading: Icon(
-                    //       Icons.book,
-                    //       color: HexColor('6153D3'),
-                    //     ),
-                    //   ),
-                    //   ),
-                    //   onTap: () async {
-                    //
-                    //     await AwesomeNotifications().createNotification(
-                    //         content:NotificationContent(
-                    //             id:  1234,
-                    //             channelKey: 'image',
-                    //           title: 'Welcome to CloudyML',
-                    //           body: 'It\'s great to have you on CloudyML',
-                    //           bigPicture: 'asset://assets/HomeImage.png',
-                    //           largeIcon: 'asset://assets/logo2.png',
-                    //           notificationLayout: NotificationLayout.BigPicture,
-                    //           displayOnForeground: true
-                    //         )
-                    //     );
-                    //     // LocalNotificationService.showNotificationfromApp(
-                    //     //   title: 'Welcome to CloudyML',
-                    //     //   body: 'It\'s great to have you on CloudyML',
-                    //     //   payload: 'account'
-                    //     // );
-                    //   },
-                    // ),
-                    InkWell(
-                      child: ListTile(
-                        title: Text('Reviews'),
-                        leading: Icon(
-                          Icons.reviews_rounded,
-                          color: HexColor('691EC8'),
-                        ),
-                      ),
-                      onTap: () async {
-                        Navigator.pushNamed(context, '/reviews');
-                      },
-                    ),
-                    InkWell(
-                      onTap: () {
-                        logOut(context);
-                      },
-                      child: ListTile(
-                        title: Text('LogOut'),
-                        leading: Icon(
-                          Icons.logout_rounded,
-                          color: HexColor('691EC8'),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: CircleAvatar(
-                      maxRadius: 16,
-                      backgroundColor: Colors.white,
-                      child: Center(
-                        child: IconButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            icon: Icon(
-                              Icons.arrow_back,
-                              color: Colors.black,
-                              size: 12,
-                            )),
-                      )),
-                ),
-              ],
-            ),
-          ),
-        ),
+        drawer: customDrawer(context),
         body: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
           if (constraints.maxWidth >= 515) {
@@ -587,42 +289,42 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                           width: horizontalScale * 25,
                         ),
-                        SizedBox(
-                          height: 30,
-                          width: screenWidth / 3,
-                          child: TextField(
-                            style: TextStyle(
-                                color: HexColor("A7A7A7"), fontSize: 12),
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.all(5.0),
-                                hintText: "Search Courses",
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white, width: 1)),
-                                disabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white, width: 1)),
-                                hintStyle: TextStyle(
-                                    color: HexColor("A7A7A7"), fontSize: 12),
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white, width: 1)),
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white, width: 1)),
-                                prefixIcon: IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.search_outlined,
-                                      size: 14,
-                                      color: Colors.white,
-                                    ))),
-                          ),
-                        )
+                        // SizedBox(
+                        //   height: 30,
+                        //   width: screenWidth / 3,
+                        //   child: TextField(
+                        //     style: TextStyle(
+                        //         color: HexColor("A7A7A7"), fontSize: 12),
+                        //     decoration: InputDecoration(
+                        //         contentPadding: EdgeInsets.all(5.0),
+                        //         hintText: "Search Courses",
+                        //         focusedBorder: OutlineInputBorder(
+                        //             borderSide: BorderSide(
+                        //                 color: Colors.white, width: 1)),
+                        //         disabledBorder: OutlineInputBorder(
+                        //             borderSide: BorderSide(
+                        //                 color: Colors.white, width: 1)),
+                        //         hintStyle: TextStyle(
+                        //             color: HexColor("A7A7A7"), fontSize: 12),
+                        //         border: OutlineInputBorder(
+                        //             borderSide: BorderSide(
+                        //                 color: Colors.white, width: 1)),
+                        //         enabledBorder: OutlineInputBorder(
+                        //             borderSide: BorderSide(
+                        //                 color: Colors.white, width: 1)),
+                        //         prefixIcon: IconButton(
+                        //             onPressed: () {},
+                        //             icon: Icon(
+                        //               Icons.search_outlined,
+                        //               size: 14,
+                        //               color: Colors.white,
+                        //             ))),
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
-                  Container(
+                  ref.data()!["name"] == null ? Container() :  Container(
                     padding: EdgeInsets.only(left: 60, right: 60, top: 40),
                     child: Align(
                       alignment: Alignment.topLeft,
@@ -688,6 +390,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             onTap: (() async {
                               // setModuleId(snapshot.data!.docs[index].id);
                               await getCourseName();
+
                               if (navigateToCatalogueScreen(
                                   course[index]
                                       .courseId) &&
@@ -697,40 +400,49 @@ class _HomeScreenState extends State<HomeScreen> {
                                   'outStandingAmtPaid'])) {
                                 if (!course[index]
                                     .isItComboCourse) {
-                                  Navigator.push(
-                                    context,
-                                    PageTransition(
-                                      duration: Duration(
-                                          milliseconds: 400),
-                                      curve:
-                                      Curves.bounceInOut,
-                                      type: PageTransitionType
-                                          .rightToLeftWithFade,
-                                      child: VideoScreen(
-                                        isDemo: true,
-                                        courseName:
-                                        course[index]
-                                            .courseName,
-                                        sr: 1,
-                                      ),
-                                    ),
-                                  );
+
+                                  GoRouter.of(context).pushNamed('videoScreen',
+                                      queryParams: {
+                                        'courseName': course[index].courseName});
+
+                                  // Navigator.push(
+                                  //   context,
+                                  //   PageTransition(
+                                  //     duration: Duration(
+                                  //         milliseconds: 400),
+                                  //     curve:
+                                  //     Curves.bounceInOut,
+                                  //     type: PageTransitionType
+                                  //         .rightToLeftWithFade,
+                                  //     child: VideoScreen(
+                                  //       isDemo: true,
+                                  //       courseName:
+                                  //       course[index]
+                                  //           .courseName,
+                                  //       sr: 1,
+                                  //     ),
+                                  //   ),
+                                  // );
                                 } else {
-                                  Navigator.push(
-                                    context,
-                                    PageTransition(
-                                      duration: Duration(
-                                          milliseconds: 100),
-                                      curve:
-                                      Curves.bounceInOut,
-                                      type: PageTransitionType
-                                          .rightToLeftWithFade,
-                                      child: ComboStore(
-                                        courses: course[index]
-                                            .courses,
-                                      ),
-                                    ),
-                                  );
+                                  final id = index.toString();
+                                  final courseName = course[index].courseName;
+                                  context.goNamed('comboStore', queryParams: {'courseName': courseName, 'id': id});
+
+                                  // Navigator.push(
+                                  //   context,
+                                  //   PageTransition(
+                                  //     duration: Duration(
+                                  //         milliseconds: 100),
+                                  //     curve:
+                                  //     Curves.bounceInOut,
+                                  //     type: PageTransitionType
+                                  //         .rightToLeftWithFade,
+                                  //     child: ComboStore(
+                                  //       courses: course[index]
+                                  //           .courses,
+                                  //     ),
+                                  //   ),
+                                  // );
                                 }
                               } else {
                                 if (!course[index]
@@ -759,44 +471,53 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     );
                                   } else {
-                                    Navigator.push(
-                                      context,
-                                      PageTransition(
-                                        duration: Duration(
-                                            milliseconds:
-                                            400),
-                                        curve: Curves
-                                            .bounceInOut,
-                                        type: PageTransitionType
-                                            .rightToLeftWithFade,
-                                        child: VideoScreen(
-                                          isDemo: true,
-                                          courseName:
-                                          course[index]
-                                              .courseName,
-                                          sr: 1,
-                                        ),
-                                      ),
-                                    );
+                                    GoRouter.of(context).pushNamed('videoScreen',
+                                        queryParams: {
+                                          'courseName': course[index].courseName});
+                                    // Navigator.push(
+                                    //   context,
+                                    //   PageTransition(
+                                    //     duration: Duration(
+                                    //         milliseconds:
+                                    //         400),
+                                    //     curve: Curves
+                                    //         .bounceInOut,
+                                    //     type: PageTransitionType
+                                    //         .rightToLeftWithFade,
+                                    //     child: VideoScreen(
+                                    //       isDemo: true,
+                                    //       courseName:
+                                    //       course[index]
+                                    //           .courseName,
+                                    //       sr: 1,
+                                    //     ),
+                                    //   ),
+                                    // );
                                   }
                                 } else {
+
                                   ComboCourse.comboId.value =
                                       course[index].courseId;
-                                  Navigator.push(
-                                    context,
-                                    PageTransition(
-                                      duration: Duration(
-                                          milliseconds: 400),
-                                      curve:
-                                      Curves.bounceInOut,
-                                      type: PageTransitionType
-                                          .rightToLeftWithFade,
-                                      child: ComboCourse(
-                                        courses: course[index]
-                                            .courses,
-                                      ),
-                                    ),
-                                  );
+
+                                  final id = index.toString();
+                                  final courseName = course[index].courseName;
+
+                                  GoRouter.of(context).pushNamed('comboCourse', queryParams: {'id': id, 'courseName': courseName});
+                                  // Navigator.push(
+                                  //   context,
+                                  //   PageTransition(
+                                  //     duration: Duration(
+                                  //         milliseconds: 400),
+                                  //     curve:
+                                  //     Curves.bounceInOut,
+                                  //     type: PageTransitionType
+                                  //         .rightToLeftWithFade,
+                                  //     child: ComboCourse(
+                                  //       courses: course[index]
+                                  //           .courses,
+                                  //     ),
+                                  //   ),
+                                  // );
                                 }
                               }
                               setState(() {
@@ -910,31 +631,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ),
                                                 ),
                                                 SizedBox(height: 5,),
-                                                Container(
-                                                  height: 15,
-                                                  child: Row(
-                                                    children: [
-                                                      SizedBox(
-                                                        height: 5,
-                                                        width: 150,
-                                                        child:
-                                                        LinearProgressIndicator(
-                                                          value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
-                                                          color: HexColor(
-                                                              "8346E1"),
-                                                          backgroundColor:
-                                                          HexColor(
-                                                              'E3E3E3'),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Text(
-                                                        "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),)
-                                                    ],
-                                                  ),
-                                                ),
+                                                // Container(
+                                                //   height: 15,
+                                                //   child: Row(
+                                                //     children: [
+                                                //       // SizedBox(
+                                                //       //   height: 5,
+                                                //       //   width: 150,
+                                                //       //   child:
+                                                //       //   LinearProgressIndicator(
+                                                //       //     value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
+                                                //       //     color: HexColor(
+                                                //       //         "8346E1"),
+                                                //       //     backgroundColor:
+                                                //       //     HexColor(
+                                                //       //         'E3E3E3'),
+                                                //       //   ),
+                                                //       // ),
+                                                //       SizedBox(
+                                                //         width: 5,
+                                                //       ),
+                                                //       Text(
+                                                //         "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),)
+                                                //     ],
+                                                //   ),
+                                                // ),
                                               ],
                                             ),
                                           ),
@@ -994,16 +715,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                   });
                                   print(courseId);
                                   if (course[index].isItComboCourse) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ComboStore(
-                                          courses: course[index].courses,
-                                        ),
-                                      ),
-                                    );
+                                    final ids = index.toString();
+                                    final courseName = course[index].courseName;
+                                    final courseP = course[index].coursePrice;
+                                    GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': ids, 'coursePrice': courseP});
+
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) => ComboStore(
+                                    //       courses: course[index].courses,
+                                    //     ),
+                                    //   ),
+                                    // );
                                   } else {
-                                    Navigator.pushNamed(context, '/catalogue');
+
+                                    final id = index.toString();
+                                    GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+
                                   }
                                 },
                                 child: Padding(
@@ -1036,6 +765,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                               course[index].courseImageUrl,
                                               fit: BoxFit.fill,
                                             ),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.only(top: 5, right: 5),
+                                          height: verticalScale * 15,
+                                          child: Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Image.asset('assets/Rating.png',
+                                              fit: BoxFit.fill,
+                                              height: 10,
+                                              width: screenWidth/16,),
                                           ),
                                         ),
                                         Container(
@@ -1107,16 +847,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       fontSize: 10),
                                                 ),
                                               ),
-                                              Align(
-                                                alignment: Alignment.bottomRight,
-                                                child: Padding(
-                                                    padding: const EdgeInsets.only(top: 5, left: 8.0, right: 8),
-                                                    child: Image.asset('assets/Rating.png',
-                                                      fit: BoxFit.fill,
-                                                      height: 10,
-                                                      width: screenWidth/16,)
-                                                ),
-                                              ),
                                             ],
                                           ),
                                         ),
@@ -1136,7 +866,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         5)),
                                               ),
                                               child: Text(
-                                                "${course[index].coursePrice}",
+                                                "₹${course[index].coursePrice}/-",
                                                 style: TextStyle(
                                                     fontSize: 12,
                                                     color:
@@ -1705,7 +1435,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     );
                                   } else {
-                                    Navigator.pushNamed(context, '/catalogue');
+                                    Navigator.pushNamed(context, '/catalogue', );
                                   }
                                 },
                                 child: Padding(

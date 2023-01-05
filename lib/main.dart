@@ -1,27 +1,19 @@
 import 'dart:async';
 import 'dart:html' as html;
 import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudyml_app2/MyAccount/myaccount.dart';
 import 'package:cloudyml_app2/Providers/AppProvider.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/Providers/chat_screen_provider.dart';
 import 'package:cloudyml_app2/Services/database_service.dart';
 import 'package:cloudyml_app2/authentication/firebase_auth.dart';
-import 'package:cloudyml_app2/catalogue_screen.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/models/video_details.dart';
-import 'package:cloudyml_app2/my_Courses.dart';
-import 'package:cloudyml_app2/payment_screen.dart';
-import 'package:cloudyml_app2/payments_history.dart';
-import 'package:cloudyml_app2/screens/assignment_tab_screen.dart';
+import 'package:cloudyml_app2/router/login_state_check.dart';
+import 'package:cloudyml_app2/router/router.dart';
 import 'package:cloudyml_app2/screens/chat_screen.dart';
-import 'package:cloudyml_app2/screens/exlusive_offer/seasons_offer_screen.dart';
-import 'package:cloudyml_app2/screens/groups_list.dart';
 import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
 import 'package:cloudyml_app2/screens/splash.dart';
 import 'package:cloudyml_app2/services/local_notificationservice.dart';
-import 'package:cloudyml_app2/store.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -30,10 +22,12 @@ import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:renderer_switcher/renderer_switcher.dart';
-import 'globals.dart';
-import 'homepage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'package:go_router/go_router.dart';
 
+import 'authentication_screens/phone_auth.dart';
+import 'homepage.dart';
 
 
 
@@ -73,6 +67,7 @@ Future<void> backgroundHandler(RemoteMessage message) async {
 
 
 
+
 Future<void> main() async {
 
   await Hive.initFlutter();
@@ -80,6 +75,8 @@ Future<void> main() async {
   await Hive.openBox("NotificationBox");
   setPathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
+  final state = LoginState(await SharedPreferences.getInstance());
+  state.checkLoggedIn();
 
 
   await Firebase.initializeApp(
@@ -96,7 +93,7 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   LocalNotificationService.initialize();
 
-  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: MyApp()));
+  runApp(MyApp(loginState: state,));
 
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
@@ -111,19 +108,20 @@ Future<void> main() async {
     // Switches web renderer to html and reloads the window.
     RendererSwitcher.switchWebRenderer(WebRenderer.html);
   }
-
 }
 
+
 class MyApp extends StatefulWidget {
+
+  final LoginState loginState;
+
+  MyApp({required this.loginState});
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-
-
-
-
 
   @override
   void initState() {
@@ -133,9 +131,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-
-
-
     // showNoInternet() {
     //   AlertDialog alert = AlertDialog(
     //     content: Padding(
@@ -286,9 +281,18 @@ class _MyAppState extends State<MyApp> {
         isIgnoring: true,
         child: MultiProvider(
           providers: [
-            ChangeNotifierProvider(create: (_)=> ChatScreenNotifier(),child: ChatScreen()),
+            ChangeNotifierProvider(create: (_)=> ChatScreenNotifier(),
+                child: ChatScreen()),
             ChangeNotifierProvider.value(value: UserProvider.initialize()),
             ChangeNotifierProvider.value(value: AppProvider()),
+            ChangeNotifierProvider<LoginState>(
+              lazy: false,
+              create: (BuildContext createContext) => widget.loginState,
+            ),
+            Provider<MyRouter>(
+              lazy: false,
+              create: (BuildContext createContext) => MyRouter(widget.loginState),
+            ),
             StreamProvider<List<CourseDetails>>.value(
               value: DatabaseServices().courseDetails,
               initialData: [],
@@ -307,45 +311,57 @@ class _MyAppState extends State<MyApp> {
           //   );
           // },
 
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'CloudyML',
-            scrollBehavior: MyCustomScrollBehavior(),
-            builder: (BuildContext context, Widget? widget) {
-              ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-                return Container();
-              };
-              return MediaQuery(
-                child: widget!,
-                data: MediaQuery.of(context).copyWith(textScaleFactor: 1.15),
-              );
-            },
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-              // textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
-            ),
-            initialRoute: '/',
-            routes: {
-              '/': (context) => splash(),
-              "/authenticate": (context) =>
-                  Authenticate(),
-              "/myCourses": (context) =>
-                  HomeScreen(),
-              '/Store': (context) => StoreScreen(),
-              '/Messages': (context) => GroupsList(),
-              '/myAccount': (context) => MyAccountPage(),
-              '/reviewAssignments': (context) => Assignments(),
-              '/paymentHistory': (context) => PaymentHistory(),
-              '/reviews': (context) => ReviewsScreen(),
-              '/catalogue': (context) => CatelogueScreen(),
-              '/home': (context) => Home(),
-            },
+          child: Builder(
+            builder: (context) {
+              final router = Provider.of<MyRouter>(context, listen: false).routes;
+              return MaterialApp.router(
+                routerDelegate: router.routerDelegate,
+                routeInformationParser: router.routeInformationParser,
+                routeInformationProvider: router.routeInformationProvider,
+                debugShowCheckedModeBanner: false,
+                title: 'CloudyML',
+                scrollBehavior: MyCustomScrollBehavior(),
+                builder: (BuildContext context, Widget? widget) {
+                  ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                    return Container();
+                  };
+                  return MediaQuery(
+                    child: widget!,
+                    data: MediaQuery.of(context).copyWith(textScaleFactor: 1.15),
+                  );
+
+                },
+                theme: ThemeData(
+                  primarySwatch: Colors.blue,
+                  // textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
+                ),
+              //   home: splash(),
+              //   // routes: {
+              //   // MyRoutes.initialRoute : (context) => splash(),
+              //   //   "/authenticate": (context) =>
+              //   //       Authenticate(),
+              //   //   "/myCourses": (context) =>
+              //   //       HomeScreen(),
+              //   //   '/Store': (context) => StoreScreen(),
+              //   //   '/Messages': (context) => GroupsList(),
+              //   //   '/myAccount': (context) => MyAccountPage(),
+              //   //   '/reviewAssignments': (context) => Assignments(),
+              //   //   '/paymentHistory': (context) => PaymentHistory(),
+              //   //   '/reviews': (context) => ReviewsScreen(),
+              //   //   '/catalogue': (context) => CatelogueScreen(),
+              //   //   '/home': (context) => Home(),
+              //   // },
+              // )
+        );
+            }
           ),
-        ),
       ),
-    );
+    ));
   }
 }
+
+
+
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   @override

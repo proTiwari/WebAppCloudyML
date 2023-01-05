@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudyml_app2/api/firebase_api.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:cloudyml_app2/models/firebase_file.dart';
@@ -51,7 +52,9 @@ class _Review1State extends State<ReviewsScreen> {
                         color: HexColor('7A62DE'),
                       ),
                     ),
-                    Positioned(top:120*verticalScale ,left: horizontalScale*175,
+                    Positioned(
+                      top: 40 * verticalScale,
+                      left: 150 * horizontalScale,
                       child: Container(alignment: Alignment.center,height: 40,width: 260,
                           decoration: BoxDecoration(
                               border: Border.fromBorderSide(
@@ -60,36 +63,37 @@ class _Review1State extends State<ReviewsScreen> {
                               borderRadius: BorderRadius.all(Radius.circular(5)
                               )),
                           child: Text(
-                            'Our learners speaks',textAlign: TextAlign.center,
+                            'Our Learners Speaks',textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.deepPurple.shade700,
                                 fontWeight: FontWeight.bold),
                           )),
                     ),
-                    Positioned(
-                        top: 65 * verticalScale,
-                        left: 196 * horizontalScale,
-                        child: Container(
-                          child: Row(
-                            children: [
-                              Text(
-                                'Reviews',
-                                textScaleFactor:
-                                min(horizontalScale, verticalScale),
-                                style: TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        )),
+                    // Positioned(
+                    //     top: 65 * verticalScale,
+                    //     left: 196 * horizontalScale,
+                    //     child: Container(
+                    //       child: Row(
+                    //         children: [
+                    //           Text(
+                    //             'Reviews',
+                    //             textScaleFactor:
+                    //             min(horizontalScale, verticalScale),
+                    //             style: TextStyle(
+                    //                 fontSize: 30,
+                    //                 fontWeight: FontWeight.bold,
+                    //                 color: Colors.white),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     )),
                     Positioned(
                         top: 30 * verticalScale,
                         left: 10 * horizontalScale,
                         child: IconButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            GoRouter.of(context).push('/home');
+                            // Navigator.pop(context);
                           },
                           icon: Icon(
                             Icons.arrow_back,
@@ -212,7 +216,7 @@ class _Review1State extends State<ReviewsScreen> {
                                                                     fit: BoxFit.fill,
                                                                     placeholder: (context,
                                                                         url) =>
-                                                                        CircularProgressIndicator(),
+                                                                        Center(child: CircularProgressIndicator()),
                                                                   ),
                                                                 ),
                                                               ),
@@ -221,7 +225,7 @@ class _Review1State extends State<ReviewsScreen> {
                                             },
                                             child: CachedNetworkImage(
                                               placeholder: (context, url) =>
-                                                  CircularProgressIndicator(),
+                                                  Center(child: CircularProgressIndicator()),
                                               errorWidget: (context, url, error) =>
                                                   Icon(Icons.error),
                                               imageUrl: file.url,
@@ -349,7 +353,7 @@ class _Review1State extends State<ReviewsScreen> {
                                                                     fit: BoxFit.fill,
                                                                     placeholder: (context,
                                                                         url) =>
-                                                                        CircularProgressIndicator(),
+                                                                        Center(child: CircularProgressIndicator()),
                                                                   ),
                                                                 ),
                                                               ),
@@ -358,7 +362,7 @@ class _Review1State extends State<ReviewsScreen> {
                                             },
                                             child: CachedNetworkImage(
                                               placeholder: (context, url) =>
-                                                  CircularProgressIndicator(),
+                                                  Center(child: CircularProgressIndicator()),
                                               errorWidget: (context, url, error) =>
                                                   Icon(Icons.error),
                                               imageUrl: file.url,

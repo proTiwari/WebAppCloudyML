@@ -3,18 +3,24 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudyml_app2/payments_history.dart';
 import 'package:cloudyml_app2/privacy_policy.dart';
+import 'package:cloudyml_app2/router/login_state_check.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:cloudyml_app2/models/firebase_file.dart';
 import 'package:cloudyml_app2/screens/image_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:cloudyml_app2/globals.dart';
+import 'package:provider/provider.dart';
+import 'Providers/UserProvider.dart';
 import 'aboutus.dart';
 import 'authentication/firebase_auth.dart';
 import 'home.dart';
+import 'homepage.dart';
 import 'my_Courses.dart';
+import 'package:share_extend/share_extend.dart';
 
 Row Star() {
   return Row(
@@ -709,7 +715,236 @@ SingleChildScrollView safearea1(BuildContext context) {
   );
 }
 
+
+
+Drawer customDrawer(BuildContext context) {
+
+
+  void saveLoginState(BuildContext context) {
+    Provider.of<LoginState>(context, listen: false).loggedIn = false;
+  }
+
+  final userProvider = Provider.of<UserProvider>(context);
+  return Drawer(
+    child: Container(
+      child: Stack(
+        children: [
+          ListView(
+            padding: EdgeInsets.only(top: 0),
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    child: Image.network(
+                        "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FRectangle%20133.png?alt=media&token=1c822b64-1f79-4654-9ebd-2bd0682c8e0f"),
+                  ),
+                  UserAccountsDrawerHeader(
+                    accountName: Text(
+                      userProvider.userModel?.name.toString() ??
+                          'Enter name',
+                    ),
+                    accountEmail: Text(
+                      userProvider.userModel?.email.toString() == ''
+                          ? userProvider.userModel?.mobile.toString() ?? ''
+                          : userProvider.userModel?.email.toString() ??
+                          'Enter email',
+                    ),
+                    currentAccountPicture: GestureDetector(
+                      onTap: () {
+                        GoRouter.of(context).push('/myAccount');
+                        // Navigator.pushNamed(context, '/myAccount');
+                      },
+                      child: CircleAvatar(
+                        foregroundColor: Colors.black,
+                        //foregroundImage: NetworkImage('https://stratosphere.co.in/img/user.jpg'),
+                        foregroundImage: NetworkImage(
+                            userProvider.userModel?.image ?? ''),
+                        backgroundColor: Colors.transparent,
+                        backgroundImage: CachedNetworkImageProvider(
+                          'https://stratosphere.co.in/img/user.jpg',
+                        ),
+                      ),
+                    ),
+                    decoration: BoxDecoration(color: Colors.transparent),
+                  ),
+                ],
+              ),
+              InkWell(
+                child: ListTile(
+                  title: Text('Home'),
+                  leading: Icon(
+                    Icons.home,
+                    color: HexColor('691EC8'),
+                  ),
+                ),
+                onTap: () {
+                  GoRouter.of(context).push('/home');
+                },
+              ),
+              //navigate to store
+              InkWell(
+                child: ListTile(
+                  title: Text('Store'),
+                  leading: Icon(
+                    Icons.store,
+                    color: HexColor('691EC8'),
+                  ),
+                ),
+                onTap: () {
+                  GoRouter.of(context).push('/store');
+                },
+              ),
+              //navigate to messages
+              InkWell(
+                child: ListTile(
+                  title: Text('Chat with TA'),
+                  leading: Icon(
+                    Icons.chat_bubble_outline_sharp,
+                    color: HexColor('691EC8'),
+                  ),
+                ),
+                onTap: () {
+                  GoRouter.of(context).push('/chat');
+                },
+              ),
+              InkWell(
+                child: ListTile(
+                  title: Text(''
+                      'My Account'),
+                  leading: Icon(
+                    Icons.person,
+                    color: HexColor('691EC8'),
+                  ),
+                ),
+                onTap: () {
+                  GoRouter.of(context).push('/myAccount');
+                },
+              ),
+              InkWell(
+                child: ListTile(
+                  title: Text('My Courses'),
+                  leading: Icon(
+                    Icons.assignment,
+                    color: HexColor('691EC8'),
+                  ),
+                ),
+                onTap: () {
+                  GoRouter.of(context).push('/myCourses');
+                },
+              ),
+              //Assignments tab for mentors only
+              // ref.data() != null && ref.data()!["role"] == 'mentor'
+              //     ? InkWell(
+              //   child: ListTile(
+              //     title: Text('Assignments'),
+              //     leading: Icon(
+              //       Icons.assignment_ind_outlined,
+              //       color: HexColor('691EC8'),
+              //     ),
+              //   ),
+              //   onTap: () {
+              //     Navigator.pushNamed(context, '/reviewAssignments');
+              //   },
+              // )
+              //     : Container(),
+              InkWell(
+                onTap: () {
+                  GoRouter.of(context).push('/paymentHistory');
+                },
+                child: ListTile(
+                  title: Text('Payment History'),
+                  leading: Icon(
+                    Icons.payment_rounded,
+                    color: HexColor('691EC8'),
+                  ),
+                ),
+              ),
+              Divider(
+                thickness: 2,
+              ),
+              InkWell(
+                child: ListTile(
+                  title: Text('Reviews'),
+                  leading: Icon(
+                    Icons.reviews_rounded,
+                    color: HexColor('691EC8'),
+                  ),
+                ),
+                onTap: () {
+                  GoRouter.of(context).push('/reviews');
+                },
+              ),
+              InkWell(
+                child: ListTile(
+                  title: Text('Share'),
+                  leading: Icon(
+                    Icons.share,
+                    color: HexColor('691EC8'),
+                  ),
+                ),
+                onTap: () {
+                  // AppInstalledCount();
+                  String? a = linkMessage.toString();
+                  // ShareExtend.share("share text", a);
+                  ShareExtend.share(a, "text");
+                },
+              ),
+              InkWell(
+                child: ListTile(
+                  title: Text('Reward  $rewardCount'),
+                  leading: Icon(
+                    Icons.price_change,
+                    color: HexColor('691EC8'),
+                  ),
+                ),
+                onTap: () {},
+              ),
+              InkWell(
+                onTap: () {
+                  logOut(context);
+                  GoRouter.of(context).pushReplacement('/login');
+                  saveLoginState(context);
+                },
+                child: ListTile(
+                  title: Text('LogOut'),
+                  leading: Icon(
+                    Icons.logout_rounded,
+                    color: HexColor('691EC8'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            top: 10,
+            right: 10,
+            child: CircleAvatar(
+                maxRadius: 16,
+                backgroundColor: Colors.white,
+                child: Center(
+                  child: IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                        size: 12,
+                      )),
+                )),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 Drawer dr(BuildContext context) {
+
+  void saveLoginState(BuildContext context) {
+    Provider.of<LoginState>(context, listen: false).loggedIn = false;
+  }
+
   double height = MediaQuery.of(context).size.height;
   double width = MediaQuery.of(context).size.width;
   return Drawer(
@@ -885,6 +1120,7 @@ Drawer dr(BuildContext context) {
           ),
           onTap: () {
             logOut(context);
+            saveLoginState(context);
           },
         ),
       ],

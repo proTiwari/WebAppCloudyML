@@ -2,7 +2,6 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_web/razorpay_web.dart';
-import 'package:universal_io/io.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -34,7 +33,7 @@ class PaymentButton extends StatefulWidget {
   final String? whichCouponCode;
   final String outStandingAmountString;
   bool isItComboCourse;
-
+  int coursePriceMoneyRef;
   String courseId;
   // String courseFetchedId;
 
@@ -55,7 +54,8 @@ class PaymentButton extends StatefulWidget {
       required this.courseId,
       required this.couponCodeText,
       required this.isItComboCourse,
-      required this.whichCouponCode})
+      required this.whichCouponCode,
+      required this.coursePriceMoneyRef})
       : super(key: key);
 
   @override

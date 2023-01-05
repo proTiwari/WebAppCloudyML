@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:cloudyml_app2/theme.dart';
 import 'package:cloudyml_app2/global_variable.dart' as globals;
 import '../../authentication/firebase_auth.dart';
+import '../router/login_state_check.dart';
 
 class LoginUsernamePage extends StatefulWidget {
   const LoginUsernamePage({Key? key}) : super(key: key);
@@ -38,6 +39,10 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
     } catch (e) {
       showToast(e.toString());
     }
+  }
+
+  void saveLoginState(BuildContext context) {
+    Provider.of<LoginState>(context, listen: false).loggedIn = true;
   }
 
   @override
@@ -250,6 +255,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                                               email: globals.email);
                                           print(logi.user?.email);
                                           showToast(logi.user!.email);
+                                          saveLoginState(context);
                                         } else {
                                           userprofile(
                                               name: nameController.text.toString(),
@@ -258,6 +264,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                                               authType: 'phoneAuth',
                                               phoneVerified: true,
                                               email: globals.email);
+                                          saveLoginState(context);
                                         }
 
                                         if (nameController.text.isNotEmpty) {
@@ -277,6 +284,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                                                 "linked": "true",
                                               });
                                               var userDocs;
+
                                               try {
                                                 userDocs = await FirebaseFirestore
                                                     .instance

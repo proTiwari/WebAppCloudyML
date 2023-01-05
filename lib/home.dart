@@ -52,8 +52,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     insertToken();
-    print('UID--${FirebaseAuth.instance.currentUser!.uid}');
-    Provider.of<UserProvider>(context, listen: false).reloadUserModel();
+    // Provider.of<UserProvider>(context, listen: false).reloadUserModel();
     userData();
   }
 
@@ -115,7 +114,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
+    // final userProvider = Provider.of<UserProvider>(context);
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width * 0.98;
     return Scaffold(

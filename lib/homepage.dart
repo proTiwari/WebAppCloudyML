@@ -6,50 +6,45 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/api/firebase_api.dart';
 import 'package:cloudyml_app2/authentication/firebase_auth.dart';
-import 'package:cloudyml_app2/catalogue_screen.dart';
 import 'package:cloudyml_app2/combo/combo_store.dart';
 import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
-import 'package:cloudyml_app2/pages/notificationpage.dart';
-import 'package:cloudyml_app2/payments_history.dart';
-import 'package:cloudyml_app2/privacy_policy.dart';
-import 'package:cloudyml_app2/screens/assignment_tab_screen.dart';
-import 'package:cloudyml_app2/screens/exlusive_offer/seasons_offer_screen.dart';
-import 'package:cloudyml_app2/screens/groups_list.dart';
-import 'package:cloudyml_app2/screens/image_page.dart';
-import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
-import 'package:cloudyml_app2/store.dart';
+import 'package:cloudyml_app2/router/login_state_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloudyml_app2/fun.dart';
 import 'package:cloudyml_app2/models/firebase_file.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:hive/hive.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:badges/badges.dart';
-import 'package:video_player/video_player.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'MyAccount/myaccount.dart';
-import 'aboutus.dart';
-import 'package:http/http.dart' as http;
+import 'Services/code_generator.dart';
+import 'Services/deeplink_service.dart';
 import 'combo/combo_course.dart';
+import 'models/referal_model.dart';
 import 'module/pdf_course.dart';
-import 'module/video_screen.dart';
-import 'my_Courses.dart';
+import 'package:http/http.dart' as http;
+
+var rewardCount = 0;
+String? linkMessage;
 
 class Home extends StatefulWidget {
+
   const Home({Key? key}) : super(key: key);
+
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+
   late Future<List<FirebaseFile>> futureFiles;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<dynamic> courses = [];
@@ -138,89 +133,84 @@ class _HomeState extends State<Home> {
   //   }
   // }
 
-  var coursePercent = {};
+  // var coursePercent = {};
 
-  getPercentageOfCourse()
-  async {
-
-    try{
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get()
-          .then((value) async{
-        try {
-          courses = value.data()!['paidCourseNames'];
-        } catch(e){
-          print('donggg ${e.toString()}');
-        }
-      });
-    }catch(e){
-      print(e.toString());
-    }
-
-    try{
-      var data = await FirebaseFirestore.instance.collection("courseprogress")
-          .doc(FirebaseAuth.instance.currentUser!.uid).get();
-      var getData = data.data();
-
-      for(var courseId in courses)
-      {
-        print("ID = = ${courseId}");
-        int count = 0;
-        try{
-          await FirebaseFirestore.instance.collection("courses").where("id", isEqualTo: courseId).get().then(
-                  (value)async{
-                if(value.docs.first.exists)
-                {
-                  var coursesName = value.docs.first.data()["courses name"];
-                  for(var name in coursesName)
-                  {
-                    double num = (getData![name+"percentage"]!=null)?getData[name+"percentage"]:0;
-                    count+=num.toInt();
-                    print("Count = $count");
-                    coursePercent[courseId] = count~/(value.docs.first.data()["courses name"].length);
-                  }
-                }
-              }
-          ).catchError((err)=>print("Error"));
-        }
-        catch(err)
-        {
-          print(err);
-        }
-      }
-
-    }catch(e){
-      print('my courses error ${e.toString()}');
-    }
-
-    print("done");
-    setState(() {
-      coursePercent;
-    });
-    print(coursePercent);
-  }
+  // getPercentageOfCourse()
+  // async {
+  //
+  //   try{
+  //     await FirebaseFirestore.instance
+  //         .collection('Users')
+  //         .doc(FirebaseAuth.instance.currentUser!.uid)
+  //         .get()
+  //         .then((value) async{
+  //       try {
+  //         courses = value.data()!['paidCourseNames'];
+  //       } catch(e){
+  //         print('donggg ${e.toString()}');
+  //       }
+  //     });
+  //   }catch(e){
+  //     print(e.toString());
+  //   }
+  //
+  //   try{
+  //     var data = await FirebaseFirestore.instance.collection("courseprogress")
+  //         .doc(FirebaseAuth.instance.currentUser!.uid).get();
+  //     var getData = data.data();
+  //
+  //     for(var courseId in courses)
+  //     {
+  //       print("ID = = ${courseId}");
+  //       int count = 0;
+  //       try{
+  //         await FirebaseFirestore.instance.collection("courses").where("id", isEqualTo: courseId).get().then(
+  //                 (value)async{
+  //               if(value.docs.first.exists)
+  //               {
+  //                 var coursesName = value.docs.first.data()["courses name"];
+  //                 for(var name in coursesName)
+  //                 {
+  //                   double num = (getData![name+"percentage"]!=null)?getData[name+"percentage"]:0;
+  //                   count+=num.toInt();
+  //                   print("Count = $count");
+  //                   coursePercent[courseId] = count~/(value.docs.first.data()["courses name"].length);
+  //                 }
+  //               }
+  //             }
+  //         ).catchError((err)=>print("Error"));
+  //       }
+  //       catch(err)
+  //       {
+  //         print(err);
+  //       }
+  //     }
+  //
+  //   }catch(e){
+  //     print('my courses error ${e.toString()}');
+  //   }
+  //
+  //   print("done");
+  //   setState(() {
+  //     coursePercent;
+  //   });
+  //   print(coursePercent);
+  // }
 
   @override
   void initState() {
     // showNotification();
-
     _controller = ScrollController();
     super.initState();
     futureFiles = FirebaseApi.listAll('reviews/');
     getCourseName();
-    getPercentageOfCourse();
+    // getPercentageOfCourse();
     fetchCourses();
     dbCheckerForPayInParts();
     userData();
-    startTimer();
-
-    if (myDuration.inDays == 0) {
-      stopTimer();
-    } else {
-      return null;
-    }
+    // startTimer();
+    getuserdetails();
+    checkrewardexpiry();
   }
 
   fetchCourses() async {
@@ -232,6 +222,7 @@ class _HomeState extends State<Home> {
           .then((value) {
         setState(() {
           if(value.data()!['paidCourseNames'] == null || value.data()!['paidCourseNames'] == []){
+
             courses = [];
           }else{
             courses = value.data()!['paidCourseNames'];
@@ -268,6 +259,180 @@ class _HomeState extends State<Home> {
     }
   }
 
+
+
+  void getuserdetails() async {
+    final deepLinkRepo = await DeepLinkService.instance;
+    var referralCode = await deepLinkRepo?.referrerCode.value;
+
+    print(
+        "sddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd $referralCode ddd");
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((value) async {
+      print(value.data());
+      print(FirebaseAuth.instance.currentUser!.uid);
+
+      try {
+        linkMessage = await value.data()!['refer_link'];
+        rewardCount = await value.data()!['reward'];
+        setState(() {
+          rewardCount;
+        });
+      } catch (e) {
+        print(e);
+        linkMessage = '';
+      }
+      print(linkMessage);
+      print('1');
+      if (linkMessage == '' || linkMessage == null) {
+        print('2');
+        print(linkMessage);
+        updateReferaldata();
+      } else {}
+      ;
+    });
+  }
+
+  checkrewardexpiry() async {
+    var rewardvalidfrom;
+    var rewardexpireindays;
+    try {
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((value) {
+        rewardvalidfrom = value.data()!['rewardvalidfrom'];
+      });
+      await FirebaseFirestore.instance
+          .collection("Controllers")
+          .doc("variables")
+          .get()
+          .then((value) {
+        rewardexpireindays = value.data()!['rewardexpireindays'];
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+    if (rewardexpireindays == null) {
+      rewardexpireindays = 7;
+    }
+    if (rewardvalidfrom != null) {
+      var data = DateTime.now().difference(rewardvalidfrom.toDate());
+      if (data.inDays >= rewardexpireindays) {
+        await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({"reward": 0}).whenComplete(() {
+          print('success');
+        }).onError((error, stackTrace) => print(error));
+      }
+    }
+  }
+
+  void updateReferaldata() async {
+    try {
+      print('4');
+      final deepLinkRepo = await DeepLinkService.instance;
+      var referralCode = await deepLinkRepo?.referrerCode.value;
+      print(
+          "sddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd ${referralCode}");
+      final referCode = await CodeGenerator().generateCode('refer');
+      final referLink =
+      await DeepLinkService.instance?.createReferLink(referCode);
+      setState(() {
+        if (referralCode != '') {
+          rewardCount = 50;
+        } else {
+          rewardCount = 0;
+        }
+        linkMessage = referLink;
+        print(linkMessage);
+      });
+
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'refer_link': referLink,
+        'refer_code': referCode,
+        "referral_code": referralCode,
+        'reward': rewardCount,
+      }).whenComplete(() =>
+          print("send data to firebase uid: ${FirebaseAuth.instance.currentUser!.uid}"));
+
+      Future<ReferalModel> getReferrerUser(String referCode) async {
+        print("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ${referCode}");
+        final docSnapshots = await FirebaseFirestore.instance
+            .collection('Users')
+            .where('refer_code', isEqualTo: referCode)
+            .get();
+
+        final userSnapshot = docSnapshots.docs.first;
+        print(
+            "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ${userSnapshot.exists}");
+        if (userSnapshot.exists) {
+          print(userSnapshot.data());
+          return ReferalModel.fromJson(userSnapshot.data());
+        } else {
+          return ReferalModel.empty();
+        }
+      }
+
+      Future<void> rewardUser(
+          String currentUserUID, String referrerCode) async {
+        try {
+          if (referrerCode.toString().substring(0, 11) != "moneyreward") {
+            final referer = await getReferrerUser(referrerCode);
+            print(
+                "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ${referer.id}");
+
+            final checkIfUserAlreadyExist = await FirebaseFirestore.instance
+                .collection('Users')
+                .doc(referer.id)
+                .collection('referrers')
+                .doc(currentUserUID)
+                .get();
+
+            if (!checkIfUserAlreadyExist.exists) {
+              await FirebaseFirestore.instance
+                  .collection('Users')
+                  .doc(referer.id)
+                  .collection('referrers')
+                  .doc(currentUserUID)
+                  .set({
+                "uid": currentUserUID,
+                "createdAt": DateTime.now(),
+              });
+
+              await FirebaseFirestore.instance
+                  .collection('Users')
+                  .doc(referer.id)
+                  .update({
+                "reward": FieldValue.increment(50),
+                "rewardvalidfrom": DateTime.now()
+              });
+            }
+          }
+        } catch (e) {
+          debugPrint(e.toString());
+        }
+      }
+
+      if (referralCode != "") {
+        print("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ${referralCode}");
+        await rewardUser(FirebaseAuth.instance.currentUser!.uid, referralCode!);
+      }
+      ;
+    } catch (e) {
+      print(
+          "................................................................................................................................${e}");
+    }
+  }
+
   void startTimer() {
     countDownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       setCountDown();
@@ -301,6 +466,10 @@ class _HomeState extends State<Home> {
 
   String strDigits(int n) => n.toString().padLeft(2, '0');
 
+  void saveLoginOutState(BuildContext context) {
+    Provider.of<LoginState>(context, listen: false).loggedIn = false;
+  }
+
   Timer? countDownTimer;
   Duration myDuration = Duration(days: 5);
 
@@ -313,7 +482,6 @@ class _HomeState extends State<Home> {
 
     final providerNotification =
     Provider.of<UserProvider>(context, listen: false);
-    final userProvider = Provider.of<UserProvider>(context);
     final size = MediaQuery.of(context).size;
     List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
     final screenHeight = MediaQuery.of(context).size.height;
@@ -323,292 +491,7 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: Drawer(
-        child: Container(
-          child: Stack(
-            children: [
-              ListView(
-                padding: EdgeInsets.only(top: 0),
-                children: [
-                  Stack(
-                    children: [
-                      Container(
-                        child: Image.network(
-                            "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FRectangle%20133.png?alt=media&token=1c822b64-1f79-4654-9ebd-2bd0682c8e0f"),
-                      ),
-                      UserAccountsDrawerHeader(
-                        accountName: Text(
-                          userProvider.userModel?.name.toString() ??
-                              'Enter name',
-                        ),
-                        accountEmail: Text(
-                          userProvider.userModel?.email.toString() == ''
-                              ? userProvider.userModel?.mobile.toString() ?? ''
-                              : userProvider.userModel?.email.toString() ??
-                              'Enter email',
-                        ),
-                        currentAccountPicture: GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/myAccount');
-                          },
-                          child: CircleAvatar(
-                            foregroundColor: Colors.black,
-                            //foregroundImage: NetworkImage('https://stratosphere.co.in/img/user.jpg'),
-                            foregroundImage: NetworkImage(
-                                userProvider.userModel?.image ?? ''),
-                            backgroundColor: Colors.transparent,
-                            backgroundImage: CachedNetworkImageProvider(
-                              'https://stratosphere.co.in/img/user.jpg',
-                            ),
-                          ),
-                        ),
-                        decoration: BoxDecoration(color: Colors.transparent),
-                      ),
-                    ],
-                  ),
-                  // Container(
-                  //     height: height * 0.27,
-                  //     //decoration: BoxDecoration(gradient: gradient),
-                  //     color: HexColor('7B62DF'),
-                  //     child: StreamBuilder<QuerySnapshot>(
-                  //       stream: FirebaseFirestore.instance
-                  //           .collection("Users")
-                  //           .snapshots(),
-                  //       builder: (BuildContext context,
-                  //           AsyncSnapshot<QuerySnapshot> snapshot) {
-                  //         if (!snapshot.hasData) return const SizedBox.shrink();
-                  //         return ListView.builder(
-                  //           itemCount: snapshot.data!.docs.length,
-                  //           itemBuilder: (BuildContext context, index) {
-                  //             DocumentSnapshot document = snapshot.data!.docs[index];
-                  //             Map<String, dynamic> map = snapshot.data!.docs[index]
-                  //                 .data() as Map<String, dynamic>;
-                  //             if (map["id"].toString() ==
-                  //                 FirebaseAuth.instance.currentUser!.uid) {
-                  //               return Padding(
-                  //                 padding: EdgeInsets.all(width * 0.05),
-                  //                 child: Container(
-                  //                   child: Column(
-                  //                     crossAxisAlignment: CrossAxisAlignment.start,
-                  //                     mainAxisSize: MainAxisSize.min,
-                  //                     children: [
-                  //                       CircleAvatar(
-                  //                         radius: width * 0.089,
-                  //                         backgroundImage:
-                  //                             AssetImage('assets/user.jpg'),
-                  //                       ),
-                  //                       SizedBox(
-                  //                         height: height * 0.01,
-                  //                       ),
-                  //                       map['name'] != null
-                  //                           ? Text(
-                  //                               map['name'],
-                  //                               style: TextStyle(
-                  //                                   color: Colors.white,
-                  //                                   fontWeight: FontWeight.w500,
-                  //                                   fontSize: width * 0.049),
-                  //                             )
-                  //                           : Text(
-                  //                               map['mobilenumber'],
-                  //                               style: TextStyle(
-                  //                                   color: Colors.white,
-                  //                                   fontWeight: FontWeight.w500,
-                  //                                   fontSize: width * 0.049),
-                  //                             ),
-                  //                       SizedBox(
-                  //                         height: height * 0.007,
-                  //                       ),
-                  //                       map['email'] != null
-                  //                           ? Text(
-                  //                               map['email'],
-                  //                               style: TextStyle(
-                  //                                   color: Colors.white,
-                  //                                   fontSize: width * 0.038),
-                  //                             )
-                  //                           : Container(),
-                  //                     ],
-                  //                   ),
-                  //                 ),
-                  //               );
-                  //             } else {
-                  //               return Container();
-                  //             }
-                  //           },
-                  //         );
-                  //       },
-                  //     )
-                  // ),
-                  InkWell(
-                    child: ListTile(
-                      title: Text('Home'),
-                      leading: Icon(
-                        Icons.home,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/home');
-                    },
-                  ),
-                  //navigate to store
-                  InkWell(
-                    child: ListTile(
-                      title: Text('Store'),
-                      leading: Icon(
-                        Icons.store,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/Store');
-                    },
-                  ),
-                  //navigate to messages
-                  InkWell(
-                    child: ListTile(
-                      title: Text('Chat with TA'),
-                      leading: Icon(
-                        Icons.chat_bubble_outline_sharp,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/Messages');
-                    },
-                  ),
-                  InkWell(
-                    child: ListTile(
-                      title: Text(''
-                          'My Account'),
-                      leading: Icon(
-                        Icons.person,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/myAccount');
-                    },
-                  ),
-                  InkWell(
-                    child: ListTile(
-                      title: Text('My Courses'),
-                      leading: Icon(
-                        Icons.assignment,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () async {
-                      Navigator.pushNamed(context, '/myCourses');
-                    },
-                  ),
-                  //Assignments tab for mentors only
-                  ref.data() != null && ref.data()!["role"] == 'mentor'
-                      ? InkWell(
-                    child: ListTile(
-                      title: Text('Assignments'),
-                      leading: Icon(
-                        Icons.assignment_ind_outlined,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/reviewAssignments');
-                    },
-                  )
-                      : Container(),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/paymentHistory');
-                    },
-                    child: ListTile(
-                      title: Text('Payment History'),
-                      leading: Icon(
-                        Icons.payment_rounded,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                  ),
-                  Divider(
-                    thickness: 2,
-                  ),
-                  // InkWell(
-                  //   child: ListTile(
-                  //     title: Text('Notification Local'),
-                  //     leading: Icon(
-                  //       Icons.book,
-                  //       color: HexColor('6153D3'),
-                  //     ),
-                  //   ),
-                  //   ),
-                  //   onTap: () async {
-                  //
-                  //     await AwesomeNotifications().createNotification(
-                  //         content:NotificationContent(
-                  //             id:  1234,
-                  //             channelKey: 'image',
-                  //           title: 'Welcome to CloudyML',
-                  //           body: 'It\'s great to have you on CloudyML',
-                  //           bigPicture: 'asset://assets/HomeImage.png',
-                  //           largeIcon: 'asset://assets/logo2.png',
-                  //           notificationLayout: NotificationLayout.BigPicture,
-                  //           displayOnForeground: true
-                  //         )
-                  //     );
-                  //     // LocalNotificationService.showNotificationfromApp(
-                  //     //   title: 'Welcome to CloudyML',
-                  //     //   body: 'It\'s great to have you on CloudyML',
-                  //     //   payload: 'account'
-                  //     // );
-                  //   },
-                  // ),
-                  InkWell(
-                    child: ListTile(
-                      title: Text('Reviews'),
-                      leading: Icon(
-                        Icons.reviews_rounded,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                    onTap: () async {
-                      Navigator.pushNamed(context, '/reviews');
-                    },
-                  ),
-                  InkWell(
-                    onTap: () {
-                      logOut(context);
-                    },
-                    child: ListTile(
-                      title: Text('LogOut'),
-                      leading: Icon(
-                        Icons.logout_rounded,
-                        color: HexColor('691EC8'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: CircleAvatar(
-                    maxRadius: 16,
-                    backgroundColor: Colors.white,
-                    child: Center(
-                      child: IconButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: Colors.black,
-                            size: 12,
-                          )),
-                    )),
-              ),
-            ],
-          ),
-        ),
-      ),
+      drawer: customDrawer(context),
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             if (constraints.maxWidth >= 315) {
@@ -654,6 +537,8 @@ class _HomeState extends State<Home> {
                                 ElevatedButton(
                                     onPressed: () {
                                       logOut(context);
+                                      saveLoginOutState(context);
+                                      GoRouter.of(context).pushReplacement('/login');
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: HexColor("8346E1"),
@@ -752,40 +637,49 @@ class _HomeState extends State<Home> {
                                             'outStandingAmtPaid'])) {
                                           if (!course[index]
                                               .isItComboCourse) {
-                                            Navigator.push(
-                                              context,
-                                              PageTransition(
-                                                duration: Duration(
-                                                    milliseconds: 400),
-                                                curve:
-                                                Curves.bounceInOut,
-                                                type: PageTransitionType
-                                                    .rightToLeftWithFade,
-                                                child: VideoScreen(
-                                                  isDemo: true,
-                                                  courseName:
-                                                  course[index]
-                                                      .courseName,
-                                                  sr: 1,
-                                                ),
-                                              ),
-                                            );
+                                            GoRouter.of(context).pushNamed('videoScreen',
+                                                queryParams: {
+                                                  'courseName': course[index].courseName});
+
+                                            // Navigator.push(
+                                            //   context,
+                                            //   PageTransition(
+                                            //     duration: Duration(
+                                            //         milliseconds: 400),
+                                            //     curve:
+                                            //     Curves.bounceInOut,
+                                            //     type: PageTransitionType
+                                            //         .rightToLeftWithFade,
+                                            //     child: VideoScreen(
+                                            //       isDemo: true,
+                                            //       courseName:
+                                            //       course[index]
+                                            //           .courseName,
+                                            //       sr: 1,
+                                            //     ),
+                                            //   ),
+                                            // );
                                           } else {
-                                            Navigator.push(
-                                              context,
-                                              PageTransition(
-                                                duration: Duration(
-                                                    milliseconds: 100),
-                                                curve:
-                                                Curves.bounceInOut,
-                                                type: PageTransitionType
-                                                    .rightToLeftWithFade,
-                                                child: ComboStore(
-                                                  courses: course[index]
-                                                      .courses,
-                                                ),
-                                              ),
-                                            );
+                                            final id = index.toString();
+                                            final courseName = course[index].courseName;
+                                            context.goNamed('comboStore', queryParams: {'courseName': courseName,
+                                              'id': id});
+
+                                            // Navigator.push(
+                                            //   context,
+                                            //   PageTransition(
+                                            //     duration: Duration(
+                                            //         milliseconds: 100),
+                                            //     curve:
+                                            //     Curves.bounceInOut,
+                                            //     type: PageTransitionType
+                                            //         .rightToLeftWithFade,
+                                            //     child: ComboStore(
+                                            //       courses: course[index]
+                                            //           .courses,
+                                            //     ),
+                                            //   ),
+                                            // );
                                           }
                                         } else {
                                           if (!course[index]
@@ -814,44 +708,53 @@ class _HomeState extends State<Home> {
                                                 ),
                                               );
                                             } else {
-                                              Navigator.push(
-                                                context,
-                                                PageTransition(
-                                                  duration: Duration(
-                                                      milliseconds:
-                                                      400),
-                                                  curve: Curves
-                                                      .bounceInOut,
-                                                  type: PageTransitionType
-                                                      .rightToLeftWithFade,
-                                                  child: VideoScreen(
-                                                    isDemo: true,
-                                                    courseName:
-                                                    course[index]
-                                                        .courseName,
-                                                    sr: 1,
-                                                  ),
-                                                ),
-                                              );
+                                              GoRouter.of(context).pushNamed('videoScreen',
+                                                  queryParams: {
+                                                    'courseName': course[index].courseName});
+                                              // Navigator.push(
+                                              //   context,
+                                              //   PageTransition(
+                                              //     duration: Duration(
+                                              //         milliseconds:
+                                              //         400),
+                                              //     curve: Curves
+                                              //         .bounceInOut,
+                                              //     type: PageTransitionType
+                                              //         .rightToLeftWithFade,
+                                              //     child: VideoScreen(
+                                              //       isDemo: true,
+                                              //       courseName:
+                                              //       course[index]
+                                              //           .courseName,
+                                              //       sr: 1,
+                                              //     ),
+                                              //   ),
+                                              // );
                                             }
                                           } else {
+
                                             ComboCourse.comboId.value =
                                                 course[index].courseId;
-                                            Navigator.push(
-                                              context,
-                                              PageTransition(
-                                                duration: Duration(
-                                                    milliseconds: 400),
-                                                curve:
-                                                Curves.bounceInOut,
-                                                type: PageTransitionType
-                                                    .rightToLeftWithFade,
-                                                child: ComboCourse(
-                                                  courses: course[index]
-                                                      .courses,
-                                                ),
-                                              ),
-                                            );
+
+                                            final id = index.toString();
+                                            final courseName = course[index].courseName;
+
+                                            GoRouter.of(context).pushNamed('comboCourse', queryParams: {'id': id, 'courseName': courseName});
+                                            // Navigator.push(
+                                            //   context,
+                                            //   PageTransition(
+                                            //     duration: Duration(
+                                            //         milliseconds: 400),
+                                            //     curve:
+                                            //     Curves.bounceInOut,
+                                            //     type: PageTransitionType
+                                            //         .rightToLeftWithFade,
+                                            //     child: ComboCourse(
+                                            //       courses: course[index]
+                                            //           .courses,
+                                            //     ),
+                                            //   ),
+                                            // );
                                           }
                                         }
                                         setState(() {
@@ -965,29 +868,29 @@ class _HomeState extends State<Home> {
                                                             ),
                                                           ),
                                                           SizedBox(height: 5,),
-                                                          Container(
-                                                            height: 15,
-                                                            child: Row(
-                                                              children: [
-                                                                Container(
-                                                                  height: 5,
-                                                                  width: 150,
-                                                                  child:
-                                                                  LinearProgressIndicator(
-                                                                    value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
-                                                                    color: HexColor(
-                                                                        "8346E1"),
-                                                                    backgroundColor:
-                                                                    HexColor(
-                                                                        'E3E3E3'),
-                                                                  ),
-                                                                ),
-                                                                Spacer(),
-                                                                Text(
-                                                                  "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),)
-                                                              ],
-                                                            ),
-                                                          ),
+                                                          // Container(
+                                                          //   height: 15,
+                                                          //   child: Row(
+                                                          //     children: [
+                                                          //       Container(
+                                                          //         height: 5,
+                                                          //         width: 150,
+                                                          //         child:
+                                                          //         LinearProgressIndicator(
+                                                          //           value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
+                                                          //           color: HexColor(
+                                                          //               "8346E1"),
+                                                          //           backgroundColor:
+                                                          //           HexColor(
+                                                          //               'E3E3E3'),
+                                                          //         ),
+                                                          //       ),
+                                                          //       Spacer(),
+                                                          //       Text(
+                                                          //         "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),)
+                                                          //     ],
+                                                          //   ),
+                                                          // ),
                                                         ],
                                                       ),
                                                     ),
@@ -1211,6 +1114,7 @@ class _HomeState extends State<Home> {
                                           "null") {
                                         return Container();
                                       }
+                                      if (course[index].show == true)
                                       return InkWell(
                                         onTap: () {
                                           setState(() {
@@ -1219,18 +1123,26 @@ class _HomeState extends State<Home> {
                                           });
                                           print(courseId);
                                           if (course[index].isItComboCourse) {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ComboStore(
-                                                      courses:
-                                                      course[index].courses,
-                                                    ),
-                                              ),
-                                            );
+
+                                            final id = index.toString();
+                                            final courseName = course[index].courseName;
+                                            final courseP = course[index].coursePrice;
+                                            GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
+
+                                            // Navigator.push(
+                                            //   context,
+                                            //   MaterialPageRoute(
+                                            //     builder: (context) =>
+                                            //         ComboStore(
+                                            //           courses:
+                                            //           course[index].courses,
+                                            //         ),
+                                            //   ),
+                                            // );
+
                                           } else {
-                                            Navigator.pushNamed(context, '/catalogue');
+                                            final id = index.toString();
+                                            GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
                                           }
                                         },
                                         child: course[index].isItComboCourse
@@ -1382,7 +1294,7 @@ class _HomeState extends State<Home> {
                                                             ),
                                                             child:
                                                             Text(
-                                                              "${course[index].coursePrice}",
+                                                              "₹${course[index].coursePrice}/-",
                                                               style: TextStyle(
                                                                   fontSize: 12,
                                                                   color: Colors.white,
@@ -1415,6 +1327,8 @@ class _HomeState extends State<Home> {
                                         )
                                             : Container(),
                                       );
+
+                                      return Container();
                                     }),
                               ),
                             ),
@@ -1589,526 +1503,3 @@ class _HomeState extends State<Home> {
     );
   }
 }
-
-// SingleChildScrollView(
-// child: Column(
-// crossAxisAlignment: CrossAxisAlignment.start,
-// children: [
-// Container(
-// width: screenWidth,
-// decoration: BoxDecoration(
-// boxShadow: [
-// BoxShadow(
-// color: Color.fromRGBO(
-// 0,
-// 0,
-// 0,
-// 0.35,
-// ),
-// offset: Offset(5, 5),
-// blurRadius: 52)
-// ],
-// ),
-// child: Stack(
-// children: [
-// Container(
-// width: 414 * horizontalScale,
-// height: 280 * verticalScale,
-// decoration: BoxDecoration(
-// borderRadius: BorderRadius.only(
-// bottomLeft: Radius.circular(15),
-// bottomRight: Radius.circular(15),
-// ),
-// image: DecorationImage(
-// alignment: Alignment.center,
-// image: AssetImage('assets/HomeImage.png'),
-// fit: BoxFit.fill,
-// ),
-// ),
-// ),
-// Positioned(
-// top: 30 * verticalScale,
-// left: 10 * horizontalScale,
-// child: Container(
-// child: Row(
-// children: [
-// IconButton(
-// onPressed: () {
-// Scaffold.of(context).openDrawer();
-// },
-// icon: Icon(
-// Icons.menu,
-// size: 30 *
-// min(horizontalScale, verticalScale),
-// color: Colors.white,
-// ),
-// ),
-// SizedBox(
-// width: 10 * horizontalScale,
-// ),
-// Text(
-// 'Home',
-// textScaleFactor:
-// min(horizontalScale, verticalScale),
-// style: TextStyle(
-// fontSize: 30,
-// fontWeight: FontWeight.bold,
-// color: Colors.white),
-// )
-// ],
-// ),
-// )),
-// Positioned(
-// top: 31 * verticalScale,
-// right: 2 * horizontalScale,
-// child: Consumer<UserProvider>(
-// builder: (context, data, child) {
-// return StreamBuilder(
-// stream: FirebaseFirestore.instance
-//     .collection("Notifications")
-//     .snapshots(),
-// builder: (context,
-// AsyncSnapshot<QuerySnapshot> snapshot) {
-// print(
-// "--------notificationBox.values-----${notificationBox.values}");
-// try {
-// if (snapshot.data!.docs.length <
-// data.countNotification) {
-// notificationBox.put(1, {
-// "count": (snapshot.data!.docs.length)
-// });
-// providerNotification
-//     .showNotificationHomeScreen(
-// notificationBox
-//     .values.first["count"]);
-// }
-// } catch (e) {
-// print("oooooooooooooooooooo${e}");
-// }
-//
-// return Badge(
-// showBadge: data.countNotification ==
-// snapshot.data!.docs.length ||
-// snapshot.data!.docs.length <
-// data.countNotification
-// ? false
-//     : true,
-// child: IconButton(
-// onPressed: () async {
-// try {
-// await Navigator.push(
-// context,
-// MaterialPageRoute(
-// builder: (context) =>
-// NotificationPage()),
-// );
-// await notificationBox.put(1, {
-// "count":
-// (snapshot.data!.docs.length)
-// });
-// await providerNotification
-//     .showNotificationHomeScreen(
-// notificationBox
-//     .values.first["count"]);
-// print(
-// "++++++++++++++++++++++++${notificationBox.values}");
-// } catch (e) {
-// print(
-// "pppppppppppppppppppppppppp${e}");
-// }
-// },
-// icon: Icon(
-// Icons.notifications_active,
-// size: 30,
-// color: Colors.white,
-// ),
-// ),
-// badgeColor: Colors.red,
-// toAnimate: false,
-// badgeContent: Text(
-// snapshot.data!.docs.length -
-// notificationBox.values
-//     .first["count"] >=
-// 0
-// ? (snapshot.data!.docs.length -
-// notificationBox
-//     .values.first["count"])
-//     .toString()
-//     : (notificationBox
-//     .values.first["count"] -
-// snapshot.data!.docs.length)
-//     .toString(),
-// style: TextStyle(
-// fontSize: 9,
-// color: Colors.white,
-// fontWeight: FontWeight.bold),
-// ),
-// position: BadgePosition(
-// top: (2 -
-// 2 *
-// (snapshot.data!.docs.length)
-//     .toString()
-//     .length) *
-// verticalScale,
-// end: data.countNotification >= 100
-// ? 2
-//     : 7,
-// // (7+((snapshot.data!.docs.length).toString().length))
-// ),
-// );
-// });
-// },
-// )),
-// ],
-// ),
-// ),
-// Padding(
-// padding: EdgeInsets.only(
-// left: 5 * horizontalScale,
-// top: 20 * verticalScale,
-// ),
-// child: Text(
-// 'Feature Courses',
-// textScaleFactor: min(horizontalScale, verticalScale),
-// style: TextStyle(
-// color: Color.fromRGBO(0, 0, 0, 1),
-// fontFamily: 'Poppins',
-// fontSize: 23,
-// letterSpacing:
-// 0 /*percentages not used in flutter. defaulting to zero*/,
-// fontWeight: FontWeight.bold,
-// ),
-// ),
-// ),
-// Container(
-// width: screenWidth,
-// height: 430 * verticalScale,
-// child: MediaQuery.removePadding(
-// context: context,
-// removeTop: true,
-// removeBottom: true,
-// removeLeft: true,
-// removeRight: true,
-// child: ListView.builder(
-// physics: NeverScrollableScrollPhysics(),
-// itemCount: course.length,
-// itemBuilder: (BuildContext context, index) {
-// if (course[index].FcSerialNumber != '') {
-// return InkWell(
-// onTap: () {
-// setState(() {
-// courseId = course[index].courseDocumentId;
-// });
-//
-// print(courseId);
-// if (course[index].isItComboCourse) {
-// Navigator.push(
-// context,
-// MaterialPageRoute(
-// builder: (context) => ComboStore(
-// courses: course[index].courses,
-// ),
-// ),
-// );
-// } else {
-// Navigator.pushNamed(context, '/catalogue');
-// }
-// },
-// child: Padding(
-// padding: EdgeInsets.only(
-// left: 15,
-// right: 15,
-// top: 15,
-// ),
-// child: Container(
-// width: 366 * horizontalScale,
-// height: 122 * verticalScale,
-// decoration: BoxDecoration(
-// borderRadius: BorderRadius.only(
-// topLeft: Radius.circular(15),
-// topRight: Radius.circular(15),
-// bottomLeft: Radius.circular(15),
-// bottomRight: Radius.circular(15),
-// ),
-// boxShadow: [
-// BoxShadow(
-// color: Color.fromRGBO(31, 31, 31, 0.2),
-// offset: Offset(0, 10),
-// blurRadius: 20)
-// ],
-// color: Color.fromRGBO(255, 255, 255, 1),
-// ),
-// child: Row(
-// children: [
-// SizedBox(
-// width: 5,
-// ),
-// ClipRRect(
-// borderRadius: BorderRadius.circular(15),
-// child: CachedNetworkImage(
-// imageUrl: course[index].courseImageUrl,
-// placeholder: (context, url) =>
-// CircularProgressIndicator(),
-// errorWidget: (context, url, error) =>
-// Icon(Icons.error),
-// fit: BoxFit.fill,
-// height: 100 * verticalScale,
-// width: 127 * horizontalScale,
-// ),
-// ),
-// SizedBox(
-// width: 10,
-// ),
-// Column(
-// crossAxisAlignment:
-// CrossAxisAlignment.start,
-// children: [
-// SizedBox(
-// height: 10 * verticalScale,
-// ),
-// Container(
-// width: 194,
-// child: Text(
-// course[index].courseName,
-// textScaleFactor: min(
-// horizontalScale, verticalScale),
-// textAlign: TextAlign.left,
-// style: TextStyle(
-// color: Color.fromRGBO(0, 0, 0, 1),
-// fontFamily: 'Poppins',
-// fontSize: 18,
-// letterSpacing: 0,
-// fontWeight: FontWeight.bold,
-// height: 1,
-// ),
-// ),
-// ),
-// SizedBox(
-// height: 20 * verticalScale,
-// ),
-// Image.asset(
-// 'assets/Rating.png',
-// fit: BoxFit.fill,
-// height: 11,
-// width: 71,
-// ),
-// SizedBox(
-// height: 20 * verticalScale,
-// ),
-// Row(
-// children: [
-// Text(
-// 'English  ||  ${course[index].numOfVideos} Videos',
-// textAlign: TextAlign.left,
-// textScaleFactor: min(
-// horizontalScale,
-// verticalScale),
-// style: TextStyle(
-// color: Color.fromRGBO(
-// 88, 88, 88, 1),
-// fontFamily: 'Poppins',
-// fontSize: 12,
-// letterSpacing:
-// 0 /*percentages not used in flutter. defaulting to zero*/,
-// fontWeight: FontWeight.normal,
-// height: 1),
-// ),
-// SizedBox(
-// width: 20,
-// ),
-// Text(
-// course[index].coursePrice,
-// textScaleFactor: min(
-// horizontalScale,
-// verticalScale),
-// textAlign: TextAlign.left,
-// style: TextStyle(
-// color: Color.fromRGBO(
-// 155, 117, 237, 1),
-// fontFamily: 'Poppins',
-// fontSize: 18,
-// letterSpacing:
-// 0 /*percentages not used in flutter. defaulting to zero*/,
-// fontWeight: FontWeight.bold,
-// height: 1),
-// ),
-// ],
-// ),
-// ],
-// ),
-// ],
-// ),
-// ),
-// ),
-// );
-// } else {
-// return Container();
-// }
-// },
-// ),
-// ),
-// ),
-// Padding(
-// padding: EdgeInsets.only(
-// left: 10,
-// top: 10,
-// ),
-// child: Text(
-// 'Success Stories',
-// textScaleFactor: min(horizontalScale, verticalScale),
-// textAlign: TextAlign.center,
-// style: TextStyle(
-// color: Color.fromRGBO(0, 0, 0, 1),
-// fontFamily: 'Poppins',
-// fontSize: 23,
-// letterSpacing:
-// 0 /*percentages not used in flutter. defaulting to zero*/,
-// fontWeight: FontWeight.bold,
-// height: 1),
-// ),
-// ),
-// Container(
-// height: screenHeight * 0.81 * verticalScale,
-// width: screenWidth,
-// padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-// child: FutureBuilder<List<FirebaseFile>>(
-// future: futureFiles,
-// builder: (context, snapshot) {
-// switch (snapshot.connectionState) {
-// case ConnectionState.waiting:
-// return Center(child: CircularProgressIndicator());
-// default:
-// if (snapshot.hasError) {
-// return Center(
-// child: Text(
-// 'Some error occurred!',
-// textScaleFactor:
-// min(horizontalScale, verticalScale),
-// ));
-// } else {
-// final files = snapshot.data;
-//
-// return Column(
-// crossAxisAlignment: CrossAxisAlignment.start,
-// children: [
-// Expanded(
-// child: GridView.builder(
-// scrollDirection: Axis.vertical,
-// physics: NeverScrollableScrollPhysics(),
-// itemCount: files!.length,
-// itemBuilder: (context, index) {
-// final file = files[index];
-// return buildFile(context, file);
-// },
-// gridDelegate:
-// SliverGridDelegateWithFixedCrossAxisCount(
-// crossAxisCount: 2,
-// crossAxisSpacing: 1,
-// mainAxisSpacing: 1),
-// ),
-// ),
-// ],
-// );
-// }
-// }
-// },
-// ),
-// ),
-// //SizedBox(height: 15,),
-// Container(
-// width: 414 * horizontalScale,
-// height: 250 * verticalScale,
-// decoration: BoxDecoration(
-// image: DecorationImage(
-// alignment: Alignment.center,
-// image: AssetImage('assets/a1.png'),
-// fit: BoxFit.fill,
-// ),
-// ),
-// ),
-// Padding(
-// padding: EdgeInsets.only(
-// left: 20,
-// top: 20,
-// ),
-// child: Column(
-// crossAxisAlignment: CrossAxisAlignment.start,
-// children: [
-// Text(
-// 'About Me',
-// textScaleFactor: min(horizontalScale, verticalScale),
-// style: TextStyle(
-// color: Color.fromRGBO(0, 0, 0, 1),
-// fontFamily: 'Poppins',
-// fontSize: 25,
-// letterSpacing:
-// 0 /*percentages not used in flutter. defaulting to zero*/,
-// fontWeight: FontWeight.w500,
-// height: 1),
-// ),
-// Container(
-// width: 60 * horizontalScale,
-// child: Divider(
-// color: Color.fromRGBO(156, 91, 255, 1),
-// thickness: 2),
-// ),
-// ],
-// ),
-// ),
-// Padding(
-// padding: EdgeInsets.only(left: 20, top: 10, bottom: 20),
-// child: Text(
-// 'I have 3\+ years experience in Machine Learning\. I have done 4 industrial IoT Machine Learning projects which includes data\-preprocessing\, data cleaning\, feature selection\, model building\, optimization and deployment to AWS Sagemaker\.  Now\, I even started my YouTube channel for sharing my ML and AWS knowledge Currently, I work with Tredence Inc. as a Data Scientist for the AI CoE (Center of Excellence) team. Here I work on challenging R&D projects and building various PoCs for winning new client projects for the company.When I had put papers in previous company, I practically had no offer. First 2 months were very difficult and disappointing as I couldn’t land any offer. But things suddenly started working out in the last month and I was able to bag 8 offers from various banks, analytical companies and some startups.I made this website to use all my interview experiences to help people land their dream job\.',
-// ),
-// ),
-// Padding(
-// padding: EdgeInsets.only(
-// left: 20,
-// bottom: 10,
-// ),
-// child: Container(
-// decoration: BoxDecoration(
-// borderRadius: BorderRadius.circular(15),
-// color: Color.fromARGB(255, 6, 240, 185),
-// boxShadow: [
-// BoxShadow(
-// color: Colors.grey,
-// blurRadius: 8.0,
-// spreadRadius: .09,
-// offset: Offset(1, 5),
-// )
-// ]),
-// width: 300 * horizontalScale,
-// height: 40 * verticalScale,
-// child: Row(
-// children: [
-// TextButton(
-// onPressed: () {
-// Navigator.push(
-// context,
-// MaterialPageRoute(
-// builder: (context) => StoreScreen()),
-// );
-// },
-// child: Text(
-// 'My Recommended Courses',
-// textScaleFactor:
-// min(horizontalScale, verticalScale),
-// style: TextStyle(fontSize: 16),
-// ),
-// ),
-// SizedBox(
-// width: .01,
-// ),
-// Icon(
-// Icons.arrow_circle_right,
-// size: 30,
-// color: Colors.white,
-// ),
-// ],
-// ),
-// ),
-// ),
-// ],
-// ),
-// );

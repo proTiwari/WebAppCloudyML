@@ -1,30 +1,22 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
-import 'package:cloudyml_app2/authentication/onboardnew.dart';
-import 'package:cloudyml_app2/authentication_screens/otp_page.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/home.dart';
-import 'package:cloudyml_app2/models/existing_user.dart';
-import 'package:cloudyml_app2/my_Courses.dart';
-import 'package:cloudyml_app2/payments_history.dart';
-import 'package:cloudyml_app2/store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
-
-import '../authentication_screens/google_auth.dart';
-import '../authentication_screens/login_email.dart';
-import '../authentication_screens/login_username.dart';
 import '../authentication_screens/phone_auth.dart';
-import '../authentication_screens/signin_password.dart';
-import '../homepage.dart';
+import 'package:cloudyml_app2/global_variable.dart' as globals;
+
+import '../catalogue_screen.dart';
+import '../pages/survay_page.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -37,11 +29,57 @@ String? gimageUrl;
 // bool isVerifyy=false;
 // ValueNotifier<bool> emailsigned=ValueNotifier(false);
 // ValueNotifier<bool> isVerifyy=ValueNotifier(false);
-class Authenticate extends StatelessWidget {
+
+class Authenticate extends StatefulWidget {
+
+  @override
+  State<Authenticate> createState() => _AuthenticateState();
+}
+
+class _AuthenticateState extends State<Authenticate> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  var moneyreferrerCode = '';
+  String? action;
+
   @override
   Widget build(BuildContext context) {
-    if (_auth.currentUser != null) {
-      return StoreScreen();
+    var user = FirebaseAuth.instance.currentUser;
+    print("oooooppppppp");
+    print(globals.action);
+    print(globals.signoutvalue);
+    print("oooooppppppp");
+    if (globals.action == "true") {
+      if (user != null) {
+        print('ddddddffeee');
+        print(globals.moneyrefcode);
+        setState(() {
+          globals.moneyrefcode;
+        });
+        if (globals.moneyrefcode != '') {
+          courseId = globals.moneyrefcode.split('-')[1];
+          return CatelogueScreen();
+        } else {
+          if (globals.survay == "done") {
+            print("sidfjsodfijsodjfoisijdfo");
+            if(globals.moneyrefcode != ''){
+              return CatelogueScreen();
+            }
+            else{
+              // return CatelogueScreen();
+              return HomePage();
+            }
+          } else {
+            return CheckboxPage();
+          }
+        }
+      } else {
+        return LoginPage();
+      }
     } else {
       return LoginPage();
     }
@@ -103,10 +141,16 @@ Future logOut(BuildContext context) async {
       provider.googlelogout(context);
     } catch (e) {
       await _auth.signOut().then((value) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-        );
+
+        GoRouter.of(context).pushReplacement('/login');
+
+        // GoRouter.of(context).pushReplacement('/login');
+
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => LoginPage()),
+        // );
+
       });
     }
   } catch (e) {
@@ -290,9 +334,10 @@ void userprofile({
       "payInPartsDetails": {},
       "image": image,
     });
+
+
   }catch(e){
     print(e.toString());
   }
-
 
 }

@@ -1489,6 +1489,7 @@ class _LoginPageState extends State<LoginPage> {
           );
         }
       }),
+
     );
   }
 
@@ -1673,6 +1674,7 @@ class _LoginPageState extends State<LoginPage> {
             setState(() {
               loading = false;
             });
+
             await Navigator.of(context)
                 .push(MaterialPageRoute(builder: (_) => OtpPage()));
           },

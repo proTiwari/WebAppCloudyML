@@ -11,6 +11,7 @@ import 'package:cloudyml_app2/offline/offline_videos.dart';
 import 'package:cloudyml_app2/pages/notificationpage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -64,7 +65,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 size: 36,
               ),
               onPressed: () {
-                Navigator.pop(context);
+                GoRouter.of(context).pop(context);
+                // Navigator.pop(context);
               },
             ),
           ),
@@ -621,6 +623,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                         InkWell(
                           onTap: () {
                             logOut(context);
+                            GoRouter.of(context).pushReplacement('/login');
                           },
                           child: Padding(
                               padding: EdgeInsets.fromLTRB(

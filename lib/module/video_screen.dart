@@ -27,14 +27,14 @@ import '../models/firebase_file.dart';
 import 'new_assignment_screen.dart';
 
 class VideoScreen extends StatefulWidget {
-  final List<dynamic>? courses;
+  // final List<dynamic>? courses;
   final int? sr;
   final bool? isDemo;
   final String? courseName;
   static ValueNotifier<double> currentSpeed = ValueNotifier(1.0);
 
   const VideoScreen(
-      {required this.isDemo, this.sr, this.courseName, this.courses});
+      {required this.isDemo, this.sr, this.courseName});
 
   @override
   _VideoScreenState createState() => _VideoScreenState();

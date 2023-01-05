@@ -6,10 +6,14 @@ import 'package:cloudyml_app2/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:lottie/lottie.dart';
 import 'package:cloudyml_app2/theme.dart';
 import 'package:cloudyml_app2/global_variable.dart' as globals;
+import 'package:provider/provider.dart';
+
+import '../router/login_state_check.dart';
 
 class SigninPasswordPage extends StatefulWidget {
   String email;
@@ -23,6 +27,11 @@ class _SigninPasswordPageState extends State<SigninPasswordPage> {
   bool loading = false;
   late bool _passwordVisible;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+
+  void saveLoginState(BuildContext context) {
+    Provider.of<LoginState>(context, listen: false).loggedIn = true;
+  }
 
   @override
   void initState() {
@@ -801,6 +810,7 @@ class _SigninPasswordPageState extends State<SigninPasswordPage> {
                                 });
                                 User? user;
                                 FirebaseAuth _auth = FirebaseAuth.instance;
+
                                 try {
                                   user =
                                       (await _auth.signInWithEmailAndPassword(
@@ -841,12 +851,16 @@ class _SigninPasswordPageState extends State<SigninPasswordPage> {
 
                                 // showToast("here");
                                 if (user != null) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => HomePage(),
-                                    ),
-                                  );
+                                  saveLoginState(context);
+                                  GoRouter.of(context).pushReplacement('/home');
+
+                                  // Navigator.pushReplacement(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => HomePage(),
+                                  //   ),
+                                  // );
+
                                 } else {
                                   showToast("wrong password");
                                 }

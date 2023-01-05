@@ -7,12 +7,20 @@ import 'package:cloudyml_app2/fun.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/widgets/pay_now_bottomsheet.dart';
 import 'package:cloudyml_app2/payment_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ribbon_widget/ribbon_widget.dart';
+import 'package:share_extend/share_extend.dart';
+
+import 'Services/code_generator.dart';
+import 'Services/deeplink_service.dart';
 
 class CatelogueScreen extends StatefulWidget {
-  const CatelogueScreen({Key? key}) : super(key: key);
+  final String? id;
+  final List<dynamic>? courses;
+  const CatelogueScreen({Key? key,  this.id, this.courses}) : super(key: key);
   static ValueNotifier<String> coursePrice = ValueNotifier('');
   // static ValueNotifier<Map<String, dynamic>>? map = ValueNotifier({});
   static ValueNotifier<double> _currentPosition = ValueNotifier<double>(0.0);
@@ -68,9 +76,39 @@ class _CatelogueScreenState extends State<CatelogueScreen>
   void initState() {
     super.initState();
     getCourseName();
+    lookformoneyref();
     _tabController = TabController(length: 2, vsync: this);
     _scrollController.addListener(_scrollListener);
   }
+
+  var uid = FirebaseAuth.instance.currentUser!.uid;
+  var moneyrefcode;
+  var moneyreferalcode;
+  var moneyreferallink;
+
+  void lookformoneyref() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(uid)
+          .get()
+          .then((value) => {moneyrefcode = value.data()!["moneyrefcode"]});
+    } catch (e) {}
+    try {
+      print("moneyrefcode: ${moneyrefcode}");
+      moneyreferalcode = await CodeGenerator()
+          .generateCodeformoneyreward('moneyreward-$courseId');
+      moneyreferallink =
+      await DeepLinkService.instance?.createReferLink(moneyreferalcode);
+      print("this is the kings enargy: ${moneyreferallink}");
+      if (moneyrefcode == null) {
+        FirebaseFirestore.instance.collection("Users").doc(uid).update({
+          "moneyrefcode": "$moneyreferalcode",
+        });
+      }
+    } catch (e) {}
+  }
+
 
   void getCourseName() async {
 
@@ -122,7 +160,21 @@ class _CatelogueScreenState extends State<CatelogueScreen>
     List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: moneyreferallink.toString() != 'null'?false:true,
         backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.share,
+              color: Colors.black,
+            ),
+            onPressed: () async {
+              if(moneyreferallink.toString() != 'null'){
+               await ShareExtend.share(moneyreferallink.toString(), "text");
+              }
+            },
+          ),
+        ],
         elevation: 0,
         leading: InkWell(
           onTap: () {
@@ -140,7 +192,7 @@ class _CatelogueScreenState extends State<CatelogueScreen>
       ),
       bottomSheet: PayNowBottomSheet(
         currentPosition: CatelogueScreen._currentPosition,
-        coursePrice: coursePrice,
+        coursePrice: '₹$coursePrice/-',
         map: courseMap,
         popBottomSheetAt: CatelogueScreen._closeBottomSheetAt,
         isItComboCourse: false,
@@ -298,7 +350,7 @@ class _CatelogueScreenState extends State<CatelogueScreen>
                                           height: 30,
                                         ),
                                         Text(
-                                          course[index].coursePrice,
+                                          '₹${course[index].coursePrice}/-',
                                           style: TextStyle(
                                               fontFamily: 'Medium',
                                               fontSize: 30,
@@ -307,9 +359,16 @@ class _CatelogueScreenState extends State<CatelogueScreen>
                                         SizedBox(height: 35),
                                         InkWell(
                                           onTap: () {
-                                            Navigator.pushNamed(
-                                                context, '/paymentscreen'
-                                            );
+
+                                            GoRouter.of(context)
+                                                .pushNamed(
+                                                'paymentScreen',
+                                                queryParams: {'isItComboCourse': false,
+                                                  'courseMap': courseMap});
+
+                                            // Navigator.pushNamed(
+                                            //     context, '/paymentscreen'
+                                            // );
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(

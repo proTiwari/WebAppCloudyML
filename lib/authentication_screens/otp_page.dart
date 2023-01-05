@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/home.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:numeric_keyboard/numeric_keyboard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +10,8 @@ import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:pinput/pinput.dart';
 import 'package:cloudyml_app2/theme.dart';
 import 'package:cloudyml_app2/global_variable.dart' as globals;
+import 'package:provider/provider.dart';
+import '../router/login_state_check.dart';
 import 'google_auth.dart';
 import 'login_email.dart';
 
@@ -20,6 +22,7 @@ class OtpPage extends StatefulWidget {
 }
 
 class _OtpPageState extends State<OtpPage> {
+
   String text = '';
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool? googleloading = false;
@@ -467,6 +470,7 @@ class _OtpPageState extends State<OtpPage> {
                           GestureDetector(
                             onTap: () async {
                               await validateOtpAndLogin(context, text);
+                              // context.goNamed(MyRoutes.homeRoute);
                             },
                             child: Container(
                               margin: const EdgeInsets.symmetric(
@@ -633,19 +637,22 @@ class _OtpPageState extends State<OtpPage> {
             try {
               User? user = (await _auth.signInWithCredential(crediantial)).user;
               if (user != null) {
-                print(
-                    "Login Successful========================================================");
+                print("Login Successful======");
                 showToast("Login Successful");
                 print(user);
-                print(
-                    "Login Successful========================================================");
+                print("Login Successful==");
                 // final prefs = await SharedPreferences.getInstance();
                 // await prefs.setString('login', "true");
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (_) => HomePage(),
-                    ),
-                    (Route<dynamic> route) => false);
+
+                saveLoginState(context);
+                GoRouter.of(context).pushReplacement('/home');
+                (Route<dynamic> route) => false;
+                
+                // Navigator.of(context).pushAndRemoveUntil(
+                //     MaterialPageRoute(
+                //       builder: (_) => HomePage(),
+                //     ),
+                //     (Route<dynamic> route) => false);
               } else {
                 showToast("Login Failed");
                 print("Login Failed");
@@ -668,11 +675,17 @@ class _OtpPageState extends State<OtpPage> {
         }
       } else {
         if (globals.linked == 'true') {
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (_) => HomePage(),
-              ),
-              (Route<dynamic> route) => false);
+          saveLoginState(context);
+          GoRouter.of(context).pushReplacement('/home');
+              (Route<dynamic> route) => false;
+
+
+
+          // Navigator.of(context).pushAndRemoveUntil(
+          //     MaterialPageRoute(
+          //       builder: (_) => HomePage(),
+          //     ),
+          //     (Route<dynamic> route) => false);
         } else {
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => GoogleAuthLogin()));
@@ -724,4 +737,9 @@ class _OtpPageState extends State<OtpPage> {
       showToast(e.toString());
     }
   }
+
+  void saveLoginState(BuildContext context) {
+    Provider.of<LoginState>(context, listen: false).loggedIn = true;
+  }
+
 }
