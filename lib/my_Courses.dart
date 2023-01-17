@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:star_rating/star_rating.dart';
 import 'MyAccount/myaccount.dart';
 import 'Providers/UserProvider.dart';
 import 'authentication/firebase_auth.dart';
@@ -351,30 +352,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-
-
+                  SizedBox(height: 25,),
                   courses.length > 0
                       ? Container(
-                    width: screenWidth / 2.5,
-                    height: screenHeight / 5.5,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black26,
-                            offset: Offset(
-                              2, // Move to right 10  horizontally
-                              2.0, // Move to bottom 10 Vertically
-                            ),
-                            blurRadius: 40)
-                      ],
-                      border: Border.all(
-                        color: HexColor('440F87'),
-                        width: 1.5,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child:ListView.builder(
+                    width: courses.length == 1 ? screenWidth/2.5 : screenWidth/1.2,
+                    height: screenHeight/5,
+                    color: Colors.transparent,
+                    child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       // shrinkWrap: true,
                       itemCount: course.length,
@@ -386,286 +370,300 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                         if (courses.contains(
                             course[index].courseId)) {
-                          return InkWell(
-                            onTap: (() async {
-                              // setModuleId(snapshot.data!.docs[index].id);
-                              await getCourseName();
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              InkWell(
+                                onTap: (() async {
+                                  // setModuleId(snapshot.data!.docs[index].id);
+                                  await getCourseName();
+                                  if (navigateToCatalogueScreen(
+                                      course[index]
+                                          .courseId) &&
+                                      !(userMap['payInPartsDetails']
+                                      [course[index]
+                                          .courseId][
+                                      'outStandingAmtPaid'])) {
+                                    if (!course[index]
+                                        .isItComboCourse) {
+                                      GoRouter.of(context).pushNamed('videoScreen',
+                                          queryParams: {
+                                            'courseName': course[index].courseName});
 
-                              if (navigateToCatalogueScreen(
-                                  course[index]
-                                      .courseId) &&
-                                  !(userMap['payInPartsDetails']
-                                  [course[index]
-                                      .courseId][
-                                  'outStandingAmtPaid'])) {
-                                if (!course[index]
-                                    .isItComboCourse) {
+                                      // Navigator.push(
+                                      //   context,
+                                      //   PageTransition(
+                                      //     duration: Duration(
+                                      //         milliseconds: 400),
+                                      //     curve:
+                                      //     Curves.bounceInOut,
+                                      //     type: PageTransitionType
+                                      //         .rightToLeftWithFade,
+                                      //     child: VideoScreen(
+                                      //       isDemo: true,
+                                      //       courseName:
+                                      //       course[index]
+                                      //           .courseName,
+                                      //       sr: 1,
+                                      //     ),
+                                      //   ),
+                                      // );
+                                    } else {
+                                      final id = index.toString();
+                                      final courseName = course[index].courseName;
+                                      context.goNamed('comboStore', queryParams: {'courseName': courseName,
+                                        'id': id});
 
-                                  GoRouter.of(context).pushNamed('videoScreen',
-                                      queryParams: {
-                                        'courseName': course[index].courseName});
-
-                                  // Navigator.push(
-                                  //   context,
-                                  //   PageTransition(
-                                  //     duration: Duration(
-                                  //         milliseconds: 400),
-                                  //     curve:
-                                  //     Curves.bounceInOut,
-                                  //     type: PageTransitionType
-                                  //         .rightToLeftWithFade,
-                                  //     child: VideoScreen(
-                                  //       isDemo: true,
-                                  //       courseName:
-                                  //       course[index]
-                                  //           .courseName,
-                                  //       sr: 1,
-                                  //     ),
-                                  //   ),
-                                  // );
-                                } else {
-                                  final id = index.toString();
-                                  final courseName = course[index].courseName;
-                                  context.goNamed('comboStore', queryParams: {'courseName': courseName, 'id': id});
-
-                                  // Navigator.push(
-                                  //   context,
-                                  //   PageTransition(
-                                  //     duration: Duration(
-                                  //         milliseconds: 100),
-                                  //     curve:
-                                  //     Curves.bounceInOut,
-                                  //     type: PageTransitionType
-                                  //         .rightToLeftWithFade,
-                                  //     child: ComboStore(
-                                  //       courses: course[index]
-                                  //           .courses,
-                                  //     ),
-                                  //   ),
-                                  // );
-                                }
-                              } else {
-                                if (!course[index]
-                                    .isItComboCourse) {
-                                  if (course[index]
-                                      .courseContent ==
-                                      'pdf') {
-                                    Navigator.push(
-                                      context,
-                                      PageTransition(
-                                        duration: Duration(
-                                            milliseconds:
-                                            400),
-                                        curve: Curves
-                                            .bounceInOut,
-                                        type: PageTransitionType
-                                            .rightToLeftWithFade,
-                                        child:
-                                        PdfCourseScreen(
-                                          curriculum: course[
-                                          index]
-                                              .curriculum
-                                          as Map<String,
-                                              dynamic>,
-                                        ),
-                                      ),
-                                    );
+                                      // Navigator.push(
+                                      //   context,
+                                      //   PageTransition(
+                                      //     duration: Duration(
+                                      //         milliseconds: 100),
+                                      //     curve:
+                                      //     Curves.bounceInOut,
+                                      //     type: PageTransitionType
+                                      //         .rightToLeftWithFade,
+                                      //     child: ComboStore(
+                                      //       courses: course[index]
+                                      //           .courses,
+                                      //     ),
+                                      //   ),
+                                      // );
+                                    }
                                   } else {
-                                    GoRouter.of(context).pushNamed('videoScreen',
-                                        queryParams: {
-                                          'courseName': course[index].courseName});
-                                    // Navigator.push(
-                                    //   context,
-                                    //   PageTransition(
-                                    //     duration: Duration(
-                                    //         milliseconds:
-                                    //         400),
-                                    //     curve: Curves
-                                    //         .bounceInOut,
-                                    //     type: PageTransitionType
-                                    //         .rightToLeftWithFade,
-                                    //     child: VideoScreen(
-                                    //       isDemo: true,
-                                    //       courseName:
-                                    //       course[index]
-                                    //           .courseName,
-                                    //       sr: 1,
-                                    //     ),
-                                    //   ),
-                                    // );
-                                  }
-                                } else {
-
-                                  ComboCourse.comboId.value =
-                                      course[index].courseId;
-
-                                  final id = index.toString();
-                                  final courseName = course[index].courseName;
-
-                                  GoRouter.of(context).pushNamed('comboCourse', queryParams: {'id': id, 'courseName': courseName});
-                                  // Navigator.push(
-                                  //   context,
-                                  //   PageTransition(
-                                  //     duration: Duration(
-                                  //         milliseconds: 400),
-                                  //     curve:
-                                  //     Curves.bounceInOut,
-                                  //     type: PageTransitionType
-                                  //         .rightToLeftWithFade,
-                                  //     child: ComboCourse(
-                                  //       courses: course[index]
-                                  //           .courses,
-                                  //     ),
-                                  //   ),
-                                  // );
-                                }
-                              }
-                              setState(() {
-                                courseId = course[index]
-                                    .courseDocumentId;
-                              });
-                            }),
-                            child: Container(
-                              width: screenWidth / 2.5,
-                              height: screenHeight / 5.5,
-                              child: Stack(
-                                children: [
-                                  Padding(
-                                    padding:
-                                    const EdgeInsets.all(
-                                        8.0),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 60 *
-                                              horizontalScale,
-                                          height:
-                                          screenHeight /
-                                              5.5,
-                                          decoration:
-                                          BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors
-                                                      .transparent),
-                                              borderRadius:
-                                              BorderRadius
-                                                  .circular(5),
-                                              image: DecorationImage(
-                                                  image: CachedNetworkImageProvider(
-                                                    course[index]
-                                                        .courseImageUrl,
-                                                  ),
-                                                  fit: BoxFit.fill)),
-                                        ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Container(
-                                          width: screenWidth/4.5,
-                                          height:
-                                          screenHeight /
-                                              5.5,
-                                          child: Align(
-                                            alignment:
-                                            Alignment
-                                                .topCenter,
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  course[index]
-                                                      .courseName,
-                                                  style: TextStyle(
-                                                      color: HexColor(
-                                                          "2C2C2C"),
-                                                      fontFamily:
-                                                      'Medium',
-                                                      fontSize:
-                                                      12,
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .w500,
-                                                      height:
-                                                      1),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .only(
-                                                      top:
-                                                      5.0,
-                                                      bottom:
-                                                      5),
-                                                  child:
-                                                  Align(
-                                                    alignment:
-                                                    Alignment
-                                                        .topLeft,
-                                                    child: Image
-                                                        .asset(
-                                                      'assets/Rating.png',
-                                                      fit: BoxFit
-                                                          .fill,
-                                                      height:
-                                                      10,
-                                                      width: screenWidth /
-                                                          16,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Align(
-                                                  alignment:
-                                                  Alignment
-                                                      .topLeft,
-                                                  child: Text(
-                                                    "${course[index].courseLanguage} || ${course[index].numOfVideos} Videos",
-                                                    style: TextStyle(
-                                                        color: HexColor(
-                                                            "2C2C2C"),
-                                                        fontFamily:
-                                                        'Medium',
-                                                        fontSize:
-                                                        12,
-                                                        fontWeight: FontWeight
-                                                            .w500,
-                                                        height:
-                                                        1),
-                                                  ),
-                                                ),
-                                                SizedBox(height: 5,),
-                                                // Container(
-                                                //   height: 15,
-                                                //   child: Row(
-                                                //     children: [
-                                                //       // SizedBox(
-                                                //       //   height: 5,
-                                                //       //   width: 150,
-                                                //       //   child:
-                                                //       //   LinearProgressIndicator(
-                                                //       //     value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
-                                                //       //     color: HexColor(
-                                                //       //         "8346E1"),
-                                                //       //     backgroundColor:
-                                                //       //     HexColor(
-                                                //       //         'E3E3E3'),
-                                                //       //   ),
-                                                //       // ),
-                                                //       SizedBox(
-                                                //         width: 5,
-                                                //       ),
-                                                //       Text(
-                                                //         "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),)
-                                                //     ],
-                                                //   ),
-                                                // ),
-                                              ],
+                                    if (!course[index]
+                                        .isItComboCourse) {
+                                      if (course[index]
+                                          .courseContent ==
+                                          'pdf') {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            duration: Duration(
+                                                milliseconds:
+                                                400),
+                                            curve: Curves
+                                                .bounceInOut,
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child:
+                                            PdfCourseScreen(
+                                              curriculum: course[
+                                              index]
+                                                  .curriculum
+                                              as Map<String,
+                                                  dynamic>,
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        );
+                                      } else {
+                                        GoRouter.of(context).pushNamed('videoScreen',
+                                            queryParams: {
+                                              'courseName': course[index].courseName});
+                                        // Navigator.push(
+                                        //   context,
+                                        //   PageTransition(
+                                        //     duration: Duration(
+                                        //         milliseconds:
+                                        //         400),
+                                        //     curve: Curves
+                                        //         .bounceInOut,
+                                        //     type: PageTransitionType
+                                        //         .rightToLeftWithFade,
+                                        //     child: VideoScreen(
+                                        //       isDemo: true,
+                                        //       courseName:
+                                        //       course[index]
+                                        //           .courseName,
+                                        //       sr: 1,
+                                        //     ),
+                                        //   ),
+                                        // );
+                                      }
+                                    } else {
+
+                                      ComboCourse.comboId.value =
+                                          course[index].courseId;
+
+                                      final id = index.toString();
+                                      final courseName = course[index].courseName;
+
+                                      GoRouter.of(context).pushNamed('comboCourse', queryParams: {'id': id, 'courseName': courseName});
+                                      // Navigator.push(
+                                      //   context,
+                                      //   PageTransition(
+                                      //     duration: Duration(
+                                      //         milliseconds: 400),
+                                      //     curve:
+                                      //     Curves.bounceInOut,
+                                      //     type: PageTransitionType
+                                      //         .rightToLeftWithFade,
+                                      //     child: ComboCourse(
+                                      //       courses: course[index]
+                                      //           .courses,
+                                      //     ),
+                                      //   ),
+                                      // );
+                                    }
+                                  }
+                                  setState(() {
+                                    courseId = course[index]
+                                        .courseDocumentId;
+                                  });
+                                }),
+                                child: Container(
+                                  width: screenWidth / 2.8,
+                                  height: screenHeight/ 5.5,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    // boxShadow: [
+                                    //   BoxShadow(
+                                    //       color: Colors.black26,
+                                    //       offset: Offset(
+                                    //         2, // Move to right 10  horizontally
+                                    //         2.0, // Move to bottom 10 Vertically
+                                    //       ),
+                                    //       blurRadius: 40)
+                                    // ],
+                                    border: Border.all(
+                                      color: HexColor('440F87'),
+                                      width: 1.5,
                                     ),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                ],
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                        const EdgeInsets.all(
+                                            8.0),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 60 * horizontalScale,
+                                              height: screenHeight / 5.5,
+                                              decoration:
+                                              BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors
+                                                          .transparent),
+                                                  borderRadius:
+                                                  BorderRadius
+                                                      .circular(5),
+                                                  image: DecorationImage(
+                                                      image: CachedNetworkImageProvider(
+                                                        course[index]
+                                                            .courseImageUrl,
+                                                      ),
+                                                      fit: BoxFit.fill)),
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Container(
+                                              width: screenWidth/5.6,
+                                              height:
+                                              screenHeight /
+                                                  5.5,
+                                              child: Align(
+                                                alignment:
+                                                Alignment
+                                                    .topCenter,
+                                                child: Column(
+                                                  children: [
+                                                    Align(
+                                                      alignment: Alignment.topLeft,
+                                                      child: Text(
+                                                        course[index].courseName,
+                                                        maxLines: 2,
+                                                        style: TextStyle(
+                                                          overflow: TextOverflow.ellipsis,
+                                                          color: Colors.black,
+                                                          fontFamily: 'Medium',
+                                                          fontSize: 16,
+                                                          height: 0.95,
+                                                          fontWeight: FontWeight.bold,),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 5,),
+                                                    Align(
+                                                      alignment:
+                                                      Alignment
+                                                          .topLeft,
+                                                      child: Text(
+                                                        "${course[index].numOfVideos} Videos",
+                                                        style: TextStyle(
+                                                            color: HexColor(
+                                                                "2C2C2C"),
+                                                            fontFamily:
+                                                            'Medium',
+                                                            fontSize:
+                                                            12,
+                                                            fontWeight: FontWeight
+                                                                .w500,
+                                                            height:
+                                                            1),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 5,),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                          const EdgeInsets.only(right: 5.0),
+                                                          child: StarRating(
+                                                            length: 5,
+                                                            rating: 5,
+                                                            color: Colors.green,
+                                                            starSize: 15,
+                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(right: 5.0),
+                                                          child: Text('5/5',
+                                                            style: TextStyle(fontSize: 10),),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: 5,),
+                                                    // Container(
+                                                    //   height: 15,
+                                                    //   child: Row(
+                                                    //     children: [
+                                                    //       Container(
+                                                    //         height: 5,
+                                                    //         width: 150,
+                                                    //         child:
+                                                    //         LinearProgressIndicator(
+                                                    //           value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
+                                                    //           color: HexColor(
+                                                    //               "8346E1"),
+                                                    //           backgroundColor:
+                                                    //           HexColor(
+                                                    //               'E3E3E3'),
+                                                    //         ),
+                                                    //       ),
+                                                    //       Spacer(),
+                                                    //       Text(
+                                                    //         "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),)
+                                                    //     ],
+                                                    //   ),
+                                                    // ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
+                              Container(width: 25,),
+                            ],
                           );
                         } else {
                           return Container();
@@ -693,196 +691,198 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.only(right: 60.0, left: 60.0),
                     child: Container(
                       margin: EdgeInsets.only(top: 15, bottom: 15),
+                      width: screenWidth,
                       height: screenHeight / 1.9,
-                      child: Center(
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: course.length,
-                            itemBuilder: (BuildContext context, index) {
-                              if (course[index].courseName == "null") {
-                                return Container();
-                              }
-                              if (course[index].courses == null) {
-                                return Container(
-                                );
-                              }
-                              return InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    courseId =
-                                        course[index].courseDocumentId;
-                                  });
-                                  print(courseId);
-                                  if (course[index].isItComboCourse) {
-                                    final ids = index.toString();
-                                    final courseName = course[index].courseName;
-                                    final courseP = course[index].coursePrice;
-                                    GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': ids, 'coursePrice': courseP});
+                      child: ListView.builder(
+                          // shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: course.length,
+                          itemBuilder: (BuildContext context, index) {
+                            if (course[index].courseName == "null") {
+                              return Container();
+                            }
+                            if (course[index].courses == null) {
+                              return Container(
+                              );
+                            }
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      courseId =
+                                          course[index].courseDocumentId;
+                                    });
+                                    print(courseId);
+                                    if (course[index].isItComboCourse) {
+                                      final ids = index.toString();
+                                      final courseName = course[index].courseName;
+                                      final courseP = course[index].coursePrice;
+                                      GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': ids, 'coursePrice': courseP});
 
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder: (context) => ComboStore(
-                                    //       courses: course[index].courses,
-                                    //     ),
-                                    //   ),
-                                    // );
-                                  } else {
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) => ComboStore(
+                                      //       courses: course[index].courses,
+                                      //     ),
+                                      //   ),
+                                      // );
+                                    } else {
 
-                                    final id = index.toString();
-                                    GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
-
-                                  }
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Container(
-                                    width: screenWidth / 4,
-                                    height: screenHeight / 2,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                      BorderRadius.circular(15),
-                                      border: Border.all(
-                                          width: 0.5,
-                                          color: HexColor("440F87")),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          width: screenWidth / 4,
-                                          height: screenHeight / 6,
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.only(
-                                                topLeft:
-                                                Radius.circular(15),
-                                                topRight:
-                                                Radius.circular(15)),
-                                            child: Image.network(
-                                              course[index].courseImageUrl,
-                                              fit: BoxFit.fill,
+                                      final id = index.toString();
+                                      GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Container(
+                                      width: screenWidth / 5.25,
+                                      height: screenHeight / 2.25,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(
+                                            width: 0.5,
+                                            color: HexColor("440F87")),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: screenWidth / 4,
+                                            height: screenHeight / 5.5,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft:
+                                                  Radius.circular(15),
+                                                  topRight:
+                                                  Radius.circular(15)),
+                                              child: Image.network(
+                                                course[index].courseImageUrl,
+                                                fit: BoxFit.fill,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        Container(
-                                          padding: EdgeInsets.only(top: 5, right: 5),
-                                          height: verticalScale * 15,
-                                          child: Align(
-                                            alignment: Alignment.centerRight,
-                                            child: Image.asset('assets/Rating.png',
-                                              fit: BoxFit.fill,
-                                              height: 10,
-                                              width: screenWidth/16,),
-                                          ),
-                                        ),
-                                        Container(
-                                          height: screenHeight/5,
-                                          padding: EdgeInsets.all(8),
-                                          child: Column(
-                                            children: [
-                                              Align(
-                                                alignment:
-                                                Alignment.topLeft,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(bottom: 5.0),
-                                                  child: Text(
-                                                    course[index]
-                                                        .courseName,
-                                                    style: TextStyle(
-                                                      color: Colors
-                                                          .black,
-                                                      debugLabel: course[index]
-                                                          .courseName,
-                                                      fontFamily:
-                                                      'Medium',
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .w500,),
+                                          Container(
+                                            height: screenHeight/5.5,
+                                            padding: EdgeInsets.all(8),
+                                            child: Column(
+                                              children: [
+                                                Align(
+                                                  alignment:
+                                                  Alignment.topLeft,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(bottom: 5.0),
+                                                    child: Text(
+                                                      course[index].courseName,
+                                                      maxLines: 2,
+                                                      style: TextStyle(
+                                                        overflow: TextOverflow.ellipsis,
+                                                        height: 0.95,
+                                                        color: Colors.black,
+                                                        debugLabel: course[index].courseName,
+                                                        fontFamily:
+                                                        'Medium',
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              Align(
-                                                alignment:
-                                                Alignment.topLeft,
-                                                child: Text(
-                                                  "- ${course[index].courseLanguage} Language",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .bold,
-                                                      color: Colors
-                                                          .black,
-                                                      fontSize: 10),
+                                                Align(
+                                                  alignment:
+                                                  Alignment.topLeft,
+                                                  child: Text(
+                                                    "- ${course[index].numOfVideos} Videos",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Colors
+                                                            .black,
+                                                        fontSize: 10),
+                                                  ),
                                                 ),
-                                              ),
-                                              Align(
-                                                alignment:
-                                                Alignment.topLeft,
-                                                child: Text(
-                                                  "- ${course[index].numOfVideos} Videos",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .bold,
-                                                      color: Colors
-                                                          .black,
-                                                      fontSize: 10),
+                                                Align(
+                                                  alignment:
+                                                  Alignment.topLeft,
+                                                  child: Text(
+                                                    "- Lifetime Access",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Colors
+                                                            .black,
+                                                        fontSize: 10),
+                                                  ),
                                                 ),
-                                              ),
-                                              Align(
-                                                alignment:
-                                                Alignment.topLeft,
-                                                child: Text(
-                                                  "- Lifetime Access",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .bold,
-                                                      color: Colors
-                                                          .black,
-                                                      fontSize: 10),
+                                                SizedBox(
+                                                  height: 5,
                                                 ),
-                                              ),
-                                            ],
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    StarRating(
+                                                      length: 5,
+                                                      rating: 5,
+                                                      color: Colors.green,
+                                                      starSize: 15,
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                    ),
+                                                    SizedBox(width: 5,),
+                                                    Text('5/5',
+                                                      style: TextStyle(fontSize: 10),)
+                                                  ],
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.bottomCenter,
-                                          child: ElevatedButton(
-                                              onPressed: () {},
-                                              style: ElevatedButton
-                                                  .styleFrom(
-                                                backgroundColor:
-                                                HexColor(
-                                                    "8346E1"),
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius
-                                                        .circular(
-                                                        5)),
+                                          Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Container(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment:MainAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(bottom: 10.0, left: 10),
+                                                    child: ElevatedButton(
+                                                        onPressed:
+                                                            () {},
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                          HexColor("8346E1"),
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                              BorderRadius.circular(5)),
+                                                        ),
+                                                        child:
+                                                        Text(
+                                                          "₹${course[index].coursePrice}/-",
+                                                          style: TextStyle(
+                                                              fontSize: 12,
+                                                              color: Colors.white,
+                                                              fontWeight: FontWeight.bold),
+                                                        )),
+                                                  ),
+                                                ],
                                               ),
-                                              child: Text(
-                                                "₹${course[index].coursePrice}/-",
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color:
-                                                    Colors.white,
-                                                    fontWeight:
-                                                    FontWeight
-                                                        .bold),
-                                              )),
-                                        ),
-                                      ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              );
-                            }),
-                      ),
+                              ],
+                            );
+                          }),
                     ),
                   ),
                   Container(
@@ -1163,10 +1163,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     right: 10 * horizontalScale,
                                                     child: Container(
                                                       child: Text(
-                                                        course[index]
-                                                            .courseName,
-                                                        textScaleFactor:
-                                                            horizontalScale,
+                                                        course[index].courseName,
+                                                        textScaleFactor: horizontalScale,
                                                         style: TextStyle(
                                                             color:
                                                                 Color.fromRGBO(

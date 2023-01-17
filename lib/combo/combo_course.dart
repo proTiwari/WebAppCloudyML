@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class ComboCourse extends StatefulWidget {
+
   final List<dynamic>? courses;
   final String? id;
   final String? courseName;
@@ -24,6 +25,10 @@ class ComboCourse extends StatefulWidget {
 }
 
 class _ComboCourseState extends State<ComboCourse> {
+
+  // _listOfVideoDetails[_currentVideoIndex.value]
+  //     .videoTitle;
+
   // bool statusOfPayInParts(String id) async {
   //   DocumentSnapshot userDocs = await FirebaseFirestore.instance
   //       .collection('Users')
@@ -117,7 +122,8 @@ class _ComboCourseState extends State<ComboCourse> {
         elevation: 0,
         leading: InkWell(
           onTap: () {
-            GoRouter.of(context).pushReplacement('/home');
+            Navigator.of(context).pop();
+            // GoRouter.of(context).pushReplacement('/home');
             // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home()));
           },
           child: Padding(
@@ -248,10 +254,8 @@ class _ComboCourseState extends State<ComboCourse> {
                                           ),
                                           SizedBox(width: 8),
                                           Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                             children: [
                                               Container(
                                                 width: 170,

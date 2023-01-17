@@ -675,10 +675,11 @@ class _OtpPageState extends State<OtpPage> {
         }
       } else {
         if (globals.linked == 'true') {
-          saveLoginState(context);
-          GoRouter.of(context).pushReplacement('/home');
-              (Route<dynamic> route) => false;
 
+          // GoRouter.of(context).pushReplacement('/home');
+          GoRouter.of(context).pushReplacementNamed('home');
+          (Route<dynamic> route) => false;
+          saveLoginState(context);
 
 
           // Navigator.of(context).pushAndRemoveUntil(

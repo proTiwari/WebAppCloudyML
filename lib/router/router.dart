@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/MyAccount/myaccount.dart';
 import 'package:cloudyml_app2/combo/combo_course.dart';
 import 'package:cloudyml_app2/combo/combo_store.dart';
@@ -6,11 +7,13 @@ import 'package:cloudyml_app2/module/video_screen.dart';
 import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:cloudyml_app2/payments_history.dart';
 import 'package:cloudyml_app2/router/error_page.dart';
+import 'package:cloudyml_app2/screens/chat_screen.dart';
 import 'package:cloudyml_app2/screens/groups_list.dart';
 import 'package:cloudyml_app2/screens/splash.dart';
 import 'package:cloudyml_app2/store.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import '../authentication_screens/phone_auth.dart';
 import '../catalogue_screen.dart';
@@ -49,6 +52,7 @@ class MyRouter {
           },
         ),
         GoRoute(
+            name: 'home',
             path: '/home',
             pageBuilder: (context, state) {
               return MaterialPage(child: Home());
@@ -173,7 +177,35 @@ class MyRouter {
             return MaterialPage(
                 child: PaymentScreen(map: courseMap,
                     isItComboCourse: isItComboCourse));
-        })
+        }),
+        GoRoute(
+            name: 'chatWindow',
+            path: '/chatWindow',
+          pageBuilder: (context, state) {
+
+            final AsyncSnapshot<List<dynamic>> groupData = state.queryParams['groupData']! as AsyncSnapshot<List<dynamic>>;
+            final String groupId = state.queryParams['groupId']!;
+            final DocumentSnapshot<Map<String, dynamic>> userData = state.queryParams['userData']! as DocumentSnapshot<Map<String, dynamic>>;
+              return MaterialPage(
+                  child: ChatScreen(
+                    groupData: groupData,
+                    groupId: groupId,
+                    userData: userData,
+              ));
+          }
+        ),
+        GoRoute(
+            name: 'videoNameClass',
+            path: '/videoNameClass',
+            builder: (context, state) {
+              final String videoName = state.queryParams['videoName']!;
+              final dynamic videoController = state.queryParams['videoController']!;
+              return videoNameClass(
+                videoName: videoName,
+                videoController: videoController,
+              );
+            },
+        ),
 
       ],
       errorPageBuilder: (context, state) {

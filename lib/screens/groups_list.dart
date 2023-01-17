@@ -12,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
@@ -436,7 +437,11 @@ class _GroupsListState extends State<GroupsList> {
 
 
     var headers = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST',
+      "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
       'Content-Type': 'application/json',
+      'Accept': '*/*',
       'Authorization': 'Bearer ${authorizationToken}'
     };
 
@@ -444,9 +449,12 @@ class _GroupsListState extends State<GroupsList> {
     try{
       print("next data = ${listOfGroupListData.length}");
       var response =
-      await http.post(Uri.parse("https://us-central1-cloudyml-app.cloudfunctions.net/Grouplist/groupList"),headers: headers,body: json.encode({"documentID":documentID}));
+      await http.post(Uri.parse("https://us-central1-cloudyml-app.cloudfunctions.net/CloudyML/groupList"),
+          headers: headers,
+          body: json.encode({"documentID":documentID}));
+
       var responseData = await jsonDecode(response.body);
-      print(response.statusCode);
+      print('this is response status code ${response.statusCode}');
       print(responseData["responseData"][0]["data"]["student_name"]);
       if(response.statusCode==200)
       {
@@ -521,11 +529,15 @@ class _GroupsListState extends State<GroupsList> {
     _scrollController.dispose();
     super.dispose();
   }
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final userprovider = Provider.of<UserProvider>(context);
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: customDrawer(context),
       body: Column(
         children: [
           Container(
@@ -709,13 +721,24 @@ class _GroupsListState extends State<GroupsList> {
                                                 onTap: ()
                                                 async{
                                                   print("dataaaaa");
-                                                  print(snapshotGroupList.data![index].data());
+                                                  print('that is  data ${snapshotGroupList.data![index].data()}');
                                                   updateNotificationCountToZero(snapshotGroupList.data![index].id);
+                                                  print('dip dip');
+
+                                                  // GoRouter.of(context).pushNamed('chatWindow',
+                                                  //     queryParams: {
+                                                  //       'groupData': {"data": snapshotGroupList.data![index].data(), 'id': snapshotGroupList.data![index].id},
+                                                  //       'userData': userData,
+                                                  //       'groupId': snapshotGroupList.data![index].id, });
+
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
                                                       builder: (_) => ChatScreen(
-                                                        groupData: {"data":snapshotGroupList.data![index].data(),"id":snapshotGroupList.data![index].id},
+                                                        groupData: {
+                                                          "data": snapshotGroupList.data![index].data(),
+                                                          "id": snapshotGroupList.data![index].id
+                                                        },
                                                         groupId: snapshotGroupList.data![index].id,
                                                         userData: userData,
                                                       ),
@@ -1288,7 +1311,7 @@ class _GroupsListState extends State<GroupsList> {
                                 }):
                             userData!["role"]=="mentor"?StreamBuilder<List<dynamic>>(
                                 stream: !isLoading?_stream:_stream,
-                                builder: (context,snapshotGroupList){
+                                builder: (context, snapshotGroupList){
                                   // print("snapshotData = ${snapshotGroupList.data!.docs[0]["icon"]}");
                                   if(snapshotGroupList.hasData)
                                   {
@@ -1314,18 +1337,32 @@ class _GroupsListState extends State<GroupsList> {
                                                     updateNotificationCountToZero(listOfGroupListData[index]['id']);
 
                                                   }
-                                                  print(snapshotGroupList.data![index]);
+                                                  print('groupData is ${snapshotGroupList.data![index]}');
+                                                  print('this is idddd ${snapshotGroupList.data![index]["id"]}');
+                                                  print('datatata $userData');
 
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (_) => ChatScreen(
-                                                        groupData: snapshotGroupList.data![index],
-                                                        groupId: snapshotGroupList.data![index]["id"],
-                                                        userData: userData,
-                                                      ),
-                                                    ),
-                                                  );
+                                                  final String groupId = snapshotGroupList.data![index]["id"];
+
+                                                  GoRouter.of(context).pushNamed('chatWindow',
+                                                      queryParams: {
+                                                        'groupData': snapshotGroupList.data![index],
+                                                        'groupId': groupId,
+                                                        'userData': userData,});
+
+
+                                                  // Navigator.push(
+                                                  //   context,
+                                                  //   MaterialPageRoute(
+                                                  //     builder: (_) => ChatScreen(
+                                                  //       groupData: snapshotGroupList.data![index],
+                                                  //       groupId: snapshotGroupList.data![index]["id"],
+                                                  //       userData: userData,
+                                                  //     ),
+                                                  //   ),
+                                                  // );
+
+
+
                                                   await _firestore
                                                       .collection('groups')
                                                       .doc(snapshotGroupList.data![index]["id"])
@@ -1862,16 +1899,25 @@ class _GroupsListState extends State<GroupsList> {
                                               GestureDetector(
                                                 onTap: ()
                                                 async{
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (_) => ChatScreen(
-                                                        groupData: {"data":snapshotGroupList.data!.docs[index].data(),"id":snapshotGroupList.data!.docs[index].id},
-                                                        groupId: snapshotGroupList.data!.docs[index].id,
-                                                        userData: userData,
-                                                      ),
-                                                    ),
-                                                  );
+
+                                                  GoRouter.of(context).pushNamed('chatWindow', queryParams: {
+                                                  'groupId': snapshotGroupList.data!.docs[index].id,
+                                                  'userData': userData,
+                                                  'groupData': {
+                                                    "data": snapshotGroupList.data!.docs[index].data(),
+                                                    "id": snapshotGroupList.data!.docs[index].id},
+                                                  });
+
+                                                  // Navigator.push(
+                                                  //   context,
+                                                  //   MaterialPageRoute(
+                                                  //     builder: (_) => ChatScreen(
+                                                  //       groupData: {"data":snapshotGroupList.data!.docs[index].data(),"id":snapshotGroupList.data!.docs[index].id},
+                                                  //       groupId: snapshotGroupList.data!.docs[index].id,
+                                                  //       userData: userData,
+                                                  //     ),
+                                                  //   ),
+                                                  // );
                                                   await _firestore
                                                       .collection('groups')
                                                       .doc(snapshotGroupList.data!.docs[index].id)
@@ -2440,7 +2486,7 @@ class _GroupsListState extends State<GroupsList> {
                       ),
 
 
-                      userData!["role"]=="student"?Positioned(
+                      userData!["role"]=="student"? Positioned(
                           bottom: 0,
                           child:
                           StreamBuilder(

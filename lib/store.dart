@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
+import 'package:star_rating/star_rating.dart';
 
 import 'MyAccount/myaccount.dart';
 import 'Providers/UserProvider.dart';
@@ -198,215 +199,216 @@ class _StoreScreenState extends State<StoreScreen> {
 
                   Container(
                     height: MediaQuery.of(context).size.height,
-                    // padding: const EdgeInsets.only(right: 60.0, left: 60.0),
-                    child: GridView.custom(
-                      scrollDirection: Axis.vertical,
+                    padding: const EdgeInsets.only(right: 15.0, left: 15.0),
+                    child: GridView.builder(
+                        scrollDirection: Axis.vertical,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: constraints.maxWidth >= 900 ? 4 : 3,
-                          childAspectRatio: constraints.maxWidth >= 900 ? 1.10 : 1.20,
-
+                          childAspectRatio: constraints.maxWidth >= 900 ? 0.80 : 1.05,
+                          crossAxisSpacing: constraints.maxWidth >= 900 ? 25 : 15,
                         ),
-                        childrenDelegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              if (course[index].courseName == "null") {
-                                return Container(
-                                  child: Text('This is a container'),
-                                );
-                              }
-                              if (course[index].show == true)
-                                return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      courseId = course[index]
-                                          .courseDocumentId;
-                                    });
-                                    print(courseId);
-                                    if (course[index].isItComboCourse) {
+                      itemCount: course.length,
+                      itemBuilder: (context, index) {
+                      if (course[index].courseName == "null") {
+                        return Container(
+                          child: Text('This is a container'),
+                        );
+                      }
+                      if (course[index].show == true)
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              courseId = course[index]
+                                  .courseDocumentId;
+                            });
+                            print(courseId);
+                            if (course[index].isItComboCourse) {
 
-                                      final id = index.toString();
-                                      final courseName = course[index].courseName;
-                                      final courseP = course[index].coursePrice;
-                                      GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
+                              final id = index.toString();
+                              final courseName = course[index].courseName;
+                              final courseP = course[index].coursePrice;
+                              GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
 
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) =>
-                                      //         ComboStore(
-                                      //           courses:
-                                      //           course[index].courses,
-                                      //         ),
-                                      //   ),
-                                      // );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) =>
+                              //         ComboStore(
+                              //           courses:
+                              //           course[index].courses,
+                              //         ),
+                              //   ),
+                              // );
 
-                                    } else {
-                                      final id = index.toString();
-                                      GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
-                                    }
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Container(
-                                      height: screenHeight/4,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                        BorderRadius.circular(15),
-                                        border: Border.all(
-                                            width: 0.5,
-                                            color: HexColor("440F87")),
+                            } else {
+                              final id = index.toString();
+                              GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                            }
+                          },
+                          child: course[index].show == true ? Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Container(
+                              width: screenWidth,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                BorderRadius.circular(15),
+                                border: Border.all(
+                                    width: 0.5,
+                                    color: HexColor("440F87")),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: screenWidth,
+                                    height: screenHeight / 7,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft:
+                                          Radius.circular(15),
+                                          topRight:
+                                          Radius.circular(15)),
+                                      child: Image.network(
+                                        course[index].courseImageUrl,
+                                        fit: BoxFit.fill,
                                       ),
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 30,
+                                    padding: EdgeInsets.only(left: 8, right: 8, top: 8),
+                                    width: screenWidth,
+                                    child: Text(
+                                      course[index].courseName,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'Medium',
+                                        fontSize: 12,
+                                        height: 0.95,
+                                        fontWeight: FontWeight.bold,),
+                                    ),
+                                  ),
+                                  Container(
+                                    height: verticalScale * 130,
+                                    width: screenWidth,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8),
                                       child: Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.center,
                                         children: [
-                                          Container(
-                                            width: screenWidth,
-                                            height: screenHeight / 8,
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.only(
-                                                  topLeft:
-                                                  Radius.circular(15),
-                                                  topRight:
-                                                  Radius.circular(15)),
-                                              child: Image.network(
-                                                course[index].courseImageUrl,
-                                                fit: BoxFit.fill,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            height: 15,
-                                            color: HexColor('EEE1FF'),
-                                            child: Row(
-                                              children: [
-                                                SizedBox(width: 8,),
-                                                Image.asset(
-                                                  'assets/Rating.png',
-                                                  fit: BoxFit.fill,
-                                                  height: 10,
-                                                  width: 50,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            // height: verticalScale * 130,
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(8),
-                                              child: Column(
-                                                children: [
-                                                  Align(
-                                                    alignment:
-                                                    Alignment.topLeft,
-                                                    child: Text(
-                                                      course[index]
-                                                          .courseName,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          color: Colors
-                                                              .black,
-                                                          fontFamily:
-                                                          'Medium',
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .w500),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: verticalScale * 5,
-                                                  ),
-                                                  Align(
-                                                    alignment:
-                                                    Alignment.topLeft,
-                                                    child: Text(
-                                                      "- ${course[index].courseLanguage} Language",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold,
-                                                          color: Colors
-                                                              .black,
-                                                          fontSize: 8),
-                                                    ),
-                                                  ),
-                                                  Align(
-                                                    alignment:
-                                                    Alignment.topLeft,
-                                                    child: Text(
-                                                      "- ${course[index].numOfVideos} Videos",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold,
-                                                          color: Colors
-                                                              .black,
-                                                          fontSize: 8),
-                                                    ),
-                                                  ),
-                                                  Align(
-                                                    alignment:
-                                                    Alignment.topLeft,
-                                                    child: Text(
-                                                      "- Lifetime Access",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold,
-                                                          color: Colors
-                                                              .black,
-                                                          fontSize: 8),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: horizontalScale * 50,
-                                            height: 20,
-
-                                            decoration: BoxDecoration(
-                                              color: HexColor("8346E1"),
-                                              borderRadius: BorderRadius.circular(5),
-                                            ),
-                                            // child: ElevatedButton(
-                                            //     onPressed: () {},
-                                            //     style: ElevatedButton
-                                            //         .styleFrom(
-                                            //       backgroundColor:
-                                            //       HexColor(
-                                            //           "8346E1"),
-                                            //       shape: RoundedRectangleBorder(
-                                            //           borderRadius:
-                                            //           BorderRadius
-                                            //               .circular(
-                                            //               5)),
-                                            //     ),
-                                                child: Center(
-                                                  child: Text(
-                                                    "Enroll Now 🔥",
-                                                    style: TextStyle(
-                                                        fontSize: 10,
-                                                        color:
-                                                        Colors.white,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold),
-                                                  ),
-                                                )),
+                                          // Align(
+                                          //   alignment: Alignment.topLeft,
+                                          //   child: Text(
+                                          //     course[index].courseName,
+                                          //     maxLines: 2,
+                                          //     overflow: TextOverflow.ellipsis,
+                                          //     style: TextStyle(
+                                          //       color: Colors.black,
+                                          //       fontFamily: 'Medium',
+                                          //       fontSize: 12,
+                                          //       height: 0.95,
+                                          //       fontWeight: FontWeight.bold,),
+                                          //   ),
                                           // ),
-                                          Spacer(),
+                                          SizedBox(
+                                            height: verticalScale * 5,
+                                          ),
+                                          Align(
+                                            alignment:
+                                            Alignment.topLeft,
+                                            child: Text(
+                                              "- ${course[index].numOfVideos} Videos",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .bold,
+                                                  color: Colors
+                                                      .black,
+                                                  fontSize: 10),
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment:
+                                            Alignment.topLeft,
+                                            child: Text(
+                                              "- Lifetime Access",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .bold,
+                                                  color: Colors
+                                                      .black,
+                                                  fontSize: 10),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: verticalScale * 5,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                const EdgeInsets.only(right: 5.0),
+                                                child: StarRating(
+                                                  length: 5,
+                                                  rating: 5,
+                                                  color: Colors.green,
+                                                  starSize: 15,
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(right: 5.0),
+                                                child: Text('5/5',
+                                                  style: TextStyle(fontSize: 10),),
+                                              )
+                                            ],
+                                          ),
                                         ],
                                       ),
                                     ),
                                   ),
-                                );
-                              return Container();
-                            },
-                          childCount: course.length,
-                        ))
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Container(
+                                      height: verticalScale * 30,
+                                      width: screenWidth/8,
+                                      child: ElevatedButton(
+                                          onPressed: () {},
+                                          style: ElevatedButton
+                                              .styleFrom(
+                                            backgroundColor:
+                                            HexColor(
+                                                "8346E1"),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    5)),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Enroll Now",
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  color:
+                                                  Colors.white,
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .bold),
+                                            ),
+                                          )),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ) : Container(),);
+                      return Container();
+                    },)
                   ),
                   // Container(
                   //   padding: const EdgeInsets.only(right: 60.0, left: 60.0),
@@ -720,6 +722,8 @@ class _StoreScreenState extends State<StoreScreen> {
                                 ),
                                 itemCount: course.length,
                                 itemBuilder: (context, index) {
+
+                                  if(course[index].show == true)
                                   return InkWell(
                                     onTap: () {
                                       setState(() {
@@ -771,7 +775,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                                     imageUrl:
                                                     course[index].courseImageUrl,
                                                     placeholder: (context, url) =>
-                                                        CircularProgressIndicator(),
+                                                        Center(child: CircularProgressIndicator()),
                                                     errorWidget:
                                                         (context, url, error) =>
                                                         Icon(Icons.error),
@@ -925,6 +929,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                       ),
                                     ),
                                   );
+                                  return Container();
                                 }),
                           ),
                         ),
@@ -935,7 +940,6 @@ class _StoreScreenState extends State<StoreScreen> {
               ]),
             );
           }
-
         }
       ),
     );

@@ -1,20 +1,18 @@
-// ignore: import_of_legacy_library_into_null_safe
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/api/firebase_api.dart';
 import 'package:cloudyml_app2/authentication/firebase_auth.dart';
-import 'package:cloudyml_app2/combo/combo_store.dart';
-import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/router/login_state_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloudyml_app2/fun.dart';
 import 'package:cloudyml_app2/models/firebase_file.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -24,13 +22,13 @@ import 'package:provider/provider.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:star_rating/star_rating.dart';
 import 'Services/code_generator.dart';
 import 'Services/deeplink_service.dart';
 import 'combo/combo_course.dart';
 import 'models/referal_model.dart';
 import 'module/pdf_course.dart';
 import 'package:http/http.dart' as http;
-
 var rewardCount = 0;
 String? linkMessage;
 
@@ -470,6 +468,43 @@ class _HomeState extends State<Home> {
     Provider.of<LoginState>(context, listen: false).loggedIn = false;
   }
 
+  var authorizationToken;
+  void insertToken()
+  async{
+    print("insertToken");
+    final token = await FirebaseMessaging.instance.getToken();
+    await FirebaseFirestore.instance.collection("Users").doc(FirebaseAuth.instance.currentUser!.uid).update(
+        {"token":token}
+    );
+    authorizationToken  = await FirebaseAuth.instance.currentUser!.getIdToken();
+  }
+
+  getHello() async {
+    var headers = {
+      'Access-Control-Allow-Origin': '*',
+      'Accept': '*/*',
+      'Access-Control-Allow-Methods': 'GET, POST',
+      "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer ${authorizationToken}'
+    };
+
+    try {
+      var response =
+      await http.post(
+        Uri.parse('https://us-central1-cloudyml-app.cloudfunctions.net/helloWorld'),
+          headers: headers,);
+      var responseData = await jsonDecode(response.body);
+
+      print(response.statusCode);
+      print(responseData.toString());
+      print(response.toString());
+    } catch(e){
+      print('that is an error boss ${e.toString()}');
+    }
+
+  }
+
   Timer? countDownTimer;
   Duration myDuration = Duration(days: 5);
 
@@ -549,6 +584,9 @@ class _HomeState extends State<Home> {
                                     ),
                                     child: Text("Log out",
                                         style: textStyle)),
+                                IconButton(onPressed: () async {
+                                  getHello();
+                                }, icon: Icon(Icons.add))
                               ],
                             ),
                             Positioned(
@@ -586,328 +624,328 @@ class _HomeState extends State<Home> {
                                     "My Enrolled Courses",
                                     style: TextStyle(
                                         fontFamily: 'Medium',
-                                        fontSize: 16,
+                                        color: Colors.black,
+                                        fontSize: 22,
                                         fontWeight: FontWeight.bold),
                                   ),
                                 )),
-
                             courses.length > 0
                                 ? Container(
-                              width: screenWidth / 2.5,
-                              height: screenHeight / 5.5,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.black26,
-                                      offset: Offset(
-                                        2, // Move to right 10  horizontally
-                                        2.0, // Move to bottom 10 Vertically
-                                      ),
-                                      blurRadius: 40)
-                                ],
-                                border: Border.all(
-                                  color: HexColor('440F87'),
-                                  width: 1.5,
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child:ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                // shrinkWrap: true,
-                                itemCount: course.length,
-                                itemBuilder:
-                                    (BuildContext context, int index) {
-                                  if (course[index].courseName ==
-                                      "null") {
-                                    return Container();
-                                  }
-                                  if (courses.contains(
-                                      course[index].courseId)) {
-                                    return InkWell(
-                                      onTap: (() async {
-                                        // setModuleId(snapshot.data!.docs[index].id);
-                                        await getCourseName();
-                                        if (navigateToCatalogueScreen(
-                                            course[index]
-                                                .courseId) &&
-                                            !(userMap['payInPartsDetails']
-                                            [course[index]
-                                                .courseId][
-                                            'outStandingAmtPaid'])) {
-                                          if (!course[index]
-                                              .isItComboCourse) {
-                                            GoRouter.of(context).pushNamed('videoScreen',
-                                                queryParams: {
-                                                  'courseName': course[index].courseName});
-
-                                            // Navigator.push(
-                                            //   context,
-                                            //   PageTransition(
-                                            //     duration: Duration(
-                                            //         milliseconds: 400),
-                                            //     curve:
-                                            //     Curves.bounceInOut,
-                                            //     type: PageTransitionType
-                                            //         .rightToLeftWithFade,
-                                            //     child: VideoScreen(
-                                            //       isDemo: true,
-                                            //       courseName:
-                                            //       course[index]
-                                            //           .courseName,
-                                            //       sr: 1,
-                                            //     ),
-                                            //   ),
-                                            // );
-                                          } else {
-                                            final id = index.toString();
-                                            final courseName = course[index].courseName;
-                                            context.goNamed('comboStore', queryParams: {'courseName': courseName,
-                                              'id': id});
-
-                                            // Navigator.push(
-                                            //   context,
-                                            //   PageTransition(
-                                            //     duration: Duration(
-                                            //         milliseconds: 100),
-                                            //     curve:
-                                            //     Curves.bounceInOut,
-                                            //     type: PageTransitionType
-                                            //         .rightToLeftWithFade,
-                                            //     child: ComboStore(
-                                            //       courses: course[index]
-                                            //           .courses,
-                                            //     ),
-                                            //   ),
-                                            // );
-                                          }
-                                        } else {
-                                          if (!course[index]
-                                              .isItComboCourse) {
-                                            if (course[index]
-                                                .courseContent ==
-                                                'pdf') {
-                                              Navigator.push(
-                                                context,
-                                                PageTransition(
-                                                  duration: Duration(
-                                                      milliseconds:
-                                                      400),
-                                                  curve: Curves
-                                                      .bounceInOut,
-                                                  type: PageTransitionType
-                                                      .rightToLeftWithFade,
-                                                  child:
-                                                  PdfCourseScreen(
-                                                    curriculum: course[
-                                                    index]
-                                                        .curriculum
-                                                    as Map<String,
-                                                        dynamic>,
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              GoRouter.of(context).pushNamed('videoScreen',
-                                                  queryParams: {
-                                                    'courseName': course[index].courseName});
-                                              // Navigator.push(
-                                              //   context,
-                                              //   PageTransition(
-                                              //     duration: Duration(
-                                              //         milliseconds:
-                                              //         400),
-                                              //     curve: Curves
-                                              //         .bounceInOut,
-                                              //     type: PageTransitionType
-                                              //         .rightToLeftWithFade,
-                                              //     child: VideoScreen(
-                                              //       isDemo: true,
-                                              //       courseName:
-                                              //       course[index]
-                                              //           .courseName,
-                                              //       sr: 1,
-                                              //     ),
-                                              //   ),
-                                              // );
-                                            }
-                                          } else {
-
-                                            ComboCourse.comboId.value =
-                                                course[index].courseId;
-
-                                            final id = index.toString();
-                                            final courseName = course[index].courseName;
-
-                                            GoRouter.of(context).pushNamed('comboCourse', queryParams: {'id': id, 'courseName': courseName});
-                                            // Navigator.push(
-                                            //   context,
-                                            //   PageTransition(
-                                            //     duration: Duration(
-                                            //         milliseconds: 400),
-                                            //     curve:
-                                            //     Curves.bounceInOut,
-                                            //     type: PageTransitionType
-                                            //         .rightToLeftWithFade,
-                                            //     child: ComboCourse(
-                                            //       courses: course[index]
-                                            //           .courses,
-                                            //     ),
-                                            //   ),
-                                            // );
-                                          }
-                                        }
-                                        setState(() {
-                                          courseId = course[index]
-                                              .courseDocumentId;
-                                        });
-                                      }),
-                                      child: Container(
-                                        width: screenWidth / 2.5,
-                                        height: screenHeight / 5.5,
-                                        child: Stack(
+                                  width: courses.length == 1 ? screenWidth / 2.5 : screenWidth/1.2,
+                                  height: screenHeight/5,
+                              color: Colors.transparent,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    // shrinkWrap: true,
+                                    itemCount: course.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      if (course[index].courseName ==
+                                          "null") {
+                                        return Container();
+                                      }
+                                      if (courses.contains(
+                                          course[index].courseId)) {
+                                        return Row(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Padding(
-                                              padding:
-                                              const EdgeInsets.all(
-                                                  8.0),
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    width: 60 *
-                                                        horizontalScale,
-                                                    height:
-                                                    screenHeight /
-                                                        5.5,
-                                                    decoration:
-                                                    BoxDecoration(
-                                                        border: Border.all(
-                                                            color: Colors
-                                                                .transparent),
-                                                        borderRadius:
-                                                        BorderRadius
-                                                            .circular(5),
-                                                        image: DecorationImage(
-                                                            image: CachedNetworkImageProvider(
-                                                              course[index]
-                                                                  .courseImageUrl,
-                                                            ),
-                                                            fit: BoxFit.fill)),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Container(
-                                                    width: screenWidth/4.5,
-                                                    height:
-                                                    screenHeight /
-                                                        5.5,
-                                                    child: Align(
-                                                      alignment:
-                                                      Alignment
-                                                          .topCenter,
-                                                      child: Column(
-                                                        children: [
-                                                          Text(
-                                                            course[index]
-                                                                .courseName,
-                                                            style: TextStyle(
-                                                                color: HexColor(
-                                                                    "2C2C2C"),
-                                                                fontFamily:
-                                                                'Medium',
-                                                                fontSize:
-                                                                12,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .w500,
-                                                                height:
-                                                                1),
+                                            InkWell(
+                                              onTap: (() async {
+                                                // setModuleId(snapshot.data!.docs[index].id);
+                                                await getCourseName();
+                                                if (navigateToCatalogueScreen(
+                                                    course[index]
+                                                        .courseId) &&
+                                                    !(userMap['payInPartsDetails']
+                                                    [course[index]
+                                                        .courseId][
+                                                    'outStandingAmtPaid'])) {
+                                                  if (!course[index]
+                                                      .isItComboCourse) {
+                                                    GoRouter.of(context).pushNamed('videoScreen',
+                                                        queryParams: {
+                                                          'courseName': course[index].courseName});
+
+                                                    // Navigator.push(
+                                                    //   context,
+                                                    //   PageTransition(
+                                                    //     duration: Duration(
+                                                    //         milliseconds: 400),
+                                                    //     curve:
+                                                    //     Curves.bounceInOut,
+                                                    //     type: PageTransitionType
+                                                    //         .rightToLeftWithFade,
+                                                    //     child: VideoScreen(
+                                                    //       isDemo: true,
+                                                    //       courseName:
+                                                    //       course[index]
+                                                    //           .courseName,
+                                                    //       sr: 1,
+                                                    //     ),
+                                                    //   ),
+                                                    // );
+                                                  } else {
+                                                    final id = index.toString();
+                                                    final courseName = course[index].courseName;
+                                                    context.goNamed('comboStore', queryParams: {'courseName': courseName,
+                                                      'id': id});
+
+                                                    // Navigator.push(
+                                                    //   context,
+                                                    //   PageTransition(
+                                                    //     duration: Duration(
+                                                    //         milliseconds: 100),
+                                                    //     curve:
+                                                    //     Curves.bounceInOut,
+                                                    //     type: PageTransitionType
+                                                    //         .rightToLeftWithFade,
+                                                    //     child: ComboStore(
+                                                    //       courses: course[index]
+                                                    //           .courses,
+                                                    //     ),
+                                                    //   ),
+                                                    // );
+                                                  }
+                                                } else {
+                                                  if (!course[index]
+                                                      .isItComboCourse) {
+                                                    if (course[index]
+                                                        .courseContent ==
+                                                        'pdf') {
+                                                      Navigator.push(
+                                                        context,
+                                                        PageTransition(
+                                                          duration: Duration(
+                                                              milliseconds:
+                                                              400),
+                                                          curve: Curves
+                                                              .bounceInOut,
+                                                          type: PageTransitionType
+                                                              .rightToLeftWithFade,
+                                                          child:
+                                                          PdfCourseScreen(
+                                                            curriculum: course[
+                                                            index]
+                                                                .curriculum
+                                                            as Map<String,
+                                                                dynamic>,
                                                           ),
-                                                          Padding(
-                                                            padding: const EdgeInsets
-                                                                .only(
-                                                                top:
-                                                                5.0,
-                                                                bottom:
-                                                                5),
-                                                            child:
-                                                            Align(
-                                                              alignment:
-                                                              Alignment
-                                                                  .topLeft,
-                                                              child: Image
-                                                                  .asset(
-                                                                'assets/Rating.png',
-                                                                fit: BoxFit
-                                                                    .fill,
-                                                                height:
-                                                                10,
-                                                                width: screenWidth /
-                                                                    16,
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      GoRouter.of(context).pushNamed('videoScreen',
+                                                          queryParams: {
+                                                            'courseName': course[index].courseName});
+                                                      // Navigator.push(
+                                                      //   context,
+                                                      //   PageTransition(
+                                                      //     duration: Duration(
+                                                      //         milliseconds:
+                                                      //         400),
+                                                      //     curve: Curves
+                                                      //         .bounceInOut,
+                                                      //     type: PageTransitionType
+                                                      //         .rightToLeftWithFade,
+                                                      //     child: VideoScreen(
+                                                      //       isDemo: true,
+                                                      //       courseName:
+                                                      //       course[index]
+                                                      //           .courseName,
+                                                      //       sr: 1,
+                                                      //     ),
+                                                      //   ),
+                                                      // );
+                                                    }
+                                                  } else {
+
+                                                    ComboCourse.comboId.value =
+                                                        course[index].courseId;
+
+                                                    final id = index.toString();
+                                                    final courseName = course[index].courseName;
+
+                                                    GoRouter.of(context).pushNamed('comboCourse', queryParams: {'id': id, 'courseName': courseName});
+                                                    // Navigator.push(
+                                                    //   context,
+                                                    //   PageTransition(
+                                                    //     duration: Duration(
+                                                    //         milliseconds: 400),
+                                                    //     curve:
+                                                    //     Curves.bounceInOut,
+                                                    //     type: PageTransitionType
+                                                    //         .rightToLeftWithFade,
+                                                    //     child: ComboCourse(
+                                                    //       courses: course[index]
+                                                    //           .courses,
+                                                    //     ),
+                                                    //   ),
+                                                    // );
+                                                  }
+                                                }
+                                                setState(() {
+                                                  courseId = course[index]
+                                                      .courseDocumentId;
+                                                });
+                                              }),
+                                              child: Container(
+                                                width: screenWidth / 2.8,
+                                                height: screenHeight/ 5.5,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  // boxShadow: [
+                                                  //   BoxShadow(
+                                                  //       color: Colors.black26,
+                                                  //       offset: Offset(
+                                                  //         2, // Move to right 10  horizontally
+                                                  //         2.0, // Move to bottom 10 Vertically
+                                                  //       ),
+                                                  //       blurRadius: 40)
+                                                  // ],
+                                                  border: Border.all(
+                                                    color: HexColor('440F87'),
+                                                    width: 1.5,
+                                                  ),
+                                                  borderRadius: BorderRadius.circular(10),
+                                                ),
+                                                child: Stack(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsets.all(
+                                                          8.0),
+                                                      child: Row(
+                                                        children: [
+                                                          Container(
+                                                            width: 60 *
+                                                                horizontalScale,
+                                                            height:
+                                                            screenHeight /
+                                                                5.5,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                                border: Border.all(
+                                                                    color: Colors
+                                                                        .transparent),
+                                                                borderRadius:
+                                                                BorderRadius
+                                                                    .circular(5),
+                                                                image: DecorationImage(
+                                                                    image: CachedNetworkImageProvider(
+                                                                      course[index]
+                                                                          .courseImageUrl,
+                                                                    ),
+                                                                    fit: BoxFit.fill)),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          Container(
+                                                            width: screenWidth/5.6,
+                                                            height: screenHeight / 5.5,
+                                                            child: Align(
+                                                              alignment: Alignment.topCenter,
+                                                              child: Column(
+                                                                children: [
+                                                                  Align(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child: Text(
+                                                                      course[index].courseName,
+                                                                      maxLines: 2,
+                                                                      style: TextStyle(
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                        color: Colors.black,
+                                                                          fontFamily: 'Medium',
+                                                                          fontSize: 16,
+                                                                          height: 0.95,
+                                                                          fontWeight: FontWeight.bold,),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(height: 5,),
+                                                                  Align(
+                                                                    alignment:
+                                                                    Alignment
+                                                                        .topLeft,
+                                                                    child: Text(
+                                                                      "${course[index].numOfVideos} Videos",
+                                                                      style: TextStyle(
+                                                                          color: HexColor(
+                                                                              "2C2C2C"),
+                                                                          fontFamily:
+                                                                          'Medium',
+                                                                          fontSize:
+                                                                          12,
+                                                                          fontWeight: FontWeight
+                                                                              .w500,
+                                                                          height:
+                                                                          1),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(height: 5,),
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                    children: [
+                                                                      Padding(
+                                                                        padding:
+                                                                        const EdgeInsets.only(right: 5.0),
+                                                                        child: StarRating(
+                                                                          length: 5,
+                                                                          rating: 5,
+                                                                          color: Colors.green,
+                                                                          starSize: 15,
+                                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                                        ),
+                                                                      ),
+                                                                      Padding(
+                                                                        padding: const EdgeInsets.only(right: 5.0),
+                                                                        child: Text('5/5',
+                                                                          style: TextStyle(fontSize: 10),),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                  SizedBox(height: 5,),
+                                                                  // Container(
+                                                                  //   height: 15,
+                                                                  //   child: Row(
+                                                                  //     children: [
+                                                                  //       Container(
+                                                                  //         height: 5,
+                                                                  //         width: 150,
+                                                                  //         child:
+                                                                  //         LinearProgressIndicator(
+                                                                  //           value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
+                                                                  //           color: HexColor(
+                                                                  //               "8346E1"),
+                                                                  //           backgroundColor:
+                                                                  //           HexColor(
+                                                                  //               'E3E3E3'),
+                                                                  //         ),
+                                                                  //       ),
+                                                                  //       Spacer(),
+                                                                  //       Text(
+                                                                  //         "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),)
+                                                                  //     ],
+                                                                  //   ),
+                                                                  // ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ),
-                                                          Align(
-                                                            alignment:
-                                                            Alignment
-                                                                .topLeft,
-                                                            child: Text(
-                                                              "${course[index].courseLanguage} || ${course[index].numOfVideos} Videos",
-                                                              style: TextStyle(
-                                                                  color: HexColor(
-                                                                      "2C2C2C"),
-                                                                  fontFamily:
-                                                                  'Medium',
-                                                                  fontSize:
-                                                                  12,
-                                                                  fontWeight: FontWeight
-                                                                      .w500,
-                                                                  height:
-                                                                  1),
-                                                            ),
-                                                          ),
-                                                          SizedBox(height: 5,),
-                                                          // Container(
-                                                          //   height: 15,
-                                                          //   child: Row(
-                                                          //     children: [
-                                                          //       Container(
-                                                          //         height: 5,
-                                                          //         width: 150,
-                                                          //         child:
-                                                          //         LinearProgressIndicator(
-                                                          //           value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
-                                                          //           color: HexColor(
-                                                          //               "8346E1"),
-                                                          //           backgroundColor:
-                                                          //           HexColor(
-                                                          //               'E3E3E3'),
-                                                          //         ),
-                                                          //       ),
-                                                          //       Spacer(),
-                                                          //       Text(
-                                                          //         "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),)
-                                                          //     ],
-                                                          //   ),
-                                                          // ),
                                                         ],
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ),
+                                            Container(width: 25,),
                                           ],
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return Container();
-                                  }
-                                },
-                              ),
-                            )
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
+                                    },
+                                  ),
+                                )
                                 : Container(
                               width: screenWidth / 2.5,
                               height: screenHeight / 5.5,
@@ -915,7 +953,8 @@ class _HomeState extends State<Home> {
                                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                 border: Border.all(color: Colors.black, width: 1.0),
                               ),
-                              child: Center(child: Text('There are zero courses.')),
+                              child: Center(
+                                  child: Text('There are zero courses.')),
                             ),
                             SizedBox(height: verticalScale * 40),
                             // Padding(
@@ -929,7 +968,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       Container(
-                        height: screenHeight / 1.9,
+                        height: screenHeight / 1.8,
                         width: screenWidth,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -943,7 +982,7 @@ class _HomeState extends State<Home> {
                             ],
                           ),
                         ),
-                        child: ListView(
+                        child: Column(
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -952,7 +991,7 @@ class _HomeState extends State<Home> {
                                 child: Text(
                                   'Reviews',
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 24,
                                     fontFamily: 'Poppins',
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
@@ -960,118 +999,341 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
                             ),
-                            FutureBuilder<List<FirebaseFile>>(
-                              future: futureFiles,
-                              builder: (context, snapshot) {
-                                try {
-                                  switch (snapshot.connectionState) {
-                                    case ConnectionState.waiting:
-                                      return Center(
-                                          child: CircularProgressIndicator());
-                                    default:
-                                      if (snapshot.hasError) {
-                                        return Center(
-                                            child: Text(
-                                              'Some error occurred!',
-                                              textScaleFactor: min(
-                                                  horizontalScale, verticalScale),
-                                            ));
-                                      } else {
-                                        final files = snapshot.data!;
-                                        return Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Container(
-                                            height: screenHeight / 2.3,
-                                            child: CarouselSlider.builder(
-                                              itemCount: files.length,
-                                              itemBuilder: (BuildContext
-                                              context,
-                                                  int index,
-                                                  int pageNo) =>
-                                                  ClipRRect(
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(12),
-                                                      child: InkWell(
-                                                        onTap: () {
-                                                          final file =
-                                                          files[index];
-                                                          showDialog(
-                                                              context: context,
-                                                              builder: (context) =>
-                                                                  GestureDetector(
-                                                                      onTap: () =>
-                                                                          Navigator.pop(
-                                                                              context),
-                                                                      child: Container(
-                                                                        alignment:
-                                                                        Alignment.center,
-                                                                        color:
-                                                                        Colors.transparent,
-                                                                        height: 400,
-                                                                        width: 300,
-                                                                        child: AlertDialog(
-                                                                          shape: RoundedRectangleBorder(
-                                                                              borderRadius:
-                                                                              BorderRadius
-                                                                                  .circular(
-                                                                                  15.0),
-                                                                              side: BorderSide
-                                                                                  .none),
-                                                                          scrollable: true,
-                                                                          content:
-                                                                          Container(height:240,width:320,
-                                                                            child: ClipRRect(borderRadius: BorderRadius.circular(20),
-                                                                              child: CachedNetworkImage(
-                                                                                errorWidget:
-                                                                                    (context, url,
-                                                                                    error) =>
-                                                                                    Icon(Icons
-                                                                                        .error),
-                                                                                imageUrl: file.url,
-                                                                                fit: BoxFit.fill,
-                                                                                placeholder: (context,
-                                                                                    url) =>
-                                                                                    Center(child: CircularProgressIndicator()),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                FutureBuilder<List<FirebaseFile>>(
+                                  future: futureFiles,
+                                  builder: (context, snapshot) {
+                                    try {
+                                      switch (snapshot.connectionState) {
+                                        case ConnectionState.waiting:
+                                          return Center(
+                                              child: CircularProgressIndicator());
+                                        default:
+                                          if (snapshot.hasError) {
+                                            return Center(
+                                                child: Text(
+                                                  'Some error occurred!',
+                                                  textScaleFactor: min(
+                                                      horizontalScale, verticalScale),
+                                                ));
+                                          } else {
+                                            final files = snapshot.data!;
+                                            return Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                height: screenHeight / 2.3,
+                                                width: screenWidth/3.5,
+                                                child: CarouselSlider.builder(
+                                                  options: CarouselOptions(
+                                                    autoPlay: true,
+                                                    enableInfiniteScroll: true,
+                                                    enlargeCenterPage: false,
+                                                    viewportFraction: 1,
+                                                    aspectRatio: 2.0,
+                                                    initialPage: 0,
+                                                    autoPlayCurve: Curves.fastOutSlowIn,
+                                                    autoPlayAnimationDuration: Duration(
+                                                        milliseconds: 1000),
+                                                  ),
+                                                  itemCount: files.length,
+                                                  itemBuilder: (BuildContext context, int index, int pageNo) {
+                                                    return
+                                                    ClipRRect(
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(12),
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            final file =
+                                                            files[index];
+                                                            showDialog(
+                                                                context: context,
+                                                                builder: (context) =>
+                                                                    GestureDetector(
+                                                                        onTap: () =>
+                                                                            Navigator.pop(
+                                                                                context),
+                                                                        child: Container(
+                                                                          alignment: Alignment.center,
+                                                                          color: Colors.transparent,
+                                                                          height: 400,
+                                                                          width: 300,
+                                                                          child: AlertDialog(
+                                                                            shape: RoundedRectangleBorder(
+                                                                                borderRadius:
+                                                                                BorderRadius
+                                                                                    .circular(
+                                                                                    15.0),
+                                                                                side: BorderSide
+                                                                                    .none),
+                                                                            scrollable: true,
+                                                                            content:
+                                                                            Container(height:240,width:320,
+                                                                              child: ClipRRect(borderRadius: BorderRadius.circular(20),
+                                                                                child: CachedNetworkImage(
+                                                                                  errorWidget:
+                                                                                      (context, url,
+                                                                                      error) =>
+                                                                                      Icon(Icons
+                                                                                          .error),
+                                                                                  imageUrl: file.url,
+                                                                                  fit: BoxFit.fill,
+                                                                                  placeholder: (context,
+                                                                                      url) =>
+                                                                                      Center(child: CircularProgressIndicator()),
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                      )));
-                                                        },
-                                                        child: Image.network(
-                                                            files[index].url),
-                                                      )),
-                                              options: CarouselOptions(
-                                                autoPlay: true,
-                                                enableInfiniteScroll: true,
-                                                enlargeCenterPage: true,
-                                                viewportFraction: 0.8,
-                                                aspectRatio: 1.0,
-                                                initialPage: 0,
-                                                autoPlayCurve:
-                                                Curves.fastOutSlowIn,
-                                                autoPlayAnimationDuration:
-                                                Duration(
-                                                    milliseconds: 1000),
+                                                                        )));
+                                                          },
+                                                          child: Image.network(
+                                                              files[index].url),
+                                                        ));
+                                                  }
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                        );
+                                            );
+                                          }
                                       }
-                                  }
-                                } catch (e) {
-                                  print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
+                                    } catch (e) {
+                                      print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
 
-                                  Fluttertoast.showToast(msg: e.toString());
-                                  return Center(
-                                      child: Text(
-                                        'Some error occurred!',
-                                        textScaleFactor:
-                                        min(horizontalScale, verticalScale),
-                                      ));
-                                }
-                              },
+                                      Fluttertoast.showToast(msg: e.toString());
+                                      return Center(
+                                          child: Text(
+                                            'Some error occurred!',
+                                            textScaleFactor:
+                                            min(horizontalScale, verticalScale),
+                                          ));
+                                    }
+                                  },
+                                ),
+                                FutureBuilder<List<FirebaseFile>>(
+                                  future: futureFiles,
+                                  builder: (context, snapshot) {
+                                    try {
+                                      switch (snapshot.connectionState) {
+                                        case ConnectionState.waiting:
+                                          return Center(
+                                              child: CircularProgressIndicator());
+                                        default:
+                                          if (snapshot.hasError) {
+                                            return Center(
+                                                child: Text(
+                                                  'Some error occurred!',
+                                                  textScaleFactor: min(
+                                                      horizontalScale, verticalScale),
+                                                ));
+                                          } else {
+                                            final files = snapshot.data!;
+                                            return Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                height: screenHeight / 2.3,
+                                                width: screenWidth/3.5,
+                                                child: CarouselSlider.builder(
+                                                    options: CarouselOptions(
+                                                      autoPlay: true,
+                                                      enableInfiniteScroll: true,
+                                                      enlargeCenterPage: false,
+                                                      viewportFraction: 1,
+                                                      aspectRatio: 2.0,
+                                                      initialPage: 4,
+                                                      autoPlayCurve: Curves.fastOutSlowIn,
+                                                      autoPlayAnimationDuration: Duration(
+                                                          milliseconds: 2000),
+                                                    ),
+                                                    itemCount: files.length,
+                                                    itemBuilder: (BuildContext context, int index, int pageNo) {
+                                                      return
+                                                        ClipRRect(
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                final file =
+                                                                files[index];
+                                                                showDialog(
+                                                                    context: context,
+                                                                    builder: (context) =>
+                                                                        GestureDetector(
+                                                                            onTap: () =>
+                                                                                Navigator.pop(
+                                                                                    context),
+                                                                            child: Container(
+                                                                              alignment:
+                                                                              Alignment.center,
+                                                                              color:
+                                                                              Colors.transparent,
+                                                                              height: 400,
+                                                                              width: 300,
+                                                                              child: AlertDialog(
+                                                                                shape: RoundedRectangleBorder(
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        15.0),
+                                                                                    side: BorderSide
+                                                                                        .none),
+                                                                                scrollable: true,
+                                                                                content:
+                                                                                Container(height:240,width:320,
+                                                                                  child: ClipRRect(borderRadius: BorderRadius.circular(20),
+                                                                                    child: CachedNetworkImage(
+                                                                                      errorWidget:
+                                                                                          (context, url,
+                                                                                          error) =>
+                                                                                          Icon(Icons
+                                                                                              .error),
+                                                                                      imageUrl: file.url,
+                                                                                      fit: BoxFit.fill,
+                                                                                      placeholder: (context,
+                                                                                          url) =>
+                                                                                          Center(child: CircularProgressIndicator()),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            )));
+                                                              },
+                                                              child: Image.network(
+                                                                  files[index].url),
+                                                            ));
+                                                    }
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                      }
+                                    } catch (e) {
+                                      print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
+
+                                      Fluttertoast.showToast(msg: e.toString());
+                                      return Center(
+                                          child: Text(
+                                            'Some error occurred!',
+                                            textScaleFactor:
+                                            min(horizontalScale, verticalScale),
+                                          ));
+                                    }
+                                  },
+                                ),
+                                FutureBuilder<List<FirebaseFile>>(
+                                  future: futureFiles,
+                                  builder: (context, snapshot) {
+                                    try {
+                                      switch (snapshot.connectionState) {
+                                        case ConnectionState.waiting:
+                                          return Center(
+                                              child: CircularProgressIndicator());
+                                        default:
+                                          if (snapshot.hasError) {
+                                            return Center(
+                                                child: Text(
+                                                  'Some error occurred!',
+                                                  textScaleFactor: min(
+                                                      horizontalScale, verticalScale),
+                                                ));
+                                          } else {
+                                            final files = snapshot.data!;
+                                            return Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                height: screenHeight / 2.3,
+                                                width: screenWidth/3.5,
+                                                child: CarouselSlider.builder(
+                                                    options: CarouselOptions(
+                                                      autoPlay: true,
+                                                      enableInfiniteScroll: true,
+                                                      enlargeCenterPage: false,
+                                                      viewportFraction: 1,
+                                                      aspectRatio: 2.0,
+                                                      initialPage: 7,
+                                                      autoPlayCurve: Curves.fastOutSlowIn,
+                                                      autoPlayAnimationDuration: Duration(
+                                                          milliseconds: 3000),
+                                                    ),
+                                                    itemCount: files.length,
+                                                    itemBuilder: (BuildContext context, int index, int pageNo) {
+                                                      return
+                                                        ClipRRect(
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                final file =
+                                                                files[index];
+                                                                showDialog(
+                                                                    context: context,
+                                                                    builder: (context) =>
+                                                                        GestureDetector(
+                                                                            onTap: () =>
+                                                                                Navigator.pop(
+                                                                                    context),
+                                                                            child: Container(
+                                                                              alignment:
+                                                                              Alignment.center,
+                                                                              color:
+                                                                              Colors.transparent,
+                                                                              height: 400,
+                                                                              width: 300,
+                                                                              child: AlertDialog(
+                                                                                shape: RoundedRectangleBorder(
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        15.0),
+                                                                                    side: BorderSide
+                                                                                        .none),
+                                                                                scrollable: true,
+                                                                                content:
+                                                                                Container(height:240,width:320,
+                                                                                  child: ClipRRect(borderRadius: BorderRadius.circular(20),
+                                                                                    child: CachedNetworkImage(
+                                                                                      errorWidget:
+                                                                                          (context, url,
+                                                                                          error) =>
+                                                                                          Icon(Icons
+                                                                                              .error),
+                                                                                      imageUrl: file.url,
+                                                                                      fit: BoxFit.fill,
+                                                                                      placeholder: (context,
+                                                                                          url) =>
+                                                                                          Center(child: CircularProgressIndicator()),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            )));
+                                                              },
+                                                              child: Image.network(
+                                                                  files[index].url),
+                                                            ));
+                                                    }
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                      }
+                                    } catch (e) {
+                                      print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
+
+                                      Fluttertoast.showToast(msg: e.toString());
+                                      return Center(
+                                          child: Text(
+                                            'Some error occurred!',
+                                            textScaleFactor:
+                                            min(horizontalScale, verticalScale),
+                                          ));
+                                    }
+                                  },
+                                ),
+                              ],
                             )
                           ],
                         ),
@@ -1103,185 +1365,189 @@ class _HomeState extends State<Home> {
                             Container(
                               margin: EdgeInsets.only(top: 75, bottom: 50),
                               height: screenHeight / 2,
-                              child: Center(
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: course.length,
-                                    itemBuilder:
-                                        (BuildContext context, index) {
-                                      if (course[index].courseName ==
-                                          "null") {
-                                        return Container();
-                                      }
-                                      if (course[index].show == true)
-                                      return InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            courseId = course[index]
-                                                .courseDocumentId;
-                                          });
-                                          print(courseId);
-                                          if (course[index].isItComboCourse) {
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: course.length,
+                                  itemBuilder:
+                                      (BuildContext context, index) {
+                                    if (course[index].courseName ==
+                                        "null") {
+                                      return Container();
+                                    }
+                                    if (course[index].show == true)
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          courseId = course[index]
+                                              .courseDocumentId;
+                                        });
+                                        print(courseId);
+                                        if (course[index].isItComboCourse) {
 
-                                            final id = index.toString();
-                                            final courseName = course[index].courseName;
-                                            final courseP = course[index].coursePrice;
-                                            GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
+                                          final id = index.toString();
+                                          final courseName = course[index].courseName;
+                                          final courseP = course[index].coursePrice;
+                                          GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
 
-                                            // Navigator.push(
-                                            //   context,
-                                            //   MaterialPageRoute(
-                                            //     builder: (context) =>
-                                            //         ComboStore(
-                                            //           courses:
-                                            //           course[index].courses,
-                                            //         ),
+                                          // Navigator.push(
+                                          //   context,
+                                          //   MaterialPageRoute(
+                                          //     builder: (context) =>
+                                          //         ComboStore(
+                                          //           courses:
+                                          //           course[index].courses,
+                                          //         ),
+                                          //   ),
+                                          // );
+
+                                        } else {
+                                          final id = index.toString();
+                                          GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                                        }
+                                      },
+                                      child: course[index].isItComboCourse
+                                          ? Padding(
+                                        padding: const EdgeInsets.all(
+                                            10.0),
+                                        child: Container(
+                                          height: screenHeight / 2.25,
+                                          width: screenWidth / 5,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            // boxShadow: [
+                                            //   BoxShadow(
+                                            //     color: Colors.black26,
+                                            //     offset: Offset(0, 2),
+                                            //     blurRadius: 40,
                                             //   ),
-                                            // );
-
-                                          } else {
-                                            final id = index.toString();
-                                            GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
-                                          }
-                                        },
-                                        child: course[index].isItComboCourse
-                                            ? Padding(
-                                          padding: const EdgeInsets.all(
-                                              10.0),
-                                          child: Container(
-                                            width: screenWidth / 5,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black26,
-                                                  offset: Offset(0, 2),
-                                                  blurRadius: 40,
-                                                ),
-                                              ],
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  15),
-                                              border: Border.all(
-                                                  width: 0.5,
-                                                  color: HexColor(
-                                                      "440F87")),
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment
-                                                  .center,
-                                              children: [
-                                                Container(
-                                                  width:
-                                                  screenWidth / 5,
-                                                  height:
-                                                  screenHeight / 5.5,
-                                                  child: ClipRRect(
-                                                    borderRadius: BorderRadius.only(
-                                                        topLeft: Radius
-                                                            .circular(
-                                                            15),
-                                                        topRight: Radius
-                                                            .circular(
-                                                            15)),
-                                                    child:
-                                                    Image.network(
-                                                      course[index]
-                                                          .courseImageUrl,
-                                                      fit: BoxFit.fill,
-                                                    ),
+                                            // ],
+                                            borderRadius:
+                                            BorderRadius.circular(
+                                                15),
+                                            border: Border.all(
+                                                width: 0.5,
+                                                color: HexColor(
+                                                    "440F87")),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment
+                                                .center,
+                                            children: [
+                                              Container(
+                                                width:
+                                                screenWidth / 5,
+                                                height: screenHeight / 5.5,
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.only(
+                                                      topLeft: Radius
+                                                          .circular(
+                                                          15),
+                                                      topRight: Radius
+                                                          .circular(
+                                                          15)),
+                                                  child:
+                                                  Image.network(
+                                                    course[index]
+                                                        .courseImageUrl,
+                                                    fit: BoxFit.fill,
                                                   ),
                                                 ),
-                                                Padding(
-                                                  padding: const EdgeInsets.only(top: 5.0, right: 5),
-                                                  child: Container(
-                                                    height: screenHeight /
-                                                        6.5,
-                                                    padding: EdgeInsets.only(left: 5),
-                                                    child: Column(
-                                                      children: [
-                                                        Align(
-                                                          alignment:
-                                                          Alignment
-                                                              .topLeft,
-                                                          child:
-                                                          Text(
-                                                            course[index]
-                                                                .courseName,
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontFamily:
-                                                                'Medium',
-                                                                fontSize:
-                                                                12,
-                                                                fontWeight:
-                                                                FontWeight.w500,
-                                                                height: 1),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: verticalScale * 5,
-                                                        ),
-                                                        Align(
-                                                          alignment:
-                                                          Alignment
-                                                              .topLeft,
-                                                          child:
-                                                          Text(
-                                                            "- ${course[index].courseLanguage} Language",
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                FontWeight.bold,
-                                                                color: Colors.black,
-                                                                fontSize: 10),
-                                                          ),
-                                                        ),
-                                                        Align(
-                                                          alignment:
-                                                          Alignment
-                                                              .topLeft,
-                                                          child:
-                                                          Text(
-                                                            "- ${course[index].numOfVideos} Videos",
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                FontWeight.bold,
-                                                                color: Colors.black,
-                                                                fontSize: 10),
-                                                          ),
-                                                        ),
-                                                        Align(
-                                                          alignment:
-                                                          Alignment
-                                                              .topLeft,
-                                                          child:
-                                                          Text(
-                                                            "- Lifetime Access",
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                FontWeight.bold,
-                                                                color: Colors.black,
-                                                                fontSize: 10),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                Container(
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 5.0, right: 5),
+                                                child: Container(
+                                                  height: screenHeight /
+                                                      6.5,
+                                                  padding: EdgeInsets.only(left: 5),
                                                   child: Column(
                                                     children: [
-                                                      Padding(
-                                                        padding:
-                                                        const EdgeInsets
-                                                            .only(
-                                                            bottom:
-                                                            10.0),
+                                                      SizedBox(height: 5,),
+                                                      Align(
+                                                        alignment:
+                                                        Alignment
+                                                            .topLeft,
                                                         child:
-                                                        ElevatedButton(
+                                                        Text(
+                                                          course[index].courseName,
+                                                          maxLines: 2,
+                                                          style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontFamily: 'Medium',
+                                                              fontSize: 16,
+                                                              fontWeight: FontWeight.bold,
+                                                              overflow: TextOverflow.ellipsis,
+                                                              height: 1),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: verticalScale * 5,
+                                                      ),
+                                                      Align(
+                                                        alignment:
+                                                        Alignment
+                                                            .topLeft,
+                                                        child:
+                                                        Text(
+                                                          "- ${course[index].numOfVideos} Videos",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                              color: Colors.black,
+                                                              fontSize: 10),
+                                                        ),
+                                                      ),
+                                                      Align(
+                                                        alignment:
+                                                        Alignment
+                                                            .topLeft,
+                                                        child:
+                                                        Text(
+                                                          "- Lifetime Access",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                              color: Colors.black,
+                                                              fontSize: 10),
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 5,),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                            const EdgeInsets.only(left: 5.0),
+                                                            child: StarRating(
+                                                              length: 5,
+                                                              rating: 5,
+                                                              color: Colors.green,
+                                                              starSize: 15,
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(right: 5.0),
+                                                            child: Text('5/5',
+                                                              style: TextStyle(fontSize: 10),),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Container(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    mainAxisAlignment:MainAxisAlignment.start,
+                                                    children: [
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(bottom: 10.0, left: 10),
+                                                        child: ElevatedButton(
                                                             onPressed:
                                                                 () {},
                                                             style: ElevatedButton
@@ -1301,44 +1567,26 @@ class _HomeState extends State<Home> {
                                                                   fontWeight: FontWeight.bold),
                                                             )),
                                                       ),
-                                                      Padding(
-                                                        padding:
-                                                        const EdgeInsets
-                                                            .only(
-                                                            right:
-                                                            15.0),
-                                                        child: Align(
-                                                          alignment: Alignment.bottomRight,
-                                                          child:
-                                                          Image.asset(
-                                                            'assets/Rating.png',
-                                                            fit: BoxFit.fill,
-                                                            height: verticalScale * 20,
-                                                            width: horizontalScale * 30,
-                                                          ),
-                                                        ),
-                                                      ),
                                                     ],
                                                   ),
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
-                                        )
-                                            : Container(),
-                                      );
-
-                                      return Container();
-                                    }),
-                              ),
+                                        ),
+                                      )
+                                          : Container(),
+                                    );
+                                    return Container();
+                                  }),
                             ),
                           ],
                         ),
                       ),
-                      Container(
-                        height: screenHeight / 16,
-                        width: screenWidth,
-                      ),
+                      // Container(
+                      //   height: screenHeight / 20,
+                      //   width: screenWidth,
+                      // ),
                       // Container(
                       //   width: screenWidth,
                       //   height: screenHeight / 3,
