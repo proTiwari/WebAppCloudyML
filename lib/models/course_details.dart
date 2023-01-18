@@ -16,6 +16,7 @@ class CourseDetails {
   String numOfVideos;
   String FcSerialNumber;
   String courseContent;
+  String reviews;
   bool? show;
 
   CourseDetails({
@@ -37,5 +38,6 @@ class CourseDetails {
     required this.FcSerialNumber,
     required this.courseContent,
     required this.show,
+    required this.reviews,
   });
 }

@@ -594,7 +594,7 @@ class _ChatScreenState extends State<ChatScreen> {
     //   Navigator.of(context).push(MaterialPageRoute(builder: (context)=>GroupsList()));
     // });
     RemoveNotificationChatScreen();
-    print("GroupData = ${widget.groupData["student_id"]}");
+    print("GroupData = ${widget.groupData['data']['student_id']}");
     print("USerData =  ${widget.userData["id"]}");
     _scrollController.addListener(() {
       if (_scrollController.offset >=
@@ -691,7 +691,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     if (widget.userData["role"] == "mentor") {
       mentorList.remove(widget.userData["id"]);
-      mentorList.add(widget.groupData["student_id"]);
+      mentorList.add(widget.groupData['data']['student_id']);
     }
     await sendNotification(mentorList, message);
   }
@@ -709,6 +709,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 "AAAAD5zkKfo:APA91bE5z1j6YGz8xZEAHqAaqI8YNE6lZ6oIEfa8ojnp-bk-Ai2dixXDZ1IgZF-VaKsjQ_3MDFSug0hC9MlyIyXJIUP21mCFlFg8wuSqtBzRtEN9mzALmEN0f0eJGn9xWsISMt_W88pR";
             // print("value = ${value["token"]}");
             var headers = {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET, POST',
+              'Accept': '*/*',
+              "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
               'Authorization': 'key=$SERVER_API_KEY',
               'Content-Type': 'application/json'
             };

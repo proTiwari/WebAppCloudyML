@@ -44,6 +44,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   late Future<List<FirebaseFile>> futureFiles;
+  late Future<List<FirebaseFile>> futurefilesComboCourseReviews;
+  late Future<List<FirebaseFile>> futurefilesSocialMediaReviews;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<dynamic> courses = [];
   bool? load = true;
@@ -200,7 +202,9 @@ class _HomeState extends State<Home> {
     // showNotification();
     _controller = ScrollController();
     super.initState();
-    futureFiles = FirebaseApi.listAll('reviews/');
+    futureFiles = FirebaseApi.listAll('reviews/recent_review');
+    futurefilesComboCourseReviews = FirebaseApi.listAll('reviews/combo_course_review');
+    futurefilesSocialMediaReviews = FirebaseApi.listAll('reviews/social_media_review');
     getCourseName();
     // getPercentageOfCourse();
     fetchCourses();
@@ -584,11 +588,7 @@ class _HomeState extends State<Home> {
                                     ),
                                     child: Text("Log out",
                                         style: textStyle)),
-                                IconButton(onPressed: () async {
-                                  getHello();
-                                }, icon: Icon(Icons.add))
-                              ],
-                            ),
+                              ],),
                             Positioned(
                               top: 50,
                               right: 75,
@@ -885,21 +885,32 @@ class _HomeState extends State<Home> {
                                                                     mainAxisAlignment: MainAxisAlignment.start,
                                                                     children: [
                                                                       Padding(
+                                                                        padding: const EdgeInsets.only(right: 5.0),
+                                                                        child: Container(
+                                                                          height: 20,
+                                                                          width: 25,
+                                                                          decoration: BoxDecoration(
+                                                                            borderRadius: BorderRadius.circular(5.0),
+                                                                            color: HexColor('440F87'),
+                                                                          ),
+                                                                          child: Center(
+                                                                            child: Text(course[index].reviews,
+                                                                              style: TextStyle(fontSize: 12, color: Colors.white,
+                                                                                  fontWeight: FontWeight.normal),),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Padding(
                                                                         padding:
                                                                         const EdgeInsets.only(right: 5.0),
                                                                         child: StarRating(
                                                                           length: 5,
-                                                                          rating: 5,
-                                                                          color: Colors.green,
-                                                                          starSize: 15,
+                                                                          rating: double.parse(course[index].reviews),
+                                                                          color: HexColor('440F87'),
+                                                                          starSize: 20,
                                                                           mainAxisAlignment: MainAxisAlignment.start,
                                                                         ),
                                                                       ),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(right: 5.0),
-                                                                        child: Text('5/5',
-                                                                          style: TextStyle(fontSize: 10),),
-                                                                      )
                                                                     ],
                                                                   ),
                                                                   SizedBox(height: 5,),
@@ -1112,7 +1123,7 @@ class _HomeState extends State<Home> {
                                   },
                                 ),
                                 FutureBuilder<List<FirebaseFile>>(
-                                  future: futureFiles,
+                                  future: futurefilesComboCourseReviews,
                                   builder: (context, snapshot) {
                                     try {
                                       switch (snapshot.connectionState) {
@@ -1223,7 +1234,7 @@ class _HomeState extends State<Home> {
                                   },
                                 ),
                                 FutureBuilder<List<FirebaseFile>>(
-                                  future: futureFiles,
+                                  future: futurefilesSocialMediaReviews,
                                   builder: (context, snapshot) {
                                     try {
                                       switch (snapshot.connectionState) {
@@ -1459,7 +1470,7 @@ class _HomeState extends State<Home> {
                                                 padding: const EdgeInsets.only(top: 5.0, right: 5),
                                                 child: Container(
                                                   height: screenHeight /
-                                                      6.5,
+                                                      5.5,
                                                   padding: EdgeInsets.only(left: 5),
                                                   child: Column(
                                                     children: [

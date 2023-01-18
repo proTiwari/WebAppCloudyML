@@ -21,6 +21,7 @@ import 'MyAccount/myaccount.dart';
 import 'Providers/UserProvider.dart';
 import 'aboutus.dart';
 import 'authentication/firebase_auth.dart';
+import 'models/user_details.dart';
 import 'my_Courses.dart';
 
 class StoreScreen extends StatefulWidget {
@@ -44,7 +45,77 @@ class _StoreScreenState extends State<StoreScreen> {
   @override
   Widget build(BuildContext context) {
 
-    List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
+    List<CourseDetails> courseList = Provider.of<List<CourseDetails>>(context);
+
+    List<CourseDetails> course = [];
+    List<dynamic> courseToRemove = [];
+    var cou = [];
+    bool everycourseispurchased = false;
+    UserDetails? userCourse = Provider.of<UserDetails?>(context, listen: true);
+    print("hhhhhhhhhhhhhhhhh");
+    print("course list: ${courseList}");
+
+    for (CourseDetails element in courseList) {
+      print("show${element.show}");
+      print(userCourse);
+      print(userCourse?.paidCoursesId);
+
+      // logic for showing if complete courses has been taken or not
+      try {
+        for (var i in userCourse!.paidCoursesId) {
+          if (i == element.courseId) {
+            courseToRemove.add(i);
+          }
+          if (i == element.courseId) {
+            if (element.isItComboCourse) {
+              courseToRemove = courseToRemove + element.courses;
+            }
+
+          }
+        }
+      } catch (e) {}
+
+    }
+    try {
+      course = courseList;
+      var valuedata = [];
+      courseList.forEach((element) {
+        courseToRemove.forEach((i) {
+          if (element.courseId == i) {
+            valuedata.add(element);
+          }
+        });
+      });
+
+      print("startdddddddddddddddd");
+      //logic for removing
+      var set1 = Set.from(course);
+      var set2 = Set.from(valuedata);
+      setState(() {
+        course = List.from(set1.difference(set2));
+        if (course == []) {
+          everycourseispurchased = true;
+        }
+        print("sfjdsdjflsdfls$course");
+      });
+
+      //logic for show parameter
+
+      for (var i in course) {
+        try {
+          if (i.show == true) {
+            cou.add(i);
+          }
+        } catch (e) {
+          print("uiooiio${e.toString()}");
+        }
+      }
+    } catch (e) {
+      print("tttttttttttttttttt${e.toString()}");
+    }
+
+
+
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     var verticalScale = screenHeight / mockUpHeight;
@@ -207,26 +278,26 @@ class _StoreScreenState extends State<StoreScreen> {
                           childAspectRatio: constraints.maxWidth >= 900 ? 0.80 : 1.05,
                           crossAxisSpacing: constraints.maxWidth >= 900 ? 25 : 15,
                         ),
-                      itemCount: course.length,
+                      itemCount: cou.length,
                       itemBuilder: (context, index) {
-                      if (course[index].courseName == "null") {
+                      if (cou[index].courseName == "null") {
                         return Container(
                           child: Text('This is a container'),
                         );
                       }
-                      if (course[index].show == true)
+                      if (cou[index].show == true)
                         return GestureDetector(
                           onTap: () {
                             setState(() {
-                              courseId = course[index]
+                              courseId = cou[index]
                                   .courseDocumentId;
                             });
                             print(courseId);
-                            if (course[index].isItComboCourse) {
+                            if (cou[index].isItComboCourse) {
 
                               final id = index.toString();
-                              final courseName = course[index].courseName;
-                              final courseP = course[index].coursePrice;
+                              final courseName = cou[index].courseName;
+                              final courseP = cou[index].coursePrice;
                               GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
 
                               // Navigator.push(
@@ -245,7 +316,7 @@ class _StoreScreenState extends State<StoreScreen> {
                               GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
                             }
                           },
-                          child: course[index].show == true ? Padding(
+                          child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Container(
                               width: screenWidth,
@@ -270,7 +341,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                           topRight:
                                           Radius.circular(15)),
                                       child: Image.network(
-                                        course[index].courseImageUrl,
+                                        cou[index].courseImageUrl,
                                         fit: BoxFit.fill,
                                       ),
                                     ),
@@ -280,7 +351,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                     padding: EdgeInsets.only(left: 8, right: 8, top: 8),
                                     width: screenWidth,
                                     child: Text(
-                                      course[index].courseName,
+                                      cou[index].courseName,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -319,7 +390,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                             alignment:
                                             Alignment.topLeft,
                                             child: Text(
-                                              "- ${course[index].numOfVideos} Videos",
+                                              "- ${cou[index].numOfVideos} Videos",
                                               style: TextStyle(
                                                   fontWeight:
                                                   FontWeight
@@ -406,7 +477,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                 ],
                               ),
                             ),
-                          ) : Container(),);
+                          ));
                       return Container();
                     },)
                   ),

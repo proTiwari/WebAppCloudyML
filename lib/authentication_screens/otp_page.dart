@@ -646,6 +646,9 @@ class _OtpPageState extends State<OtpPage> {
 
                 saveLoginState(context);
                 GoRouter.of(context).pushReplacement('/home');
+
+                // context.pushReplacementNamed('home');
+
                 (Route<dynamic> route) => false;
                 
                 // Navigator.of(context).pushAndRemoveUntil(
@@ -676,8 +679,8 @@ class _OtpPageState extends State<OtpPage> {
       } else {
         if (globals.linked == 'true') {
 
-          // GoRouter.of(context).pushReplacement('/home');
-          GoRouter.of(context).pushReplacementNamed('home');
+          GoRouter.of(context).pushReplacement('/home');
+          // GoRouter.of(context).pushReplacementNamed('home');
           (Route<dynamic> route) => false;
           saveLoginState(context);
 

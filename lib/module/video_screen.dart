@@ -323,6 +323,7 @@ class _VideoScreenState extends State<VideoScreen> {
               .runtimeType);
           _initialVideoPercentageList[widget.courseName.toString()]
               .add({list[i]["modulename"].toString(): []});
+
           for (int j = 0; j < list[i]["videos"].length; j++) {
             list[i]["videos"][j]["type"]=="video"?_initialVideoPercentageList[widget.courseName][i]
             [list[i]["modulename"]]
@@ -334,7 +335,8 @@ class _VideoScreenState extends State<VideoScreen> {
             .doc(_auth.currentUser!.uid.toString())
             .set({
           widget.courseName.toString():
-          _initialVideoPercentageList[widget.courseName.toString()],"email":_auth.currentUser!.email.toString()
+          _initialVideoPercentageList[widget.courseName.toString()],
+          "email":_auth.currentUser!.email.toString()
         });
         _getVideoPercentageList =
         _initialVideoPercentageList[widget.courseName.toString()];
@@ -599,13 +601,18 @@ class _VideoScreenState extends State<VideoScreen> {
                                     height: menuClicked
                                         ? screenHeight
                                         : screenHeight / 1.2,
-                                    child: Center(
-                                      child: AspectRatio(
-                                        aspectRatio: 16 / 9,
-                                        child: VideoPlayer(
-                                            _videoController!,),
-                                      ),
-                                    ),
+                                    child: videoNameClass(
+                                      videoController: _videoController!,
+                                      videoName: _listOfVideoDetails[_currentVideoIndex.value].videoTitle,
+                                    )
+
+                                    // Center(
+                                    //   child: AspectRatio(
+                                    //     aspectRatio: 16 / 9,
+                                    //     child: VideoPlayer(
+                                    //         _videoController!,),
+                                    //   ),
+                                    // ),
                                   ),
                                   InkWell(
                                       onTap: () {
@@ -1790,106 +1797,8 @@ class _VideoScreenState extends State<VideoScreen> {
                                               index = null;
                                             });
                                           }
-                                          // for (int i = 0;
-                                          //     i <
-                                          //         listOfSectionData[widget
-                                          //                         .courseName]
-                                          //                     [sectionIndex]
-                                          //                 ["subsection"]
-                                          //             .length;
-                                          //     i++) {
-                                          //   print("i = ==");
-                                          //   print(listOfSectionData[widget
-                                          //           .courseName][sectionIndex]
-                                          //       ["subsection"][i]["sr"]);
-                                          // }
-                                          // print(listOfSectionData);
-
-                                          ///
-                                          // int temp = listOfSectionData[widget.courseName][sectionIndex]["subsection"][subIndex]["sr"];
-                                          // listOfSectionData[widget.courseName][sectionIndex]["subsection"][subIndex]["sr"] = listOfSectionData[widget.courseName][sectionIndex]["subsection"][subsectionIndex]["sr"];
-                                          // listOfSectionData[widget.courseName][sectionIndex]["subsection"][subsectionIndex]["sr"] = temp;
-                                          ///
-                                          // listOfSectionData[widget.courseName][sectionIndex]["subsection"][subsectionIndex]["sr"]
-                                          // for(int i=0;i<listOfSectionData[widget.courseName][sectionIndex]["subsection"].length;i++)
-                                          //   {
-                                          //     if(listOfSectionData[widget.courseName][sectionIndex]["subsection"][i]["status"])
-                                          //       {
-                                          //         listOfSectionData[widget.courseName][sectionIndex]["subsection"][i]["status"] = false;
-                                          //         listOfSectionData[widget.courseName][sectionIndex]["subsection"][subsectionIndex]["status"] = true;
-                                          //         int index = listOfSectionData[widget.courseName][sectionIndex]["subsection"][i]["sr"];
-                                          //         print("index----${index}");
-                                          //         int currentIndex = listOfSectionData[widget.courseName][sectionIndex]["subsection"][subsectionIndex]["sr"];
-                                          //         print("cuurent--${currentIndex}");
-                                          //         listOfSectionData[widget.courseName][sectionIndex]["subsection"][subsectionIndex]["sr"] = index;
-                                          //         listOfSectionData[widget.courseName][sectionIndex]["subsection"][i]["sr"] = currentIndex;
-                                          //       }
-                                          //   }
                                         },
                                       ),
-                                      // listOfSectionData[widget.courseName][sectionIndex]["subsection"][subsectionIndex]["status"]?
-                                      //     Container(child: Text(listOfSectionData[widget.courseName][sectionIndex]["assignment"].toString()),):SizedBox(),
-                                      ///
-                                      // listOfSectionData[widget.courseName][sectionIndex]["subsection"][subsectionIndex]["status"]?
-                                      // Draggable(
-                                      //     data:
-                                      //     listOfSectionData[widget.courseName][sectionIndex],
-                                      //     child: Container(
-                                      //       alignment: Alignment.center,
-                                      //       decoration: BoxDecoration(
-                                      //           color: Colors.green,
-                                      //           borderRadius: BorderRadius.circular(20)
-                                      //       ),
-                                      //       width: 150,
-                                      //       height: 100,
-                                      //       child: Text("Drag Assignment"),
-                                      //     ), feedback: Container(
-                                      //   alignment: Alignment.center,
-                                      //   decoration: BoxDecoration(
-                                      //       color: Colors.green,
-                                      //       borderRadius: BorderRadius.circular(20)
-                                      //   ),
-                                      //   width: 150,
-                                      //   height: 100,
-                                      //   child: Text("Drag Assignment",style: TextStyle(fontSize: 13),),
-                                      // )):
-                                      // DragTarget(
-                                      //   builder: (context,_,__)=>
-                                      //     Container(
-                                      //       decoration: BoxDecoration(
-                                      //           color:listOfSectionData[widget.courseName][sectionIndex]["subsection"][subsectionIndex]["status"]?Colors.red:Colors.red,
-                                      //           borderRadius: BorderRadius.circular(20)
-                                      //       ),
-                                      //       alignment: Alignment.center,
-                                      //       height: listOfSectionData[widget.courseName][sectionIndex]["subsection"][subsectionIndex]["status"]?100:100,
-                                      //       width: listOfSectionData[widget.courseName][sectionIndex]["subsection"][subsectionIndex]["status"]?150:150,
-                                      //       child: Text("Drop here"),
-                                      //     ),
-                                      //   onAccept: (data)async{
-                                      //   // print(listOfSectionSort);
-                                      //   print("ppp");
-                                      //
-                                      //   // print(listOfSectionSort[sectionIndex]["subsection"][subsectionIndex]);
-                                      //   for(int i=0;i<listOfSectionData[widget.courseName][sectionIndex]["subsection"].length;i++)
-                                      //   {
-                                      //     if(listOfSectionData[widget.courseName][sectionIndex]["subsection"][i]["status"]==true)
-                                      //     {
-                                      //       listOfSectionData[widget.courseName][sectionIndex]["subsection"][i]["status"] = false;
-                                      //     }
-                                      //   }
-                                      //   listOfSectionData[widget.courseName][sectionIndex]["subsection"][subsectionIndex]["status"] = true;
-                                      //   await FirebaseFirestore.instance.collection("courses").doc(courseId).
-                                      //   update({"curriculum1":listOfSectionData});
-                                      //   setState(() {
-                                      //     print("Accept");
-                                      //     // color = data;
-                                      //     print(subsectionIndex);
-                                      //     print(sectionIndex);
-                                      //     listOfSectionData;
-                                      //     print("--------------${listOfSectionData[widget.courseName][sectionIndex]["subsection"][sectionIndex]["status"]}");
-                                      //     print(listOfSectionData);
-                                      //   });
-                                      // },)
                                     ],
                                   );
                                 })),

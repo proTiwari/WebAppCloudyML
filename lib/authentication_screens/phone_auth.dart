@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,6 +24,7 @@ import '../authentication/loginform.dart';
 import '../globals.dart';
 import '../widgets/loading.dart';
 import 'otp_page.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class LoginPage extends StatefulWidget {
   String? name;
@@ -32,10 +34,23 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    final el = window.document.getElementById('__ff-recaptcha-container');
+    if (el != null) {
+      el.style.visibility = 'hidden';
+    }
+  }
+
   TextEditingController phoneController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool loading = false;
   late String actualCode;
+
+  PhoneNumber number = PhoneNumber(isoCode: 'IN');
+  String phonenumber = '';
 
   bool? googleloading = false;
   bool formVisible = false;
@@ -219,26 +234,57 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                     Container(
                                       height: 40,
-                                      constraints:
-                                          const BoxConstraints(maxWidth: 500),
+                                      constraints: const BoxConstraints(maxWidth: 500),
                                       margin: const EdgeInsets.symmetric(
                                           horizontal: 20, vertical: 10),
-                                      child: CupertinoTextField(
+                                      child: InternationalPhoneNumberInput(
                                         maxLength: 10,
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(4))),
-                                        controller: phoneController,
-                                        clearButtonMode:
-                                            OverlayVisibilityMode.editing,
-                                        keyboardType: TextInputType.phone,
-                                        maxLines: 1,
-                                        placeholder: '+91...',
+                                        onInputChanged: (PhoneNumber number) {
+                                          print(number.phoneNumber);
+                                          print(phoneController.text);
+                                          phonenumber = number.phoneNumber.toString();
+                                          print("phone number: ${phonenumber}");
+                                        },
+                                        onInputValidated: (bool value) {
+                                          print(value);
+                                        },
+                                        selectorConfig: SelectorConfig(
+                                          trailingSpace: false,
+                                          selectorType: PhoneInputSelectorType.DIALOG,
+                                        ),
+                                        autofillHints: [AutofillHints.telephoneNumber],
+                                        autoFocus: true,
+                                        textAlignVertical: TextAlignVertical.center,
+                                        textAlign: TextAlign.start,
+                                        ignoreBlank: false,
+                                        autoValidateMode: AutovalidateMode.disabled,
+                                        selectorTextStyle: TextStyle(color: Colors.black),
+                                        initialValue: number,
+                                        textFieldController: phoneController,
+                                        formatInput: false,
+                                        keyboardType: TextInputType.numberWithOptions(
+                                            signed: true, decimal: true),
+                                        onSaved: (PhoneNumber number) {
+                                          print('On Saved: $number');
+                                          print(phoneController.text);
+                                        },
                                       ),
+                                      // CupertinoTextField(
+                                      //   maxLength: 10,
+                                      //   padding: const EdgeInsets.symmetric(
+                                      //       horizontal: 16),
+                                      //   decoration: BoxDecoration(
+                                      //       color: Colors.white,
+                                      //       borderRadius:
+                                      //           const BorderRadius.all(
+                                      //               Radius.circular(4))),
+                                      //   controller: phoneController,
+                                      //   clearButtonMode:
+                                      //       OverlayVisibilityMode.editing,
+                                      //   keyboardType: TextInputType.phone,
+                                      //   maxLines: 1,
+                                      //   placeholder: '+91...',
+                                      // ),
                                     ),
                                     SizedBox(
                                       height: 20,
@@ -249,7 +295,7 @@ class _LoginPageState extends State<LoginPage> {
                                           globals.phone =
                                               phoneController.text.toString();
                                           getCodeWithPhoneNumber(context,
-                                              "${'+91' + phoneController.text.toString()}");
+                                              "${phonenumber}");
                                         } else if (phoneController.text.isEmpty) {
                                           Fluttertoast.showToast(msg: 'Please enter a phone number');
                                         }
@@ -1540,7 +1586,7 @@ class _LoginPageState extends State<LoginPage> {
         docSnapshots = await FirebaseFirestore.instance
             .collection('Users')
             .where('mobilenumber',
-            isEqualTo: "+91${phoneController.text.toString()}")
+            isEqualTo: phoneNumber)
             .get();
 
         items.clear();
@@ -1548,7 +1594,7 @@ class _LoginPageState extends State<LoginPage> {
 
         await FirebaseFirestore.instance
             .collection('Users')
-            .where('mobilenumber', isEqualTo: phoneController.text.toString())
+            .where('mobilenumber', isEqualTo: phoneNumber)
             .get()
             .then((QuerySnapshot snapshot) {
           snapshot.docs.forEach((f) => items.add(f.data()));
@@ -1669,7 +1715,7 @@ class _LoginPageState extends State<LoginPage> {
             });
             actualCode = verificationId;
             globals.actualCode = verificationId;
-            globals.phone = phoneController.text.toString();
+            globals.phone = phoneNumber;
 
             setState(() {
               loading = false;

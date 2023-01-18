@@ -435,13 +435,12 @@ class _GroupsListState extends State<GroupsList> {
   _getGroupListData()
   async{
 
-
     var headers = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST',
+      'Accept': '*/*',
       "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
       'Content-Type': 'application/json',
-      'Accept': '*/*',
       'Authorization': 'Bearer ${authorizationToken}'
     };
 
@@ -571,6 +570,7 @@ class _GroupsListState extends State<GroupsList> {
                         SizedBox(width: 10,),
                         IconButton(
                           onPressed: () {
+                            customDrawer(context);
                             Scaffold.of(context).openDrawer();
                           },
                           icon: Icon(
@@ -1337,18 +1337,23 @@ class _GroupsListState extends State<GroupsList> {
                                                     updateNotificationCountToZero(listOfGroupListData[index]['id']);
 
                                                   }
-                                                  print('groupData is ${snapshotGroupList.data![index]}');
-                                                  print('this is idddd ${snapshotGroupList.data![index]["id"]}');
-                                                  print('datatata $userData');
+                                                  print('groupData is - - - - ${snapshotGroupList.data![index]}');
+                                                  print('student id is - - - - ${snapshotGroupList.data![index]['data']['student_id']}');
+                                                  print('this is group id - - - ${snapshotGroupList.data![index]["id"]}');
+                                                  print('userData - - $userData');
 
                                                   final String groupId = snapshotGroupList.data![index]["id"];
 
-                                                  GoRouter.of(context).pushNamed('chatWindow',
-                                                      queryParams: {
-                                                        'groupData': snapshotGroupList.data![index],
-                                                        'groupId': groupId,
-                                                        'userData': userData,});
+                                                  // GoRouter.of(context).pushNamed('chatWindow',
+                                                  //     queryParams: {
+                                                  //       'groupData': snapshotGroupList.data![index],
+                                                  //       'groupId': groupId,
+                                                  //       'userData': userData,});
 
+                                                  context.pushNamed('chatWindow', queryParams: {
+                                                    'groupData': snapshotGroupList.data![index],
+                                                    'groupId': groupId,
+                                                    'userData': userData,});
 
                                                   // Navigator.push(
                                                   //   context,
@@ -1378,7 +1383,7 @@ class _GroupsListState extends State<GroupsList> {
                                                         .update({
                                                       'groupChatCount.${_auth.currentUser!.uid}':
                                                       value.docs.length,
-                                                      "mentioned":FieldValue.arrayRemove([_auth.currentUser!.uid])
+                                                      "mentioned": FieldValue.arrayRemove([_auth.currentUser!.uid])
                                                     });
                                                   });
 
