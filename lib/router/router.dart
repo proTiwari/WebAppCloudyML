@@ -175,37 +175,52 @@ class MyRouter {
           final Map<String, dynamic> courseMap = state.queryParams['courseMap']! as Map<String, dynamic>;
             final bool isItComboCourse = state.queryParams['isItComboCourse']! as bool;
             return MaterialPage(
-                child: PaymentScreen(map: courseMap,
-                    isItComboCourse: isItComboCourse));
+                child: PaymentScreen(
+                    map: courseMap,
+                    isItComboCourse: isItComboCourse),);
         }),
         GoRoute(
             name: 'chatWindow',
             path: '/chatWindow',
           pageBuilder: (context, state) {
-
-            final AsyncSnapshot<List<dynamic>> groupData = state.queryParams['groupData']! as AsyncSnapshot<List<dynamic>>;
-            final String groupId = state.queryParams['groupId']!;
-            final DocumentSnapshot<Map<String, dynamic>> userData = state.queryParams['userData']! as DocumentSnapshot<Map<String, dynamic>>;
+              // dynamic groupData = state.queryParams['groupData']! as dynamic;
+              // final userData = state.queryParams['userData']! as dynamic;
+              String? groupId = state.queryParams['groupId']!;
+              // Object chatScreen = state.extra!;
               return MaterialPage(
                   child: ChatScreen(
-                    groupData: groupData,
+                    // userData: userData,
+                    // groupData: groupData,
                     groupId: groupId,
-                    userData: userData,
+
               ));
           }
         ),
         GoRoute(
-            name: 'videoNameClass',
-            path: '/videoNameClass',
-            builder: (context, state) {
-              final String videoName = state.queryParams['videoName']!;
-              final dynamic videoController = state.queryParams['videoController']!;
-              return videoNameClass(
-                videoName: videoName,
-                videoController: videoController,
-              );
-            },
+            name: 'studentChat',
+            path: '/studentChat',
+            pageBuilder: (context, state) {
+              // Object? chatScreen = state.extra!;
+              String? groupId = state.queryParams['groupId']!;
+              return MaterialPage(
+                  child: ChatScreen(
+                    groupId: groupId,
+                    // chatScreen: chatScreen,
+                  ));
+            }
         ),
+        // GoRoute(
+        //     name: 'videoNameClass',
+        //     path: '/videoNameClass',
+        //     builder: (context, state) {
+        //       final String videoName = state.queryParams['videoName']!;
+        //       final dynamic videoController = state.queryParams['videoController']!;
+        //       return videoNameClass(
+        //         videoName: videoName,
+        //         videoController: videoController,
+        //       );
+        //     },
+        // ),
 
       ],
       errorPageBuilder: (context, state) {

@@ -421,21 +421,32 @@ class _StoreScreenState extends State<StoreScreen> {
                                             mainAxisAlignment: MainAxisAlignment.start,
                                             children: [
                                               Padding(
+                                                padding: const EdgeInsets.only(right: 5.0),
+                                                child: Container(
+                                                  height: 20,
+                                                  width: 25,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(5.0),
+                                                    color: HexColor('440F87'),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text( cou[index].reviews.isNotEmpty ? cou[index].reviews : '5.0',
+                                                      style: TextStyle(fontSize: 12, color: Colors.white,
+                                                          fontWeight: FontWeight.normal),),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
                                                 padding:
                                                 const EdgeInsets.only(right: 5.0),
                                                 child: StarRating(
                                                   length: 5,
-                                                  rating: 5,
-                                                  color: Colors.green,
-                                                  starSize: 15,
+                                                  rating: cou[index].reviews.isNotEmpty ? double.parse(cou[index].reviews) : 5.0,
+                                                  color: HexColor('440F87'),
+                                                  starSize: 20,
                                                   mainAxisAlignment: MainAxisAlignment.start,
                                                 ),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(right: 5.0),
-                                                child: Text('5/5',
-                                                  style: TextStyle(fontSize: 10),),
-                                              )
                                             ],
                                           ),
                                         ],

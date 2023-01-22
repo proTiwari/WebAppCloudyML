@@ -315,6 +315,7 @@ class _MyAppState extends State<MyApp> {
             builder: (context) {
               final router = Provider.of<MyRouter>(context, listen: false).routes;
               return MaterialApp.router(
+
                 routerDelegate: router.routerDelegate,
                 routeInformationParser: router.routeInformationParser,
                 routeInformationProvider: router.routeInformationProvider,

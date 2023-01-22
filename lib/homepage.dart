@@ -133,89 +133,10 @@ class _HomeState extends State<Home> {
   //   }
   // }
 
-  // var coursePercent = {};
 
-  // getPercentageOfCourse()
-  // async {
-  //
-  //   try{
-  //     await FirebaseFirestore.instance
-  //         .collection('Users')
-  //         .doc(FirebaseAuth.instance.currentUser!.uid)
-  //         .get()
-  //         .then((value) async{
-  //       try {
-  //         courses = value.data()!['paidCourseNames'];
-  //       } catch(e){
-  //         print('donggg ${e.toString()}');
-  //       }
-  //     });
-  //   }catch(e){
-  //     print(e.toString());
-  //   }
-  //
-  //   try{
-  //     var data = await FirebaseFirestore.instance.collection("courseprogress")
-  //         .doc(FirebaseAuth.instance.currentUser!.uid).get();
-  //     var getData = data.data();
-  //
-  //     for(var courseId in courses)
-  //     {
-  //       print("ID = = ${courseId}");
-  //       int count = 0;
-  //       try{
-  //         await FirebaseFirestore.instance.collection("courses").where("id", isEqualTo: courseId).get().then(
-  //                 (value)async{
-  //               if(value.docs.first.exists)
-  //               {
-  //                 var coursesName = value.docs.first.data()["courses name"];
-  //                 for(var name in coursesName)
-  //                 {
-  //                   double num = (getData![name+"percentage"]!=null)?getData[name+"percentage"]:0;
-  //                   count+=num.toInt();
-  //                   print("Count = $count");
-  //                   coursePercent[courseId] = count~/(value.docs.first.data()["courses name"].length);
-  //                 }
-  //               }
-  //             }
-  //         ).catchError((err)=>print("Error"));
-  //       }
-  //       catch(err)
-  //       {
-  //         print(err);
-  //       }
-  //     }
-  //
-  //   }catch(e){
-  //     print('my courses error ${e.toString()}');
-  //   }
-  //
-  //   print("done");
-  //   setState(() {
-  //     coursePercent;
-  //   });
-  //   print(coursePercent);
-  // }
 
-  @override
-  void initState() {
-    // showNotification();
-    _controller = ScrollController();
-    super.initState();
-    futureFiles = FirebaseApi.listAll('reviews/recent_review');
-    futurefilesComboCourseReviews = FirebaseApi.listAll('reviews/combo_course_review');
-    futurefilesSocialMediaReviews = FirebaseApi.listAll('reviews/social_media_review');
-    getCourseName();
-    // getPercentageOfCourse();
-    fetchCourses();
-    dbCheckerForPayInParts();
-    userData();
-    // startTimer();
-    getuserdetails();
-    checkrewardexpiry();
-  }
 
-  fetchCourses() async {
+  Future fetchCourses() async {
     try {
       await FirebaseFirestore.instance
           .collection('Users')
@@ -224,7 +145,6 @@ class _HomeState extends State<Home> {
           .then((value) {
         setState(() {
           if(value.data()!['paidCourseNames'] == null || value.data()!['paidCourseNames'] == []){
-
             courses = [];
           }else{
             courses = value.data()!['paidCourseNames'];
@@ -237,6 +157,102 @@ class _HomeState extends State<Home> {
       print("kkkk$e");
     }
   }
+
+  var coursePercent = {};
+  getPercentageOfCourse() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((value) async {
+        try {
+          courses = value.data()!['paidCourseNames'];
+        } catch (e) {
+          print('donggg ${e.toString()}');
+        }
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+
+    try {
+      var data = await FirebaseFirestore.instance
+          .collection("courseprogress")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      var getData = data.data();
+
+      for (var courseId in courses) {
+        print("ID = = ${courseId}");
+        int count = 0;
+        try {
+          await FirebaseFirestore.instance
+              .collection("courses")
+              .where("id", isEqualTo: courseId)
+              .get()
+              .then((value) async {
+            if (value.docs.first.exists) {
+              var coursesName = value.docs.first.data()["courses name"];
+              if (coursesName != null) {
+                print("name");
+                for (var name in coursesName) {
+                  double num = (getData![name + "percentage"] != null)
+                      ? getData[name + "percentage"]
+                      : 0;
+                  count += num.toInt();
+                  print("Count = $count");
+                  coursePercent[courseId] =
+                      count ~/ (value.docs.first.data()["courses name"].length);
+                }
+              } else {
+                print("yy");
+                print(getData![value.docs.first.data()["name"].toString() +
+                    "percentage"]
+                    .toString());
+                coursePercent[courseId] = getData[
+                value.docs.first.data()["name"].toString() +
+                    "percentage"] !=
+                    null
+                    ? getData[value.docs.first.data()["name"].toString() +
+                    "percentage"]
+                    : 0;
+              }
+            }
+          }).catchError((err) => print("Error"));
+        } catch (err) {
+          print(err);
+        }
+      }
+    } catch (e) {
+      print('my courses error ${e.toString()}');
+    }
+
+    print("done");
+    setState(() {
+      coursePercent;
+    });
+    print(coursePercent);
+  }
+
+  @override
+  void initState() {
+    // showNotification();
+    _controller = ScrollController();
+    super.initState();
+    futureFiles = FirebaseApi.listAll('reviews/recent_review');
+    futurefilesComboCourseReviews = FirebaseApi.listAll('reviews/combo_course_review');
+    futurefilesSocialMediaReviews = FirebaseApi.listAll('reviews/social_media_review');
+    getCourseName();
+    fetchCourses();
+    dbCheckerForPayInParts();
+    userData();
+    getPercentageOfCourse();
+    // startTimer();
+    getuserdetails();
+    checkrewardexpiry();
+  }
+
 
   var textStyle = TextStyle(
     fontWeight: FontWeight.bold,
@@ -509,6 +525,7 @@ class _HomeState extends State<Home> {
 
   }
 
+
   Timer? countDownTimer;
   Duration myDuration = Duration(days: 5);
 
@@ -531,6 +548,13 @@ class _HomeState extends State<Home> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: customDrawer(context),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          GoRouter.of(context).push('/chat');
+        },
+        backgroundColor: Colors.white,
+        child: Icon(Icons.mark_chat_unread_outlined, color: HexColor('691EC8'),),
+      ),
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             if (constraints.maxWidth >= 315) {
@@ -861,26 +885,26 @@ class _HomeState extends State<Home> {
                                                                     ),
                                                                   ),
                                                                   SizedBox(height: 5,),
-                                                                  Align(
-                                                                    alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                                    child: Text(
-                                                                      "${course[index].numOfVideos} Videos",
-                                                                      style: TextStyle(
-                                                                          color: HexColor(
-                                                                              "2C2C2C"),
-                                                                          fontFamily:
-                                                                          'Medium',
-                                                                          fontSize:
-                                                                          12,
-                                                                          fontWeight: FontWeight
-                                                                              .w500,
-                                                                          height:
-                                                                          1),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(height: 5,),
+                                                                  // Align(
+                                                                  //   alignment:
+                                                                  //   Alignment
+                                                                  //       .topLeft,
+                                                                  //   child: Text(
+                                                                  //     "${course[index].numOfVideos} Videos",
+                                                                  //     style: TextStyle(
+                                                                  //         color: HexColor(
+                                                                  //             "2C2C2C"),
+                                                                  //         fontFamily:
+                                                                  //         'Medium',
+                                                                  //         fontSize:
+                                                                  //         12,
+                                                                  //         fontWeight: FontWeight
+                                                                  //             .w500,
+                                                                  //         height:
+                                                                  //         1),
+                                                                  //   ),
+                                                                  // ),
+                                                                  SizedBox(height: 10,),
                                                                   Row(
                                                                     mainAxisAlignment: MainAxisAlignment.start,
                                                                     children: [
@@ -894,7 +918,7 @@ class _HomeState extends State<Home> {
                                                                             color: HexColor('440F87'),
                                                                           ),
                                                                           child: Center(
-                                                                            child: Text(course[index].reviews,
+                                                                            child: Text( course[index].reviews.isNotEmpty ? course[index].reviews : '5.0',
                                                                               style: TextStyle(fontSize: 12, color: Colors.white,
                                                                                   fontWeight: FontWeight.normal),),
                                                                           ),
@@ -905,7 +929,7 @@ class _HomeState extends State<Home> {
                                                                         const EdgeInsets.only(right: 5.0),
                                                                         child: StarRating(
                                                                           length: 5,
-                                                                          rating: double.parse(course[index].reviews),
+                                                                          rating: course[index].reviews.isNotEmpty ? double.parse(course[index].reviews) : 5.0,
                                                                           color: HexColor('440F87'),
                                                                           starSize: 20,
                                                                           mainAxisAlignment: MainAxisAlignment.start,
@@ -914,29 +938,29 @@ class _HomeState extends State<Home> {
                                                                     ],
                                                                   ),
                                                                   SizedBox(height: 5,),
-                                                                  // Container(
-                                                                  //   height: 15,
-                                                                  //   child: Row(
-                                                                  //     children: [
-                                                                  //       Container(
-                                                                  //         height: 5,
-                                                                  //         width: 150,
-                                                                  //         child:
-                                                                  //         LinearProgressIndicator(
-                                                                  //           value: coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]/100:0,
-                                                                  //           color: HexColor(
-                                                                  //               "8346E1"),
-                                                                  //           backgroundColor:
-                                                                  //           HexColor(
-                                                                  //               'E3E3E3'),
-                                                                  //         ),
-                                                                  //       ),
-                                                                  //       Spacer(),
-                                                                  //       Text(
-                                                                  //         "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),)
-                                                                  //     ],
-                                                                  //   ),
-                                                                  // ),
+                                                                  Container(
+                                                                    height: 15,
+                                                                    child: Row(
+                                                                      children: [
+                                                                        Container(
+                                                                          height: 5,
+                                                                          width: 150,
+                                                                          child:
+                                                                          LinearProgressIndicator(
+                                                                            value: coursePercent[course[index].courseId.toString()]!=null ? coursePercent[course[index].courseId]/100 : 0,
+                                                                            color: HexColor(
+                                                                                "8346E1"),
+                                                                            backgroundColor:
+                                                                            HexColor(
+                                                                                'E3E3E3'),
+                                                                          ),
+                                                                        ),
+                                                                        Spacer(),
+                                                                        Text(
+                                                                          "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),)
+                                                                      ],
+                                                                    ),
+                                                                  ),
                                                                 ],
                                                               ),
                                                             ),
@@ -1528,21 +1552,32 @@ class _HomeState extends State<Home> {
                                                         mainAxisAlignment: MainAxisAlignment.start,
                                                         children: [
                                                           Padding(
-                                                            padding:
-                                                            const EdgeInsets.only(left: 5.0),
-                                                            child: StarRating(
-                                                              length: 5,
-                                                              rating: 5,
-                                                              color: Colors.green,
-                                                              starSize: 15,
-                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                            padding: const EdgeInsets.only(right: 5.0),
+                                                            child: Container(
+                                                              height: 20,
+                                                              width: 25,
+                                                              decoration: BoxDecoration(
+                                                                borderRadius: BorderRadius.circular(5.0),
+                                                                color: HexColor('440F87'),
+                                                              ),
+                                                              child: Center(
+                                                                child: Text( course[index].reviews.isNotEmpty ? course[index].reviews : '5.0',
+                                                                  style: TextStyle(fontSize: 12, color: Colors.white,
+                                                                      fontWeight: FontWeight.normal),),
+                                                              ),
                                                             ),
                                                           ),
                                                           Padding(
-                                                            padding: const EdgeInsets.only(right: 5.0),
-                                                            child: Text('5/5',
-                                                              style: TextStyle(fontSize: 10),),
-                                                          )
+                                                            padding:
+                                                            const EdgeInsets.only(right: 5.0),
+                                                            child: StarRating(
+                                                              length: 5,
+                                                              rating: course[index].reviews.isNotEmpty ? double.parse(course[index].reviews) : 5.0,
+                                                              color: HexColor('440F87'),
+                                                              starSize: 20,
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                            ),
+                                                          ),
                                                         ],
                                                       ),
                                                     ],
