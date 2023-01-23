@@ -12,6 +12,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../authentication_screens/otp_page.dart';
 import '../authentication_screens/phone_auth.dart';
 import 'package:cloudyml_app2/global_variable.dart' as globals;
 
@@ -31,13 +33,11 @@ String? gimageUrl;
 // ValueNotifier<bool> isVerifyy=ValueNotifier(false);
 
 class Authenticate extends StatefulWidget {
-
   @override
   State<Authenticate> createState() => _AuthenticateState();
 }
 
 class _AuthenticateState extends State<Authenticate> {
-
   @override
   void initState() {
     super.initState();
@@ -66,10 +66,9 @@ class _AuthenticateState extends State<Authenticate> {
         } else {
           if (globals.survay == "done") {
             print("sidfjsodfijsodjfoisijdfo");
-            if(globals.moneyrefcode != ''){
+            if (globals.moneyrefcode != '') {
               return CatelogueScreen();
-            }
-            else{
+            } else {
               // return CatelogueScreen();
               return HomePage();
             }
@@ -133,6 +132,11 @@ Future<User?> logIn(String email, String password) async {
 
 Future logOut(BuildContext context) async {
   FirebaseAuth _auth = FirebaseAuth.instance;
+  globals.phone = "";
+  globals.email = "";
+  globals.name = "";
+  globals.phoneNumberexists = 'false';
+  globals.linked = 'false';
 
   try {
     try {
@@ -141,7 +145,6 @@ Future logOut(BuildContext context) async {
       provider.googlelogout(context);
     } catch (e) {
       await _auth.signOut().then((value) {
-
         GoRouter.of(context).pushReplacement('/login');
 
         // GoRouter.of(context).pushReplacement('/login');
@@ -150,7 +153,6 @@ Future logOut(BuildContext context) async {
         //   context,
         //   MaterialPageRoute(builder: (context) => LoginPage()),
         // );
-
       });
     }
   } catch (e) {
@@ -199,6 +201,7 @@ class GoogleSignInProvider extends ChangeNotifier {
   Future googleLogin(
     BuildContext context,
   ) async {
+    var otpverified = true;
     try {
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) return;
@@ -216,38 +219,38 @@ class GoogleSignInProvider extends ChangeNotifier {
       print("Printing Access Token.........");
       print(googleAuth.accessToken);
       print("Printed");
-      await FirebaseAuth.instance.signInWithCredential(credential);
 
-      showToast('Please wait while we are fetching info...');
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      try {
+        await FirebaseAuth.instance.currentUser!
+            .linkWithCredential(globals.credental);
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          "linked": "true",
+          "mobilenumber": globals.phone,
+          "authType": "phoneAuth",
+        });
+      } catch (e) {
+        otpverified = false;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => OtpPage("fromemailpage"),
+          ),
+        );
+        print(e.toString());
+        showToast(
+          e.toString(),
+          context: context,
+        );
+      }
+
+      // showToast('Please wait while we are fetching info...');
 
       //This is check if User already exist in Database in User Collection
       //If User does not exist create user and groups collection
-      await FirebaseFirestore.instance
-          .collection('Users')
-          //Comparing Google providers email with email as Fields in User collection
-          .where('email', isEqualTo: _user?.email)
-          .get()
-          .then((value) async {
-        if (value.docs.isEmpty) {
-          print("----------------------------------");
-          userprofile(
-            name: _user?.displayName ?? 'Enter Your Name',
-            email: _user?.email,
-            mobilenumber: '',
-            image: _user?.photoUrl,
-            authType: "googleAuth",
-            phoneVerified: false,
-            listOfCourses: [],
-          );
-          showToast('Account Created');
-          // if (paidCourseNames.isNotEmpty) {
-          //   updateGroupData(
-          //     paidCourseNames,
-          //     FirebaseAuth.instance.currentUser?.uid,
-          //     _user?.displayName,
-          //   );
-          // }
-        }
+      if (otpverified) {
         await AwesomeNotifications().createNotification(
           content: NotificationContent(
               id: 1234,
@@ -267,20 +270,20 @@ class GoogleSignInProvider extends ChangeNotifier {
               'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/images%2Fhomeimage.png?alt=media&token=2f4abc37-413f-49c3-b43d-03c02696567e',
           NDate: DateFormat('dd-MM-yyyy | h:mm a').format(DateTime.now()),
         );
-      });
-      Navigator.pushAndRemoveUntil(
-        context,
-        PageTransition(
-            duration: Duration(milliseconds: 200),
-            curve: Curves.bounceInOut,
-            type: PageTransitionType.rightToLeftWithFade,
-            child: HomePage()),
-        (route) => false,
-      );
+        Navigator.pushAndRemoveUntil(
+          context,
+          PageTransition(
+              duration: Duration(milliseconds: 20),
+              curve: Curves.bounceInOut,
+              type: PageTransitionType.rightToLeftWithFade,
+              child: HomePage()),
+          (route) => false,
+        );
+      }
       return true;
     } catch (e) {
       print(e.toString());
-      Fluttertoast.showToast(msg: "Please try again");
+      showToast(e.toString());
       return false;
     }
   }
@@ -312,32 +315,26 @@ void userprofile({
   required String authType,
   required bool phoneVerified,
   List<String?>? listOfCourses,
+  required String linked,
 }) async {
-
-  try{
-    await FirebaseFirestore.instance
-        .collection("Users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .set({
-      "name": name,
-      "mobilenumber": mobilenumber,
-      "email": email,
-      "paidCourseNames": listOfCourses,
-      "authType": authType,
-      "phoneVerified": phoneVerified,
-      "courseBuyID": "0", //course id will be displayed
-      "paid": "False",
-      "id": _auth.currentUser!.uid,
-      "password": "is it needed",
-      "role": "student",
-      "couponCodeDetails": {},
-      "payInPartsDetails": {},
-      "image": image,
-    });
-
-
-  }catch(e){
-    print(e.toString());
-  }
-
+  await FirebaseFirestore.instance
+      .collection("Users")
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .set({
+    "name": name,
+    "linked": linked,
+    "mobilenumber": mobilenumber,
+    "email": email,
+    "paidCourseNames": listOfCourses,
+    "authType": authType,
+    "phoneVerified": phoneVerified,
+    "courseBuyID": "0", //course id will be displayed
+    "paid": "False",
+    "id": _auth.currentUser!.uid,
+    "password": "is it needed",
+    "role": "student",
+    "couponCodeDetails": {},
+    "payInPartsDetails": {},
+    "image": image,
+  });
 }

@@ -8,6 +8,7 @@ import '../authentication/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
+import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 
 class splash extends StatefulWidget {
   const splash({Key? key}) : super(key: key);
@@ -24,6 +25,7 @@ class _splashState extends State<splash> {
   void initState() {
     // TODO:implement initState
     super.initState();
+    GRecaptchaV3.hideBadge();
     Timer(
         Duration(seconds: 5),
             () => GoRouter.of(context).push('/login')
