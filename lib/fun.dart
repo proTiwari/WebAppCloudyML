@@ -718,12 +718,9 @@ SingleChildScrollView safearea1(BuildContext context) {
 
 
 Drawer customDrawer(BuildContext context) {
-
-
   void saveLoginState(BuildContext context) {
     Provider.of<LoginState>(context, listen: false).loggedIn = false;
   }
-
   final userProvider = Provider.of<UserProvider>(context);
   return Drawer(
     child: Container(

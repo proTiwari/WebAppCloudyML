@@ -211,11 +211,16 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     var authn = 'Basic ' + base64Encode(utf8.encode('$key:$secret'));
 
     var headers = {
-      'content-type': 'application/json',
-      'Authorization': authn,
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST',
-      "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+      'Content-Type': 'application/json',
+      "Cache-Control": "no-cache",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,POST, OPTIONS",
+      'Accept': '/',
+      // 'content-type': 'application/json',
+      // 'Authorization': authn,
+      // 'Access-Control-Allow-Origin': '*',
+      // 'Access-Control-Allow-Methods': 'GET, POST',
+      // "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
     };
 
     var data =

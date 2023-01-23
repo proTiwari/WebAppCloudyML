@@ -40,6 +40,7 @@ dependencies:
   url_strategy: ^0.2.0
   go_router:
   intl_phone_number_input:
+  percent_indicator:
   firebase_core: ^1.24.0
   firebase_storage: ^10.3.11
   cloud_firestore: ^3.5.1

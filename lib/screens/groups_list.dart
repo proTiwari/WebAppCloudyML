@@ -32,6 +32,8 @@ class _GroupsListState extends State<GroupsList> {
   ValueNotifier<bool> _moreGroupDetailsAvailable = ValueNotifier(true);
   FirebaseAuth _auth = FirebaseAuth.instance;
   dynamic groupData;
+
+
   // dynamic userData;
   String? groupId;
   List<int> newchatcount = [];
@@ -45,7 +47,7 @@ class _GroupsListState extends State<GroupsList> {
   DocumentSnapshot<Map<String, dynamic>>? _lastDocument1;
   ScrollController _scrollController = ScrollController();
   // ValueNotifier<int> studentCount = ValueNotifier(0);
-  Map? userData = {};
+  dynamic userData = {};
   loadUserData() async {
     setState(() {
       isLoading = true;
@@ -435,36 +437,43 @@ class _GroupsListState extends State<GroupsList> {
   _getGroupListData()
   async{
 
-    var headers = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST',
-      'Accept': '*/*',
-      "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${authorizationToken}'
-    };
+    // var headers = {
+    //   'Access-Control-Allow-Origin': '*',
+    //   'Access-Control-Allow-Methods': 'GET, POST',
+    //   'Accept': '*/*',
+    //   "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+    //   'Content-Type': 'application/json',
+    //   'Authorization': 'Bearer ${authorizationToken}',
+    // };
 
     callingAPI = true;
-    try{
+    try {
+      print("doc id is==$documentID");
       print("next data = ${listOfGroupListData.length}");
-      var response =
-      await http.post(Uri.parse("https://us-central1-cloudyml-app.cloudfunctions.net/CloudyML/groupList"),
-          headers: headers,
-          body: json.encode({"documentID":documentID}));
-
-      var responseData = await jsonDecode(response.body);
-      print('this is response status code ${response.statusCode}');
+      var url = Uri.parse("https://us-central1-cloudyml-app.cloudfunctions.net/CloudyML/groupList");
+      var response = await http.post(url,
+          // Uri.parse("https://us-central1-cloudyml-app.cloudfunctions.net/CloudyML/groupList")
+          headers: {
+            'Content-Type': 'application/json',
+            "Cache-Control": "no-cache",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,POST, OPTIONS",
+            'Accept': '/',
+          },
+          body: json.encode({"documentID": documentID}));
+      print("response ------${response.statusCode}");
+      var responseData = await json.decode(response.body);
+      print(await response.body);
       print(responseData["responseData"][0]["data"]["student_name"]);
-      if(response.statusCode==200)
-      {
-        documentID = responseData["responseData"][responseData["responseData"].length-1]["id"].toString();
+      if (response.statusCode == 200) {
+        documentID = responseData["responseData"]
+        [responseData["responseData"].length - 1]["id"]
+            .toString();
         listOfGroupListData.addAll(responseData["responseData"]);
         _streamSink.add(listOfGroupListData);
         print("added");
         print(listOfGroupListData[0]['data']['time']);
-      }
-      else
-      {
+      } else {
         print("Error in groupList");
       }
     }
@@ -537,6 +546,39 @@ class _GroupsListState extends State<GroupsList> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: customDrawer(context),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: HexColor("6153D3"),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Chat',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Regular',
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              userData!["role"] == "student"
+                  ? "Groups For You"
+                  : "Groups For Mentors",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontFamily: 'Regular',
+                  overflow: TextOverflow.ellipsis
+              ),
+            ),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           Container(
@@ -550,7 +592,7 @@ class _GroupsListState extends State<GroupsList> {
                 bottomRight: Radius.circular(25),
               ),
             ),
-            height: 145,
+            height: 70,
             // height: MediaQuery.of(context).size.height*.1,
             padding: const EdgeInsets.only(left: 0,top: 8),
             child: Column(
@@ -562,65 +604,64 @@ class _GroupsListState extends State<GroupsList> {
                   children: [
                     // SizedBox(height: 15,),
                     // SizedBox(height: MediaQuery.of(context).size.height * .08),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.start,
+                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                    //   children: [
+                    //
+                    //     SizedBox(width: 10,),
+                    //     IconButton(
+                    //       onPressed: () {
+                    //         Scaffold.of(context).openDrawer();
+                    //       },
+                    //       icon: Icon(
+                    //         Icons.menu_rounded,
+                    //         size: 30,
+                    //         color: Colors.white,
+                    //       ),
+                    //     ),
+                    //     SizedBox(
+                    //         width: 8
+                    //       // MediaQuery.of(context).size.width * 0.08,
+                    //     ),
+                    //   ],
+                    // ),
 
-                        SizedBox(width: 10,),
-                        IconButton(
-                          onPressed: () {
-                            customDrawer(context);
-                            Scaffold.of(context).openDrawer();
-                          },
-                          icon: Icon(
-                            Icons.menu_rounded,
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(
-                            width: 8
-                          // MediaQuery.of(context).size.width * 0.08,
-                        ),
-                      ],
-                    ),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Chat',
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontFamily: 'Regular',
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          userData!["role"] == "student"
-                              ? "Groups For You"
-                              : "Groups For Mentors",
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontFamily: 'Regular',
-                              overflow: TextOverflow.ellipsis
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   crossAxisAlignment: CrossAxisAlignment.center,
+                    //   children: [
+                    //     Text(
+                    //       'Chat',
+                    //       style: TextStyle(
+                    //           fontSize: 18,
+                    //           fontFamily: 'Regular',
+                    //           fontWeight: FontWeight.bold,
+                    //           color: Colors.white),
+                    //     ),
+                    //     SizedBox(
+                    //       width: 5,
+                    //     ),
+                    //     Text(
+                    //       userData!["role"] == "student"
+                    //           ? "Groups For You"
+                    //           : "Groups For Mentors",
+                    //       style: TextStyle(
+                    //           fontSize: 18,
+                    //           fontWeight: FontWeight.bold,
+                    //           color: Colors.white,
+                    //           fontFamily: 'Regular',
+                    //           overflow: TextOverflow.ellipsis
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                     // SizedBox(height: MediaQuery.of(context).size.height * .02),
 
                   ],
                 ),
                 SizedBox(height: 3,),
-                userData!["role"]=="mentor"?Container(
+                userData!["role"]=="mentor"? Container(
                   height: 41,
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -723,27 +764,27 @@ class _GroupsListState extends State<GroupsList> {
                                                   print("dataaaaa");
                                                   print('that is  data ${snapshotGroupList.data![index].data()}');
                                                   updateNotificationCountToZero(snapshotGroupList.data![index].id);
-                                                  print('dip dip');
 
-                                                  // GoRouter.of(context).pushNamed('chatWindow',
-                                                  //     queryParams: {
-                                                  //       'groupData': {"data": snapshotGroupList.data![index].data(), 'id': snapshotGroupList.data![index].id},
-                                                  //       'userData': userData,
-                                                  //       'groupId': snapshotGroupList.data![index].id, });
-
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (_) => ChatScreen(
-                                                        groupData: {
-                                                          "data": snapshotGroupList.data![index].data(),
-                                                          "id": snapshotGroupList.data![index].id
-                                                        },
-                                                        groupId: snapshotGroupList.data![index].id,
-                                                        userData: userData,
-                                                      ),
-                                                    ),
+                                                  GoRouter.of(context).pushNamed('chatWindow',
+                                                    queryParams: {
+                                                      "groupId": snapshotGroupList.data![index].id,
+                                                    },
                                                   );
+
+                                                  // Navigator.push(
+                                                  //   context,
+                                                  //   MaterialPageRoute(
+                                                  //     builder: (_) => ChatScreen(
+                                                  //       groupData: {
+                                                  //         "data": snapshotGroupList.data![index].data(),
+                                                  //         "id": snapshotGroupList.data![index].id
+                                                  //       },
+                                                  //       groupId: snapshotGroupList.data![index].id,
+                                                  //       userData: userData,
+                                                  //     ),
+                                                  //   ),
+                                                  // );
+
                                                   await _firestore
                                                       .collection('groups')
                                                       .doc(snapshotGroupList.data![index].id)
@@ -831,6 +872,7 @@ class _GroupsListState extends State<GroupsList> {
                                                                     fontFamily: 'Regular',
                                                                   ),
                                                                 ),
+                                                                Text('', style: TextStyle(height: 0.5),),
                                                                 userData!["role"] == "mentor"
                                                                     ? Text(
                                                                   "Student: ${snapshotGroupList.data![index]["student_name"]}",
@@ -1337,23 +1379,18 @@ class _GroupsListState extends State<GroupsList> {
                                                     updateNotificationCountToZero(listOfGroupListData[index]['id']);
 
                                                   }
-                                                  print('groupData is - - - - ${snapshotGroupList.data![index]}');
+                                                  print('groupData is - - - - ${snapshotGroupList.data![index]['data']}');
                                                   print('student id is - - - - ${snapshotGroupList.data![index]['data']['student_id']}');
                                                   print('this is group id - - - ${snapshotGroupList.data![index]["id"]}');
-                                                  print('userData - - $userData');
 
-                                                  final String groupId = snapshotGroupList.data![index]["id"];
 
-                                                  // GoRouter.of(context).pushNamed('chatWindow',
-                                                  //     queryParams: {
-                                                  //       'groupData': snapshotGroupList.data![index],
-                                                  //       'groupId': groupId,
-                                                  //       'userData': userData,});
+                                                  GoRouter.of(context).pushNamed('chatWindow',
+                                                      queryParams: {
+                                                        "groupId": snapshotGroupList.data![index]["id"],
+                                                      },
+                                                  );
 
-                                                  context.pushNamed('chatWindow', queryParams: {
-                                                    'groupData': snapshotGroupList.data![index],
-                                                    'groupId': groupId,
-                                                    'userData': userData,});
+
 
                                                   // Navigator.push(
                                                   //   context,
@@ -1455,6 +1492,7 @@ class _GroupsListState extends State<GroupsList> {
                                                                     fontFamily: 'Regular',
                                                                   ),
                                                                 ),
+                                                                Text('', style: TextStyle(height: 0.5),),
                                                                 userData!["role"] == "mentor"
                                                                     ? Text(
                                                                   "Student: ${snapshotGroupList.data![index]["data"]["student_name"]}",
@@ -1527,7 +1565,7 @@ class _GroupsListState extends State<GroupsList> {
                                                                         //   DateFormat.jm().format(Timestamp(snapshotGroupList.data![index]['data']["time"]["_seconds"],snapshotGroupList.data![index]['data']["time"]["_nanoseconds"]).toDate()).toString(),
 
                                                                         style: TextStyle(
-                                                                            fontSize:6,
+                                                                            fontSize:10,
                                                                             fontFamily: "Regular",
                                                                             fontWeight: FontWeight.bold,
                                                                             color: HexColor("7A7A7C")
@@ -1888,7 +1926,7 @@ class _GroupsListState extends State<GroupsList> {
                                     .where("student_id", isEqualTo: _auth.currentUser!.uid)
                                 // .orderBy("time",descending: true)
                                     .snapshots(),
-                                builder: (context,AsyncSnapshot<QuerySnapshot> snapshotGroupList){
+                                builder: (context, AsyncSnapshot<QuerySnapshot> snapshotGroupList){
                                   // print("snapshotData = ${snapshotGroupList.data!.docs[0]["icon"]}");
                                   if(snapshotGroupList.hasData)
                                   {
@@ -1905,24 +1943,34 @@ class _GroupsListState extends State<GroupsList> {
                                                 onTap: ()
                                                 async{
 
-                                                  GoRouter.of(context).pushNamed('chatWindow', queryParams: {
-                                                  'groupId': snapshotGroupList.data!.docs[index].id,
-                                                  'userData': userData,
-                                                  'groupData': {
-                                                    "data": snapshotGroupList.data!.docs[index].data(),
-                                                    "id": snapshotGroupList.data!.docs[index].id},
-                                                  });
+
+
+                                                  print('this is groupId = ${snapshotGroupList.data!.docs[index].id}');
+                                                  print('this is groupData = ${snapshotGroupList.data!.docs[index].data()} && ${snapshotGroupList.data!.docs[index].id}');
+                                                  print('this is userData = ${userData.toString()}');
+
+
+
+                                                  GoRouter.of(context).pushNamed('studentChat',
+                                                      queryParams: {
+                                                        'groupId': snapshotGroupList.data!.docs[index].id,
+                                                      }
+                                                  );
+
 
                                                   // Navigator.push(
                                                   //   context,
                                                   //   MaterialPageRoute(
                                                   //     builder: (_) => ChatScreen(
-                                                  //       groupData: {"data":snapshotGroupList.data!.docs[index].data(),"id":snapshotGroupList.data!.docs[index].id},
+                                                  //       groupData: {
+                                                  //       "data": snapshotGroupList.data!.docs[index].data(),
+                                                  //       "id":snapshotGroupList.data!.docs[index].id},
                                                   //       groupId: snapshotGroupList.data!.docs[index].id,
                                                   //       userData: userData,
                                                   //     ),
                                                   //   ),
                                                   // );
+
                                                   await _firestore
                                                       .collection('groups')
                                                       .doc(snapshotGroupList.data!.docs[index].id)
@@ -2010,6 +2058,7 @@ class _GroupsListState extends State<GroupsList> {
                                                                     fontFamily: 'Regular',
                                                                   ),
                                                                 ),
+                                                                Text('', style: TextStyle(height: 0.5),),
                                                                 userData!["role"] == "mentor"
                                                                     ? Text(
                                                                   "Student: ${snapshotGroupList.data!.docs[index]["student_name"]}",
