@@ -15,6 +15,7 @@ import 'package:cloudyml_app2/store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
@@ -52,7 +53,9 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     insertToken();
-    // Provider.of<UserProvider>(context, listen: false).reloadUserModel();
+    // final userProvider = Provider.of<UserProvider>(context);
+    GRecaptchaV3.hideBadge();
+    Provider.of<UserProvider>(context, listen: false).reloadUserModel();
     userData();
   }
 

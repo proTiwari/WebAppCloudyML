@@ -73,7 +73,7 @@ class _SignUpformState extends State<SignUpform> {
         image: '',
         authType: "emailAuth",
         phoneVerified: false,
-        listOfCourses: [],
+        listOfCourses: [], linked: '',
       );
       AwesomeDialog(
         context: context,

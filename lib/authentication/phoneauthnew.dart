@@ -447,7 +447,7 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
                                   mobilenumber: mobile.text,
                                   authType: 'phoneAuth',
                                   phoneVerified: true,
-                                  email: '');
+                                  email: '', linked: '');
                               showToast('Account Created');
                             }
                             await Future.delayed(Duration(seconds: 4));

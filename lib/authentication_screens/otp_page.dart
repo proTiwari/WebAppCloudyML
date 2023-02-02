@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/home.dart';
+import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:numeric_keyboard/numeric_keyboard.dart';
@@ -16,13 +17,13 @@ import 'google_auth.dart';
 import 'login_email.dart';
 
 class OtpPage extends StatefulWidget {
-  const OtpPage({Key? key}) : super(key: key);
+  String fromemailpage;
+  OtpPage(this.fromemailpage, {Key? key}) : super(key: key);
   @override
   _OtpPageState createState() => _OtpPageState();
 }
 
 class _OtpPageState extends State<OtpPage> {
-
   String text = '';
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool? googleloading = false;
@@ -124,6 +125,13 @@ class _OtpPageState extends State<OtpPage> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    GRecaptchaV3.hideBadge();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -132,21 +140,23 @@ class _OtpPageState extends State<OtpPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-              color: Color.fromARGB(255, 140, 58, 240),
-            ),
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Color.fromRGBO(35, 0, 79, 1),
-              size: 16,
-            ),
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: widget.fromemailpage == 'fromemailpage'
+            ? Container()
+            : IconButton(
+                icon: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    color: Color.fromARGB(255, 140, 58, 240),
+                  ),
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    color: Color.fromRGBO(35, 0, 79, 1),
+                    size: 16,
+                  ),
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
         elevation: 0,
         backgroundColor: HexColor("7226D1"),
         brightness: Brightness.light,
@@ -293,18 +303,15 @@ class _OtpPageState extends State<OtpPage> {
                                           padding: const EdgeInsets.fromLTRB(
                                               18, 80, 18, 0),
                                           child: Container(
-                                            
                                             constraints: const BoxConstraints(
                                                 maxWidth: 400),
                                             child: Row(
-                                              
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceEvenly,
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Expanded(
-                                                  
                                                     child: darkRoundedPinPut()),
                                                 // _otpTextField(context, true, 0),
                                                 // _otpTextField(
@@ -570,66 +577,23 @@ class _OtpPageState extends State<OtpPage> {
       });
       final AuthCredential _authCredential = PhoneAuthProvider.credential(
           verificationId: actualCode, smsCode: smsCode);
-
-      // print("00000000000000000000000000000000000 $output");
-      // result = await _auth.currentUser!.linkWithCredential(_authCredential);
-      // output = await _auth.signInWithCredential(_authCredential);
-
       globals.credental = _authCredential;
-      print("4${result}");
-      // var value = await FirebaseAuth.instance.currentUser!.uid;
-      // print("5");
-      // final prefs = await SharedPreferences.getInstance();
-      // print("6");
-      // await prefs.setString('$value', "true");
-      print("7");
-      // if (authResult != null && authResult.user != null) {
-      //   print("8");
-      //   print('Authentication successful');
-      //   print("9");
       onAuthenticationSuccessful(context, output, _authCredential);
-
-      // }
     } on FirebaseException catch (e) {
       print(e.toString());
       showToast(e.toString());
       setState(() {
         loading = false;
       });
-      // showToast(e.toString());
-      // setState(() {
-      //   loading = false;
-      // });
-      // if (e.code.toString() == "provider-already-linked") {
-      //   var value = await FirebaseAuth.instance.currentUser!.uid;
-      //   print("5");
-      //   final prefs = await SharedPreferences.getInstance();
-      //   print("6");
-      //   await prefs.setString('$value', "true");
-      //   onAuthenticationSuccessful(context, output);
-      // }
-      // if (e.code.toString() == "credential-already-in-use") {
-      //   var value = await FirebaseAuth.instance.currentUser!.uid;
-      //   print("5");
-      //   final prefs = await SharedPreferences.getInstance();
-      //   print("6");
-      //   await prefs.setString('$value', "true");
-      //   await onAuthenticationSuccessful(context, output);
-      // }
-      // setState(() {
-      //   loading = false;
-      // });
-      // showToast(e.toString());
-      // print("this is error kinga${e}");
     }
   }
 
   Future<void> onAuthenticationSuccessful(
       BuildContext context, dynamic result, dynamic crediantial) async {
     try {
-      // firebaseUser = result.user;
-
-      // var user = FirebaseAuth.instance.currentUser;
+      print("ttt1:${globals.googleAuth}");
+      print("ttt2:${globals.phoneNumberexists}");
+      print("ttt3:${globals.linked}");
       if (globals.googleAuth != 'true') {
         if (globals.phoneNumberexists == "true") {
           if (globals.linked == "true") {
@@ -641,21 +605,12 @@ class _OtpPageState extends State<OtpPage> {
                 showToast("Login Successful");
                 print(user);
                 print("Login Successful==");
-                // final prefs = await SharedPreferences.getInstance();
-                // await prefs.setString('login', "true");
 
+                // GoRouter.of(context).pushReplacement('/home');
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (_) => HomePage()));
+                // (Route<dynamic> route) => false;
                 saveLoginState(context);
-                GoRouter.of(context).pushReplacement('/home');
-
-                // context.pushReplacementNamed('home');
-
-                (Route<dynamic> route) => false;
-                
-                // Navigator.of(context).pushAndRemoveUntil(
-                //     MaterialPageRoute(
-                //       builder: (_) => HomePage(),
-                //     ),
-                //     (Route<dynamic> route) => false);
               } else {
                 showToast("Login Failed");
                 print("Login Failed");
@@ -664,75 +619,39 @@ class _OtpPageState extends State<OtpPage> {
               showToast("wrong otp: ${e.toString()}");
             }
           } else if (globals.googleAuth == 'true') {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) => GoogleAuthLogin()));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => GoogleAuthLogin(),
+              ),
+            );
           } else {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) => LoginEmailPage()));
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => LoginEmailPage(user: "signin")));
           }
         } else {
           print("here 2");
-          await _auth.signOut();
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => LoginEmailPage()));
+          try {
+            FirebaseAuth auth = FirebaseAuth.instance;
+            await auth.signInWithCredential(globals.credental);
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => LoginEmailPage(user: "signup")));
+          } catch (e) {
+            showToast(e.toString(), context: context);
+          }
         }
       } else {
         if (globals.linked == 'true') {
-
           GoRouter.of(context).pushReplacement('/home');
-          // GoRouter.of(context).pushReplacementNamed('home');
           (Route<dynamic> route) => false;
           saveLoginState(context);
-
-
-          // Navigator.of(context).pushAndRemoveUntil(
-          //     MaterialPageRoute(
-          //       builder: (_) => HomePage(),
-          //     ),
-          //     (Route<dynamic> route) => false);
         } else {
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => GoogleAuthLogin()));
         }
       }
-
-      // if (globals.name != "") {
-      //   if (user != null) {
-      //     DocumentSnapshot userDocs = await FirebaseFirestore.instance
-      //         .collection('Users')
-      //         .doc(FirebaseAuth.instance.currentUser!.uid)
-      //         .get();
-      //     if (userDocs.data() == null) {
-      //       showToast('user data does not exist');
-      //       // userprofile(
-      //       //     name: globals.name,
-      //       //     image: '',
-      //       //     mobilenumber: globals.phone,
-      //       //     authType: 'phoneAuth',
-      //       //     phoneVerified: true,
-      //       //     email: globals.email);
-      //       setState(() {
-      //         loading = false;
-      //       });
-      //     }
-      //     setState(() {
-      //       loading = false;
-      //     });
-      //   } else {
-      //     showToast('user does not exist');
-      //     setState(() {
-      //       loading = false;
-      //     });
-      //   }
-      // }
       setState(() {
         loading = false;
       });
-
-      // showToast("navigate to home page");
-      // Navigator.of(context).pushAndRemoveUntil(
-      //     MaterialPageRoute(builder: (_) => HomePage()),
-      //     (Route<dynamic> route) => false);
     } catch (e) {
       setState(() {
         loading = false;
@@ -745,5 +664,4 @@ class _OtpPageState extends State<OtpPage> {
   void saveLoginState(BuildContext context) {
     Provider.of<LoginState>(context, listen: false).loggedIn = true;
   }
-
 }

@@ -252,7 +252,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                                               mobilenumber: globals.phone,
                                               authType: 'phoneAuth',
                                               phoneVerified: true,
-                                              email: globals.email);
+                                              email: globals.email, linked: '');
                                           print(logi.user?.email);
                                           showToast(logi.user!.email);
                                           saveLoginState(context);
@@ -263,7 +263,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                                               mobilenumber: globals.phone,
                                               authType: 'phoneAuth',
                                               phoneVerified: true,
-                                              email: globals.email);
+                                              email: globals.email, linked: '');
                                           saveLoginState(context);
                                         }
 
@@ -632,7 +632,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                                           mobilenumber: globals.phone,
                                           authType: 'phoneAuth',
                                           phoneVerified: true,
-                                          email: globals.email);
+                                          email: globals.email, linked: '');
                                       print(logi.user?.email);
                                       showToast(logi.user!.email);
                                     } else {
@@ -642,7 +642,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                                           mobilenumber: globals.phone,
                                           authType: 'phoneAuth',
                                           phoneVerified: true,
-                                          email: globals.email);
+                                          email: globals.email, linked: '');
                                     }
 
                                     if (nameController.text.isNotEmpty) {
