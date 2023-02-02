@@ -16,7 +16,8 @@ class AssignmentScreen extends StatefulWidget {
         this.selectedSection,
         this.assignmentUrl,
         this.solutionUrl,
-        this.dataSetUrl})
+        this.dataSetUrl,
+        this.assignmentName})
       : super(key: key);
 
   final courseData;
@@ -25,6 +26,7 @@ class AssignmentScreen extends StatefulWidget {
   final assignmentUrl;
   final solutionUrl;
   final dataSetUrl;
+  final assignmentName;
 
   @override
   State<AssignmentScreen> createState() => _AssignmentScreenState();
@@ -170,11 +172,25 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  // (widget.solutionUrl != null &&
+                                  //             widget.solutionUrl != "null" &&
+                                  //             widget.solutionUrl != "") ||
+                                  (widget.assignmentUrl != null &&
+                                      widget.assignmentUrl != "" &&
+                                      widget.assignmentUrl != "null")
+                                      ? Text(
                                     "Please download the assignment, watch videos as instructed and answer all questions ",
                                     textAlign: TextAlign.left,
-                                  ),
-                                  Row(
+                                  )
+                                      : SizedBox(),
+
+                                  // (widget.solutionUrl != null &&
+                                  //             widget.solutionUrl != "null" &&
+                                  //             widget.solutionUrl != "") ||
+                                  (widget.assignmentUrl != null &&
+                                      widget.assignmentUrl != "" &&
+                                      widget.assignmentUrl != "null")
+                                      ? Row(
                                     children: [
                                       Text(
                                         "accordingly. Open colab by clicking here : ",
@@ -186,32 +202,50 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                           child: Text(
                                             "https://colab.research.google.com/",
                                             style: TextStyle(
-                                                color: Colors.deepPurpleAccent),
+                                                color:
+                                                Colors.deepPurpleAccent),
                                           )),
                                     ],
-                                  ),
-                                  SizedBox(
+                                  )
+                                      : SizedBox(),
+
+                                  // (widget.solutionUrl != null &&
+                                  //             widget.solutionUrl != "null" &&
+                                  //             widget.solutionUrl != "") ||
+                                  (widget.assignmentUrl != null &&
+                                      widget.assignmentUrl != "" &&
+                                      widget.assignmentUrl != "null")
+                                      ? SizedBox(
                                     height: 20,
-                                  ),
-                                  Row(
+                                  )
+                                      : SizedBox(),
+                                  widget.solutionUrl != null &&
+                                      widget.solutionUrl != "null" &&
+                                      widget.solutionUrl != ""
+                                      ? Row(
                                     children: [
-                                      Text("Reference PDF for output "),
+                                      Text("Reference PDF for output"),
                                       InkWell(
                                           onTap: () {
                                             launch(widget.solutionUrl);
                                           },
                                           child: Text(
-                                            'Reference pdf.',
+                                            'output.pdf',
                                             style: TextStyle(
-                                                color: Colors.deepPurpleAccent),
+                                                color:
+                                                Colors.deepPurpleAccent),
                                           )),
                                     ],
-                                  ),
+                                  )
+                                      : SizedBox(),
                                   SizedBox(
                                     height: 10,
                                   ),
                                   //for assignments
-                                  Row(
+                                  widget.assignmentUrl != null &&
+                                      widget.assignmentUrl != "" &&
+                                      widget.assignmentUrl != "null"
+                                      ? Row(
                                     children: [
                                       Text(
                                         'Click to download ',
@@ -222,13 +256,14 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                           launch(widget.assignmentUrl);
                                         },
                                         child: Text(
-                                          'Assignment file.',
+                                          '${widget.assignmentName}',
                                           style: TextStyle(
                                               color: Colors.deepPurpleAccent),
                                         ),
                                       ),
                                     ],
-                                  ),
+                                  )
+                                      : SizedBox(),
                                   //future builder for DataSets
                                   widget.dataSetUrl.length != 0
                                       ? Column(
@@ -268,10 +303,18 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                         ),
                       ),
                       // main grey container
-                      Container(
+
+                      // (widget.solutionUrl != null &&
+                      //             widget.solutionUrl != "null" &&
+                      //             widget.solutionUrl != "") ||
+                      (widget.assignmentUrl != null &&
+                          widget.assignmentUrl != "" &&
+                          widget.assignmentUrl != "null")
+                          ? Container(
                         width: MediaQuery.of(context).size.width / 2,
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white12, width: 0.5),
+                          border:
+                          Border.all(color: Colors.white12, width: 0.5),
                           color: Colors.black12,
                         ),
                         child: Padding(
@@ -301,7 +344,8 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                               //button container
                               Container(
                                 padding: EdgeInsets.only(left: 20),
-                                width: MediaQuery.of(context).size.width / 1.2,
+                                width:
+                                MediaQuery.of(context).size.width / 1.2,
                                 color: Colors.black12,
                                 child: Row(
                                   children: [
@@ -315,8 +359,8 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                           }
                                         },
                                         child: Text("Choose file",
-                                            style:
-                                            TextStyle(color: Colors.black26)),
+                                            style: TextStyle(
+                                                color: Colors.black26)),
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.white),
                                       ),
@@ -327,11 +371,13 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                     uploadedFile != null
                                         ? Text(
                                       fileName.toString(),
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(
+                                          color: Colors.black),
                                     )
                                         : Text(
                                       "No file chosen",
-                                      style: TextStyle(color: Colors.black26),
+                                      style: TextStyle(
+                                          color: Colors.black26),
                                     )
                                   ],
                                 ),
@@ -392,7 +438,8 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                             ],
                           ),
                         ),
-                      ),
+                      )
+                          : SizedBox(),
                     ],
                   ),
                 )),

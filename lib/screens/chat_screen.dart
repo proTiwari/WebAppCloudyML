@@ -16,6 +16,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:hive/hive.dart';
 import 'dart:io';
@@ -520,35 +521,35 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   //on record show bottom modal and send audio message
-  void onSendAudioMessage() async {
-    final size = MediaQuery.of(context).size;
-    startRecording();
-    showModalBottomSheet(
-        isDismissible: false,
-        enableDrag: false,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(50),
-          ),
-        ),
-        context: context,
-        builder: (context) {
-          return WillPopScope(
-            onWillPop: () async => false,
-            child: StatefulBottomSheet(
-              size: size,
-              startRecording: startRecording,
-              stopRecording: stopRecording,
-              cancelRecording: cancelRecording,
-            ),
-          );
-        });
-    //To bring latest msg on top
-    // await _firestore
-    //     .collection('groups')
-    //     .doc(gData!["id"])
-    //     .update({'time': FieldValue.serverTimestamp()});
-  }
+  // void onSendAudioMessage() async {
+  //   final size = MediaQuery.of(context).size;
+  //   startRecording();
+  //   showModalBottomSheet(
+  //       isDismissible: false,
+  //       enableDrag: false,
+  //       shape: const RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.vertical(
+  //           top: Radius.circular(50),
+  //         ),
+  //       ),
+  //       context: context,
+  //       builder: (context) {
+  //         return WillPopScope(
+  //           onWillPop: () async => false,
+  //           child: StatefulBottomSheet(
+  //             size: size,
+  //             startRecording: startRecording,
+  //             stopRecording: stopRecording,
+  //             cancelRecording: cancelRecording,
+  //           ),
+  //         );
+  //       });
+  //   //To bring latest msg on top
+  //   // await _firestore
+  //   //     .collection('groups')
+  //   //     .doc(gData!["id"])
+  //   //     .update({'time': FieldValue.serverTimestamp()});
+  // }
 
   //getting path to app's internal storage
   // Future getStoragePath() async {
@@ -1094,7 +1095,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 GestureDetector(
                     onTap: () {
                       removeNotificationOnChatScreenOn = false;
-                      Navigator.pop(context);
+                      GoRouter.of(context).pushReplacementNamed('chat');
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 10),
@@ -1536,9 +1537,10 @@ class _ChatScreenState extends State<ChatScreen> {
                             onPressed: () {
                               providerChatScreenNotifier
                                   .sendTextMessage("");
-                              _message.text != ""
-                                  ? onSendMessage()
-                                  : onSendAudioMessage();
+                              // _message.text != ""
+                              //     ?
+                              onSendMessage();
+                                  // : onSendAudioMessage();
                               //To bring latest msg on top
                               // await _firestore
                               //     .collection('groups')
@@ -1548,9 +1550,12 @@ class _ChatScreenState extends State<ChatScreen> {
                             icon: Consumer<ChatScreenNotifier>(
                               builder: (context, child, value) {
                                 print(child.text);
-                                return child.text == ""
-                                    ? const Icon(Icons.mic)
-                                    : const Icon(Icons.send);
+                                return
+                                  // child.text == ""
+                                    // ?
+                                // const Icon(Icons.mic);
+                                //     :
+                                const Icon(Icons.send);
                               },
                             ),
                             color: Colors.white,

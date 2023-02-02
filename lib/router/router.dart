@@ -77,6 +77,7 @@ class MyRouter {
             }
         ),
         GoRoute(
+          name: 'chat',
             path: '/chat',
             pageBuilder: (context, state) {
               return MaterialPage(child: GroupsList());
@@ -89,6 +90,7 @@ class MyRouter {
             }
         ),
         GoRoute(
+          name: 'myCourses',
           path: '/myCourses',
           pageBuilder: (context, state) {
             return MaterialPage(

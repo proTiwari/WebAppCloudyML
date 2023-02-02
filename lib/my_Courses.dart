@@ -162,6 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   var coursePercent = {};
+
   getPercentageOfCourse() async {
     try {
       await FirebaseFirestore.instance
@@ -196,29 +197,29 @@ class _HomeScreenState extends State<HomeScreen> {
               .get()
               .then((value) async {
             if (value.docs.first.exists) {
-              var coursesName = value.docs.first.data()["courses name"];
+              var coursesName = value.docs.first.data()["courses"];
               if (coursesName != null) {
                 print("name");
-                for (var name in coursesName) {
-                  double num = (getData![name + "percentage"] != null)
-                      ? getData[name + "percentage"]
+                for (var Id in coursesName) {
+                  double num = (getData![Id + "percentage"] != null)
+                      ? getData[Id + "percentage"]
                       : 0;
                   count += num.toInt();
                   print("Count = $count");
                   coursePercent[courseId] =
-                      count ~/ (value.docs.first.data()["courses name"].length);
+                      count ~/ (value.docs.first.data()["courses"].length);
                 }
               } else {
                 print("yy");
-                print(getData![value.docs.first.data()["name"].toString() +
-                    "percentage"]
+                print(getData![
+                value.docs.first.data()["id"].toString() + "percentage"]
                     .toString());
                 coursePercent[courseId] = getData[
-                value.docs.first.data()["name"].toString() +
+                value.docs.first.data()["id"].toString() +
                     "percentage"] !=
                     null
-                    ? getData[value.docs.first.data()["name"].toString() +
-                    "percentage"]
+                    ? getData[
+                value.docs.first.data()["id"].toString() + "percentage"]
                     : 0;
               }
             }
@@ -250,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     fetchCourses();
     dbCheckerForPayInParts();
-    getPercentageOfCourse();
+    // getPercentageOfCourse();
     getCourseName();
     userData();
     print('user enrolled in number of courses ${courses.length}');
@@ -621,21 +622,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       mainAxisAlignment: MainAxisAlignment.start,
                                                       children: [
                                                         Padding(
+                                                          padding: const EdgeInsets.only(right: 5.0),
+                                                          child: Container(
+                                                            height: 20,
+                                                            width: 25,
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(5.0),
+                                                              color: HexColor('440F87'),
+                                                            ),
+                                                            child: Center(
+                                                              child: Text( course[index].reviews.isNotEmpty ? course[index].reviews : '5.0',
+                                                                style: TextStyle(fontSize: 12, color: Colors.white,
+                                                                    fontWeight: FontWeight.normal),),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
                                                           padding:
                                                           const EdgeInsets.only(right: 5.0),
                                                           child: StarRating(
                                                             length: 5,
-                                                            rating: 5,
-                                                            color: Colors.green,
-                                                            starSize: 15,
+                                                            rating: course[index].reviews.isNotEmpty ? double.parse(course[index].reviews) : 5.0,
+                                                            color: HexColor('440F87'),
+                                                            starSize: 20,
                                                             mainAxisAlignment: MainAxisAlignment.start,
                                                           ),
                                                         ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(right: 5.0),
-                                                          child: Text('5/5',
-                                                            style: TextStyle(fontSize: 10),),
-                                                        )
                                                       ],
                                                     ),
                                                     SizedBox(height: 5,),
@@ -838,18 +850,35 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.start,
                                                   children: [
-                                                    StarRating(
-                                                      length: 5,
-                                                      rating: 5,
-                                                      color: Colors.green,
-                                                      starSize: 15,
-                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(right: 5.0),
+                                                      child: Container(
+                                                        height: 20,
+                                                        width: 25,
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(5.0),
+                                                          color: HexColor('440F87'),
+                                                        ),
+                                                        child: Center(
+                                                          child: Text( course[index].reviews.isNotEmpty ? course[index].reviews : '5.0',
+                                                            style: TextStyle(fontSize: 12, color: Colors.white,
+                                                                fontWeight: FontWeight.normal),),
+                                                        ),
+                                                      ),
                                                     ),
-                                                    SizedBox(width: 5,),
-                                                    Text('5/5',
-                                                      style: TextStyle(fontSize: 10),)
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsets.only(right: 5.0),
+                                                      child: StarRating(
+                                                        length: 5,
+                                                        rating: course[index].reviews.isNotEmpty ? double.parse(course[index].reviews) : 5.0,
+                                                        color: HexColor('440F87'),
+                                                        starSize: 20,
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                      ),
+                                                    ),
                                                   ],
-                                                )
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -864,7 +893,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     padding: const EdgeInsets.only(bottom: 10.0, left: 10),
                                                     child: ElevatedButton(
                                                         onPressed:
-                                                            () {},
+                                                            () {
+                                                              setState(() {
+                                                                courseId =
+                                                                    course[index].courseDocumentId;
+                                                              });
+                                                              print(courseId);
+                                                              if (course[index].isItComboCourse) {
+                                                                final ids = index.toString();
+                                                                final courseName = course[index].courseName;
+                                                                final courseP = course[index].coursePrice;
+                                                                GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': ids, 'coursePrice': courseP});
+
+                                                                // Navigator.push(
+                                                                //   context,
+                                                                //   MaterialPageRoute(
+                                                                //     builder: (context) => ComboStore(
+                                                                //       courses: course[index].courses,
+                                                                //     ),
+                                                                //   ),
+                                                                // );
+                                                              } else {
+
+                                                                final id = index.toString();
+                                                                GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                                                              }
+                                                            },
                                                         style: ElevatedButton
                                                             .styleFrom(
                                                           backgroundColor:

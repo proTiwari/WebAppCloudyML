@@ -426,7 +426,6 @@ class _GroupsListState extends State<GroupsList> {
   final StreamController<List<dynamic>> _streamController = StreamController.broadcast();
   StreamSink<List<dynamic>>  get _streamSink  => _streamController.sink;
   Stream<List<dynamic>> get _stream => _streamController.stream;
-
   List<dynamic> listOfGroupListData = [];
 
 

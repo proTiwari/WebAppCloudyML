@@ -154,11 +154,12 @@ class _HomeState extends State<Home> {
       });
       print('user enrolled in number of courses ${courses.length}');
     } catch (e) {
-      print("kkkk$e");
+      print("kkkk $e}");
     }
   }
 
   var coursePercent = {};
+
   getPercentageOfCourse() async {
     try {
       await FirebaseFirestore.instance
@@ -193,29 +194,29 @@ class _HomeState extends State<Home> {
               .get()
               .then((value) async {
             if (value.docs.first.exists) {
-              var coursesName = value.docs.first.data()["courses name"];
+              var coursesName = value.docs.first.data()["courses"];
               if (coursesName != null) {
                 print("name");
-                for (var name in coursesName) {
-                  double num = (getData![name + "percentage"] != null)
-                      ? getData[name + "percentage"]
+                for (var Id in coursesName) {
+                  double num = (getData![Id + "percentage"] != null)
+                      ? getData[Id + "percentage"]
                       : 0;
                   count += num.toInt();
                   print("Count = $count");
                   coursePercent[courseId] =
-                      count ~/ (value.docs.first.data()["courses name"].length);
+                      count ~/ (value.docs.first.data()["courses"].length);
                 }
               } else {
                 print("yy");
-                print(getData![value.docs.first.data()["name"].toString() +
-                    "percentage"]
+                print(getData![
+                value.docs.first.data()["id"].toString() + "percentage"]
                     .toString());
                 coursePercent[courseId] = getData[
-                value.docs.first.data()["name"].toString() +
+                value.docs.first.data()["id"].toString() +
                     "percentage"] !=
                     null
-                    ? getData[value.docs.first.data()["name"].toString() +
-                    "percentage"]
+                    ? getData[
+                value.docs.first.data()["id"].toString() + "percentage"]
                     : 0;
               }
             }
@@ -239,6 +240,8 @@ class _HomeState extends State<Home> {
   void initState() {
     // showNotification();
     _controller = ScrollController();
+    print('Helllllllllllo');
+
     super.initState();
     futureFiles = FirebaseApi.listAll('reviews/recent_review');
     futurefilesComboCourseReviews = FirebaseApi.listAll('reviews/combo_course_review');
@@ -270,7 +273,9 @@ class _HomeState extends State<Home> {
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
 
-      print(ref.data()!["role"]);
+      print('uid is ${FirebaseAuth.instance.currentUser!.uid}');
+
+      print(ref.data()!["role"].toString());
 
     } catch (e) {
       print("kkkkkkk${e}");
@@ -499,31 +504,6 @@ class _HomeState extends State<Home> {
     authorizationToken  = await FirebaseAuth.instance.currentUser!.getIdToken();
   }
 
-  getHello() async {
-    var headers = {
-      'Access-Control-Allow-Origin': '*',
-      'Accept': '*/*',
-      'Access-Control-Allow-Methods': 'GET, POST',
-      "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer ${authorizationToken}'
-    };
-
-    try {
-      var response =
-      await http.post(
-        Uri.parse('https://us-central1-cloudyml-app.cloudfunctions.net/helloWorld'),
-          headers: headers,);
-      var responseData = await jsonDecode(response.body);
-
-      print(response.statusCode);
-      print(responseData.toString());
-      print(response.toString());
-    } catch(e){
-      print('that is an error boss ${e.toString()}');
-    }
-
-  }
 
 
   Timer? countDownTimer;
@@ -548,12 +528,18 @@ class _HomeState extends State<Home> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: customDrawer(context),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          GoRouter.of(context).push('/chat');
-        },
-        backgroundColor: Colors.white,
-        child: Icon(Icons.mark_chat_unread_outlined, color: HexColor('691EC8'),),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.black54,
+          onPressed: () {
+        GoRouter.of(context).push('/chat');
+      },
+        label: Text('Chat with TA', style: TextStyle(fontSize: 16)),
+        icon: Icon(
+          Icons.chat_bubble_outline_sharp,
+          color: Colors.white,
+          size: 20,
+        ),
       ),
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
@@ -1595,7 +1581,35 @@ class _HomeState extends State<Home> {
                                                         padding: const EdgeInsets.only(bottom: 10.0, left: 10),
                                                         child: ElevatedButton(
                                                             onPressed:
-                                                                () {},
+                                                                () {
+                                                                  setState(() {
+                                                                    courseId = course[index]
+                                                                        .courseDocumentId;
+                                                                  });
+                                                                  print(courseId);
+                                                                  if (course[index].isItComboCourse) {
+
+                                                                    final id = index.toString();
+                                                                    final courseName = course[index].courseName;
+                                                                    final courseP = course[index].coursePrice;
+                                                                    GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
+
+                                                                    // Navigator.push(
+                                                                    //   context,
+                                                                    //   MaterialPageRoute(
+                                                                    //     builder: (context) =>
+                                                                    //         ComboStore(
+                                                                    //           courses:
+                                                                    //           course[index].courses,
+                                                                    //         ),
+                                                                    //   ),
+                                                                    // );
+
+                                                                  } else {
+                                                                    final id = index.toString();
+                                                                    GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                                                                  }
+                                                                },
                                                             style: ElevatedButton
                                                                 .styleFrom(
                                                               backgroundColor:

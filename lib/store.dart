@@ -459,7 +459,35 @@ class _StoreScreenState extends State<StoreScreen> {
                                       height: verticalScale * 30,
                                       width: screenWidth/8,
                                       child: ElevatedButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            setState(() {
+                                              courseId = cou[index]
+                                                  .courseDocumentId;
+                                            });
+                                            print(courseId);
+                                            if (cou[index].isItComboCourse) {
+
+                                              final id = index.toString();
+                                              final courseName = cou[index].courseName;
+                                              final courseP = cou[index].coursePrice;
+                                              GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
+
+                                              // Navigator.push(
+                                              //   context,
+                                              //   MaterialPageRoute(
+                                              //     builder: (context) =>
+                                              //         ComboStore(
+                                              //           courses:
+                                              //           course[index].courses,
+                                              //         ),
+                                              //   ),
+                                              // );
+
+                                            } else {
+                                              final id = index.toString();
+                                              GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                                            }
+                                          },
                                           style: ElevatedButton
                                               .styleFrom(
                                             backgroundColor:

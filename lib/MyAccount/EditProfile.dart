@@ -573,13 +573,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 }else{
                                   // Fluttertoast.showToast(
                                   //     msg: 'Profile image must be provided');
-                                  (userprovider.userModel?.authType=='phoneAuth')?
+                                  (userprovider.userModel?.authType=='phoneAuth') ?
                                   _firestore.collection('Users')
                                       .doc(userprovider.userModel!.id)
                                       .update({
-                                    'name':_username,
-                                    'email':_phoneauthemail,
-                                    'mobilenumber':_mobile,
+                                    'name': _username,
+                                    'email': _phoneauthemail,
+                                    'mobilenumber': _mobile,
                                   }):
                                   _firestore.collection('Users')
                                       .doc(userprovider.userModel!.id)
