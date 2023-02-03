@@ -220,7 +220,7 @@ class _HomeState extends State<Home> {
                     : 0;
               }
             }
-          }).catchError((err) => print("Error"));
+          }).catchError((err) => print("${err.toString()} Error"));
         } catch (err) {
           print(err);
         }
@@ -674,7 +674,9 @@ class _HomeState extends State<Home> {
                                                       .isItComboCourse) {
                                                     GoRouter.of(context).pushNamed('videoScreen',
                                                         queryParams: {
-                                                          'courseName': course[index].courseName});
+                                                          'courseName': course[index].courseName,
+                                                          'cID': course[index].courseDocumentId,
+                                                        });
 
                                                     // Navigator.push(
                                                     //   context,
@@ -745,7 +747,9 @@ class _HomeState extends State<Home> {
                                                     } else {
                                                       GoRouter.of(context).pushNamed('videoScreen',
                                                           queryParams: {
-                                                            'courseName': course[index].courseName});
+                                                            'courseName': course[index].courseName,
+                                                            'cID': course[index].courseDocumentId,
+                                                          });
                                                       // Navigator.push(
                                                       //   context,
                                                       //   PageTransition(

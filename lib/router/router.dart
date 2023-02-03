@@ -151,9 +151,11 @@ class MyRouter {
           // final bool isDemo = state.queryParams['isDemo']! as bool;
           // final int sr = state.queryParams['sr']! as int;
           final String courseName = state.queryParams['courseName']!;
+          final String cID = state.queryParams['cID']!;
             return MaterialPage(
                 child: VideoScreen(
               isDemo: true,
+            cID: cID,
             courseName: courseName,
             sr: 1,));
         }),
@@ -163,11 +165,13 @@ class MyRouter {
             pageBuilder: (context, state) {
               // final bool isDemo = state.queryParams['isDemo']! as bool;
               // final int sr = state.queryParams['sr']! as int;
+              final String cID = state.queryParams['cID']!;
               final String courseName = state.queryParams['courseName']!;
               return MaterialPage(
                   child: VideoScreen(
                     isDemo: null,
                     courseName: courseName,
+                    cID: cID,
                     sr: null,));
             }),
         GoRoute(

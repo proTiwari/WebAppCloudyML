@@ -184,7 +184,10 @@ class _ComboCourseState extends State<ComboCourse> {
                                         courseId = courseList[index].courseDocumentId;
                                       });
                                       GoRouter.of(context).pushNamed('comboVideoScreen',
-                                          queryParams: {'courseName': courseList[index].courseName,});
+                                          queryParams: {
+                                        'courseName': courseList[index].courseName,
+                                          'cID': courseList[index].courseDocumentId,
+                                          });
                                       // Navigator.push(
                                       //   context,
                                       //   MaterialPageRoute(

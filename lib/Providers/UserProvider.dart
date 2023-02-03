@@ -35,7 +35,7 @@ class UserProvider with ChangeNotifier {
     if (user != null) {
       _user = user;
       _userModel = await _userServices.getUserById(user.uid);
-      print("sdfjiosifso${user}:  ${_userModel!.email.toString()}");
+      print("sdfjiosifso ${user}:  ${_userModel!.email.toString()}");
 
       // splash();
     } else {

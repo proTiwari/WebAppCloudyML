@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:math';
@@ -37,10 +38,11 @@ class VideoScreen extends StatefulWidget {
   final int? sr;
   final bool? isDemo;
   final String? courseName;
+  final String? cID;
   static ValueNotifier<double> currentSpeed = ValueNotifier(1.0);
 
   const VideoScreen(
-      {required this.isDemo, this.sr, this.courseName, this.courses});
+      {required this.isDemo, this.sr, this.courseName, this.courses, this.cID});
 
   @override
   _VideoScreenState createState() => _VideoScreenState();
@@ -111,7 +113,7 @@ class _VideoScreenState extends State<VideoScreen> {
   Future<void> setModuleId() async {
     await FirebaseFirestore.instance
         .collection('courses')
-        .doc(courseId)
+        .doc(widget.cID)
         .collection('Modules')
         .where('firstType', isEqualTo: 'video')
         .get()
@@ -166,35 +168,6 @@ class _VideoScreenState extends State<VideoScreen> {
     print("----percent ${((currentPosition / totalDuration) * 100).toInt()}");
 
     print(_getVideoPercentageList);
-    //
-    // for(var i in _getVideoPercentageList)
-    //   {
-    //     if(i[moduleName.toString()]!=null)
-    //       {
-    //          for(var j in i[moduleName.toString()])
-    //            {
-    //              print("0kkkkk");
-    //              j[videoTitle.toString()]!=null && j[videoTitle.toString()]<((currentPosition / totalDuration) * 100).toInt()?
-    //              j[videoTitle.toString()] = ((currentPosition / totalDuration) * 100).toInt():null;
-    //            }
-    //       }
-    //   }
-    // //
-    // int total = 0,count = 0;
-    // for(int i=0;i<_getVideoPercentageList.length;i++)
-    //   {
-    //     for(var j in _getVideoPercentageList[i].entries)
-    //       {
-    //         j.value.forEach((element){
-    //           Map<String,dynamic> dic = element as Map<String,dynamic>;
-    //           int t = dic.values.first;
-    //           total+=t;
-    //           count+=1;
-    //         });
-    //       }
-    //   }
-    // FirebaseFirestore.instance.collection("courseprogress").doc(_auth.currentUser!.uid).update({widget.courseName.toString():_getVideoPercentageList,
-    // widget.courseName.toString()+"percentage":(total/(count*100))*100});
 
     if (_disposed) {
       return;
@@ -279,42 +252,6 @@ class _VideoScreenState extends State<VideoScreen> {
         CourseID.toString()+"percentage":((total/(count*100))*100).toInt(),}):null;
     }
 
-    // if (sectionName.length != 0 && videoPercentageList.length != 0) {
-    //   for (int i = 0; i < sectionName.length; i++) {
-    //     print('ii = $i');
-    //     for (int j = 0; j < videoPercentageList[i][sectionName[i]].length; j++) {
-    //       print('jjj = $j $i  }');
-    //       try {
-    //         print('video $videoTitle');
-    //         print(
-    //             'ssss ${videoPercentageList[i][sectionName[i]][j].toString()}');
-    //         print('length of == ${videoTitle.toString().length}');
-    //         if (videoPercentageList[i][sectionName[i]][j][videoTitle.toString()]
-    //             .toString() !=
-    //             'null') {
-    //           if(((currentPosition / totalDuration) * 100).toInt()>=videoPercentageList[i][sectionName[i]][j][videoTitle.toString()])
-    //           {
-    //             print("True-----------------");
-    //             videoPercentageList[i][sectionName[i]][j][videoTitle.toString()] =
-    //                 ((currentPosition / totalDuration) * 100).toInt();
-    //           }
-    //         }
-    //         print(
-    //             'dd ${videoPercentageList[i][sectionName[i]][j][videoTitle.toString()].toString()}');
-    //       } catch (e) {
-    //         print('I am error ${e.toString()}');
-    //       }
-    //     }
-    //   }
-    // }
-
-    ///
-//     setState(() {
-//       currentPosition = _videoController!.value.position.inSeconds.toInt();
-//       videoPercentageList;
-//     });
-    ///
-//     updateCourseCompletionPercentage(videoPercentageList);
 
     var position = _videoController?.value.position;
     setState(() {
@@ -464,144 +401,6 @@ class _VideoScreenState extends State<VideoScreen> {
 
   var dataa;
   var curriculum1;
-  Future<void> getCourseData() async {
-    // setState(() {
-    //   loading = true;
-    // });
-
-    var val;
-
-    // print("LLLLLLL ${FirebaseAuth.instance.currentUser!.uid} ${courseId}");
-
-    // await FirebaseFirestore.instance
-    //     .collection('courses')
-    //     .doc(courseId)
-    //     .get()
-    //     .then((value) async {
-    //   print(value.data());
-    //
-    //   val = value.data();
-    //
-    //   curriculumdata = val["curriculum"];
-    //   curriculum1 = val["curriculum1"];
-    //
-    //
-    //   print("curriculum1 = $curriculum1");
-    //
-    //
-    //
-    //   courseName = val['name'];
-    //   sectionName = curriculumdata['sectionsName'];
-    //   var dic = {};
-    //   print(sectionName);
-    //   for (var i in sectionName) {
-    //     dic[i] = i;
-    //   }
-    //
-    //   // dataa = await getDataFrom(dic, curriculumdata);
-    //   await FirebaseFirestore.instance.collection('courseprogress')
-    //       .doc(_auth.currentUser!.uid).get().then((value) async {
-    //     if(value.exists) {
-    //       var progressData = await FirebaseFirestore.instance.collection('courseprogress')
-    //           .doc(_auth.currentUser!.uid).get();
-    //       // print("poppp");
-    //       // print('progressdata ${progressData.data()!.containsKey(courseName)}');
-    //       // // var restData = progressData.data();
-    //       // print("sss");
-    //       if(progressData.data()!.containsKey(courseName))
-    //       {
-    //         // print("pp");
-    //         if(progressData.get(courseName).length!=0)
-    //         {
-    //           videoPercentageList = progressData.get(courseName);
-    //         }
-    //         else
-    //         {
-    //           for (var i in dataa.entries) {
-    //             // print('i == dip ${i.key}');
-    //             // print('i == dip ${i.value[0].videoTitle}');
-    //             var sectionList = [];
-    //             for (var k = 0; k < i.value.length; k++) {
-    //               sectionList.add({
-    //                 i.value[k].videoTitle.toString(): 0,
-    //               });
-    //             }
-    //             videoPercentageList.add({i.key.toString(): sectionList});
-    //           }
-    //         }
-    //       }
-    //       else{
-    //         for (var i in dataa.entries) {
-    //           print('i == dip ${i.key}');
-    //           print('i == dip ${i.value[0].videoTitle}');
-    //           var sectionList = [];
-    //           for (var k = 0; k < i.value.length; k++) {
-    //             sectionList.add({
-    //               i.value[k].videoTitle.toString(): 0,
-    //             });
-    //           }
-    //           videoPercentageList.add({i.key.toString(): sectionList});
-    //         }
-    //       }
-    //     }
-    //     else {
-    //       for (var i in dataa.entries) {
-    //         print('i == dip ${i.key}');
-    //         print('i == dip ${i.value[0].videoTitle}');
-    //         var sectionList = [];
-    //         for (var k = 0; k < i.value.length; k++) {
-    //           sectionList.add({
-    //             i.value[k].videoTitle.toString(): 0,
-    //           });
-    //         }
-    //         videoPercentageList.add({i.key.toString(): sectionList});
-    //       }
-    //     }
-    //   });
-    //
-    //   print('videoPercentage = $videoPercentageList');
-    //   setState(() {
-    //     videoPercentageList;
-    //   });
-    //   print('this is $sectionName');
-    //   print("datamap = $datamap");
-    //   curriculumdata.remove("sectionsName");
-    //   print("this is srinivas $curriculumdata");
-    //
-    //
-    //   // try {
-    //     // courseData = dataa;
-    //     // courseData = courseData;
-    //     // print("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy ");
-    //     // print(curriculumdata.length);
-    //     // print(courseData);
-    //     // if (courseData == datamap) {
-    //     //   setState(() {
-    //     //     loading = false;
-    //     //     courseData;
-    //     //   });
-    //     // }
-    //
-    //     print("LLLLLLLLLLLLLLLLLLyyyyyyyyyyyyyy ");
-    //   // } catch (e) {
-    //   //   print('2');
-    //   //   if (courseData == dataa) {
-    //   //     setState(() {
-    //   //       loading = false;
-    //   //       courseData;
-    //   //     });
-    //   //   }
-    //   //   print(e);
-    //   // }
-    // });
-
-    // if (courseData == dataa) {
-    //   setState(() {
-    //     loading = false;
-    //     courseData;
-    //   });
-    // }
-  }
 
 /*-------------- Video Percentage Srinivas Code ------------- */
 
@@ -620,9 +419,11 @@ class _VideoScreenState extends State<VideoScreen> {
       print(value.exists);
       var res = await FirebaseFirestore.instance
           .collection("courses")
-          .doc(courseId)
+          .doc(widget.cID)
           .get();
       CourseID  = await res.get("id");
+      print('course id - $CourseID ');
+
       if (value.exists && value.data()![CourseID]!=null) {
 
         var list = await res.get("curriculum1")[widget.courseName];
@@ -915,12 +716,26 @@ class _VideoScreenState extends State<VideoScreen> {
     // });
   }
 
+  streamVideoData()
+  async{
+    print("Videoss;");
+    print(widget.cID);
+    await FirebaseFirestore.instance
+        .collection("courses")
+        .doc(widget.cID).get().then((value) async{
+      print("!!!!!!!!!!!!!!!!!!!!!!! ${value.data()}");
+      Map<String, dynamic>? data = await value.data();
+      Counter.counterSinkVideos.add(data!=null?data:null);
+    });
+  }
+
   @override
   void initState() {
     // html.window.document.onContextMenu.listen((evt) => evt.preventDefault());
     VideoScreen.currentSpeed.value = 1.0;
     // getData();
     // getCourseData();
+    streamVideoData();
     getUserRole();
     getProgressData();
     getFiles();
@@ -938,7 +753,7 @@ class _VideoScreenState extends State<VideoScreen> {
     print("Firstvideo---");
     var res = await FirebaseFirestore.instance
         .collection("courses")
-        .doc(courseId)
+        .doc(widget.cID)
         .get();
     var list = res.get("curriculum1")[widget.courseName];
     list.sort((a, b) {
@@ -1537,14 +1352,12 @@ class _VideoScreenState extends State<VideoScreen> {
   // int? selectAssignment;
   // int? selectAssignmentSectionIndex;
   Widget _buildVideoDetails() {
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection("courses")
-            .doc(courseId)
-            .snapshots(),
+    return StreamBuilder<Map<String, dynamic>?>(
+        stream: Counter.counterStreamVideos,
         builder: (context, AsyncSnapshot snapshot) {
+          print('dishss ${snapshot}');
           if (snapshot.hasData) {
-            print("snapdata---------- ${snapshot.hasData} ${snapshot.data.data()}");
+            print("snapdata---------- ${snapshot.hasData}}");
             print('${widget.courseName}');
             var listOfSectionData;
             var id;
@@ -1684,7 +1497,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                     try{
                                                       FirebaseFirestore.instance
                                                           .collection('courses')
-                                                          .doc(courseId)
+                                                          .doc(widget.cID)
                                                           .update({
                                                         'curriculum1': {
                                                           '${widget.courseName}': listOfSectionData[widget.courseName],
@@ -1697,6 +1510,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                     setState(() {
                                                       editModule = false;
                                                       moduleNameController.clear();
+                                                      streamVideoData();
                                                     });
                                                     print('hello ${moduleNameController.text}');
                                                     // sectionIndex = sectionIndex;
@@ -1762,7 +1576,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                       });
                                                                       try{
 
-                                                                        FirebaseFirestore.instance.collection('courses').doc(courseId).update({
+                                                                        FirebaseFirestore.instance.collection('courses').doc(widget.cID).update({
                                                                           'curriculum1' : {
                                                                             widget.courseName : listOfSectionData[widget.courseName],
                                                                           }
@@ -1780,6 +1594,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                       addVideoName.clear();
                                                                       Navigator.of(context).pop();
                                                                       getProgressData();
+                                                                      streamVideoData();
                                                                     });
 
                                                                   }
@@ -2196,7 +2011,6 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                       ["videos"][subsectionIndex]["id"].toString()]!=null)
                                                                       {
                                                                         return updateVideoName && updateVideoIndex == subsectionIndex ?
-
                                                                         TextField(
                                                                           controller: updateVideoNameController,
                                                                           decoration: InputDecoration(
@@ -2206,7 +2020,7 @@ class _VideoScreenState extends State<VideoScreen> {
 
                                                                                   listOfSectionData[widget.courseName][editIndex]['videos'][updateVideoIndex]['name'] = updateVideoNameController.text;
                                                                                   try{
-                                                                                    FirebaseFirestore.instance.collection('courses').doc(courseId).update({
+                                                                                    FirebaseFirestore.instance.collection('courses').doc(widget.cID).update({
                                                                                       'curriculum1' : {
                                                                                         widget.courseName : listOfSectionData[widget.courseName],
                                                                                       }
@@ -2216,6 +2030,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                                   }
 
                                                                                   setState(() {
+                                                                                    streamVideoData();
                                                                                     updateVideoNameController.clear();
                                                                                     updateVideoName = false;
                                                                                   });
@@ -2345,11 +2160,13 @@ class _VideoScreenState extends State<VideoScreen> {
 
                                                                     try{
 
-                                                                      FirebaseFirestore.instance.collection('courses').doc(courseId).update({
+                                                                      FirebaseFirestore.instance.collection('courses').doc(widget.cID).update({
                                                                         'curriculum1' : {
                                                                           widget.courseName : listOfSectionData[widget.courseName],
                                                                         }
                                                                       }).whenComplete(() => Fluttertoast.showToast(msg: 'Video deleted'));
+
+                                                                      streamVideoData();
 
                                                                     }catch(e){
                                                                       print(e.toString());
@@ -2385,7 +2202,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                                         if (updateVideoUrl.text.isNotEmpty) {
                                                                                           listOfSectionData[widget.courseName][editIndex]['videos'][updateVideoIndex]['url'] = updateVideoUrl.text;
                                                                                           try{
-                                                                                            FirebaseFirestore.instance.collection('courses').doc(courseId).update({
+                                                                                            FirebaseFirestore.instance.collection('courses').doc(widget.cID).update({
                                                                                               'curriculum1' : {
                                                                                                 widget.courseName : listOfSectionData[widget.courseName],
                                                                                               }
@@ -2397,6 +2214,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                                           setState(() {
                                                                                             updateVideoUrl.clear();
                                                                                             Navigator.of(context).pop();
+                                                                                            streamVideoData();
                                                                                           });
                                                                                         } else {
                                                                                           Fluttertoast.showToast(msg: 'Please enter URL');
@@ -2508,7 +2326,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                               }
                                               await FirebaseFirestore.instance
                                                   .collection("courses")
-                                                  .doc(courseId)
+                                                  .doc(widget.cID)
                                                   .update({
                                                 "curriculum1": listOfSectionData
                                               });
@@ -2530,12 +2348,8 @@ class _VideoScreenState extends State<VideoScreen> {
                     }),
               ),
             );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-          return Text("Loading..");
+          } else  {
+          return Text("Loading...");
           }
         });
   }
@@ -2550,6 +2364,16 @@ class _VideoScreenState extends State<VideoScreen> {
   String? initialVideoName;
   TextEditingController updateVideoNameController = TextEditingController();
 
+}
+
+class Counter {
+
+  static final _stateStreamControllerVideos =
+  StreamController<Map<String,dynamic>?>.broadcast();
+  static StreamSink<Map<String,dynamic>?> get counterSinkVideos =>
+      _stateStreamControllerVideos.sink;
+  static Stream<Map<String,dynamic>?> get counterStreamVideos =>
+      _stateStreamControllerVideos.stream;
 }
 
 class replay10 extends StatelessWidget {

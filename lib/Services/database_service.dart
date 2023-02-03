@@ -22,7 +22,7 @@ class DatabaseServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Stream<List<CourseDetails>> get courseDetails {
-    return _fireStore.collection('courses').snapshots().map(
+        return _fireStore.collection('courses').snapshots().map(
           (querySnapshot) => querySnapshot.docs
               .map(
                 (documentSnapshot) => CourseDetails(
@@ -52,6 +52,8 @@ class DatabaseServices {
               .toList(),
         );
   }
+
+
 
   Stream<List<VideoDetails>> get videoDetails {
     return _fireStore

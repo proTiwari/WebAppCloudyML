@@ -251,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     fetchCourses();
     dbCheckerForPayInParts();
-    // getPercentageOfCourse();
+    getPercentageOfCourse();
     getCourseName();
     userData();
     print('user enrolled in number of courses ${courses.length}');
@@ -400,7 +400,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .isItComboCourse) {
                                       GoRouter.of(context).pushNamed('videoScreen',
                                           queryParams: {
-                                            'courseName': course[index].courseName});
+                                            'courseName': course[index].courseName,
+                                            'cID': course[index].courseDocumentId,
+                                      });
 
                                       // Navigator.push(
                                       //   context,
@@ -423,7 +425,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     } else {
                                       final id = index.toString();
                                       final courseName = course[index].courseName;
-                                      context.goNamed('comboStore', queryParams: {'courseName': courseName,
+                                      context.goNamed('comboStore',
+                                          queryParams: {'courseName': courseName,
                                         'id': id});
 
                                       // Navigator.push(
@@ -471,7 +474,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       } else {
                                         GoRouter.of(context).pushNamed('videoScreen',
                                             queryParams: {
-                                              'courseName': course[index].courseName});
+                                              'courseName': course[index].courseName,
+                                              'cID': course[index].courseDocumentId,},);
                                         // Navigator.push(
                                         //   context,
                                         //   PageTransition(
@@ -1056,8 +1060,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 .rightToLeftWithFade,
                                             child: VideoScreen(
                                               isDemo: true,
-                                              courseName:
-                                                  course[index].courseName,
+                                              courseName: course[index].courseName,
                                               sr: 1,
                                             ),
                                           ),
