@@ -114,6 +114,9 @@ dependencies:
   numeric_keyboard: ^1.1.0
   pinput: ^2.2.16
   g_recaptcha_v3: ^0.0.5
+  timeago: ^3.3.0
+  json_path: ^0.4.2
+  from_css_color: ^2.0.0
 
   
 dev_dependencies:

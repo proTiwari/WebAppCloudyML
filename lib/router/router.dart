@@ -19,6 +19,7 @@ import '../authentication_screens/phone_auth.dart';
 import '../catalogue_screen.dart';
 import '../models/course_details.dart';
 import '../my_Courses.dart';
+import '../screens/quiz_page.dart';
 import '../screens/review_screen/review_screen.dart';
 import 'login_state_check.dart';
 
@@ -95,7 +96,7 @@ class MyRouter {
           pageBuilder: (context, state) {
             return MaterialPage(
                 key: state.pageKey,
-                child: HomeScreen());
+                child: ReWidget());
           },
         ),
         GoRoute(
