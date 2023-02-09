@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../helpers/file_handler.dart';
 import 'package:hexcolor/hexcolor.dart';
+
 class FileMsgTile extends StatefulWidget {
   final size;
   final Map<String, dynamic>? map;
@@ -20,19 +22,30 @@ class FileMsgTile extends StatefulWidget {
 class _FileMsgTileState extends State<FileMsgTile> {
   var filePath;
 
-  String? checkFileExists(fileName) {
-    final file = File("${widget.appStorage!.path}/$fileName");
-
-    if (!file.existsSync()) {
-      final file = File("${widget.appStorage!.path}/$fileName");
-      downloadFile(widget.map!["link"], fileName, file);
-      return null;
-    } else {
-      setState(() {
-        filePath = file.path;
-      });
-      return file.path;
+  downloadFileWeb(String link)
+  async{
+    final url = Uri.parse(link);
+    if(await canLaunchUrl(url)){
+      await launchUrl(url);
+    }else {
+      throw 'Could not launch $url';
     }
+  }
+
+  String? checkFileExists(fileName) {
+    print("Fiile is there exists");
+    // File? file = File("${widget.appStorage!.path}/$fileName");
+    //
+    // if (!file.existsSync()) {
+    //   final file = File("${widget.appStorage!.path}/$fileName");
+    //   downloadFile(widget.map!["link"], fileName, file);
+    //   return null;
+    // } else {
+    //   setState(() {
+    //     filePath = file.path;
+    //   });
+    //   return file.path;
+    // }
   }
 
   @override
@@ -47,10 +60,10 @@ class _FileMsgTileState extends State<FileMsgTile> {
       child: Container(
         width: widget.size.width * 0.5,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          color: widget.map!["sendBy"] == widget.displayName
-              ? HexColor("#6da2f7")
-              : HexColor("#b3afb0")
+            borderRadius: BorderRadius.circular(25),
+            color: widget.map!["sendBy"] == widget.displayName
+                ? HexColor("#6da2f7")
+                : HexColor("#b3afb0")
           // gradient: RadialGradient(
           //     center: Alignment.topRight,
           //     // near the top right
@@ -60,90 +73,92 @@ class _FileMsgTileState extends State<FileMsgTile> {
         ),
         alignment: Alignment.center,
         child: widget.map!['link'] != ""
-            ? InkWell(
-                onTap: () => openFile(
-                    url: widget.map!["link"], fileName: widget.map!["message"]),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 10),
-                      child: Text(
-                        widget.map!["sendBy"],
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Container(
-                      constraints:
-                          BoxConstraints(minWidth: widget.size.width * 0.5),
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      height: 50,
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: widget.size.width * 0.4,
-                            child: Text(widget.map!["message"],
-                                style: const TextStyle(fontSize: 15),
-                                overflow: TextOverflow.ellipsis),
-                          ),
-                          // filePath == null
-                          //     ? const CircleAvatar(
-                          //         child: Icon(
-                          //           Icons.download,
-                          //           color: Colors.white,
-                          //         ),
-                          //         backgroundColor:
-                          //             Color.fromARGB(255, 141, 5, 136),
-                          //       )
-                          //     : Container()
-                        ],
-                      ),
-                      decoration: BoxDecoration(
-                          color: Colors.grey.shade200.withOpacity(0.5)),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          const Text(
-                            "File",
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                          Text(
-                            DateFormat('hh:mm a')
-                                .format(widget.map!["time"].toDate())
-                                .toLowerCase(),
-                            style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      constraints: BoxConstraints(
-                        minWidth: widget.size.width * 0.2,
-                      ),
-                    )
-                  ],
-                ),
-              )
-            : Container(
-                height: widget.size.height * 0.15,
-                child: Center(
-                  child: CircularProgressIndicator(),
+            ?
+        InkWell(
+          onTap: () => downloadFileWeb(widget.map!["link"]),
+          // openFile(
+          // url: widget.map!["link"], fileName: widget.map!["message"]),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 10, horizontal: 10),
+                child: Text(
+                  widget.map!["sendBy"],
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
+              Container(
+                constraints:
+                BoxConstraints(minWidth: widget.size.width * 0.5),
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                height: 50,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: widget.size.width * 0.4,
+                      child: Text(widget.map!["message"],
+                          style: const TextStyle(fontSize: 15),
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                    // filePath == null
+                    //     ? const CircleAvatar(
+                    //         child: Icon(
+                    //           Icons.download,
+                    //           color: Colors.white,
+                    //         ),
+                    //         backgroundColor:
+                    //             Color.fromARGB(255, 141, 5, 136),
+                    //       )
+                    //     : Container()
+                  ],
+                ),
+                decoration: BoxDecoration(
+                    color: Colors.grey.shade200.withOpacity(0.5)),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 10, horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const Text(
+                      "File",
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                    Text(
+                      DateFormat('hh:mm a')
+                          .format(widget.map!["time"].toDate())
+                          .toLowerCase(),
+                      style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                constraints: BoxConstraints(
+                  minWidth: widget.size.width * 0.2,
+                ),
+              )
+            ],
+          ),
+        )
+            : Container(
+          height: widget.size.height * 0.15,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
       ),
     );
   }

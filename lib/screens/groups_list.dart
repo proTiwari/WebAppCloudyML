@@ -547,6 +547,20 @@ class _GroupsListState extends State<GroupsList> {
       drawer: customDrawer(context),
       appBar: AppBar(
         elevation: 0,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(
+                Icons.menu,
+                size: 30,
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
+          },
+        ),
         backgroundColor: HexColor("6153D3"),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,

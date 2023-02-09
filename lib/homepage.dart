@@ -13,6 +13,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloudyml_app2/fun.dart';
 import 'package:cloudyml_app2/models/firebase_file.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -25,10 +26,15 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:star_rating/star_rating.dart';
 import 'Services/code_generator.dart';
 import 'Services/deeplink_service.dart';
+import 'catalogue_screen.dart';
 import 'combo/combo_course.dart';
+import 'combo/combo_store.dart';
 import 'models/referal_model.dart';
 import 'module/pdf_course.dart';
-import 'package:http/http.dart' as http;
+import 'package:showcaseview/src/showcase.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'module/video_screen.dart';
 var rewardCount = 0;
 String? linkMessage;
 
@@ -134,6 +140,20 @@ class _HomeState extends State<Home> {
   // }
 
 
+  List<CourseDetails> featuredCourse = [];
+
+  setFeaturedCourse(List<CourseDetails> course){
+    featuredCourse.clear();
+    course.forEach((element) {
+      if(element.FcSerialNumber.isNotEmpty && element.FcSerialNumber != null && element.isItComboCourse == true){
+        featuredCourse.add(element);
+      }
+    });
+    featuredCourse.sort((a, b) {
+      return int.parse(a.FcSerialNumber).compareTo(int.parse(b.FcSerialNumber));}
+    );
+  }
+
 
 
   Future fetchCourses() async {
@@ -148,6 +168,7 @@ class _HomeState extends State<Home> {
             courses = [];
           }else{
             courses = value.data()!['paidCourseNames'];
+            getPercentageOfCourse();
           }
           load = false;
         });
@@ -161,100 +182,138 @@ class _HomeState extends State<Home> {
   var coursePercent = {};
 
   getPercentageOfCourse() async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get()
-          .then((value) async {
-        try {
-          courses = value.data()!['paidCourseNames'];
-        } catch (e) {
-          print('donggg ${e.toString()}');
-        }
-      });
-    } catch (e) {
-      print(e.toString());
-    }
-
-    try {
-      var data = await FirebaseFirestore.instance
-          .collection("courseprogress")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
-      var getData = data.data();
-
-      for (var courseId in courses) {
-        print("ID = = ${courseId}");
-        int count = 0;
-        try {
-          await FirebaseFirestore.instance
-              .collection("courses")
-              .where("id", isEqualTo: courseId)
-              .get()
-              .then((value) async {
-            if (value.docs.first.exists) {
-              var coursesName = value.docs.first.data()["courses"];
-              if (coursesName != null) {
-                print("name");
-                for (var Id in coursesName) {
-                  double num = (getData![Id + "percentage"] != null)
-                      ? getData[Id + "percentage"]
-                      : 0;
-                  count += num.toInt();
-                  print("Count = $count");
-                  coursePercent[courseId] =
-                      count ~/ (value.docs.first.data()["courses"].length);
-                }
-              } else {
-                print("yy");
-                print(getData![
-                value.docs.first.data()["id"].toString() + "percentage"]
-                    .toString());
-                coursePercent[courseId] = getData[
-                value.docs.first.data()["id"].toString() +
-                    "percentage"] !=
-                    null
-                    ? getData[
-                value.docs.first.data()["id"].toString() + "percentage"]
-                    : 0;
-              }
-            }
-          }).catchError((err) => print("${err.toString()} Error"));
-        } catch (err) {
-          print(err);
-        }
+    if (courses.length != 0) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .get()
+            .then((value) async {
+          try {
+            courses = value.data()!['paidCourseNames'];
+          } catch (e) {
+            print('donggg ${e.toString()}');
+          }
+        });
+      } catch (e) {
+        print(e.toString());
       }
-    } catch (e) {
-      print('my courses error ${e.toString()}');
+      var getData;
+      try {
+        var data = await FirebaseFirestore.instance
+            .collection("courseprogress")
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .get().then((value) {
+          getData = value.data();
+        }).catchError((e) => print(e.toString()));
+
+        for (var courseId in courses) {
+          print("ID = = ${courseId}");
+          int count = 0;
+          try {
+            await FirebaseFirestore.instance
+                .collection("courses")
+                .where("id", isEqualTo: courseId)
+                .get()
+                .then((value) async {
+              if (value.docs.first.exists) {
+                var coursesName = value.docs.first.data()["courses"];
+                if (coursesName != null) {
+                  print("name");
+                  for (var Id in coursesName) {
+                    double num = (getData![Id + "percentage"] != null)
+                        ? getData[Id + "percentage"]
+                        : 0;
+                    count += num.toInt();
+                    print("Count = $count");
+                    coursePercent[courseId] =
+                        count ~/ (value.docs.first.data()["courses"].length);
+                  }
+                } else {
+                  print("yy");
+                  print(getData![
+                  value.docs.first.data()["id"].toString() + "percentage"]
+                      .toString());
+                  coursePercent[courseId] = getData[
+                  value.docs.first.data()["id"].toString() +
+                      "percentage"] !=
+                      null
+                      ? getData[
+                  value.docs.first.data()["id"].toString() + "percentage"]
+                      : 0;
+                }
+              }
+            }).catchError((err) => print("${err.toString()} Error"));
+          } catch (err) {
+            print(err);
+          }
+        }
+      } catch (e) {
+        print('my courses error ${e.toString()}');
+      }
+
+      print("done");
+      setState(() {
+        coursePercent;
+      });
+      print(coursePercent);
     }
+  }
 
-    print("done");
-    setState(() {
-      coursePercent;
+  bool isShow=false;
+
+  _wpshow() async{
+
+    await FirebaseFirestore.instance
+        .collection('Notice')
+        .doc('rLwaS5rDufmCQ7Gv5vMI')
+        .get().then((value) {
+      setState(() {
+        isShow= value.data()!['show'];
+      });
+
+      print("show is===$isShow");
+
     });
-    print(coursePercent);
+
   }
 
-  @override
-  void initState() {
-    // showNotification();
-    _controller = ScrollController();
-    print('Helllllllllllo');
+  _launchWhatsapp() async {
 
-    super.initState();
-    futureFiles = FirebaseApi.listAll('reviews/recent_review');
-    futurefilesComboCourseReviews = FirebaseApi.listAll('reviews/combo_course_review');
-    futurefilesSocialMediaReviews = FirebaseApi.listAll('reviews/social_media_review');
-    getCourseName();
-    fetchCourses();
-    dbCheckerForPayInParts();
-    userData();
-    getPercentageOfCourse();
-    // startTimer();
-    getuserdetails();
-    checkrewardexpiry();
+
+    var note = await FirebaseFirestore.instance
+        .collection('Notice')
+        .doc('rLwaS5rDufmCQ7Gv5vMI')
+        .get().then((value) {
+      return value.data()!['msg']; // Access your after your get the data
+    });
+
+    print("the msg is====$note");
+    print("the show is====$isShow");
+
+    var whatsApp1=await FirebaseFirestore.instance
+        .collection('Notice')
+        .doc('rLwaS5rDufmCQ7Gv5vMI')
+        .get().then((value) {
+      return value.data()!['number']; // Access your after your get the data
+    });
+
+    print("the number is====$whatsApp1");
+
+    var whatsapp = "+918902530551";
+    var whatsappAndroid =Uri.parse("whatsapp://send?phone=$whatsApp1&text=$note");
+    if (await canLaunchUrl(whatsappAndroid)) {
+      await launchUrl(whatsappAndroid);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("WhatsApp is not installed on the device"),
+        ),
+      );
+    }
   }
+
+
 
 
   var textStyle = TextStyle(
@@ -265,7 +324,7 @@ class _HomeState extends State<Home> {
   );
 
   var ref;
-
+  var userDocData;
   userData() async {
     try {
       ref = await FirebaseFirestore.instance
@@ -276,6 +335,7 @@ class _HomeState extends State<Home> {
       print('uid is ${FirebaseAuth.instance.currentUser!.uid}');
 
       print(ref.data()!["role"].toString());
+      userDocData = ref.data()!;
 
     } catch (e) {
       print("kkkkkkk${e}");
@@ -314,7 +374,9 @@ class _HomeState extends State<Home> {
         print('2');
         print(linkMessage);
         updateReferaldata();
-      } else {}
+      } else {
+
+      }
       ;
     });
   }
@@ -504,6 +566,38 @@ class _HomeState extends State<Home> {
     authorizationToken  = await FirebaseAuth.instance.currentUser!.getIdToken();
   }
 
+  bool isAnnounceMent = false;
+  String announcementMsg = '';
+  void getAnnouncement()async{
+    await FirebaseFirestore.instance.collection('Notice').get().then((value){
+      setState(() {
+        announcementMsg = value.docs[2].get('Message');
+        isAnnounceMent = value.docs[2].get('show');
+      });
+
+    });
+
+
+  }
+
+  @override
+  void initState() {
+    // showNotification();
+    _controller = ScrollController();
+    print('Helllllllllllo');
+
+    super.initState();
+    futureFiles = FirebaseApi.listAll('reviews/recent_review');
+    futurefilesComboCourseReviews = FirebaseApi.listAll('reviews/combo_course_review');
+    futurefilesSocialMediaReviews = FirebaseApi.listAll('reviews/social_media_review');
+    getCourseName();
+    fetchCourses();
+    dbCheckerForPayInParts();
+    userData();
+    // startTimer();
+    // getuserdetails();
+    checkrewardexpiry();
+  }
 
 
   Timer? countDownTimer;
@@ -515,16 +609,17 @@ class _HomeState extends State<Home> {
     final hours = strDigits(myDuration.inHours.remainder(24));
     final minutes = strDigits(myDuration.inMinutes.remainder(60));
     final seconds = strDigits(myDuration.inSeconds.remainder(60));
-
+    final size = MediaQuery.of(context).size;
+    final height = size.height;
+    final width = size.width;
     final providerNotification =
     Provider.of<UserProvider>(context, listen: false);
-    final size = MediaQuery.of(context).size;
     List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
-
+    setFeaturedCourse(course);
     return Scaffold(
       key: _scaffoldKey,
       drawer: customDrawer(context),
@@ -543,8 +638,7 @@ class _HomeState extends State<Home> {
       ),
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            if (constraints.maxWidth >= 315) {
-              try {
+            if (constraints.maxWidth >= 650) {
                 return SingleChildScrollView(
                   child: Column(
                     children: [
@@ -569,14 +663,15 @@ class _HomeState extends State<Home> {
                                     icon: Icon(
                                       Icons.menu,
                                       color: Colors.white,
+                                      size: 30,
                                     )),
                                 SizedBox(
                                   width: horizontalScale * 15,
                                 ),
                                 Image.asset(
                                   "assets/logo2.png",
-                                  width: 30,
-                                  height: 30,
+                                  width: 50,
+                                  height: 40,
                                 ),
                                 Text(
                                   "CloudyML",
@@ -603,7 +698,7 @@ class _HomeState extends State<Home> {
                               top: 50,
                               right: 75,
                               child: Container(
-                                  height: screenHeight / 1.8,
+                                  height: screenHeight / 1.5,
                                   width: screenWidth / 2.8,
                                   child: Image.asset(
                                     'assets/homepage/Webgraphics21.png',
@@ -928,7 +1023,7 @@ class _HomeState extends State<Home> {
                                                                     ],
                                                                   ),
                                                                   SizedBox(height: 5,),
-                                                                  Container(
+                                                                 courses.length != 0 && coursePercent != {} ? Container(
                                                                     height: 15,
                                                                     child: Row(
                                                                       children: [
@@ -950,7 +1045,7 @@ class _HomeState extends State<Home> {
                                                                           "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),)
                                                                       ],
                                                                     ),
-                                                                  ),
+                                                                  ) : SizedBox(),
                                                                 ],
                                                               ),
                                                             ),
@@ -1396,11 +1491,11 @@ class _HomeState extends State<Home> {
                                   itemCount: course.length,
                                   itemBuilder:
                                       (BuildContext context, index) {
-                                    if (course[index].courseName ==
+                                    if (featuredCourse[index].courseName ==
                                         "null") {
                                       return Container();
                                     }
-                                    if (course[index].show == true)
+                                    // if (course[index].isItComboCourse == true)
                                     return InkWell(
                                       onTap: () {
                                         setState(() {
@@ -1431,8 +1526,7 @@ class _HomeState extends State<Home> {
                                           GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
                                         }
                                       },
-                                      child: course[index].isItComboCourse
-                                          ? Padding(
+                                      child:  Padding(
                                         padding: const EdgeInsets.all(
                                             10.0),
                                         child: Container(
@@ -1474,7 +1568,7 @@ class _HomeState extends State<Home> {
                                                           15)),
                                                   child:
                                                   Image.network(
-                                                    course[index]
+                                                    featuredCourse[index]
                                                         .courseImageUrl,
                                                     fit: BoxFit.fill,
                                                   ),
@@ -1495,7 +1589,7 @@ class _HomeState extends State<Home> {
                                                             .topLeft,
                                                         child:
                                                         Text(
-                                                          course[index].courseName,
+                                                          featuredCourse[index].courseName,
                                                           maxLines: 2,
                                                           style: TextStyle(
                                                               color: Colors.black,
@@ -1515,7 +1609,7 @@ class _HomeState extends State<Home> {
                                                             .topLeft,
                                                         child:
                                                         Text(
-                                                          "- ${course[index].numOfVideos} Videos",
+                                                          "- ${featuredCourse[index].numOfVideos} Videos",
                                                           style: TextStyle(
                                                               fontWeight:
                                                               FontWeight.bold,
@@ -1551,7 +1645,7 @@ class _HomeState extends State<Home> {
                                                                 color: HexColor('440F87'),
                                                               ),
                                                               child: Center(
-                                                                child: Text( course[index].reviews.isNotEmpty ? course[index].reviews : '5.0',
+                                                                child: Text( featuredCourse[index].reviews.isNotEmpty ? featuredCourse[index].reviews : '5.0',
                                                                   style: TextStyle(fontSize: 12, color: Colors.white,
                                                                       fontWeight: FontWeight.normal),),
                                                               ),
@@ -1562,7 +1656,7 @@ class _HomeState extends State<Home> {
                                                             const EdgeInsets.only(right: 5.0),
                                                             child: StarRating(
                                                               length: 5,
-                                                              rating: course[index].reviews.isNotEmpty ? double.parse(course[index].reviews) : 5.0,
+                                                              rating: featuredCourse[index].reviews.isNotEmpty ? double.parse(featuredCourse[index].reviews) : 5.0,
                                                               color: HexColor('440F87'),
                                                               starSize: 20,
                                                               mainAxisAlignment: MainAxisAlignment.start,
@@ -1583,53 +1677,88 @@ class _HomeState extends State<Home> {
                                                     children: [
                                                       Padding(
                                                         padding: const EdgeInsets.only(bottom: 10.0, left: 10),
-                                                        child: ElevatedButton(
-                                                            onPressed:
-                                                                () {
-                                                                  setState(() {
-                                                                    courseId = course[index]
-                                                                        .courseDocumentId;
-                                                                  });
-                                                                  print(courseId);
-                                                                  if (course[index].isItComboCourse) {
+                                                        child: Row(
+                                                          children: [
+                                                            ElevatedButton(
+                                                                onPressed: () {
+                                                                      setState(() {
+                                                                        courseId = featuredCourse[index]
+                                                                            .courseDocumentId;
+                                                                      });
+                                                                      print(courseId);
+                                                                      if (featuredCourse[index].isItComboCourse) {
 
-                                                                    final id = index.toString();
-                                                                    final courseName = course[index].courseName;
-                                                                    final courseP = course[index].coursePrice;
-                                                                    GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
+                                                                        final id = index.toString();
+                                                                        final courseName = featuredCourse[index].courseName;
+                                                                        final courseP = featuredCourse[index].coursePrice;
+                                                                        GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
+                                                                        // Navigator.push(
+                                                                        //   context,
+                                                                        //   MaterialPageRoute(
+                                                                        //     builder: (context) =>
+                                                                        //         ComboStore(
+                                                                        //           courses:
+                                                                        //           course[index].courses,
+                                                                        //         ),
+                                                                        //   ),
+                                                                        // );
 
-                                                                    // Navigator.push(
-                                                                    //   context,
-                                                                    //   MaterialPageRoute(
-                                                                    //     builder: (context) =>
-                                                                    //         ComboStore(
-                                                                    //           courses:
-                                                                    //           course[index].courses,
-                                                                    //         ),
-                                                                    //   ),
-                                                                    // );
+                                                                      } else {
+                                                                        final id = index.toString();
+                                                                        GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                                                                      }
+                                                                    },
+                                                                style: ElevatedButton
+                                                                    .styleFrom(
+                                                                  backgroundColor: HexColor("8346E1"),
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.circular(5)),
+                                                                ),
+                                                                child:
+                                                                Text(
+                                                                  "₹${featuredCourse[index].coursePrice}/-",
+                                                                  style: TextStyle(
+                                                                      fontSize: 12,
+                                                                      color: Colors.white,
+                                                                      fontWeight: FontWeight.bold),
+                                                                )),
+                                                            // course[index].trial! ? SizedBox(width: 15) : SizedBox(),
+                                                            // course[index].trial!
+                                                            //     && (userDocData['trialCourse'] == false
+                                                            //     || userDocData['trialCourse'] == null) ?
+                                                            // ElevatedButton(
+                                                            //     onPressed: () {
 
-                                                                  } else {
-                                                                    final id = index.toString();
-                                                                    GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
-                                                                  }
-                                                                },
-                                                            style: ElevatedButton
-                                                                .styleFrom(
-                                                              backgroundColor:
-                                                              HexColor("8346E1"),
-                                                              shape: RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                  BorderRadius.circular(5)),
-                                                            ),
-                                                            child:
-                                                            Text(
-                                                              "₹${course[index].coursePrice}/-",
-                                                              style: TextStyle(
-                                                                  fontSize: 12,
-                                                                  color: Colors.white,
-                                                                  fontWeight: FontWeight.bold),
-                                                            )),
+                                                            //       showDialog(
+                                                            //         context: context,
+                                                            //           builder: (context) {
+                                                            //           return AlertDialog(
+                                                            //             title: Text('This course is available for $numberOfDays trial '),
+                                                            //             content: Container(
+                                                            //               height: screenHeight/3,
+                                                            //               width: screenWidth/3,
+                                                            //               child: Column(
+
+                                                            //               ),
+                                                            //             ),
+                                                            //           );
+                                                            //       });
+
+                                                            //       // print('paidCourseNames before ${userMap['paidCourseNames']}');
+                                                            //       // userMap['paidCourseNames'].add(course[index].courseId);
+                                                            //       //
+                                                            //       // FirebaseFirestore.instance.collection('Users')
+                                                            //       //     .doc(FirebaseAuth.instance.currentUser!.uid)
+                                                            //       //     .update({
+                                                            //       //   'trialCourse': true,
+                                                            //       //   'paidCourseNames': userMap['paidCourseNames'],
+                                                            //       // });
+                                                            //       // print('paidCourseNames ${userMap['paidCourseNames']}');
+                                                            //     },
+                                                            //     child: Text('Try for $numberOfDays days'))
+                                                            //     : Container(),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ],
                                                   ),
@@ -1639,7 +1768,6 @@ class _HomeState extends State<Home> {
                                           ),
                                         ),
                                       )
-                                          : Container(),
                                     );
                                     return Container();
                                   }),
@@ -1803,15 +1931,1039 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                 );
-              } catch (e) {
-                print(e.toString());
-                print("sdjffsifsihsiodf${e}ifsiojfdiiiiiiiiiiiiiiiiiiii$e");
-                return Text("Some error $e");
-              }
+              
             } else {
-              return Container();
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: screenWidth,
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                              color: Color.fromRGBO(
+                                0,
+                                0,
+                                0,
+                                0.35,
+                              ),
+                              offset: Offset(5, 5),
+                              blurRadius: 52)
+                        ],
+                      ),
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 414 * horizontalScale,
+                            height: 280 * verticalScale,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(15),
+                                bottomRight: Radius.circular(15),
+                              ),
+                            ),
+                            child: Image.network( 'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Fh1.png?alt=media&token=e51a6697-9b1d-467b-8443-b4251181830e',
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          Positioned(
+                            right: 5,
+                            child: IconButton(onPressed: () {
+                              logOut(context);
+                              saveLoginOutState(context);
+                            },
+                                icon: Icon(Icons.logout_rounded)),
+                          ),
+                          Positioned(
+                            left: 5,
+                            child: IconButton(
+                                onPressed: () {
+                              Scaffold.of(context).openDrawer();
+                            }, icon: Icon(Icons.menu)),
+                          ),
+                          Positioned(
+                            top: 7,
+                            left: 45,
+                            child: Row(
+                              children: [
+                                // Image.asset(
+                                //   "assets/logo2.png",
+                                //   width: 25,
+                                //   height: 20,
+                                // ),
+                                Text(
+                                  "CloudyML",
+                                  style: textStyle,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: 20 * horizontalScale,
+                          top: 20 * verticalScale,
+                          bottom: 5
+                      ),
+                      child: Text(
+                        'What make us different?',
+                        textScaleFactor: min(horizontalScale, verticalScale),
+                        style: TextStyle(
+                          color: Color.fromRGBO(0, 0, 0, 1),
+                          fontFamily: 'Poppins',
+                          fontSize: 23,
+                          letterSpacing:
+                          0 /*percentages not used in flutter. defaulting to zero*/,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 130,
+                      width: width,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: AssetImage("assets/UII.png",)
+                        ),
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            // left: (width-150)/12,
+                              left: width * 0.082,
+                              top:20,
+                              child: Container(
+                                alignment: Alignment.center,
+                                height:90,
+                                // width: (width-150)/4.2,
+                                width:width * 0.24,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                ),
+                                child:   Text("100% paid internship after combo course completion",
+                                  style: TextStyle(fontSize: 8,fontFamily: 'Bold',),maxLines: 5,
+                                  textAlign: TextAlign.center,overflow: TextOverflow.ellipsis,),
+
+                              )
+                          ),
+
+                          Positioned(
+                            // left: (width-150)/12,
+                              left: width * 0.18,
+                              top:6.8,
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 15,
+                                // width: (width-150)/4.2,
+                                width:15,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: HexColor("#592CA4")
+                                ),
+                                child:   Text("1",
+                                  style: TextStyle(fontSize: 8,fontFamily: 'Bold',color: Colors.white),maxLines: 5,
+                                  textAlign: TextAlign.center,overflow: TextOverflow.ellipsis,),
+                              )
+                          ),
+                          Positioned(
+                            // left: (width-150)/12,
+                              left: width * 0.38,
+                              top:20,
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 90,
+                                // width: (width-150)/4.2,
+                                width:width * 0.24,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                ),
+                                child:   Text("We provide \n hands on learning experience",
+                                  style: TextStyle(fontSize: 8,fontFamily: 'Bold',),maxLines: 5,
+                                  textAlign: TextAlign.center,overflow: TextOverflow.ellipsis,),
+
+                              )
+                          ),
+                          Positioned(
+                            // left: (width-150)/12,
+                              left: width * 0.48,
+                              top:6.8,
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 15,
+                                // width: (width-150)/4.2,
+                                width:15,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: HexColor("#592CA4")
+                                ),
+                                child:   Text("2",
+                                  style: TextStyle(fontSize: 8,fontFamily: 'Bold',color: Colors.white),maxLines: 5,
+                                  textAlign: TextAlign.center,overflow: TextOverflow.ellipsis,),
+
+                              )
+                          ),
+                          Positioned(
+                            // left: (width-150)/12,
+                              left: width * 0.68,
+                              top:19,
+                              // top:height* 0.018,
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 90,
+                                // width: (width-150)/4.2,
+                                // height: height * 0.13,
+                                width:width * 0.24,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                ),
+                                child:   Text("1-1 teaching assistants for doubt clearance",
+                                  style: TextStyle(fontSize: 8,fontFamily: 'Bold',),maxLines: 5,
+                                  textAlign: TextAlign.center,overflow: TextOverflow.ellipsis,),
+
+                              )
+                          ),
+
+                          Positioned(
+                            // left: (width-150)/12,
+                              left: width * 0.79,
+                              top:6.8,
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 15,
+                                // width: (width-150)/4.2,
+                                width:15,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: HexColor("#592CA4")
+                                ),
+                                child:   Text("3",
+                                  style: TextStyle(fontSize: 8,fontFamily: 'Bold',color: Colors.white),maxLines: 5,
+                                  textAlign: TextAlign.center,overflow: TextOverflow.ellipsis,),
+
+                              )
+                          ),
+
+                        ],
+                      ),
+                    ),
+
+                    isAnnounceMent ?
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: 20 * horizontalScale,
+                          right: 20 * horizontalScale,
+                          bottom: 4
+                        // top: 20 * verticalScale,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Announcements 📣',
+                            textScaleFactor: min(horizontalScale, verticalScale),
+                            style: TextStyle(
+                              color: Color.fromRGBO(0, 0, 0, 1),
+                              fontFamily: 'Poppins',
+                              fontSize: 23,
+                              letterSpacing:
+                              0 /*percentages not used in flutter. defaulting to zero*/,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          Container(
+                            padding: EdgeInsets.only(
+                              left: 10 * horizontalScale,
+                              right: 10 * horizontalScale,
+                              top:  15 * verticalScale,
+                              bottom:  15 * verticalScale,
+
+                              // top: 20 * verticalScale,
+                            ),
+
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.deepPurple.withOpacity(0.12)
+
+                            ),
+                            child: Center(
+                              child: Text(announcementMsg,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )  : SizedBox(),
+
+                    SizedBox(height: 10,),
+                    courses.length > 0?Padding(
+                      padding: EdgeInsets.only(
+                          left: 20 * horizontalScale,
+                          bottom: 4
+                        // top: 20 * verticalScale,
+                      ),
+                      child: Text(
+                        'My Courses',
+                        textScaleFactor: min(horizontalScale, verticalScale),
+                        style: TextStyle(
+                          color: Color.fromRGBO(0, 0, 0, 1),
+                          fontFamily: 'Poppins',
+                          fontSize: 23,
+                          letterSpacing:
+                          0 /*percentages not used in flutter. defaulting to zero*/,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ):SizedBox(),
+                    courses.length>0?Container(
+                      width: width,
+                      height: 130,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),),
+                      margin: EdgeInsets.only(top: 2,bottom: 7,left: 10),
+                      child: MediaQuery.removePadding(
+                        context: context,
+                        removeTop: true,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          // shrinkWrap: true,
+                          itemCount: course.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            if (course[index].courseName == "null") {
+                              return Container();
+                            }
+                            if (courses.contains(course[index].courseId)) {
+                              return InkWell(
+                                onTap: (() {
+                                  // setModuleId(snapshot.data!.docs[index].id);
+                                  getCourseName();
+                                  if (navigateToCatalogueScreen(
+                                      course[index].courseId) &&
+                                      !(userMap['payInPartsDetails']
+                                      [course[index].courseId]
+                                      ['outStandingAmtPaid'])) {
+                                    if (!course[index].isItComboCourse) {
+                                      Navigator.push(
+                                        context,
+                                        PageTransition(
+                                          duration: Duration(milliseconds: 400),
+                                          curve: Curves.bounceInOut,
+                                          type:
+                                          PageTransitionType.rightToLeftWithFade,
+                                          child: VideoScreen(
+                                            isDemo: true,
+                                            courseName: course[index].courseName,
+                                            sr: 1,
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      Navigator.push(
+                                        context,
+                                        PageTransition(
+                                          duration: Duration(milliseconds: 100),
+                                          curve: Curves.bounceInOut,
+                                          type:
+                                          PageTransitionType.rightToLeftWithFade,
+                                          child: ComboStore(
+                                            courses: course[index].courses,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    if (!course[index].isItComboCourse) {
+                                      if (course[index].courseContent == 'pdf') {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            duration: Duration(milliseconds: 400),
+                                            curve: Curves.bounceInOut,
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child: PdfCourseScreen(
+                                              curriculum: course[index].curriculum
+                                              as Map<String, dynamic>,
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            duration: Duration(milliseconds: 400),
+                                            curve: Curves.bounceInOut,
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child: VideoScreen(
+                                              isDemo: true,
+                                              courseName: course[index].courseName,
+                                              sr: 1,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    } else {
+                                      ComboCourse.comboId.value =
+                                          course[index].courseId;
+                                      Navigator.push(
+                                        context,
+                                        PageTransition(
+                                          duration: Duration(milliseconds: 400),
+                                          curve: Curves.bounceInOut,
+                                          type:
+                                          PageTransitionType.rightToLeftWithFade,
+                                          child: ComboCourse(
+                                            courses: course[index].courses,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                  setState(() {
+                                    courseId = course[index].courseDocumentId;
+                                  });
+                                }),
+                                child: Container(height: 150,width: 320,
+                                    margin: EdgeInsets.only(right:10),
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Color(0xFFE9E1FC)),
+                                    child: Row(
+                                      children: [
+                                        Expanded(child:
+                                        Container(width: 200,height: 150,
+                                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
+                                          child:  Container(
+                                            margin: EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(10),
+                                                topRight: Radius.circular(10),
+                                                bottomLeft: Radius.circular(10),
+                                                bottomRight: Radius.circular(10),
+                                              ),
+                                              image: DecorationImage(
+                                                  image: CachedNetworkImageProvider(
+                                                    course[index].courseImageUrl,
+                                                  ),
+                                                  fit: BoxFit.fitHeight),
+                                            ),
+                                          ),
+                                        ),flex: 1,),
+                                        Expanded(child: Container(width: 200,height: 150,
+                                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                                            child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  course[index].isItComboCourse
+                                                      ? Row(
+                                                    children: [
+                                                      Container(
+                                                        width: 70,
+                                                        height: 37,
+                                                        decoration: BoxDecoration(
+                                                          borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                          // gradient: gradient,
+                                                          color: Color(0xFF7860DC),
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            'COMBO',
+                                                            style: const TextStyle(
+                                                              fontFamily: 'Bold',
+                                                              fontSize: 10,
+                                                              fontWeight:
+                                                              FontWeight.w500,
+                                                              color: Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  )
+                                                      : Container(),
+                                                  Container(
+                                                    child: Text(
+                                                      course[index].courseName,
+                                                      style: TextStyle(
+                                                          color: Color.fromRGBO(
+                                                            0,
+                                                            0,
+                                                            0,
+                                                            1,
+                                                          ),
+                                                          fontFamily: 'Poppins',
+                                                          fontSize: 13,
+                                                          letterSpacing:
+                                                          0 /*percentages not used in flutter. defaulting to zero*/,
+                                                          fontWeight: FontWeight.w500,
+                                                          height: 1,overflow: TextOverflow.ellipsis),
+                                                      // overflow: TextOverflow.ellipsis,
+                                                      maxLines: 2,
+                                                    ),
+                                                  ),
+                                                  course[index].isItComboCourse &&
+                                                      statusOfPayInParts(
+                                                          course[index].courseId)
+                                                      ?  Container(
+                                                    child:
+                                                    !navigateToCatalogueScreen(
+                                                        course[index]
+                                                            .courseId)
+                                                        ? Container(
+                                                      height: MediaQuery.of(
+                                                          context)
+                                                          .size
+                                                          .width *
+                                                          0.08 *
+                                                          verticalScale,
+                                                      decoration:
+                                                      BoxDecoration(
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                          10,
+                                                        ),
+                                                        color: Color(
+                                                          0xFFC0AAF5,
+                                                        ),
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                        children: [
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Text(
+                                                            'Access ends in days : ',
+                                                            textScaleFactor: min(
+                                                                horizontalScale,
+                                                                verticalScale),
+                                                            style:
+                                                            TextStyle(
+                                                              color: Colors
+                                                                  .white,
+                                                              fontSize:
+                                                              13,
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              borderRadius:
+                                                              BorderRadius.circular(10),
+                                                              color: Colors
+                                                                  .grey
+                                                                  .shade100,
+                                                            ),
+                                                            width: 30 *
+                                                                min(horizontalScale,
+                                                                    verticalScale),
+                                                            height: 30 *
+                                                                min(horizontalScale,
+                                                                    verticalScale),
+                                                            // color:
+                                                            //     Color(0xFFaefb2a),
+                                                            child:
+                                                            Center(
+                                                              child:
+                                                              Text(
+                                                                '${(DateTime.parse(userMap['payInPartsDetails'][course[index].courseId]['endDateOfLimitedAccess']).difference(DateTime.now()).inDays)}',
+                                                                textScaleFactor: min(
+                                                                    horizontalScale,
+                                                                    verticalScale),
+                                                                style: TextStyle(
+                                                                    color: Colors.black,
+                                                                    fontWeight: FontWeight.bold
+                                                                  // fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                        : Container(
+                                                      height: MediaQuery.of(
+                                                          context)
+                                                          .size
+                                                          .width *
+                                                          0.08,
+                                                      decoration:
+                                                      BoxDecoration(
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                            10),
+                                                        color: Color(
+                                                            0xFFC0AAF5),
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          'Limited access expired !',
+                                                          textScaleFactor: min(
+                                                              horizontalScale,
+                                                              verticalScale),
+                                                          style:
+                                                          TextStyle(
+                                                            color: Colors
+                                                                .deepOrange[
+                                                            600],
+                                                            fontSize:
+                                                            13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ):SizedBox(),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                    children: [
+                                                      Container(
+                                                        child: Text(
+                                                          course[index].courseLanguage+"  ||",
+                                                          style: TextStyle(
+                                                              fontFamily: 'Medium',
+                                                              color: Colors.black
+                                                                  .withOpacity(0.4),
+                                                              fontSize: 10,
+                                                              fontWeight:
+                                                              FontWeight.w500),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 6,
+                                                      ),
+                                                      Container(
+                                                        child: Center(
+                                                          child: Text(
+                                                            '${course[index].numOfVideos} videos',
+                                                            style: TextStyle(
+                                                                fontFamily: 'Medium',
+                                                                color: Colors.black
+                                                                    .withOpacity(0.7),
+                                                                fontSize: 10),
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                    ],
+                                                  ),
+                                                ]
+                                            )))
+                                      ],
+                                    )
+                                ),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                      ),
+                    ):SizedBox(),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 20 * horizontalScale,
+                        // top: 20 * verticalScale,
+                      ),
+                      child: Text(
+                        'Feature Courses',
+                        textScaleFactor: min(horizontalScale, verticalScale),
+                        style: TextStyle(
+                          color: Color.fromRGBO(0, 0, 0, 1),
+                          fontFamily: 'Poppins',
+                          fontSize: 23,
+                          letterSpacing:
+                          0 /*percentages not used in flutter. defaulting to zero*/,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: screenWidth,
+                      height: 190,
+                      margin: EdgeInsets.only(top: 10,bottom: 5),
+                      child: MediaQuery.removePadding(
+                        context: context,
+                        removeTop: true,
+                        removeBottom: true,
+                        removeLeft: true,
+                        removeRight: true,
+                        child: ListView.builder(
+                          // physics: NeverScrollableScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: featuredCourse.length,
+                          itemBuilder: (BuildContext context, index) {
+                            return InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    courseId = featuredCourse[index].courseDocumentId;
+                                  });
+                                  print(courseId);
+                                  // if (featuredCourse[index].isItComboCourse) {
+                                  //   Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //       builder: (context) => ComboStore(
+                                  //         courses: featuredCourse[index].courses,
+                                  //       ),
+                                  //     ),
+                                  //   );
+                                  // } else {
+                                  //   Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) =>
+                                  //         const CatelogueScreen()),
+                                  //   );
+                                  // }
+
+                                  if (featuredCourse[index].isItComboCourse) {
+
+                                    final id = index.toString();
+                                    final courseName = featuredCourse[index].courseName;
+                                    final courseP = featuredCourse[index].coursePrice;
+                                    GoRouter.of(context).pushNamed('comboStore',
+                                        queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) =>
+                                    //         ComboStore(
+                                    //           courses:
+                                    //           course[index].courses,
+                                    //         ),
+                                    //   ),
+                                    // );
+
+                                  } else {
+                                    final id = index.toString();
+                                    GoRouter.of(context).pushNamed('catalogue',
+                                        queryParams: {'id': id});
+                                  }
+
+                                },
+                                child:
+                                Container(
+                                  decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                          colors: [
+                                            HexColor("#2C004F"),
+                                            HexColor("#8024C9")
+                                          ]
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(color: HexColor("#8024C9"),
+                                          blurRadius: 1.5,offset: Offset(1,2) ,
+                                          // spreadRadius: 0.3
+                                        )
+                                      ],
+                                      borderRadius: BorderRadius.circular(20)
+                                  ),
+                                  margin: EdgeInsets.only(left: 15,top: 5,bottom: 5),
+                                  padding: EdgeInsets.only(left: 15,right: 5,top: 15,bottom: 15),
+                                  width: 300,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        flex: 2,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(right: 10),
+                                          child: Text("${featuredCourse[index].courseName}",
+                                              style: TextStyle(fontSize: 17,color: Colors.white,fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis,fontFamily: 'Bold'),
+                                              maxLines: 1),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 8,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 5,
+                                              child: Column(
+                                                children: [
+                                                  Expanded(
+                                                    child: SizedBox(
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Expanded(
+                                                            child:
+                                                            Row(
+                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                              children: [
+                                                                RatingBarIndicator(
+                                                                  rating: 5.0,
+                                                                  itemBuilder: (context, index) => Icon(
+                                                                    Icons.star,
+                                                                    color: HexColor("#31D198"),
+                                                                  ),
+                                                                  itemCount: 5,
+                                                                  itemSize: 15.0,
+                                                                  direction: Axis.horizontal,
+                                                                  unratedColor: Colors.purple,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("5.0",style: TextStyle(color: Colors.white,fontSize: 13),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Expanded(child:   Text("English  ||  ${featuredCourse[index].numOfVideos} Videos",style: TextStyle(fontSize: 13,color: Colors.white),)
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 8,),
+                                                  Expanded(
+                                                    child: Column(
+                                                      children: [
+                                                        Expanded(
+                                                            child: Align(
+                                                              alignment: Alignment.topLeft,
+                                                              child: RichText(
+                                                                text: TextSpan(
+                                                                    children: [
+                                                                      // TextSpan(text:"3599/-  ",style: TextStyle(color: Colors.white,fontSize: 16,overflow: TextOverflow.ellipsis),),
+                                                                      TextSpan(text:"₹${featuredCourse[index].coursePrice}/-",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,
+                                                                          fontFamily: 'Poppins',fontSize: 20,
+                                                                          overflow: TextOverflow.ellipsis),)
+                                                                    ]
+                                                                ),
+                                                              ),
+                                                            )
+                                                        ),
+                                                        Expanded(
+                                                          child: Align(
+                                                            alignment: Alignment.bottomLeft,
+                                                            child: ElevatedButton(
+                                                              style: ButtonStyle(
+                                                                  backgroundColor: MaterialStateProperty.all(HexColor("#2FBF8B")),
+                                                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                                    RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.circular(18.0),
+                                                                    ),
+                                                                  )
+                                                              ),
+                                                              onPressed: ()async{
+                                                                print("Curriculum");
+                                                                setState(() {
+                                                                  courseId = featuredCourse[index].courseDocumentId;
+                                                                });
+                                                                // print(await course[index].curriculum);
+                                                                // await Navigator.push(
+                                                                //   context,
+                                                                //   MaterialPageRoute(
+                                                                //     builder: (context) => Curriculam(courseDetail: course[index])
+                                                                //   ),
+                                                                // );
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                    const CatelogueScreen(),
+                                                                  ),
+                                                                );
+                                                              },
+                                                              child: Text("Enroll now",style: TextStyle(color: Colors.white,fontFamily: 'Regular',
+                                                                  fontWeight: FontWeight.bold,fontSize: 14),),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 4,
+                                              child: Column(
+                                                children: [
+                                                  Expanded(
+                                                    child: ClipRRect(
+                                                      borderRadius: BorderRadius.circular(15),
+                                                      child: CachedNetworkImage(
+                                                        imageUrl: course[index].courseImageUrl,
+                                                        placeholder: (context, url) =>
+                                                            Center(child: CircularProgressIndicator(),
+                                                              heightFactor: 30,
+                                                              widthFactor: 30,),
+                                                        errorWidget: (context, url, error) =>
+                                                            Icon(Icons.error),
+                                                        fit: BoxFit.fill,
+                                                        height: 100 * verticalScale,
+                                                        width: 127 * horizontalScale,
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                          },
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 20,
+                        top: 10,
+                      ),
+                      child: Text(
+                        'Success Stories',
+                        textScaleFactor: min(horizontalScale, verticalScale),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Color.fromRGBO(0, 0, 0, 1),
+                            fontFamily: 'Poppins',
+                            fontSize: 23,
+                            letterSpacing:
+                            0 /*percentages not used in flutter. defaulting to zero*/,
+                            fontWeight: FontWeight.w500,
+                            height: 1),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    Container(
+                      // height: screenHeight * 0.81 * verticalScale,
+                      height: 200,
+                      width: screenWidth,
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      child: FutureBuilder<List<FirebaseFile>>(
+                        future: futureFiles,
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.waiting:
+                              return Center(child: CircularProgressIndicator());
+                            default:
+                              if (snapshot.hasError) {
+                                return Center(
+                                    child: Text(
+                                      'Some error occurred!',
+                                      textScaleFactor: min(horizontalScale, verticalScale),
+                                    ));
+                              } else {
+                                final files = snapshot.data!;
+
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        // physics: NeverScrollableScrollPhysics(),
+                                        itemCount: files.length,
+                                        itemBuilder: (context, index) {
+                                          final file = files[index];
+                                          return
+                                            Container(
+
+                                                decoration: BoxDecoration(
+                                                    color: HexColor("#FFFFFF"),
+                                                    borderRadius: BorderRadius.circular(15),
+                                                    boxShadow: [
+                                                      BoxShadow(color: Colors.grey,blurRadius: 5,offset: Offset(0,1))
+                                                    ]
+                                                ),
+                                                margin: EdgeInsets.only(left: 15,top: 5,bottom: 5),
+                                                padding: EdgeInsets.only(left: 15,right: 15,top: 12,bottom: 10),
+                                                height: 200,
+                                                width: 300,
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.circular(20),
+                                                  child: CachedNetworkImage(
+                                                    placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                                    errorWidget: (context, url, error) => Icon(Icons.error),
+                                                    imageUrl: file.url,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                )
+                                            );
+                                          // buildFile(context, file);
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+                          }
+                        },
+                      ),
+                    ),
+                    //SizedBox(height: 15,),
+                    Container(
+                      width: 414 * horizontalScale,
+                      height: 250 * verticalScale,
+                      child: Image.network('https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Fhomeimage2.png?alt=media&token=cc13e37f-63d7-4036-a0ad-338becea925e',
+                      fit: BoxFit.fill),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 20,
+                        top: 20,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'About Me',
+                            textScaleFactor: min(horizontalScale, verticalScale),
+                            style: TextStyle(
+                                color: Color.fromRGBO(0, 0, 0, 1),
+                                fontFamily: 'Poppins',
+                                fontSize: 25,
+                                letterSpacing:
+                                0 /*percentages not used in flutter. defaulting to zero*/,
+                                fontWeight: FontWeight.w500,
+                                height: 1),
+                          ),
+                          Container(
+                            width: 60 * horizontalScale,
+                            child: Divider(
+                                color: Color.fromRGBO(156, 91, 255, 1), thickness: 2),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 20, top: 10, bottom: 20),
+                      child: Text(
+                        'I have transitioned my career from Manual Tester to Data Scientist by upskilling myself on my own from various online resources and doing lots of Hands-on practice. For internal switch I sent around 150 mails to different project managers, interviewed in 20 and got selected in 10 projects.\nWhen it came to changing company I put papers with NO offers in hand. And in the notice period I struggled to get a job. First 2 months were very difficult but in the last month things started changing miraculously.\nI attended 40+ interviews in span of 3 months with the help of Naukri and LinkedIn profile Optimizations and got offer by 8 companies.\n Based on my career transition and industrial experience, I have designed this course so anyone from any background can learn Data Science and become Job-Ready at affordable price.',
+                      ),
+                    ),
+                  ],
+                ),
+              );
             }
           }),
     );
   }
+  int numberOfDays = 3;
 }

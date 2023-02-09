@@ -289,8 +289,7 @@ class _LoginPageState extends State<LoginPage> {
                                         } else if (phoneController
                                             .text.isEmpty) {
                                           Fluttertoast.showToast(
-                                              msg:
-                                                  'Please enter a phone number');
+                                              msg: 'Please enter a phone number');
                                         }
                                       },
                                       child: Container(
@@ -607,7 +606,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         SizedBox(
-                          height: 40,
+                          height: 20,
                         ),
                         Container(
                             margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -646,23 +645,70 @@ class _LoginPageState extends State<LoginPage> {
                             )),
                         Container(
                           height: 40,
-                          constraints: const BoxConstraints(maxWidth: 500),
+                          constraints:
+                          const BoxConstraints(maxWidth: 500),
                           margin: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
-                          child: CupertinoTextField(
+                          child: InternationalPhoneNumberInput(
                             maxLength: 10,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(4))),
-                            controller: phoneController,
-                            clearButtonMode: OverlayVisibilityMode.editing,
-                            keyboardType: TextInputType.phone,
-                            maxLines: 1,
-                            placeholder: '+91...',
+                            onInputChanged: (PhoneNumber number) {
+                              print(number.phoneNumber);
+                              print(phoneController.text);
+                              phonenumber =
+                                  number.phoneNumber.toString();
+                              print("phone number: ${phonenumber}");
+                            },
+                            onInputValidated: (bool value) {
+                              print(value);
+                            },
+                            selectorConfig: SelectorConfig(
+                              trailingSpace: false,
+                              selectorType:
+                              PhoneInputSelectorType.DIALOG,
+                            ),
+                            autofillHints: [
+                              AutofillHints.telephoneNumber
+                            ],
+                            autoFocus: true,
+                            textAlignVertical:
+                            TextAlignVertical.center,
+                            textAlign: TextAlign.start,
+                            ignoreBlank: false,
+                            autoValidateMode:
+                            AutovalidateMode.disabled,
+                            selectorTextStyle:
+                            TextStyle(color: Colors.black),
+                            initialValue: number,
+                            textFieldController: phoneController,
+                            formatInput: false,
+                            keyboardType:
+                            TextInputType.numberWithOptions(
+                                signed: true, decimal: true),
+                            onSaved: (PhoneNumber number) {
+                              print('On Saved: $number');
+                              print(phoneController.text);
+                            },
                           ),
                         ),
+                        // Container(
+                        //   height: 40,
+                        //   constraints: const BoxConstraints(maxWidth: 500),
+                        //   margin: const EdgeInsets.symmetric(
+                        //       horizontal: 20, vertical: 10),
+                        //   child: CupertinoTextField(
+                        //     maxLength: 10,
+                        //     padding: const EdgeInsets.symmetric(horizontal: 16),
+                        //     decoration: BoxDecoration(
+                        //         color: Colors.white,
+                        //         borderRadius:
+                        //             const BorderRadius.all(Radius.circular(4))),
+                        //     controller: phoneController,
+                        //     clearButtonMode: OverlayVisibilityMode.editing,
+                        //     keyboardType: TextInputType.phone,
+                        //     maxLines: 1,
+                        //     placeholder: '+91...',
+                        //   ),
+                        // ),
                         SizedBox(
                           height: 10,
                         ),
@@ -745,7 +791,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         SizedBox(
-                          height: 40,
+                          height: 10,
                         ),
                         Container(
                           child: InkWell(

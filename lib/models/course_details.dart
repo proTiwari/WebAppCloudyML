@@ -18,6 +18,7 @@ class CourseDetails {
   String courseContent;
   String reviews;
   bool? show;
+  bool? trial;
 
   CourseDetails({
     required this.courseName,
@@ -39,5 +40,6 @@ class CourseDetails {
     required this.courseContent,
     required this.show,
     required this.reviews,
+    required this.trial,
   });
 }

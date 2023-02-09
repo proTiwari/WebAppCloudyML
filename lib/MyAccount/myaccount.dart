@@ -65,7 +65,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 size: 36,
               ),
               onPressed: () {
-                GoRouter.of(context).pop(context);
+                Navigator.of(context).pop(context);
                 // Navigator.pop(context);
               },
             ),

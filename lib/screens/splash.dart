@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloudyml_app2/services/local_notificationservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import '../authentication/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -27,7 +29,7 @@ class _splashState extends State<splash> {
     super.initState();
     GRecaptchaV3.hideBadge();
     Timer(
-        Duration(seconds: 5),
+        Duration(seconds: 4),
             () => GoRouter.of(context).push('/login')
                 
             //     Navigator.pushReplacement(
@@ -151,136 +153,143 @@ class _splashState extends State<splash> {
     final height = size.height;
     final width = size.width;
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [
-                  Color(0xFF7860DC),
-                  // Color(0xFFC0AAF5),
-                  // Color(0xFFDDD2FB),
-                  Color.fromARGB(255, 158, 2, 148),
-                  // Color.fromARGB(255, 5, 2, 180),
-                  // Color.fromARGB(255, 3, 193, 218)
-                ])),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            SizedBox(
-                height: 350,
-                width: 150,
-                child: Image.asset("assets/splashMainImage.png")),
-            // DropShadowImage(
-            //   image: Image.asset(
-            //     'assets/DP_png.png',
-            //     width: width * .45,
-            //     height: height * .2,
-            //   ),
-            //   offset: const Offset(3, 8),
-            //   scale: .9,
-            //   blurRadius: 10,
-            //   borderRadius: 0,
-            // ),
-            SizedBox(height: 10),
-            Flexible(
-              child: DefaultTextStyle(
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight:
-                  FontWeight.lerp(FontWeight.w900, FontWeight.w900, 10.5),
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 0.5,
-                      color: Colors.black,
-                      offset: Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Text('CloudyML', textAlign: TextAlign.center),
-                // child: AnimatedTextKit(
-                //   animatedTexts: [
-                //     ColorizeAnimatedText(
-                //       'CloudyML',
-                //       textAlign: TextAlign.center,
-                //       colors: [
-                //         Colors.white,
-                //         Color.fromARGB(255, 245, 245, 245),
-                //         Colors.purple,
-                //         Color.fromARGB(255, 79, 3, 210),
-                //         Colors.pinkAccent,
-                //         Colors.amber,
-                //         Colors.teal,
-                //         // Colors.red,
-                //       ],
-                //       textStyle: TextStyle(fontSize: 50),
-                //       speed: Duration(milliseconds: 500),
-                //     ),
-                //   ],
-                //   pause: Duration(milliseconds: 1500),
-                //   totalRepeatCount: 1,
-                //   isRepeatingAnimation: true,
-                // ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Flexible(
-              child: DefaultTextStyle(
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      blurRadius: .5,
-                      color: Colors.black,
-                      offset: Offset(0, 7),
-                    ),
-                  ],
-                ),
-                child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                        text: '#Learn',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Colors.white),
-                        children: <TextSpan>[
-                          TextSpan(
-                              text: 'By',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.yellow)),
-                          TextSpan(
-                              text: 'Doing ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.white))
-                        ])),
-                // child: AnimatedTextKit(
-                //     pause: Duration(seconds: 1),
-                //     animatedTexts: [
-                //       TyperAnimatedText('#LearnByDoing',
-                //           textAlign: TextAlign.center,
-                //           speed: Duration(milliseconds: 300),
-                //           curve: Curves.bounceInOut),
-                //     ],
-                //     totalRepeatCount: 1,
-                //     isRepeatingAnimation: true,
-                //     onFinished: () {
-                //       pushToHome();
-                //     }),
-              ),
-            ),
-          ],
+      body: Center(
+        child: SpinKitSpinningLines(
+          color: Colors.deepPurpleAccent,
+          size: 150,
+          duration: Duration(milliseconds: 200),
         ),
       ),
+      // body: Container(
+      //   decoration: BoxDecoration(
+      //       gradient: LinearGradient(
+      //           begin: Alignment.bottomLeft,
+      //           end: Alignment.topRight,
+      //           colors: [
+      //             Color(0xFF7860DC),
+      //             // Color(0xFFC0AAF5),
+      //             // Color(0xFFDDD2FB),
+      //             Color.fromARGB(255, 158, 2, 148),
+      //             // Color.fromARGB(255, 5, 2, 180),
+      //             // Color.fromARGB(255, 3, 193, 218)
+      //           ])),
+      //   child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     crossAxisAlignment: CrossAxisAlignment.stretch,
+      //     mainAxisSize: MainAxisSize.max,
+      //     children: [
+      //       SizedBox(
+      //           height: 350,
+      //           width: 150,
+      //           child: Image.asset("assets/splashMainImage.png")),
+      //       // DropShadowImage(
+      //       //   image: Image.asset(
+      //       //     'assets/DP_png.png',
+      //       //     width: width * .45,
+      //       //     height: height * .2,
+      //       //   ),
+      //       //   offset: const Offset(3, 8),
+      //       //   scale: .9,
+      //       //   blurRadius: 10,
+      //       //   borderRadius: 0,
+      //       // ),
+      //       SizedBox(height: 10),
+      //       Flexible(
+      //         child: DefaultTextStyle(
+      //           style: TextStyle(
+      //             fontSize: 40,
+      //             fontWeight:
+      //             FontWeight.lerp(FontWeight.w900, FontWeight.w900, 10.5),
+      //             color: Colors.white,
+      //             shadows: [
+      //               Shadow(
+      //                 blurRadius: 0.5,
+      //                 color: Colors.black,
+      //                 offset: Offset(0, 8),
+      //               ),
+      //             ],
+      //           ),
+      //           child: Text('CloudyML', textAlign: TextAlign.center),
+      //           // child: AnimatedTextKit(
+      //           //   animatedTexts: [
+      //           //     ColorizeAnimatedText(
+      //           //       'CloudyML',
+      //           //       textAlign: TextAlign.center,
+      //           //       colors: [
+      //           //         Colors.white,
+      //           //         Color.fromARGB(255, 245, 245, 245),
+      //           //         Colors.purple,
+      //           //         Color.fromARGB(255, 79, 3, 210),
+      //           //         Colors.pinkAccent,
+      //           //         Colors.amber,
+      //           //         Colors.teal,
+      //           //         // Colors.red,
+      //           //       ],
+      //           //       textStyle: TextStyle(fontSize: 50),
+      //           //       speed: Duration(milliseconds: 500),
+      //           //     ),
+      //           //   ],
+      //           //   pause: Duration(milliseconds: 1500),
+      //           //   totalRepeatCount: 1,
+      //           //   isRepeatingAnimation: true,
+      //           // ),
+      //         ),
+      //       ),
+      //       SizedBox(height: 10),
+      //       Flexible(
+      //         child: DefaultTextStyle(
+      //           style: TextStyle(
+      //             fontSize: 30,
+      //             fontWeight: FontWeight.bold,
+      //             color: Colors.white,
+      //             shadows: [
+      //               Shadow(
+      //                 blurRadius: .5,
+      //                 color: Colors.black,
+      //                 offset: Offset(0, 7),
+      //               ),
+      //             ],
+      //           ),
+      //           child: RichText(
+      //               textAlign: TextAlign.center,
+      //               text: TextSpan(
+      //                   text: '#Learn',
+      //                   style: TextStyle(
+      //                       fontWeight: FontWeight.bold,
+      //                       fontSize: 18,
+      //                       color: Colors.white),
+      //                   children: <TextSpan>[
+      //                     TextSpan(
+      //                         text: 'By',
+      //                         style: TextStyle(
+      //                             fontWeight: FontWeight.bold,
+      //                             fontSize: 18,
+      //                             color: Colors.yellow)),
+      //                     TextSpan(
+      //                         text: 'Doing ',
+      //                         style: TextStyle(
+      //                             fontWeight: FontWeight.bold,
+      //                             fontSize: 18,
+      //                             color: Colors.white))
+      //                   ])),
+      //           // child: AnimatedTextKit(
+      //           //     pause: Duration(seconds: 1),
+      //           //     animatedTexts: [
+      //           //       TyperAnimatedText('#LearnByDoing',
+      //           //           textAlign: TextAlign.center,
+      //           //           speed: Duration(milliseconds: 300),
+      //           //           curve: Curves.bounceInOut),
+      //           //     ],
+      //           //     totalRepeatCount: 1,
+      //           //     isRepeatingAnimation: true,
+      //           //     onFinished: () {
+      //           //       pushToHome();
+      //           //     }),
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // ),
     );
   }
 }

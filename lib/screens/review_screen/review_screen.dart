@@ -129,7 +129,7 @@ class _Review1State extends State<ReviewsScreen> {
               // ),
               Container(
                 // height: screenHeight * 0.81 * verticalScale,
-                height: 200,
+                height: 230,
                 width: screenWidth,
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: FutureBuilder<List<FirebaseFile>>(
@@ -174,8 +174,7 @@ class _Review1State extends State<ReviewsScreen> {
                                             right: 5,
                                             top: 5,
                                             bottom: 5),
-                                        height: 180,
-                                        width: 180,
+                                        width: 210,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(20),
                                           child: InkWell(
@@ -266,7 +265,7 @@ class _Review1State extends State<ReviewsScreen> {
               // ),
               Container(
 
-                height: 200,
+                height: 230,
                 width: screenWidth,
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: FutureBuilder<List<FirebaseFile>>(
@@ -312,7 +311,7 @@ class _Review1State extends State<ReviewsScreen> {
                                             top: 5,
                                             bottom: 5),
                                         height: 180,
-                                        width: 180,
+                                        width: 210,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(20),
                                           child: InkWell(
@@ -400,7 +399,7 @@ class _Review1State extends State<ReviewsScreen> {
               ),
               // SizedBox(height: 10),
               Container(
-                height: 200,
+                height: 230,
                 width: screenWidth,
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: FutureBuilder<List<FirebaseFile>>(
@@ -446,7 +445,7 @@ class _Review1State extends State<ReviewsScreen> {
                                             top: 5,
                                             bottom: 5),
                                         height: 180,
-                                        width: 180,
+                                        width: 210,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(20),
                                           child: InkWell(

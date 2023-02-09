@@ -54,10 +54,10 @@ class _HomeScreenState extends State<HomeScreen> {
           .then((value) {
         setState(() {
           if(value.data()!['paidCourseNames'] == null || value.data()!['paidCourseNames'] == []){
-
             courses = [];
           }else{
             courses = value.data()!['paidCourseNames'];
+            getPercentageOfCourse();
           }
           load = false;
         });
@@ -164,79 +164,82 @@ class _HomeScreenState extends State<HomeScreen> {
   var coursePercent = {};
 
   getPercentageOfCourse() async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get()
-          .then((value) async {
-        try {
-          courses = value.data()!['paidCourseNames'];
-        } catch (e) {
-          print('donggg ${e.toString()}');
-        }
-      });
-    } catch (e) {
-      print(e.toString());
-    }
-
-    try {
-      var data = await FirebaseFirestore.instance
-          .collection("courseprogress")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
-      var getData = data.data();
-
-      for (var courseId in courses) {
-        print("ID = = ${courseId}");
-        int count = 0;
-        try {
-          await FirebaseFirestore.instance
-              .collection("courses")
-              .where("id", isEqualTo: courseId)
-              .get()
-              .then((value) async {
-            if (value.docs.first.exists) {
-              var coursesName = value.docs.first.data()["courses"];
-              if (coursesName != null) {
-                print("name");
-                for (var Id in coursesName) {
-                  double num = (getData![Id + "percentage"] != null)
-                      ? getData[Id + "percentage"]
-                      : 0;
-                  count += num.toInt();
-                  print("Count = $count");
-                  coursePercent[courseId] =
-                      count ~/ (value.docs.first.data()["courses"].length);
-                }
-              } else {
-                print("yy");
-                print(getData![
-                value.docs.first.data()["id"].toString() + "percentage"]
-                    .toString());
-                coursePercent[courseId] = getData[
-                value.docs.first.data()["id"].toString() +
-                    "percentage"] !=
-                    null
-                    ? getData[
-                value.docs.first.data()["id"].toString() + "percentage"]
-                    : 0;
-              }
-            }
-          }).catchError((err) => print("Error"));
-        } catch (err) {
-          print(err);
-        }
+    if (courses.length != 0) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .get()
+            .then((value) async {
+          try {
+            courses = value.data()!['paidCourseNames'];
+          } catch (e) {
+            print('donggg ${e.toString()}');
+          }
+        });
+      } catch (e) {
+        print(e.toString());
       }
-    } catch (e) {
-      print('my courses error ${e.toString()}');
-    }
+      var getData;
+      try {
+        var data = await FirebaseFirestore.instance
+            .collection("courseprogress")
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .get().then((value) {
+          getData = value.data();
+        }).catchError((e) => print(e.toString()));
 
-    print("done");
-    setState(() {
-      coursePercent;
-    });
-    print(coursePercent);
+        for (var courseId in courses) {
+          print("ID = = ${courseId}");
+          int count = 0;
+          try {
+            await FirebaseFirestore.instance
+                .collection("courses")
+                .where("id", isEqualTo: courseId)
+                .get()
+                .then((value) async {
+              if (value.docs.first.exists) {
+                var coursesName = value.docs.first.data()["courses"];
+                if (coursesName != null) {
+                  print("name");
+                  for (var Id in coursesName) {
+                    double num = (getData![Id + "percentage"] != null)
+                        ? getData[Id + "percentage"]
+                        : 0;
+                    count += num.toInt();
+                    print("Count = $count");
+                    coursePercent[courseId] =
+                        count ~/ (value.docs.first.data()["courses"].length);
+                  }
+                } else {
+                  print("yy");
+                  print(getData![
+                  value.docs.first.data()["id"].toString() + "percentage"]
+                      .toString());
+                  coursePercent[courseId] = getData[
+                  value.docs.first.data()["id"].toString() +
+                      "percentage"] !=
+                      null
+                      ? getData[
+                  value.docs.first.data()["id"].toString() + "percentage"]
+                      : 0;
+                }
+              }
+            }).catchError((err) => print("${err.toString()} Error"));
+          } catch (err) {
+            print(err);
+          }
+        }
+      } catch (e) {
+        print('my courses error ${e.toString()}');
+      }
+
+      print("done");
+      setState(() {
+        coursePercent;
+      });
+      print(coursePercent);
+    }
   }
 
   var textStyle = TextStyle(
@@ -251,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     fetchCourses();
     dbCheckerForPayInParts();
-    getPercentageOfCourse();
+
     getCourseName();
     userData();
     print('user enrolled in number of courses ${courses.length}');
@@ -286,6 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             icon: Icon(
                               Icons.menu,
                               color: Colors.white,
+                              size: 30,
                             )),
                         SizedBox(
                           width: horizontalScale * 15,
@@ -655,7 +659,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       ],
                                                     ),
                                                     SizedBox(height: 5,),
-                                                    Container(
+                                                    courses.length != 0 && coursePercent != {} ?  Container(
                                                       height: 15,
                                                       child: Row(
                                                         children: [
@@ -677,7 +681,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             "${coursePercent[course[index].courseId.toString()]!=null?coursePercent[course[index].courseId]:0}%", style: TextStyle(fontSize: 10),)
                                                         ],
                                                       ),
-                                                    ),
+                                                    ) : SizedBox(),
                                                   ],
                                                 ),
                                               ),
@@ -732,7 +736,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               return Container(
                               );
                             }
-                            return Row(
+                            return course[index].show! ? Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 InkWell(
@@ -950,7 +954,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               ],
-                            );
+                            ) : Container();
                           }),
                     ),
                   ),
