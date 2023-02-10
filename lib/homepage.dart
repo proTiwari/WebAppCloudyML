@@ -145,7 +145,8 @@ class _HomeState extends State<Home> {
   setFeaturedCourse(List<CourseDetails> course){
     featuredCourse.clear();
     course.forEach((element) {
-      if(element.FcSerialNumber.isNotEmpty && element.FcSerialNumber != null && element.isItComboCourse == true){
+      if(element.FcSerialNumber.isNotEmpty && element.FcSerialNumber != null &&
+          element.isItComboCourse == true){
         featuredCourse.add(element);
       }
     });
@@ -1488,7 +1489,7 @@ class _HomeState extends State<Home> {
                               child: ListView.builder(
                                   shrinkWrap: true,
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: course.length,
+                                  itemCount: featuredCourse.length,
                                   itemBuilder:
                                       (BuildContext context, index) {
                                     if (featuredCourse[index].courseName ==
@@ -1496,19 +1497,30 @@ class _HomeState extends State<Home> {
                                       return Container();
                                     }
                                     // if (course[index].isItComboCourse == true)
+
                                     return InkWell(
                                       onTap: () {
                                         setState(() {
-                                          courseId = course[index]
+                                          courseId = featuredCourse[index]
                                               .courseDocumentId;
                                         });
                                         print(courseId);
-                                        if (course[index].isItComboCourse) {
+                                        if (featuredCourse[index].isItComboCourse) {
+
+                                          print(featuredCourse[index].courses);
+
 
                                           final id = index.toString();
-                                          final courseName = course[index].courseName;
-                                          final courseP = course[index].coursePrice;
-                                          GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
+                                          final cID = featuredCourse[index].courseDocumentId;
+                                          final courseName = featuredCourse[index].courseName;
+                                          final courseP = featuredCourse[index].coursePrice;
+                                          GoRouter.of(context).pushNamed(
+                                              'featuredCourses',
+                                              queryParams: {
+                                                'cID': cID,
+                                                'courseName': courseName,
+                                                'id': id,
+                                                'coursePrice': courseP});
 
                                           // Navigator.push(
                                           //   context,
@@ -1681,33 +1693,38 @@ class _HomeState extends State<Home> {
                                                           children: [
                                                             ElevatedButton(
                                                                 onPressed: () {
-                                                                      setState(() {
-                                                                        courseId = featuredCourse[index]
-                                                                            .courseDocumentId;
-                                                                      });
-                                                                      print(courseId);
-                                                                      if (featuredCourse[index].isItComboCourse) {
+                                                                  setState(() {
+                                                                    courseId = featuredCourse[index]
+                                                                        .courseDocumentId;
+                                                                  });
+                                                                  print(courseId);
+                                                                  if (featuredCourse[index].isItComboCourse) {
+                                                                    final id = index.toString();
+                                                                    final courseName = featuredCourse[index].courseName;
+                                                                    final courseP = featuredCourse[index].coursePrice;
+                                                                    GoRouter.of(context).pushNamed('comboStore', 
+                                                                    queryParams: {
+                                                                    'courseName': courseName, 
+                                                                    'id': id, 
+                                                                    'coursePrice': courseP, 
+                                                                    'courses': featuredCourse[index].courses});
 
-                                                                        final id = index.toString();
-                                                                        final courseName = featuredCourse[index].courseName;
-                                                                        final courseP = featuredCourse[index].coursePrice;
-                                                                        GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
-                                                                        // Navigator.push(
-                                                                        //   context,
-                                                                        //   MaterialPageRoute(
-                                                                        //     builder: (context) =>
-                                                                        //         ComboStore(
-                                                                        //           courses:
-                                                                        //           course[index].courses,
-                                                                        //         ),
-                                                                        //   ),
-                                                                        // );
+                                                                    // Navigator.push(
+                                                                    //   context,
+                                                                    //   MaterialPageRoute(
+                                                                    //     builder: (context) =>
+                                                                    //         ComboStore(
+                                                                    //           courses:
+                                                                    //           course[index].courses,
+                                                                    //         ),
+                                                                    //   ),
+                                                                    // );
 
-                                                                      } else {
-                                                                        final id = index.toString();
-                                                                        GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
-                                                                      }
-                                                                    },
+                                                                  } else {
+                                                                    final id = index.toString();
+                                                                    GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                                                                  }
+                                                                },
                                                                 style: ElevatedButton
                                                                     .styleFrom(
                                                                   backgroundColor: HexColor("8346E1"),
@@ -1775,159 +1792,7 @@ class _HomeState extends State<Home> {
                           ],
                         ),
                       ),
-                      // Container(
-                      //   height: screenHeight / 20,
-                      //   width: screenWidth,
-                      // ),
-                      // Container(
-                      //   width: screenWidth,
-                      //   height: screenHeight / 3,
-                      //   color: Colors.white,
-                      //   child: Row(
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: [
-                      //       Container(
-                      //         width: screenWidth / 2.4,
-                      //         height: screenHeight / 5.5,
-                      //         decoration: BoxDecoration(
-                      //             color: HexColor("FFF4CB"),
-                      //             border: Border.all(
-                      //               color: HexColor('BE9400'),
-                      //               width: 1,
-                      //             ),
-                      //             borderRadius: BorderRadius.circular(10)),
-                      //         child: Row(
-                      //           children: [
-                      //             Padding(
-                      //               padding: const EdgeInsets.only(
-                      //                   top: 10, bottom: 10, left: 20, right: 20),
-                      //               child: Image.network(
-                      //                 "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FdownloadLogo.png?alt=media&token=031e6f59-cbc4-4c6a-a735-db14da7ec1fd",
-                      //                 fit: BoxFit.fill,
-                      //               ),
-                      //             ),
-                      //             Padding(
-                      //               padding:
-                      //                   const EdgeInsets.only(top: 10.0, right: 20),
-                      //               child: Column(
-                      //                 crossAxisAlignment: CrossAxisAlignment.start,
-                      //                 children: [
-                      //                   Text(
-                      //                     'Download The App Now!',
-                      //                     style: TextStyle(
-                      //                         color: HexColor("C19700"),
-                      //                         fontFamily: 'Poppins',
-                      //                         fontWeight: FontWeight.bold,
-                      //                         fontSize: 16),
-                      //                   ),
-                      //                   SizedBox(height: 8,),
-                      //                   Text(
-                      //                     'Learn new skill anywhere any time',
-                      //                     style: TextStyle(
-                      //                         color: HexColor("231F20"),
-                      //                         fontFamily: 'Poppins',
-                      //                         fontSize: 12),
-                      //                   ),
-                      //                   SizedBox(height: 10,),
-                      //                   Row(
-                      //                     children: [
-                      //                       Container(
-                      //                         child: Image.network(
-                      //                           "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FplaystoreIcon.png?alt=media&token=526c9fc9-0ec4-4b89-b991-cb42e272a1bd",
-                      //                           fit: BoxFit.fill,
-                      //                         ),
-                      //                       ),
-                      //                       SizedBox(width: 5,),
-                      //                       Container(
-                      //                         child: Image.network(
-                      //                           "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FappStoreLogo.png?alt=media&token=bc836ab8-451e-402b-9c48-cb16d02e9861",
-                      //                           fit: BoxFit.fill,
-                      //                         ),
-                      //                       ),
-                      //                     ],
-                      //                   ),
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ],
-                      //         ),
-                      //       ),
-                      //       SizedBox(
-                      //         width: 20,
-                      //       ),
-                      //       Container(
-                      //         width: screenWidth / 2.4,
-                      //         height: screenHeight / 5.5,
-                      //         decoration: BoxDecoration(
-                      //             color: HexColor("CBE9FF"),
-                      //             border: Border.all(
-                      //               color: HexColor('007EDA'),
-                      //               width: 1,
-                      //             ),
-                      //             borderRadius: BorderRadius.circular(10)),
-                      //         child: Row(
-                      //           children: [
-                      //             Padding(
-                      //               padding: const EdgeInsets.only(
-                      //                   top: 10, bottom: 10, left: 20, right: 20),
-                      //               child: Image.network(
-                      //                 "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Freward.png?alt=media&token=4266fe1f-8875-4c52-8e83-42e65a08fb4c",
-                      //                 fit: BoxFit.fill,
-                      //               ),
-                      //             ),
-                      //             Padding(
-                      //               padding:
-                      //               const EdgeInsets.only(top: 10.0, right: 20),
-                      //               child: Column(
-                      //                 crossAxisAlignment: CrossAxisAlignment.start,
-                      //                 children: [
-                      //                   Text(
-                      //                     'Learn, Sell & Earn',
-                      //                     style: TextStyle(
-                      //                         color: HexColor("007EDA"),
-                      //                         fontFamily: 'Poppins',
-                      //                         fontWeight: FontWeight.bold,
-                      //                         fontSize: 16),
-                      //                   ),
-                      //                   SizedBox(height: 8,),
-                      //                   Text(
-                      //                     'Join our affiliate program and grow with us',
-                      //                     style: TextStyle(
-                      //                         color: HexColor("231F20"),
-                      //                         fontFamily: 'Poppins',
-                      //                         fontSize: 10),
-                      //                   ),
-                      //                   SizedBox(height: 10,),
-                      //                   Container(
-                      //                     decoration: BoxDecoration(
-                      //                       border: Border.all(
-                      //                         width: 1.5,
-                      //                       ),
-                      //                       borderRadius: BorderRadius.circular(25),
-                      //                     ),
-                      //                     child: ElevatedButton(
-                      //                         onPressed: () {},
-                      //                         style: ElevatedButton.styleFrom(
-                      //                           backgroundColor: HexColor('CBE9FF'),
-                      //                           shape: RoundedRectangleBorder(
-                      //                             borderRadius: BorderRadius.circular(25),
-                      //                           )
-                      //                         ),
-                      //                         child: Text("Explore More",
-                      //                           style:  TextStyle(
-                      //                             fontSize: 12,
-                      //                       color: HexColor("2C2C2C"),
-                      //                     ),)),
-                      //                   )
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ],
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
+                 
                     ],
                   ),
                 );
@@ -2635,19 +2500,24 @@ class _HomeState extends State<Home> {
                                   // }
 
                                   if (featuredCourse[index].isItComboCourse) {
+                                    print(featuredCourse[index].courses);
 
                                     final id = index.toString();
                                     final courseName = featuredCourse[index].courseName;
                                     final courseP = featuredCourse[index].coursePrice;
-                                    GoRouter.of(context).pushNamed('comboStore',
-                                        queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
+                                    GoRouter.of(context).pushNamed('featuredCourses',
+                                        queryParams: {
+                                      'courseName': courseName,
+                                          'id': id,
+                                          'coursePrice': courseP});
+
                                     // Navigator.push(
                                     //   context,
                                     //   MaterialPageRoute(
                                     //     builder: (context) =>
                                     //         ComboStore(
                                     //           courses:
-                                    //           course[index].courses,
+                                    //           featuredCourse[index].courses,
                                     //         ),
                                     //   ),
                                     // );

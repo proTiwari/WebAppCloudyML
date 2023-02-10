@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -19,25 +20,24 @@ import 'package:share_extend/share_extend.dart';
 import '../Services/code_generator.dart';
 import '../Services/deeplink_service.dart';
 
-class ComboStore extends StatefulWidget {
+class FeatureCourses extends StatefulWidget {
   final String? id;
   final String? cName;
   final String? courseP;
-
-  final List<dynamic>? courses;
+  final String? cID;
 
   static ValueNotifier<String> coursePrice = ValueNotifier('');
   static ValueNotifier<Map<String, dynamic>>? map = ValueNotifier({});
   static ValueNotifier<double> _currentPosition = ValueNotifier<double>(0.0);
   static ValueNotifier<double> _closeBottomSheetAtInCombo =
   ValueNotifier<double>(0.0);
-  ComboStore({Key? key, this.courses, this.id, this.cName, this.courseP}) : super(key: key);
+  FeatureCourses({Key? key, this.id, this.cID, this.cName, this.courseP}) : super(key: key);
 
   @override
-  State<ComboStore> createState() => _ComboStoreState();
+  State<FeatureCourses> createState() => _FeatureCoursesState();
 }
 
-class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
+class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
   // var _razorpay = Razorpay();
   var amountcontroller = TextEditingController();
   TextEditingController couponCodeController = TextEditingController();
@@ -79,6 +79,30 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
   var moneyreferalcode;
   var moneyreferallink;
 
+  List<CourseDetails> featuredCourse = [];
+
+  setFeaturedCourse(List<CourseDetails> course){
+    featuredCourse.clear();
+
+    course.forEach((element) {
+      print('dipen $element ');
+      if(element.courseDocumentId == widget.cID) {
+        featuredCourse.add(element);
+        // featuredCourse.add(element.courses);
+
+        print('element ${featuredCourse[0].courseId} ');
+      }
+      // if(element.FcSerialNumber.isNotEmpty && element.FcSerialNumber != null &&
+      //     element.isItComboCourse == true){
+      //   featuredCourse.add(element);
+      // }
+    });
+    // featuredCourse.sort((a, b) {
+    //   return int.parse(a.FcSerialNumber).compareTo(int.parse(b.FcSerialNumber));}
+    // );
+    print('function ');
+  }
+
   void lookformoneyref() async {
     try {
       await FirebaseFirestore.instance
@@ -114,15 +138,20 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
         name = value.data()!['name'];
         print('ufbufb--$name');
         print("this is -- $courseId");
+        print('fcc $featuredCourse');
       });
     });
   }
 
+
   @override
   void initState() {
     super.initState();
+
+
     lookformoneyref();
     getCourseName();
+    // print(widget.courses);
     _scrollController.addListener(_scrollListener);
   }
 
@@ -131,8 +160,8 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
     _positionKey.currentContext?.findRenderObject() as RenderBox;
     Offset position = box.localToGlobal(Offset.zero); //this is global position
     double pixels = position.dy;
-    ComboStore._closeBottomSheetAtInCombo.value = pixels;
-    ComboStore._currentPosition.value = _scrollController.position.pixels;
+    FeatureCourses._closeBottomSheetAtInCombo.value = pixels;
+    FeatureCourses._currentPosition.value = _scrollController.position.pixels;
     print(pixels);
     print(_scrollController.position.pixels);
   }
@@ -148,16 +177,17 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
   @override
   Widget build(BuildContext context) {
     List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
+    setFeaturedCourse(course);
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
     return Scaffold(
       bottomSheet: PayNowBottomSheet(
-        currentPosition: ComboStore._currentPosition,
+        currentPosition: FeatureCourses._currentPosition,
         coursePrice: '₹${widget.courseP!}/-',
         map: comboMap,
-        popBottomSheetAt: ComboStore._closeBottomSheetAtInCombo,
+        popBottomSheetAt: FeatureCourses._closeBottomSheetAtInCombo,
         isItComboCourse: true,
       ),
       body: Stack(
@@ -199,20 +229,33 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                       // physics: NeverScrollableScrollPhysics(),
                       itemCount: course.length,
                       itemBuilder: (BuildContext context, index) {
+
+                        print('Fc courses ');
+
+                        List courseList = [];
+                        for (var i in featuredCourse[0].courses) {
+                          for (var j in course) {
+                            if (i == j.courseId) {
+                              courseList.add(j);
+                            }
+                          }
+                        }
+
                         if (course[index].courseName == "null") {
                           return Container();
                         }
-                        if (widget.courses!.contains(course[index].courseId)) {
+                        if (courseList.length != 0) {
                           return Padding(
                             padding: const EdgeInsets.only(
                                 bottom: 8.0, top: 8, left: 20.0, right: 20.0),
                             child: InkWell(
                               onTap: () {
                                 setState(() {
-                                  courseId = course[index].courseDocumentId;
+                                  courseId = courseList[index].courseDocumentId;
                                 });
                                 final id = index.toString();
-                                GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                                GoRouter.of(context).pushNamed('catalogue',
+                                    queryParams: {'id': id});
                               },
                               child: Container(
                                 width: 354 * horizontalScale,
@@ -258,7 +301,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                                             )),
                                         child: CachedNetworkImage(
                                           imageUrl:
-                                          course[index].courseImageUrl,
+                                          courseList[index].courseImageUrl,
                                           placeholder: (context, url) =>
                                               Center(child: CircularProgressIndicator()),
                                           errorWidget: (context, url, error) =>
@@ -280,7 +323,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                                           // width: 170,
                                           // height: 42,
                                           child: Text(
-                                            course[index].courseName,
+                                            courseList[index].courseName,
                                             textScaleFactor: min(
                                                 horizontalScale, verticalScale),
                                             style: TextStyle(
@@ -300,7 +343,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                                           width: 300 * horizontalScale,
                                           // height: 24.000001907348633,
                                           child: Text(
-                                            course[index].courseDescription,
+                                            courseList[index].courseDescription,
                                             // overflow: TextOverflow.ellipsis,
                                             textScaleFactor: min(
                                                 horizontalScale, verticalScale),
@@ -568,8 +611,8 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                       children: [
                         InkWell(
                           onTap: () {
-                            Navigator.of(context).pop();
-                            // GoRouter.of(context).push('/home');
+                            // Navigator.of(context).pop();
+                            GoRouter.of(context).push('/home');
                           },
                           child: Icon(
                             Icons.arrow_back,

@@ -415,6 +415,7 @@ class _VideoScreenState extends State<VideoScreen> {
   List<dynamic>? _getVideoPercentageList;
   String? CourseID;
 
+
   getProgressData() async {
     await FirebaseFirestore.instance
         .collection("courseprogress")
@@ -428,11 +429,15 @@ class _VideoScreenState extends State<VideoScreen> {
           .collection("courses")
           .doc(widget.cID)
           .get();
-      CourseID = await res.get("id");
+      CourseID  = await res.get("id");
       print('course id - $CourseID ');
 
-      if (value.exists && value.data()![CourseID] != null) {
-        var list = await res.get("curriculum1")[widget.courseName];
+      var list = await res.get("curriculum1")[widget.courseName];
+
+
+      if (value.exists && value.data()![CourseID]!=null)
+      {
+
         print("List-----$list");
         for(int i=0;i<list.length;i++)
         {
@@ -441,96 +446,154 @@ class _VideoScreenState extends State<VideoScreen> {
             list[i]["videos"][j]["type"]=="video"?null:list[i]["videos"].removeAt(j);
           }
         }
-        print("data((--- ${value.data()![CourseID]}");
-        var data = value.data()![CourseID];
-        if (list.length == value.data()![CourseID].length) {
-          for (int k = 0; k < list.length; k++) {
-            if (list[k]["videos"].length ==
-                value.data()![CourseID][k][list[k]["id"]].length) {
-            } else {
-              if (list[k]["videos"].length >
-                  value.data()![CourseID][k][list[k]["id"]].length) {
-                for (int g = 0; g < list[k]["videos"].length; g++) {
-                  int count = 0;
-                  value.data()![CourseID][k][list[k]["id"]].forEach((ele) => {
-                        if (ele.containsKey(list[k]["videos"][g]["id"]))
-                          {
-                            // print("True")
-                            count = 1
-                          }
-                        else
-                          {
-                            print("false")
-                            // data[k][list[k]["id"]].add(ele)
-                          }
-                      });
-                  count == 1
-                      ? null
-                      : data[k][list[k]["id"]]
-                          .add({list[k]["videos"][g]["id"].toString(): 0});
-                }
-              } else {
-                for (int g = 0; g < data[k][list[k]["id"]].length; g++) {
-                  int count = 0;
-                  print("====${data[k][list[k]["id"]][g]}");
-                  list[k]["videos"].forEach((ele) => {
-                        if (data[k][list[k]["id"]][g].containsKey(ele["id"]))
-                          {count = 1}
-                        else
-                          {print("false ${ele["id"]}")}
-                      });
-                  count == 0 ? data[k][list[k]["id"]].removeAt(g) : null;
-                }
-              }
-            }
+        list.sort((a, b) {
+          if (a["sr"] > b["sr"]) {
+            return 1;
           }
-        } else {
-          if (list.length > value.data()![CourseID].length) {
-            for (int i = 0; i < list.length; i++) {
-              int count = 0;
-              value.data()![CourseID].forEach((ele) => {
-                    // print("tyypypypyp $ele")
-                    if (ele.containsKey(list[i]["id"]))
-                      {
-                        // print("True")
-                        count = 1
-                      }
-                    else
-                      {
-                        print("false")
-                        // data[k][list[k]["id"]].add(ele)
-                      }
-                  });
-              var listOfID = [];
-              for (int j = 0; j < list[i]["videos"].length; j++) {
-                listOfID.add({list[i]["videos"][j]["id"]: 0});
-              }
-              print("iddddddd");
-              print(listOfID);
-              count == 1
-                  ? null
-                  : data.add({list[i]["id"].toString(): listOfID});
-            }
-          } else {
-            for (int j = 0; j < data.length; j++) {
-              int count = 0;
-              list.forEach((ele) {
-                if (data[j].containsKey(ele["id"])) {
-                  count = 1;
-                }
-              });
-              count == 1 ? null : data.removeAt(j);
+          return -1;
+        });
+
+        /* check */
+        var finalProgressData = [];
+        var progressData = value.data()![CourseID];
+
+        for(int i=0;i<list.length;i++)
+        {
+          for(int k=0;k<progressData.length;k++)
+          {
+            if(progressData[k][list[i]["id"]]!=null)
+            {
+              print("((((((( ${progressData[k]}");
+              finalProgressData.add(progressData[k]);
             }
           }
         }
 
-        await FirebaseFirestore.instance
-            .collection("courseprogress")
-            .doc(_auth.currentUser!.uid)
-            .update({CourseID.toString(): data});
+        print("UUUUUUUUU $finalProgressData");
+
+
+        await FirebaseFirestore.instance.collection("courseprogress").doc(_auth.currentUser!.uid).update({CourseID.toString():finalProgressData});
+
+
+        print("yyyyyyy $list");
+        value.data()![CourseID][0][list[0]["id"]];
+
+        for(int k=0;k<list.length;k++)
+        {
+          if(finalProgressData[k][list[k]["id"]]!=null){
+
+          }
+          else{
+
+          }
+        }
+        // print("&&&&&&&& ${_initialVideoPercentageList[widget.courseName]}");
+
+
+
+        print("data((--- ${finalProgressData}");
+        var data = finalProgressData;
+        print("oooo ${list.length}");
+        if(list.length==finalProgressData.length)
+        {
+          for(int k=0;k<list.length;k++)
+          {
+            if(list[k]["videos"].length==finalProgressData[k][list[k]["id"]].length)
+            {
+
+            }
+            else
+            {
+              if(list[k]["videos"].length>finalProgressData[k][list[k]["id"]].length)
+              {
+                for(int g=0;g<list[k]["videos"].length;g++)
+                {
+                  int count = 0;
+                  finalProgressData[k][list[k]["id"]].forEach((ele)=>{
+                    if(ele.containsKey(list[k]["videos"][g]["id"]))
+                      {
+                        // print("True")
+                        count =1
+                      }
+                    else{
+                      print("false")
+                      // data[k][list[k]["id"]].add(ele)
+                    }
+                  });
+                  count==1?null:data[k][list[k]["id"]].add({list[k]["videos"][g]["id"].toString():0});
+                }
+              }
+              else
+              {
+                for(int g=0;g<data[k][list[k]["id"]].length;g++)
+                {
+                  int count = 0;
+                  print("====${data[k][list[k]["id"]][g]}");
+                  list[k]["videos"].forEach((ele)=>{
+                    if(data[k][list[k]["id"]][g].containsKey(ele["id"]))
+                      {
+                        count =1
+                      }
+                    else{
+                      print("false ${ele["id"]}")
+                    }
+                  });
+                  count==0?data[k][list[k]["id"]].removeAt(g):null;
+                }
+              }
+            }
+          }
+        }
+        else
+        {
+          if(list.length>finalProgressData.length)
+          {
+            for(int i=0;i<list.length;i++)
+            {
+              int count = 0;
+              finalProgressData.forEach((ele)=>{
+                // print("tyypypypyp $ele")
+                if(ele.containsKey(list[i]["id"]))
+                  {
+                    // print("True")
+                    count =1
+                  }
+                else{
+                  print("false")
+                  // data[k][list[k]["id"]].add(ele)
+                }
+              });
+              var listOfID = [];
+              for(int j=0;j<list[i]["videos"].length;j++)
+              {
+                listOfID.add({list[i]["videos"][j]["id"]:0});
+              }
+              print("iddddddd");
+              print(listOfID);
+              count==1?null:data.add({list[i]["id"].toString():listOfID});
+            }
+          }
+          else
+          {
+            for(int j=0;j<data.length;j++)
+            {
+              int count =0;
+              list.forEach((ele){
+                if(data[j].containsKey(ele["id"]))
+                {
+                  count =1;
+                }
+              });
+              count==1?null:data.removeAt(j);
+            }
+          }
+        }
+
+        await FirebaseFirestore.instance.collection("courseprogress").doc(_auth.currentUser!.uid).update({CourseID.toString():data});
         print("finally  $data");
         _getVideoPercentageList = data;
-      } else {
+      }
+      else {
         var list = await res.get("curriculum1")[widget.courseName];
         _initialVideoPercentageList[widget.courseName.toString()] = [];
         for (int i = 0; i < list.length; i++) {
@@ -539,49 +602,31 @@ class _VideoScreenState extends State<VideoScreen> {
           _initialVideoPercentageList[widget.courseName.toString()]
               .add({list[i]["id"].toString(): []});
           for (int j = 0; j < list[i]["videos"].length; j++) {
-            list[i]["videos"][j]["type"] == "video"
-                ? _initialVideoPercentageList[widget.courseName][i]
-                        [list[i]["id"]]
-                    .add({list[i]["videos"][j]["id"]: 0})
-                : null;
+            list[i]["videos"][j]["type"]=="video"?_initialVideoPercentageList[widget.courseName][i]
+            [list[i]["id"]]
+                .add({list[i]["videos"][j]["id"]: 0}):null;
           }
         }
         print("**** $_initialVideoPercentageList");
         await getUserRole();
         await FirebaseFirestore.instance
             .collection("courseprogress")
-            .doc(_auth.currentUser!.uid.toString()).get().then((value) async {
-           if (value.exists) {
-             await FirebaseFirestore.instance
-                 .collection("courseprogress")
-                 .doc(_auth.currentUser!.uid.toString())
-                 .update({
-               CourseID.toString():
-               _initialVideoPercentageList[widget.courseName.toString()],
-               "email": userEmail,
-             }).catchError((err) => print("Error$err"));
-           }  else {
-             await FirebaseFirestore.instance
-                 .collection("courseprogress")
-                 .doc(_auth.currentUser!.uid.toString())
-                 .set({
-               CourseID.toString():
-               _initialVideoPercentageList[widget.courseName.toString()],
-               "email": userEmail,
-             }).catchError((err) => print("Error$err"));
-           }
-        });
-
-
+            .doc(_auth.currentUser!.uid.toString())
+            .update({
+          CourseID.toString():
+          _initialVideoPercentageList[widget.courseName.toString()],
+          "email": userEmail,
+        }).catchError((err)=>print("Error$err"));
         print("done----");
         _getVideoPercentageList =
-            _initialVideoPercentageList[widget.courseName.toString()];
+        _initialVideoPercentageList[widget.courseName.toString()];
       }
     });
     setState(() {
       _getVideoPercentageList;
     });
   }
+
 
   Future download({
     Dio? dio,

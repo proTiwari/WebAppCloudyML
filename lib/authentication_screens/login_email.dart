@@ -18,6 +18,7 @@ import '../Providers/UserProvider.dart';
 import '../authentication/firebase_auth.dart';
 import '../globals.dart';
 import '../models/UserModel.dart';
+import '../router/login_state_check.dart';
 import 'login_username.dart';
 
 class LoginEmailPage extends StatefulWidget {
@@ -70,239 +71,240 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
           backgroundColor: HexColor("7226D1"),
           brightness: Brightness.light,
         ),
-        body: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-          if (constraints.maxWidth >= 700) {
-            return Stack(
-              children: [
-                Container(
-                  child: Row(
+        body: SingleChildScrollView(
+          child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                if (constraints.maxWidth >= 700) {
+                  return Stack(
                     children: [
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          color: Color.fromRGBO(35, 0, 79, 1),
+                      Container(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                color: Color.fromRGBO(35, 0, 79, 1),
+                              ),
+                            ),
+                            Expanded(flex: 1, child: Container()),
+                          ],
                         ),
                       ),
-                      Expanded(flex: 1, child: Container()),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.all(80.00),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          width: 525,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(30),
-                                bottomLeft: Radius.circular(30)),
-                            gradient: LinearGradient(
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                              colors: [
-                                HexColor("440F87"),
-                                HexColor("7226D1"),
-                              ],
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 40.0, // soften the shadow
-                                offset: Offset(
-                                  0, // Move to right 10  horizontally
-                                  2.0, // Move to bottom 10 Vertically
+                      Container(
+                        margin: EdgeInsets.all(80.00),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                width: 525,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(30),
+                                      bottomLeft: Radius.circular(30)),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topRight,
+                                    end: Alignment.bottomLeft,
+                                    colors: [
+                                      HexColor("440F87"),
+                                      HexColor("7226D1"),
+                                    ],
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 40.0, // soften the shadow
+                                      offset: Offset(
+                                        0, // Move to right 10  horizontally
+                                        2.0, // Move to bottom 10 Vertically
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Image.asset(
-                                  'assets/logo.png',
-                                  height: 75,
-                                  width: 110,
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "Let's Explore",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 22),
-                                ),
-                                Text(
-                                  "Data Science Together!",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 34),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                Expanded(
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Image.asset('assets/loginoop.png'),
-                                    // child: SvgPicture.asset(
-                                    //   'assets/Frame.svg',
-                                    //   height: verticalScale * 360,
-                                    //   width: horizontalScale * 300,
-                                    //   fit: BoxFit.fill,
-                                    // ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Image.asset(
+                                        'assets/logo.png',
+                                        height: 75,
+                                        width: 110,
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        "Let's Explore",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 22),
+                                      ),
+                                      Text(
+                                        "Data Science Together!",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 34),
+                                      ),
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                      Expanded(
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Image.asset('assets/loginoop.png'),
+                                          // child: SvgPicture.asset(
+                                          //   'assets/Frame.svg',
+                                          //   height: verticalScale * 360,
+                                          //   width: horizontalScale * 300,
+                                          //   fit: BoxFit.fill,
+                                          // ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Center(
-                        child: Container(
-                          width: 325,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(30),
-                                bottomRight: Radius.circular(30)),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 40.0, // soften the shadow
-                                offset: Offset(
-                                  0, // Move to right 10  horizontally
-                                  2.0, // Move to bottom 10 Vertically
-                                ),
                               ),
-                            ],
-                          ),
-                          height: MediaQuery.of(context).size.height,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(4, 60, 4, 0),
-                            child: Column(
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 1,
+                            ),
+                            Center(
+                              child: Container(
+                                width: 325,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(30),
+                                      bottomRight: Radius.circular(30)),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 40.0, // soften the shadow
+                                      offset: Offset(
+                                        0, // Move to right 10  horizontally
+                                        2.0, // Move to bottom 10 Vertically
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                height: MediaQuery.of(context).size.height,
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(4, 60, 4, 0),
                                   child: Column(
                                     children: <Widget>[
-                                      Container(
-                                          constraints: const BoxConstraints(
-                                              maxWidth: 500),
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 10),
-                                          child: RichText(
-                                            textAlign: TextAlign.center,
-                                            text: TextSpan(children: <TextSpan>[
-                                              TextSpan(
-                                                  text:
-                                                      'We look forward to getting to know you better.',
-                                                  style: TextStyle(
-                                                      color:
-                                                          MyColors.primaryColor,
-                                                      fontSize: 18)),
-                                              TextSpan(
-                                                  text: '',
-                                                  style: TextStyle(
-                                                      color:
-                                                          MyColors.primaryColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 18)),
-                                              TextSpan(
-                                                  text:
-                                                      " Let's begin with email",
-                                                  style: TextStyle(
-                                                      color:
-                                                          MyColors.primaryColor,
-                                                      fontSize: 18)),
-                                            ]),
-                                          )),
-                                      SizedBox(
-                                        height: 40,
-                                      ),
-                                      widget.user == "signup"
-                                          ? Column(
+                                      Expanded(
+                                        flex: 1,
+                                        child: Column(
+                                          children: <Widget>[
+                                            Container(
+                                                constraints: const BoxConstraints(
+                                                    maxWidth: 500),
+                                                margin: const EdgeInsets.symmetric(
+                                                    horizontal: 10),
+                                                child: RichText(
+                                                  textAlign: TextAlign.center,
+                                                  text: TextSpan(children: <TextSpan>[
+                                                    TextSpan(
+                                                        text:
+                                                        'We look forward to getting to know you better.',
+                                                        style: TextStyle(
+                                                            color:
+                                                            MyColors.primaryColor,
+                                                            fontSize: 18)),
+                                                    TextSpan(
+                                                        text: '',
+                                                        style: TextStyle(
+                                                            color:
+                                                            MyColors.primaryColor,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                            fontSize: 18)),
+                                                    TextSpan(
+                                                        text:
+                                                        " Let's begin with email",
+                                                        style: TextStyle(
+                                                            color:
+                                                            MyColors.primaryColor,
+                                                            fontSize: 18)),
+                                                  ]),
+                                                )),
+                                            SizedBox(
+                                              height: 40,
+                                            ),
+                                            widget.user == "signup"
+                                                ? Column(
                                               children: <Widget>[
                                                 Container(
                                                   height: 60,
                                                   constraints:
-                                                      const BoxConstraints(
-                                                          maxWidth: 500),
+                                                  const BoxConstraints(
+                                                      maxWidth: 500),
                                                   margin: const EdgeInsets
-                                                          .symmetric(
+                                                      .symmetric(
                                                       horizontal: 20,
                                                       vertical: 10),
                                                   child: CupertinoTextField(
                                                     padding: const EdgeInsets
-                                                            .symmetric(
+                                                        .symmetric(
                                                         horizontal: 16),
                                                     decoration: BoxDecoration(
                                                         color: Colors.white,
                                                         borderRadius:
-                                                            const BorderRadius
-                                                                    .all(
-                                                                Radius.circular(
-                                                                    4))),
+                                                        const BorderRadius
+                                                            .all(
+                                                            Radius.circular(
+                                                                4))),
                                                     controller: nameController,
                                                     clearButtonMode:
-                                                        OverlayVisibilityMode
-                                                            .editing,
+                                                    OverlayVisibilityMode
+                                                        .editing,
                                                     keyboardType:
-                                                        TextInputType.name,
+                                                    TextInputType.name,
                                                     maxLines: 1,
                                                     placeholder: 'Name',
                                                   ),
                                                 ),
                                               ],
                                             )
-                                          : Container(),
-                                      Container(
-                                        height: 40,
-                                        constraints:
-                                            const BoxConstraints(maxWidth: 500),
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 20, vertical: 10),
-                                        child: CupertinoTextField(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(4))),
-                                          controller: emailController,
-                                          clearButtonMode:
-                                              OverlayVisibilityMode.editing,
-                                          keyboardType:
-                                              TextInputType.emailAddress,
-                                          maxLines: 1,
-                                          placeholder: 'Email',
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      widget.user == "signin"
-                                          ? Expanded(
+                                                : Container(),
+                                            Container(
+                                              height: 40,
+                                              constraints:
+                                              const BoxConstraints(maxWidth: 500),
+                                              margin: const EdgeInsets.symmetric(
+                                                  horizontal: 20, vertical: 10),
+                                              child: CupertinoTextField(
+                                                padding: const EdgeInsets.symmetric(
+                                                    horizontal: 16),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(4))),
+                                                controller: emailController,
+                                                clearButtonMode:
+                                                OverlayVisibilityMode.editing,
+                                                keyboardType:
+                                                TextInputType.emailAddress,
+                                                maxLines: 1,
+                                                placeholder: 'Email',
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            widget.user == "signin"
+                                                ? Expanded(
                                               flex: 0,
                                               child: Column(
                                                 children: <Widget>[
                                                   Container(
                                                     height: 40,
                                                     constraints:
-                                                        const BoxConstraints(
-                                                            maxWidth: 500),
+                                                    const BoxConstraints(
+                                                        maxWidth: 500),
                                                     margin: const EdgeInsets
-                                                            .symmetric(
+                                                        .symmetric(
                                                         horizontal: 20,
                                                         vertical: 10),
                                                     child: CupertinoTextField(
@@ -312,7 +314,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                           _passwordVisible
                                                               ? Icons.visibility
                                                               : Icons
-                                                                  .visibility_off,
+                                                              .visibility_off,
                                                           color: Color.fromRGBO(
                                                               120, 96, 220, 1),
                                                         ),
@@ -320,30 +322,30 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                           // Update the state i.e. toogle the state of passwordVisible variable
                                                           setState(() {
                                                             _passwordVisible =
-                                                                !_passwordVisible;
+                                                            !_passwordVisible;
                                                           });
                                                         },
                                                       ),
                                                       obscureText:
-                                                          !_passwordVisible,
+                                                      !_passwordVisible,
                                                       padding: const EdgeInsets
-                                                              .symmetric(
+                                                          .symmetric(
                                                           horizontal: 16),
                                                       decoration: BoxDecoration(
                                                           color: Colors.white,
                                                           borderRadius:
-                                                              const BorderRadius
-                                                                      .all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          4))),
+                                                          const BorderRadius
+                                                              .all(
+                                                              Radius
+                                                                  .circular(
+                                                                  4))),
                                                       clearButtonMode:
-                                                          OverlayVisibilityMode
-                                                              .editing,
+                                                      OverlayVisibilityMode
+                                                          .editing,
                                                       keyboardType:
-                                                          TextInputType.text,
+                                                      TextInputType.text,
                                                       controller:
-                                                          passwordController,
+                                                      passwordController,
                                                       maxLines: 1,
                                                       placeholder: 'Password',
                                                     ),
@@ -353,7 +355,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                   ),
                                                   Padding(
                                                     padding: const EdgeInsets
-                                                            .fromLTRB(
+                                                        .fromLTRB(
                                                         8.0, 2, 18, 8),
                                                     child: InkWell(
                                                       onTap: () {
@@ -368,28 +370,28 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                               context: context,
                                                               builder:
                                                                   (BuildContext
-                                                                      context) {
+                                                              context) {
                                                                 Future.delayed(
                                                                     Duration(
                                                                         seconds:
-                                                                            13),
-                                                                    () {
-                                                                  Navigator.of(
+                                                                        13),
+                                                                        () {
+                                                                      Navigator.of(
                                                                           context)
-                                                                      .pop(
+                                                                          .pop(
                                                                           true);
-                                                                });
+                                                                    });
                                                                 return AlertDialog(
                                                                   title: Center(
                                                                     child:
-                                                                        Column(
+                                                                    Column(
                                                                       children: [
                                                                         Lottie.asset(
                                                                             'assets/email.json',
                                                                             height: height *
                                                                                 0.15,
                                                                             width:
-                                                                                width * 0.5),
+                                                                            width * 0.5),
                                                                         Text(
                                                                           'Reset Password',
                                                                           textScaleFactor: min(
@@ -404,57 +406,57 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                     ),
                                                                   ),
                                                                   content:
-                                                                      Column(
+                                                                  Column(
                                                                     mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .min,
+                                                                    MainAxisSize
+                                                                        .min,
                                                                     children: [
                                                                       Text(
                                                                         'An email has been sent to ',
                                                                         textAlign:
-                                                                            TextAlign.center,
+                                                                        TextAlign.center,
                                                                         style:
-                                                                            TextStyle(),
+                                                                        TextStyle(),
                                                                       ),
                                                                       Text(
                                                                         '${emailController.text.toLowerCase().toString()}',
                                                                         style: TextStyle(
                                                                             fontWeight:
-                                                                                FontWeight.bold),
+                                                                            FontWeight.bold),
                                                                       ),
                                                                       Text(
                                                                         'Click the link in the email to change password.',
                                                                         textAlign:
-                                                                            TextAlign.center,
+                                                                        TextAlign.center,
                                                                       ),
                                                                       SizedBox(
                                                                         height:
-                                                                            verticalScale *
-                                                                                10,
+                                                                        verticalScale *
+                                                                            10,
                                                                       ),
                                                                       Text(
                                                                         'Didn\'t get the email?',
                                                                         textAlign:
-                                                                            TextAlign.center,
+                                                                        TextAlign.center,
                                                                         style: TextStyle(
                                                                             fontWeight:
-                                                                                FontWeight.bold),
+                                                                            FontWeight.bold),
                                                                       ),
                                                                       Text(
                                                                         'Check entered email or check spam folder.',
                                                                         textAlign:
-                                                                            TextAlign.center,
+                                                                        TextAlign.center,
                                                                         style:
-                                                                            TextStyle(),
+                                                                        TextStyle(),
                                                                       ),
                                                                       TextButton(
                                                                           child:
-                                                                              Text(
+                                                                          Text(
                                                                             'Retry',
                                                                             textScaleFactor:
-                                                                                min(horizontalScale, verticalScale),
+                                                                            min(horizontalScale, verticalScale),
                                                                             style:
-                                                                                TextStyle(
+                                                                            TextStyle(
                                                                               fontSize: 20,
                                                                             ),
                                                                           ),
@@ -472,12 +474,12 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                               context: context,
                                                               builder:
                                                                   (BuildContext
-                                                                      context) {
+                                                              context) {
                                                                 return AlertDialog(
                                                                     title:
-                                                                        Center(
+                                                                    Center(
                                                                       child:
-                                                                          Text(
+                                                                      Text(
                                                                         'Error',
                                                                         textScaleFactor: min(
                                                                             horizontalScale,
@@ -486,23 +488,23 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                             color: Colors
                                                                                 .red,
                                                                             fontSize:
-                                                                                24,
+                                                                            24,
                                                                             fontWeight:
-                                                                                FontWeight.bold),
+                                                                            FontWeight.bold),
                                                                       ),
                                                                     ),
                                                                     content:
-                                                                        Text(
+                                                                    Text(
                                                                       'Enter email in the email field or check if the email is valid.',
                                                                       textAlign:
-                                                                          TextAlign
-                                                                              .center,
+                                                                      TextAlign
+                                                                          .center,
                                                                       textScaleFactor: min(
                                                                           horizontalScale,
                                                                           verticalScale),
                                                                       style: TextStyle(
                                                                           fontSize:
-                                                                              16),
+                                                                          16),
                                                                     ),
                                                                     actions: [
                                                                       TextButton(
@@ -526,7 +528,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                               horizontalScale,
                                                               verticalScale),
                                                           textAlign:
-                                                              TextAlign.end,
+                                                          TextAlign.end,
                                                           style: TextStyle(
                                                               color: HexColor(
                                                                   '8346E1'),
@@ -538,6 +540,823 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                 ],
                                               ),
                                             )
+                                                : Container(),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            GestureDetector(
+                                                onTap: () async {
+                                                  if (widget.user == "signup") {
+                                                    print('uuyguyguguy');
+                                                    if (nameController
+                                                        .text.isNotEmpty) {
+                                                      if (RegExp(
+                                                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                                          .hasMatch(emailController
+                                                          .text
+                                                          .toLowerCase()
+                                                          .toString())) {
+                                                        if (email != "" ||
+                                                            email != null) {
+                                                          try {
+                                                            setState(() {
+                                                              loading = true;
+                                                            });
+                                                            globals.email =
+                                                                emailController.text
+                                                                    .toLowerCase()
+                                                                    .toString();
+                                                            FirebaseAuth _auth =
+                                                                FirebaseAuth.instance;
+                                                            userprofile(
+                                                                listOfCourses: [],
+                                                                linked: "true",
+                                                                name: nameController
+                                                                    .text
+                                                                    .toString(),
+
+                                                                image: '',
+                                                                mobilenumber:
+                                                                globals.phone,
+                                                                authType: 'phoneAuth',
+                                                                phoneVerified: true,
+                                                                email: globals.email);
+                                                            try {
+
+                                                              Future.delayed(
+                                                                  const Duration(
+                                                                      seconds: 2),
+                                                                      () {
+
+
+                                                                    Navigator.of(context)
+                                                                        .pushReplacement(
+                                                                      MaterialPageRoute(
+                                                                        builder: (_) =>
+                                                                            HomePage(),
+                                                                      ),
+                                                                    );
+                                                                    saveLoginState(context);
+                                                                    setState(() {
+                                                                      loading = false;
+                                                                    });
+                                                                  });
+                                                            } catch (e) {
+                                                              showToast(e.toString());
+                                                              Navigator.of(context)
+                                                                  .pushReplacement(
+                                                                MaterialPageRoute(
+                                                                  builder: (_) => OtpPage(
+                                                                      "fromemailpage"),
+                                                                ),
+                                                              );
+                                                            }
+                                                          } catch (e) {
+                                                            setState(() {
+                                                              loading = false;
+                                                            });
+                                                            print(e.toString());
+                                                            showToast(e.toString(),
+                                                                context: context);
+                                                          }
+
+                                                          // try {
+                                                          // var value = await FirebaseAuth
+                                                          //     .instance
+                                                          //     .currentUser!
+                                                          //     .uid;
+                                                          // print(
+                                                          //     "sdjsodjew${globals.moneyrefcode}");
+                                                          // if (globals.moneyrefcode !=
+                                                          //     '') {
+                                                          //   print("ijsofjdserer");
+                                                          //   courseId = globals
+                                                          //       .moneyrefcode
+                                                          //       .split('-')[1];
+                                                          //   try {
+                                                          //     print(
+                                                          //         "sdjsdfgdohroeodjew");
+                                                          //     await FirebaseFirestore
+                                                          //         .instance
+                                                          //         .collection("Users")
+                                                          //         .doc(FirebaseAuth
+                                                          //             .instance
+                                                          //             .currentUser!
+                                                          //             .uid)
+                                                          //         .get()
+                                                          //         .then((value) async {
+                                                          //       try {
+                                                          //         print(
+                                                          //             "sdjsodjesfwenjoerigoeg");
+                                                          //         print(
+                                                          //             "sdsdfsoijojwjjgsdsdsdrgjei ${value.data()!['sendermoneyrefuid']}");
+                                                          // if (true) {
+                                                          // await FirebaseFirestore
+                                                          //     .instance
+                                                          //     .collection(
+                                                          //         "Users")
+                                                          //     .doc(FirebaseAuth
+                                                          //         .instance
+                                                          //         .currentUser!
+                                                          //         .uid)
+                                                          //     .update({
+                                                          //   "sendermoneyrefuid":
+                                                          //       globals
+                                                          //           .moneyrefcode
+                                                          //           .split(
+                                                          //               '-')[2],
+                                                          //   "senderrefvalidfrom":
+                                                          //       DateTime.now()
+                                                          // });
+                                                          // }
+                                                          //       } catch (e) {
+                                                          //         print(
+                                                          //             "tyuiiiiii${e.toString()}");
+                                                          //       }
+                                                          //     });
+                                                          //   } catch (e) {
+                                                          //     print(
+                                                          //         "poooiiieirj${e.toString()}");
+                                                          //   }
+                                                          // } else {
+                                                          //   Navigator.of(context)
+                                                          //       .pushReplacement(
+                                                          //     MaterialPageRoute(
+                                                          //       builder: (_) =>
+                                                          //           HomePage(),
+                                                          //     ),
+                                                          //   );
+                                                          // }
+                                                          //   setState(() {
+                                                          //     loading = false;
+                                                          //   });
+                                                          // } catch (e) {
+                                                          //   showToast(
+                                                          //       "error jkl ${e.toString()}");
+                                                          //   print("jkl");
+                                                          //   print(e.toString());
+                                                          //   Navigator.of(context)
+                                                          //       .pushReplacement(
+                                                          //     MaterialPageRoute(
+                                                          //       builder: (_) =>
+                                                          //           HomePage(),
+                                                          //     ),
+                                                          //   );
+                                                          // }
+                                                        } else {
+                                                          setState(() {
+                                                            loading = false;
+                                                          });
+                                                          showToast(
+                                                              'Please enter a email');
+                                                        }
+                                                      } else {
+                                                        setState(() {
+                                                          loading = false;
+                                                        });
+                                                        showToast(
+                                                            'Please enter a valid email');
+                                                      }
+                                                    } else {
+                                                      showToast(
+                                                          "please enter your name");
+                                                    }
+                                                  } else if (widget.user ==
+                                                      "signin") {
+                                                    bool otpverified = true;
+                                                    print('dfgdrgergreger');
+                                                    if (passwordController
+                                                        .text.isNotEmpty) {
+                                                      setState(() {
+                                                        loading = true;
+                                                      });
+                                                      User? user;
+                                                      FirebaseAuth _auth =
+                                                          FirebaseAuth.instance;
+                                                      try {
+                                                        user = (await _auth.signInWithEmailAndPassword(
+                                                            email: emailController
+                                                                .text
+                                                                .toLowerCase()
+                                                                .toString(),
+                                                            password:
+                                                            passwordController
+                                                                .text
+                                                                .toString()))
+                                                            .user;
+
+                                                        //otp verification and linking
+                                                        try {
+                                                          await _auth.currentUser!
+                                                              .linkWithCredential(
+                                                              globals.credental);
+                                                          await FirebaseFirestore
+                                                              .instance
+                                                              .collection('Users')
+                                                              .doc(_auth
+                                                              .currentUser!.uid)
+                                                              .update({
+                                                            "linked": "true",
+                                                          });
+                                                        } catch (e) {
+                                                          showToast(e.toString());
+                                                          otpverified = false;
+                                                          Navigator.of(context)
+                                                              .pushReplacement(
+                                                            MaterialPageRoute(
+                                                              builder: (_) => OtpPage(
+                                                                  "fromemailpage"),
+                                                            ),
+                                                          );
+                                                        }
+
+                                                        var value = await FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid;
+
+                                                        setState(() {
+                                                          loading = false;
+                                                        });
+                                                      } on FirebaseException catch (e) {
+                                                        print("iooijjj${e.code}");
+                                                        setState(() {
+                                                          loading = false;
+                                                        });
+                                                        // showToast(e.toString());
+                                                        if (e.code.toString() ==
+                                                            "wrong-password") {
+                                                          setState(() {
+                                                            loading = false;
+                                                          });
+                                                          showToast("wrong password");
+                                                        }
+                                                        showToast(e.toString());
+                                                        setState(() {
+                                                          loading = false;
+                                                        });
+                                                      }
+
+                                                      // showToast("here");
+                                                      if (user != null) {
+                                                        // if (globals.moneyrefcode !=
+                                                        //     '') {
+                                                        //   courseId = globals
+                                                        //       .moneyrefcode
+                                                        //       .split('-')[1];
+                                                        //   try {
+                                                        //     await FirebaseFirestore
+                                                        //         .instance
+                                                        //         .collection("Users")
+                                                        //         .doc(FirebaseAuth
+                                                        //             .instance
+                                                        //             .currentUser!
+                                                        //             .uid)
+                                                        //         .get()
+                                                        //         .then((value) async {
+                                                        //       try {
+                                                        //         print(
+                                                        //             "sdsdfsoijojwjjgsdsdsdrgjei ${value.data()!['sendermoneyrefuid']}");
+                                                        //         if (true) {
+                                                        //           await FirebaseFirestore
+                                                        //               .instance
+                                                        //               .collection(
+                                                        //                   "Users")
+                                                        //               .doc(FirebaseAuth
+                                                        //                   .instance
+                                                        //                   .currentUser!
+                                                        //                   .uid)
+                                                        //               .update({
+                                                        //             "sendermoneyrefuid":
+                                                        //                 globals
+                                                        //                     .moneyrefcode
+                                                        //                     .split(
+                                                        //                         '-')[2],
+                                                        //             "senderrefvalidfrom":
+                                                        //                 DateTime.now()
+                                                        //           });
+                                                        //         }
+                                                        //       } catch (e) {
+                                                        //         print(
+                                                        //             "tyuiiiiii${e.toString()}");
+                                                        //       }
+                                                        //     });
+                                                        //   } catch (e) {
+                                                        //     print(
+                                                        //         "poooiiieirj${e.toString()}");
+                                                        //   }
+                                                        // } else {
+                                                        //adding condition for handling otp verification error
+                                                        if (otpverified) {
+                                                          Navigator.of(context)
+                                                              .pushReplacement(
+                                                            MaterialPageRoute(
+                                                              builder: (_) =>
+                                                                  HomePage(),
+                                                            ),
+                                                          );
+                                                          saveLoginState(context);
+                                                          // }
+                                                        }
+                                                      } else {
+                                                        showToast("wrong password");
+                                                      }
+                                                    } else {
+                                                      showToast(
+                                                          "enter your password");
+                                                    }
+                                                  } else {
+                                                    // await email(
+                                                    //     context,
+                                                    //     emailController.text
+                                                    //         .toLowerCase()
+                                                    //         .toString());
+                                                  }
+                                                },
+                                                child: Container(
+                                                  margin: const EdgeInsets.symmetric(
+                                                      horizontal: 20, vertical: 10),
+                                                  constraints: const BoxConstraints(
+                                                      maxWidth: 500),
+                                                  alignment: Alignment.center,
+                                                  decoration: const BoxDecoration(
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(14)),
+                                                      gradient: LinearGradient(
+                                                          begin: Alignment.centerLeft,
+                                                          end: Alignment.centerRight,
+                                                          colors: [
+                                                            // Color(0xFF8A2387),
+                                                            Color.fromRGBO(
+                                                                120, 96, 220, 1),
+                                                            Color.fromRGBO(
+                                                                120, 96, 220, 1),
+                                                            Color.fromARGB(
+                                                                255, 88, 52, 246),
+                                                          ])),
+                                                  padding: const EdgeInsets.symmetric(
+                                                      vertical: 8, horizontal: 8),
+                                                  child: loading
+                                                      ? Padding(
+                                                    padding:
+                                                    const EdgeInsets.all(
+                                                        6.0),
+                                                    child: Container(
+                                                        height: 20,
+                                                        width: 20,
+                                                        child: Center(
+                                                            child: CircularProgressIndicator(
+                                                                color: Colors
+                                                                    .white))),
+                                                  )
+                                                      : Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                    children: <Widget>[
+                                                      Padding(
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .fromLTRB(
+                                                            12, 0, 0, 0),
+                                                        child: Text(
+                                                          'Next',
+                                                          style: TextStyle(
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                  255,
+                                                                  255,
+                                                                  255,
+                                                                  255),
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold),
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .all(8),
+                                                        decoration:
+                                                        BoxDecoration(
+                                                          borderRadius:
+                                                          const BorderRadius
+                                                              .all(
+                                                              Radius
+                                                                  .circular(
+                                                                  20)),
+                                                          color: MyColors
+                                                              .primaryColorLight,
+                                                        ),
+                                                        child: Icon(
+                                                          Icons
+                                                              .arrow_forward_ios,
+                                                          color: Colors.white,
+                                                          size: 16,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                )),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return SingleChildScrollView(
+                    child: SafeArea(
+                      child: SingleChildScrollView(
+                        child: Container(
+                          height: MediaQuery.of(context).size.height,
+                          child: Column(
+                            children: <Widget>[
+                              Expanded(
+                                flex: 2,
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 20),
+                                      child: Stack(
+                                        children: <Widget>[
+                                          Center(
+                                            child: Container(
+                                                constraints: const BoxConstraints(
+                                                    maxHeight: 340),
+                                                margin: const EdgeInsets.symmetric(
+                                                    horizontal: 8),
+                                                child:
+                                                Image.asset('assets/loginoop.png')),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                        margin:
+                                        const EdgeInsets.symmetric(horizontal: 10),
+                                        child: Text('CloudyML',
+                                            style: TextStyle(
+                                                color: MyColors.primaryColor,
+                                                fontSize: 25,
+                                                fontWeight: FontWeight.w800)))
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: <Widget>[
+                                      SingleChildScrollView(
+                                        child: Container(
+                                            constraints:
+                                            const BoxConstraints(maxWidth: 500),
+                                            margin:
+                                            const EdgeInsets.symmetric(horizontal: 10),
+                                            child: RichText(
+                                              textAlign: TextAlign.center,
+                                              text: TextSpan(children: <TextSpan>[
+                                                TextSpan(
+                                                    text:
+                                                    'We look forward to getting to know you better.',
+                                                    style: TextStyle(
+                                                        color: MyColors.primaryColor)),
+                                                TextSpan(
+                                                    text: '',
+                                                    style: TextStyle(
+                                                        color: MyColors.primaryColor,
+                                                        fontWeight: FontWeight.bold)),
+                                                TextSpan(
+                                                    text: " Let's begin with email",
+                                                    style: TextStyle(
+                                                        color: MyColors.primaryColor)),
+                                              ]),
+                                            )),
+                                      ),
+                                      SizedBox(
+                                        height: 40,
+                                      ),
+                                      widget.user == "signup"
+                                          ? Column(
+                                        children: <Widget>[
+                                          Container(
+                                            height: 60,
+                                            constraints:
+                                            const BoxConstraints(
+                                                maxWidth: 500),
+                                            margin: const EdgeInsets
+                                                .symmetric(
+                                                horizontal: 20,
+                                                vertical: 10),
+                                            child: CupertinoTextField(
+                                              padding: const EdgeInsets
+                                                  .symmetric(
+                                                  horizontal: 16),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                  const BorderRadius
+                                                      .all(
+                                                      Radius.circular(
+                                                          4))),
+                                              controller: nameController,
+                                              clearButtonMode:
+                                              OverlayVisibilityMode
+                                                  .editing,
+                                              keyboardType:
+                                              TextInputType.name,
+                                              maxLines: 1,
+                                              placeholder: 'Name',
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                          : Container(),
+                                      Container(
+                                        height: 40,
+                                        constraints:
+                                        const BoxConstraints(maxWidth: 500),
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 10),
+                                        child: CupertinoTextField(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                              const BorderRadius.all(
+                                                  Radius.circular(4))),
+                                          controller: emailController,
+                                          clearButtonMode:
+                                          OverlayVisibilityMode.editing,
+                                          keyboardType:
+                                          TextInputType.emailAddress,
+                                          maxLines: 1,
+                                          placeholder: 'Email',
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      widget.user == "signin"
+                                          ? Expanded(
+                                        flex: 0,
+                                        child: Column(
+                                          children: <Widget>[
+                                            Container(
+                                              height: 40,
+                                              constraints:
+                                              const BoxConstraints(
+                                                  maxWidth: 500),
+                                              margin: const EdgeInsets
+                                                  .symmetric(
+                                                  horizontal: 20,
+                                                  vertical: 10),
+                                              child: CupertinoTextField(
+                                                suffix: IconButton(
+                                                  icon: Icon(
+                                                    // Based on passwordVisible state choose the icon
+                                                    _passwordVisible
+                                                        ? Icons.visibility
+                                                        : Icons
+                                                        .visibility_off,
+                                                    color: Color.fromRGBO(
+                                                        120, 96, 220, 1),
+                                                  ),
+                                                  onPressed: () {
+                                                    // Update the state i.e. toogle the state of passwordVisible variable
+                                                    setState(() {
+                                                      _passwordVisible =
+                                                      !_passwordVisible;
+                                                    });
+                                                  },
+                                                ),
+                                                obscureText:
+                                                !_passwordVisible,
+                                                padding: const EdgeInsets
+                                                    .symmetric(
+                                                    horizontal: 16),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                    const BorderRadius
+                                                        .all(
+                                                        Radius
+                                                            .circular(
+                                                            4))),
+                                                clearButtonMode:
+                                                OverlayVisibilityMode
+                                                    .editing,
+                                                keyboardType:
+                                                TextInputType.text,
+                                                controller:
+                                                passwordController,
+                                                maxLines: 1,
+                                                placeholder: 'Password',
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 4,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets
+                                                  .fromLTRB(
+                                                  8.0, 2, 18, 8),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  if (emailController
+                                                      .text.isNotEmpty) {
+                                                    _auth.sendPasswordResetEmail(
+                                                        email: emailController
+                                                            .text
+                                                            .toLowerCase()
+                                                            .toString());
+                                                    showDialog(
+                                                        context: context,
+                                                        builder:
+                                                            (BuildContext
+                                                        context) {
+                                                          Future.delayed(
+                                                              Duration(
+                                                                  seconds:
+                                                                  13),
+                                                                  () {
+                                                                Navigator.of(
+                                                                    context)
+                                                                    .pop(
+                                                                    true);
+                                                              });
+                                                          return AlertDialog(
+                                                            title: Center(
+                                                              child:
+                                                              Column(
+                                                                children: [
+                                                                  Lottie.asset(
+                                                                      'assets/email.json',
+                                                                      height: height *
+                                                                          0.15,
+                                                                      width:
+                                                                      width * 0.5),
+                                                                  Text(
+                                                                    'Reset Password',
+                                                                    textScaleFactor: min(
+                                                                        horizontalScale,
+                                                                        verticalScale),
+                                                                    style: TextStyle(
+                                                                        color: Colors.red,
+                                                                        fontSize: 22,
+                                                                        fontWeight: FontWeight.bold),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            content:
+                                                            Column(
+                                                              mainAxisSize:
+                                                              MainAxisSize
+                                                                  .min,
+                                                              children: [
+                                                                Text(
+                                                                  'An email has been sent to ',
+                                                                  textAlign:
+                                                                  TextAlign.center,
+                                                                  style:
+                                                                  TextStyle(),
+                                                                ),
+                                                                Text(
+                                                                  '${emailController.text.toLowerCase().toString()}',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight.bold),
+                                                                ),
+                                                                Text(
+                                                                  'Click the link in the email to change password.',
+                                                                  textAlign:
+                                                                  TextAlign.center,
+                                                                ),
+                                                                SizedBox(
+                                                                  height:
+                                                                  verticalScale *
+                                                                      10,
+                                                                ),
+                                                                Text(
+                                                                  'Didn\'t get the email?',
+                                                                  textAlign:
+                                                                  TextAlign.center,
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight.bold),
+                                                                ),
+                                                                Text(
+                                                                  'Check entered email or check spam folder.',
+                                                                  textAlign:
+                                                                  TextAlign.center,
+                                                                  style:
+                                                                  TextStyle(),
+                                                                ),
+                                                                TextButton(
+                                                                    child:
+                                                                    Text(
+                                                                      'Retry',
+                                                                      textScaleFactor:
+                                                                      min(horizontalScale, verticalScale),
+                                                                      style:
+                                                                      TextStyle(
+                                                                        fontSize: 20,
+                                                                      ),
+                                                                    ),
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.pop(context,
+                                                                          true);
+                                                                    }),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        });
+                                                  } else {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder:
+                                                            (BuildContext
+                                                        context) {
+                                                          return AlertDialog(
+                                                              title:
+                                                              Center(
+                                                                child:
+                                                                Text(
+                                                                  'Error',
+                                                                  textScaleFactor: min(
+                                                                      horizontalScale,
+                                                                      verticalScale),
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .red,
+                                                                      fontSize:
+                                                                      24,
+                                                                      fontWeight:
+                                                                      FontWeight.bold),
+                                                                ),
+                                                              ),
+                                                              content:
+                                                              Text(
+                                                                'Enter email in the email field or check if the email is valid.',
+                                                                textAlign:
+                                                                TextAlign
+                                                                    .center,
+                                                                textScaleFactor: min(
+                                                                    horizontalScale,
+                                                                    verticalScale),
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                    16),
+                                                              ),
+                                                              actions: [
+                                                                TextButton(
+                                                                    child: Text(
+                                                                        'Retry'),
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.pop(context,
+                                                                          true);
+                                                                    })
+                                                              ]);
+                                                        });
+                                                  }
+                                                },
+                                                child: Align(
+                                                  alignment: Alignment
+                                                      .bottomRight,
+                                                  child: Text(
+                                                    'Forgot Password?',
+                                                    textScaleFactor: min(
+                                                        horizontalScale,
+                                                        verticalScale),
+                                                    textAlign:
+                                                    TextAlign.end,
+                                                    style: TextStyle(
+                                                        color: HexColor(
+                                                            '8346E1'),
+                                                        fontSize: 16),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
                                           : Container(),
                                       SizedBox(
                                         height: 10,
@@ -549,11 +1368,11 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                               if (nameController
                                                   .text.isNotEmpty) {
                                                 if (RegExp(
-                                                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                                                     .hasMatch(emailController
-                                                        .text
-                                                        .toLowerCase()
-                                                        .toString())) {
+                                                    .text
+                                                    .toLowerCase()
+                                                    .toString())) {
                                                   if (email != "" ||
                                                       email != null) {
                                                     try {
@@ -572,30 +1391,31 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                           name: nameController
                                                               .text
                                                               .toString(),
-                                                              
+
                                                           image: '',
                                                           mobilenumber:
-                                                              globals.phone,
+                                                          globals.phone,
                                                           authType: 'phoneAuth',
                                                           phoneVerified: true,
                                                           email: globals.email);
                                                       try {
-                                                        
+
                                                         Future.delayed(
                                                             const Duration(
                                                                 seconds: 2),
-                                                            () {
-                                                          Navigator.of(context)
-                                                              .pushReplacement(
-                                                            MaterialPageRoute(
-                                                              builder: (_) =>
-                                                                  HomePage(),
-                                                            ),
-                                                          );
-                                                          setState(() {
-                                                            loading = false;
-                                                          });
-                                                        });
+                                                                () {
+                                                              Navigator.of(context)
+                                                                  .pushReplacement(
+                                                                MaterialPageRoute(
+                                                                  builder: (_) =>
+                                                                      HomePage(),
+                                                                ),
+                                                              );
+                                                              saveLoginState(context);
+                                                              setState(() {
+                                                                loading = false;
+                                                              });
+                                                            });
                                                       } catch (e) {
                                                         showToast(e.toString());
                                                         Navigator.of(context)
@@ -730,26 +1550,26 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                     FirebaseAuth.instance;
                                                 try {
                                                   user = (await _auth.signInWithEmailAndPassword(
-                                                          email: emailController
-                                                              .text
-                                                              .toLowerCase()
-                                                              .toString(),
-                                                          password:
-                                                              passwordController
-                                                                  .text
-                                                                  .toString()))
+                                                      email: emailController
+                                                          .text
+                                                          .toLowerCase()
+                                                          .toString(),
+                                                      password:
+                                                      passwordController
+                                                          .text
+                                                          .toString()))
                                                       .user;
 
                                                   //otp verification and linking
                                                   try {
                                                     await _auth.currentUser!
                                                         .linkWithCredential(
-                                                            globals.credental);
+                                                        globals.credental);
                                                     await FirebaseFirestore
                                                         .instance
                                                         .collection('Users')
                                                         .doc(_auth
-                                                            .currentUser!.uid)
+                                                        .currentUser!.uid)
                                                         .update({
                                                       "linked": "true",
                                                     });
@@ -850,6 +1670,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                             HomePage(),
                                                       ),
                                                     );
+                                                    saveLoginState(context);
                                                     // }
                                                   }
                                                 } else {
@@ -892,249 +1713,81 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                 vertical: 8, horizontal: 8),
                                             child: loading
                                                 ? Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            6.0),
-                                                    child: Container(
-                                                        height: 20,
-                                                        width: 20,
-                                                        child: Center(
-                                                            child: CircularProgressIndicator(
-                                                                color: Colors
-                                                                    .white))),
-                                                  )
+                                              padding:
+                                              const EdgeInsets.all(
+                                                  6.0),
+                                              child: Container(
+                                                  height: 20,
+                                                  width: 20,
+                                                  child: Center(
+                                                      child: CircularProgressIndicator(
+                                                          color: Colors
+                                                              .white))),
+                                            )
                                                 : Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: <Widget>[
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .fromLTRB(
-                                                                12, 0, 0, 0),
-                                                        child: Text(
-                                                          'Next',
-                                                          style: TextStyle(
-                                                              color: Color
-                                                                  .fromARGB(
-                                                                      255,
-                                                                      255,
-                                                                      255,
-                                                                      255),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                      .all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          20)),
-                                                          color: MyColors
-                                                              .primaryColorLight,
-                                                        ),
-                                                        child: Icon(
-                                                          Icons
-                                                              .arrow_forward_ios,
-                                                          color: Colors.white,
-                                                          size: 16,
-                                                        ),
-                                                      )
-                                                    ],
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .spaceBetween,
+                                              children: <Widget>[
+                                                Padding(
+                                                  padding:
+                                                  const EdgeInsets
+                                                      .fromLTRB(
+                                                      12, 0, 0, 0),
+                                                  child: Text(
+                                                    'Next',
+                                                    style: TextStyle(
+                                                        color: Color
+                                                            .fromARGB(
+                                                            255,
+                                                            255,
+                                                            255,
+                                                            255),
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
                                                   ),
+                                                ),
+                                                Container(
+                                                  padding:
+                                                  const EdgeInsets
+                                                      .all(8),
+                                                  decoration:
+                                                  BoxDecoration(
+                                                    borderRadius:
+                                                    const BorderRadius
+                                                        .all(
+                                                        Radius
+                                                            .circular(
+                                                            20)),
+                                                    color: MyColors
+                                                        .primaryColorLight,
+                                                  ),
+                                                  child: Icon(
+                                                    Icons
+                                                        .arrow_forward_ios,
+                                                    color: Colors.white,
+                                                    size: 16,
+                                                  ),
+                                                )
+                                              ],
+                                            ),
                                           )),
                                     ],
                                   ),
-                                )
-                              ],
-                            ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return SafeArea(
-              child: SingleChildScrollView(
-                child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(
-                        flex: 2,
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 20),
-                              child: Stack(
-                                children: <Widget>[
-                                  Center(
-                                    child: Container(
-                                        constraints: const BoxConstraints(
-                                            maxHeight: 340),
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 8),
-                                        child:
-                                            Image.asset('assets/loginoop.png')),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 40,
-                            ),
-                            Container(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: Text('CloudyML',
-                                    style: TextStyle(
-                                        color: MyColors.primaryColor,
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w800)))
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 500),
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: RichText(
-                                  textAlign: TextAlign.center,
-                                  text: TextSpan(children: <TextSpan>[
-                                    TextSpan(
-                                        text:
-                                            'We look forward to getting to know you better.',
-                                        style: TextStyle(
-                                            color: MyColors.primaryColor)),
-                                    TextSpan(
-                                        text: '',
-                                        style: TextStyle(
-                                            color: MyColors.primaryColor,
-                                            fontWeight: FontWeight.bold)),
-                                    TextSpan(
-                                        text: " Let's begin with email",
-                                        style: TextStyle(
-                                            color: MyColors.primaryColor)),
-                                  ]),
-                                )),
-                            Container(
-                              height: 40,
-                              constraints: const BoxConstraints(maxWidth: 500),
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              child: CupertinoTextField(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(4))),
-                                controller: emailController,
-                                clearButtonMode: OverlayVisibilityMode.editing,
-                                keyboardType: TextInputType.emailAddress,
-                                maxLines: 1,
-                                placeholder: 'Email',
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            GestureDetector(
-                              onTap: () async {
-                                // await email(
-                                //     context, emailController.text.toString());
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                constraints:
-                                    const BoxConstraints(maxWidth: 500),
-                                alignment: Alignment.center,
-                                decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(14)),
-                                    gradient: LinearGradient(
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                        colors: [
-                                          // Color(0xFF8A2387),
-                                          Color.fromRGBO(120, 96, 220, 1),
-                                          Color.fromRGBO(120, 96, 220, 1),
-                                          Color.fromARGB(255, 88, 52, 246),
-                                        ])),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 8),
-                                child: loading
-                                    ? Padding(
-                                        padding: const EdgeInsets.all(6.0),
-                                        child: Container(
-                                            height: 20,
-                                            width: 20,
-                                            child: Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                        color: Colors.white))),
-                                      )
-                                    : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                12, 0, 0, 0),
-                                            child: Text(
-                                              'Next',
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 255, 255, 255),
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(20)),
-                                              color: MyColors.primaryColorLight,
-                                            ),
-                                            child: Icon(
-                                              Icons.arrow_forward_ios,
-                                              color: Colors.white,
-                                              size: 16,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }
-        }));
+                    ),
+                  );
+                }
+              }),
+        ));
+  }
+  void saveLoginState(BuildContext context) {
+    Provider.of<LoginState>(context, listen: false).loggedIn = true;
   }
 }

@@ -18,6 +18,7 @@ import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import '../authentication_screens/phone_auth.dart';
 import '../catalogue_screen.dart';
+import '../combo/feature_courses.dart';
 import '../models/course_details.dart';
 import '../my_Courses.dart';
 import '../screens/review_screen/review_screen.dart';
@@ -138,6 +139,24 @@ class MyRouter {
                 courseP: coursePrice,
               ));
           }
+        ),
+        GoRoute(
+            name: 'featuredCourses',
+            path: '/featuredCourses',
+            pageBuilder: (context, state) {
+              final String cID = state.queryParams['cID']!;
+              final String id = state.queryParams['id']!;
+              final String courseName = state.queryParams['courseName']!;
+              final String coursePrice = state.queryParams['coursePrice']!;
+              return MaterialPage(
+                  key: state.pageKey,
+                  child: FeatureCourses(
+                    cID: cID,
+                    id: id,
+                    cName: courseName,
+                    courseP: coursePrice,
+                  ));
+            }
         ),
         GoRoute(
           name: 'comboCourse',
