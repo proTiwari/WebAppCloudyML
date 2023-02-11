@@ -624,19 +624,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: customDrawer(context),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.black54,
-          onPressed: () {
-        GoRouter.of(context).push('/chat');
-      },
-        label: Text('Chat with TA', style: TextStyle(fontSize: 16)),
-        icon: Icon(
-          Icons.chat_bubble_outline_sharp,
-          color: Colors.white,
-          size: 20,
-        ),
-      ),
+      floatingActionButton: floatingButton(context),
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             if (constraints.maxWidth >= 650) {
@@ -1693,6 +1681,8 @@ class _HomeState extends State<Home> {
                                                           children: [
                                                             ElevatedButton(
                                                                 onPressed: () {
+                                                                  print('value ${course[index].trial!}');
+
                                                                   setState(() {
                                                                     courseId = featuredCourse[index]
                                                                         .courseDocumentId;
@@ -1739,41 +1729,37 @@ class _HomeState extends State<Home> {
                                                                       color: Colors.white,
                                                                       fontWeight: FontWeight.bold),
                                                                 )),
-                                                            // course[index].trial! ? SizedBox(width: 15) : SizedBox(),
-                                                            // course[index].trial!
-                                                            //     && (userDocData['trialCourse'] == false
-                                                            //     || userDocData['trialCourse'] == null) ?
-                                                            // ElevatedButton(
-                                                            //     onPressed: () {
+                                                            course[index].trial! ? SizedBox(width: 15) : SizedBox(),
 
-                                                            //       showDialog(
-                                                            //         context: context,
-                                                            //           builder: (context) {
-                                                            //           return AlertDialog(
-                                                            //             title: Text('This course is available for $numberOfDays trial '),
-                                                            //             content: Container(
-                                                            //               height: screenHeight/3,
-                                                            //               width: screenWidth/3,
-                                                            //               child: Column(
+                                                            course[index].trial == true ? ElevatedButton(
+                                                                onPressed: () {
+                                                                  showDialog(
+                                                                    context: context,
+                                                                      builder: (context) {
+                                                                      return AlertDialog(
+                                                                        title: Text('This course is available for $numberOfDays trial '),
+                                                                        content: Container(
+                                                                          height: screenHeight/3,
+                                                                          width: screenWidth/3,
+                                                                          child: Column(
 
-                                                            //               ),
-                                                            //             ),
-                                                            //           );
-                                                            //       });
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                  });
 
-                                                            //       // print('paidCourseNames before ${userMap['paidCourseNames']}');
-                                                            //       // userMap['paidCourseNames'].add(course[index].courseId);
-                                                            //       //
-                                                            //       // FirebaseFirestore.instance.collection('Users')
-                                                            //       //     .doc(FirebaseAuth.instance.currentUser!.uid)
-                                                            //       //     .update({
-                                                            //       //   'trialCourse': true,
-                                                            //       //   'paidCourseNames': userMap['paidCourseNames'],
-                                                            //       // });
-                                                            //       // print('paidCourseNames ${userMap['paidCourseNames']}');
-                                                            //     },
-                                                            //     child: Text('Try for $numberOfDays days'))
-                                                            //     : Container(),
+                                                                  print('paidCourseNames before ${userMap['paidCourseNames']}');
+                                                                  userMap['paidCourseNames'].add(course[index].courseId);
+
+                                                                  FirebaseFirestore.instance.collection('Users')
+                                                                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                                                                      .update({
+                                                                    'trialCourse': true,
+                                                                    'paidCourseNames': userMap['paidCourseNames'],
+                                                                  });
+                                                                  print('paidCourseNames ${userMap['paidCourseNames']}');
+                                                                },
+                                                                child: Text('Try for $numberOfDays days')) : Container(),
                                                           ],
                                                         ),
                                                       ),
@@ -2478,36 +2464,24 @@ class _HomeState extends State<Home> {
                             return InkWell(
                                 onTap: () {
                                   setState(() {
-                                    courseId = featuredCourse[index].courseDocumentId;
+                                    courseId = featuredCourse[index]
+                                        .courseDocumentId;
                                   });
                                   print(courseId);
-                                  // if (featuredCourse[index].isItComboCourse) {
-                                  //   Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //       builder: (context) => ComboStore(
-                                  //         courses: featuredCourse[index].courses,
-                                  //       ),
-                                  //     ),
-                                  //   );
-                                  // } else {
-                                  //   Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //         const CatelogueScreen()),
-                                  //   );
-                                  // }
-
                                   if (featuredCourse[index].isItComboCourse) {
+
                                     print(featuredCourse[index].courses);
 
+
                                     final id = index.toString();
+                                    final cID = featuredCourse[index].courseDocumentId;
                                     final courseName = featuredCourse[index].courseName;
                                     final courseP = featuredCourse[index].coursePrice;
-                                    GoRouter.of(context).pushNamed('featuredCourses',
+                                    GoRouter.of(context).pushNamed(
+                                        'featuredCourses',
                                         queryParams: {
-                                      'courseName': courseName,
+                                          'cID': cID,
+                                          'courseName': courseName,
                                           'id': id,
                                           'coursePrice': courseP});
 
@@ -2517,17 +2491,15 @@ class _HomeState extends State<Home> {
                                     //     builder: (context) =>
                                     //         ComboStore(
                                     //           courses:
-                                    //           featuredCourse[index].courses,
+                                    //           course[index].courses,
                                     //         ),
                                     //   ),
                                     // );
 
                                   } else {
                                     final id = index.toString();
-                                    GoRouter.of(context).pushNamed('catalogue',
-                                        queryParams: {'id': id});
+                                    GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
                                   }
-
                                 },
                                 child:
                                 Container(

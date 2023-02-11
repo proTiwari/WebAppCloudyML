@@ -844,18 +844,18 @@ Drawer customDrawer(BuildContext context) {
               //   },
               // )
               //     : Container(),
-              InkWell(
-                onTap: () {
-                  GoRouter.of(context).push('/paymentHistory');
-                },
-                child: ListTile(
-                  title: Text('Payment History'),
-                  leading: Icon(
-                    Icons.payment_rounded,
-                    color: HexColor('691EC8'),
-                  ),
-                ),
-              ),
+              // InkWell(
+              //   onTap: () {
+              //     GoRouter.of(context).push('/paymentHistory');
+              //   },
+              //   child: ListTile(
+              //     title: Text('Payment History'),
+              //     leading: Icon(
+              //       Icons.payment_rounded,
+              //       color: HexColor('691EC8'),
+              //     ),
+              //   ),
+              // ),
               Divider(
                 thickness: 2,
               ),
@@ -871,21 +871,21 @@ Drawer customDrawer(BuildContext context) {
                   GoRouter.of(context).push('/reviews');
                 },
               ),
-              InkWell(
-                child: ListTile(
-                  title: Text('Share'),
-                  leading: Icon(
-                    Icons.share,
-                    color: HexColor('691EC8'),
-                  ),
-                ),
-                onTap: () {
-                  // AppInstalledCount();
-                  String? a = linkMessage.toString();
-                  // ShareExtend.share("share text", a);
-                  ShareExtend.share(a, "text");
-                },
-              ),
+              // InkWell(
+              //   child: ListTile(
+              //     title: Text('Share'),
+              //     leading: Icon(
+              //       Icons.share,
+              //       color: HexColor('691EC8'),
+              //     ),
+              //   ),
+              //   onTap: () {
+              //     // AppInstalledCount();
+              //     String? a = linkMessage.toString();
+              //     // ShareExtend.share("share text", a);
+              //     ShareExtend.share(a, "text");
+              //   },
+              // ),
               InkWell(
                 child: ListTile(
                   title: Text('Reward  $rewardCount'),
@@ -932,6 +932,21 @@ Drawer customDrawer(BuildContext context) {
           ),
         ],
       ),
+    ),
+  );
+}
+
+FloatingActionButton floatingButton(BuildContext context) {
+  return FloatingActionButton.extended(
+    backgroundColor: Colors.black54,
+    onPressed: () {
+      GoRouter.of(context).push('/chat');
+    },
+    label: Text('Chat with TA', style: TextStyle(fontSize: 16)),
+    icon: Icon(
+      Icons.chat_bubble_outline_sharp,
+      color: Colors.white,
+      size: 20,
     ),
   );
 }

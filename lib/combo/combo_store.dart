@@ -464,22 +464,22 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                           InkWell(
                             onTap: () {
 
-                              GoRouter.of(context)
-                                  .pushNamed(
-                                  'paymentScreen',
-                                  queryParams: {'isItComboCourse': true,
-                                    'courseMap': comboMap});
+                              // GoRouter.of(context)
+                              //     .pushNamed(
+                              //     'paymentScreen',
+                              //     queryParams: {'isItComboCourse': true,
+                              //       'courseMap': comboMap});
 
 
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => PaymentScreen(
-                              //       map: comboMap,
-                              //       isItComboCourse: true,
-                              //     ),
-                              //   ),
-                              // );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PaymentScreen(
+                                    map: comboMap,
+                                    isItComboCourse: true,
+                                  ),
+                                ),
+                              );
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -596,20 +596,20 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                     ),
                   ),
                 ),
-                Positioned(
-                  top: 25 * verticalScale,
-                  right: 15 * horizontalScale,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.share,
-                      color: Colors.black,
-                    ),
-                    onPressed: () async {
-                      if (moneyreferallink.toString() != 'null') {
-                        ShareExtend.share(moneyreferallink.toString(), "text");
-                      }
-                    },
-                  ),)
+                // Positioned(
+                //   top: 25 * verticalScale,
+                //   right: 15 * horizontalScale,
+                //   child: IconButton(
+                //     icon: const Icon(
+                //       Icons.share,
+                //       color: Colors.black,
+                //     ),
+                //     onPressed: () async {
+                //       if (moneyreferallink.toString() != 'null') {
+                //         ShareExtend.share(moneyreferallink.toString(), "text");
+                //       }
+                //     },
+                //   ),)
               ],
             ),
           ),

@@ -162,19 +162,19 @@ class _CatelogueScreenState extends State<CatelogueScreen>
       appBar: AppBar(
         automaticallyImplyLeading: moneyreferallink.toString() != 'null'?false:true,
         backgroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.share,
-              color: Colors.black,
-            ),
-            onPressed: () async {
-              if(moneyreferallink.toString() != 'null'){
-               await ShareExtend.share(moneyreferallink.toString(), "text");
-              }
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(
+        //       Icons.share,
+        //       color: Colors.black,
+        //     ),
+        //     onPressed: () async {
+        //       if(moneyreferallink.toString() != 'null'){
+        //        await ShareExtend.share(moneyreferallink.toString(), "text");
+        //       }
+        //     },
+        //   ),
+        // ],
         elevation: 0,
         leading: InkWell(
           onTap: () {
@@ -360,11 +360,21 @@ class _CatelogueScreenState extends State<CatelogueScreen>
                                         InkWell(
                                           onTap: () {
 
-                                            GoRouter.of(context)
-                                                .pushNamed(
-                                                'paymentScreen',
-                                                queryParams: {'isItComboCourse': false,
-                                                  'courseMap': courseMap});
+                                            // GoRouter.of(context)
+                                            //     .pushNamed(
+                                            //     'paymentScreen',
+                                            //     queryParams: {'isItComboCourse': false,
+                                            //       'courseMap': courseMap});
+
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => PaymentScreen(
+                                                  map: courseMap,
+                                                  isItComboCourse: false,
+                                                ),
+                                              ),
+                                            );
 
                                             // Navigator.pushNamed(
                                             //     context, '/paymentscreen'

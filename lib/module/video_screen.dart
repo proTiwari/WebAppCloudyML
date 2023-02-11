@@ -29,6 +29,7 @@ import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:html' as html;
 import '../api/firebase_api.dart';
+import '../fun.dart';
 import '../models/course_details.dart';
 import '../models/firebase_file.dart';
 import 'new_assignment_screen.dart';
@@ -850,6 +851,7 @@ class _VideoScreenState extends State<VideoScreen> {
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
     return Scaffold(
+        floatingActionButton: floatingButton(context),
         body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             if (constraints.maxWidth >= 650) {
