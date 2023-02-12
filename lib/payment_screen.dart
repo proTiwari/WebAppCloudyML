@@ -66,6 +66,14 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
 
   var gstAmount;
   var totalAmount;
+  final textStyle = TextStyle(
+      color: Color.fromARGB(223, 48, 48, 49),
+      fontFamily: 'Poppins',
+      fontSize: 16,
+      letterSpacing:
+      0 /*percentages not used in flutter. defaulting to zero*/,
+      fontWeight: FontWeight.w500,
+      height: 1);
 
   getAmounts() {
     try{
@@ -177,7 +185,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                   Center(
                     child: Container(
                       width: 366 * horizontalScale,
-                      height: 150 * verticalScale,
+                      height: 200 * verticalScale,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(15),
@@ -210,7 +218,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     Icon(Icons.error),
                                 fit: BoxFit.fill,
                                 height: 110 * verticalScale,
-                                width: 127 * horizontalScale,
+                                width: 140 * horizontalScale,
                               ),
                             ),
                           ),
@@ -237,7 +245,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                       style: TextStyle(
                                         color: Color.fromRGBO(0, 0, 0, 1),
                                         fontFamily: 'Poppins',
-                                        fontSize: 18,
+                                        fontSize: 22,
                                         letterSpacing: 0,
                                         fontWeight: FontWeight.bold,
                                         height: 1,
@@ -583,7 +591,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                   Center(
                     child: Container(
                       width: 366 * horizontalScale,
-                      height: 150 * verticalScale,
+                      height: 170 * verticalScale,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(15),
@@ -601,7 +609,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                         color: Color.fromRGBO(255, 255, 255, 1),
                       ),
                       child: Padding(
-                        padding: EdgeInsets.only(right: 10, left: 10),
+                        padding: EdgeInsets.all(10),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -613,34 +621,20 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     flex: 3,
                                     child: Text(
                                       'Course Price',
-                                      style: TextStyle(
-                                        color: Color.fromARGB(223, 48, 48, 49),
-                                        fontFamily: 'Poppins',
-                                        fontSize: 18,
-                                        letterSpacing:
-                                        0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.w500,
-                                        height: 1,
-                                      ),
+                                      style: textStyle,
                                     ),
                                   ),
                                   Expanded(
                                     // flex: 2,
                                     child: Text(
                                       widget.map!['gst'] != null ? '₹${widget.map!['Course Price']}/-' : widget.map!['Course Price'],
-                                      style: TextStyle(
-                                          color: Color.fromARGB(223, 48, 48, 49),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 18,
-                                          letterSpacing:
-                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                          fontWeight: FontWeight.w500,
-                                          height: 1),
+                                      style: textStyle,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
+                            SizedBox(height: 5),
                             Expanded(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -649,14 +643,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     flex: 3,
                                     child: Text(
                                       "Discount",
-                                      style: TextStyle(
-                                          color: Color.fromARGB(223, 48, 48, 49),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 18,
-                                          letterSpacing:
-                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                          fontWeight: FontWeight.w500,
-                                          height: 1),
+                                      style: textStyle,
                                     ),
                                   ),
                                   Expanded(
@@ -664,19 +651,13 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                       NoCouponApplied
                                           ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${widget.map!["Discount"]}
                                           : discountedPrice,
-                                      style: TextStyle(
-                                          color: Color.fromARGB(223, 48, 48, 49),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 18,
-                                          letterSpacing:
-                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                          fontWeight: FontWeight.w500,
-                                          height: 1),
+                                      style: textStyle,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
+                            SizedBox(height: 5),
                             Expanded(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -685,27 +666,13 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     flex: 3,
                                     child: Text(
                                       "GST",
-                                      style: TextStyle(
-                                          color: Color.fromARGB(223, 48, 48, 49),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 18,
-                                          letterSpacing:
-                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                          fontWeight: FontWeight.w500,
-                                          height: 1),
+                                      style: textStyle,
                                     ),
                                   ),
                                   Expanded(
                                     child: Text(
                                       widget.map!['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
-                                      style: TextStyle(
-                                          color: Color.fromARGB(223, 48, 48, 49),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 18,
-                                          letterSpacing:
-                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                          fontWeight: FontWeight.w500,
-                                          height: 1),
+                                      style: textStyle,
                                     ),
                                   ),
                                 ],
@@ -723,14 +690,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     flex: 3,
                                     child: Text(
                                       'Total Pay',
-                                      style: TextStyle(
-                                          color: Color.fromARGB(223, 48, 48, 49),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 18,
-                                          letterSpacing:
-                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                          fontWeight: FontWeight.w500,
-                                          height: 1),
+                                      style: textStyle,
                                     ),
                                   ),
                                   Expanded(
@@ -740,14 +700,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                       widget.map!['gst'] != null ? '₹${totalAmount.round().toString()}/-' :
                                       '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //widget.map!["Amount Payable"]
                                           : finalamountToDisplay,
-                                      style: TextStyle(
-                                          color: Color.fromARGB(223, 48, 48, 49),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 18,
-                                          letterSpacing:
-                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                          fontWeight: FontWeight.w500,
-                                          height: 1),
+                                      style: textStyle,
                                     ),
                                   ),
                                 ],

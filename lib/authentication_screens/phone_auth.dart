@@ -829,6 +829,22 @@ class _LoginPageState extends State<LoginPage> {
           .then((QuerySnapshot snapshot) {
         snapshot.docs.forEach((f) => items.add(f.data()));
       });
+      if (items.length == 0) {
+        docSnapshots = await FirebaseFirestore.instance
+            .collection('Users')
+            .where('mobilenumber',
+            isEqualTo: int.parse(phoneController.text.toString()))
+            .get();
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .where('mobilenumber',
+            isEqualTo: int.parse(phoneController.text.toString()))
+            .get()
+            .then((QuerySnapshot snapshot) {
+          snapshot.docs.forEach((f) => items.add(f.data()));
+        });
+      }
+
       print("2");
 
       print("1sdkfffffj${items}");
@@ -959,7 +975,6 @@ class _LoginPageState extends State<LoginPage> {
             globals.actualCode = verificationId;
           });
     }
-  }
 // Future<void> onAuthenticationSuccessful(
 //     BuildContext context, dynamic result) async {
 //   // firebaseUser = result.user;
@@ -1001,4 +1016,5 @@ class _LoginPageState extends State<LoginPage> {
 //       MaterialPageRoute(builder: (_) => HomePage()),
 //       (Route<dynamic> route) => false);
 // }
+}
 }
