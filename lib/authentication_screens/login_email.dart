@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:lottie/lottie.dart';
 import 'package:cloudyml_app2/theme.dart';
@@ -1661,12 +1662,13 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                           // } else {
                                           //adding condition for handling otp verification error
                                           if (otpverified) {
-                                            Navigator.of(context)
-                                                .pushReplacement(
-                                              MaterialPageRoute(
-                                                builder: (_) => HomePage(),
-                                              ),
-                                            );
+                                            // Navigator.of(context)
+                                            //     .pushReplacement(
+                                            //   MaterialPageRoute(
+                                            //     builder: (_) => HomePage(),
+                                            //   ),
+                                            // );
+                                            GoRouter.of(context).pushReplacementNamed('home');
                                             saveLoginState(context);
                                             // }
                                           }
