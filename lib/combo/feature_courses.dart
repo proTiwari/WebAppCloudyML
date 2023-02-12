@@ -510,8 +510,11 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                               // GoRouter.of(context)
                               //     .pushNamed(
                               //     'paymentScreen',
-                              //     queryParams: {'isItComboCourse': true,
-                              //       'courseMap': comboMap});
+                              //     queryParams: {
+                              //       'isItComboCourse': true,
+                              //       'courseMap': comboMap,
+                              //     }
+                              // );
 
 
                               Navigator.push(
@@ -523,6 +526,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                   ),
                                 ),
                               );
+
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -639,20 +643,20 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                     ),
                   ),
                 ),
-                Positioned(
-                  top: 25 * verticalScale,
-                  right: 15 * horizontalScale,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.share,
-                      color: Colors.black,
-                    ),
-                    onPressed: () async {
-                      if (moneyreferallink.toString() != 'null') {
-                        ShareExtend.share(moneyreferallink.toString(), "text");
-                      }
-                    },
-                  ),)
+                // Positioned(
+                //   top: 25 * verticalScale,
+                //   right: 15 * horizontalScale,
+                //   child: IconButton(
+                //     icon: const Icon(
+                //       Icons.share,
+                //       color: Colors.black,
+                //     ),
+                //     onPressed: () async {
+                //       if (moneyreferallink.toString() != 'null') {
+                //         ShareExtend.share(moneyreferallink.toString(), "text");
+                //       }
+                //     },
+                //   ),)
               ],
             ),
           ),

@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dotted_line/dotted_line.dart';
+import 'fun.dart';
 import 'global_variable.dart' as globals;
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
@@ -156,7 +157,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 193 * max(verticalScale, horizontalScale),
+                    height: 65 * max(verticalScale, horizontalScale),
                   ),
                   Text(
                     'Course Details',
@@ -164,7 +165,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                     style: TextStyle(
                         color: Color.fromRGBO(48, 48, 49, 1),
                         fontFamily: 'Poppins',
-                        fontSize: 20,
+                        fontSize: 34,
                         letterSpacing:
                         0 /*percentages not used in flutter. defaulting to zero*/,
                         fontWeight: FontWeight.bold,
@@ -173,158 +174,161 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                   SizedBox(
                     height: 20,
                   ),
-                  Container(
-                    width: 366 * horizontalScale,
-                    height: 122 * verticalScale,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        topRight: Radius.circular(15),
-                        bottomLeft: Radius.circular(15),
-                        bottomRight: Radius.circular(15),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                            color:
-                            Color.fromRGBO(31, 31, 31, 0.20000000298023224),
-                            offset: Offset(2, 10),
-                            blurRadius: 20)
-                      ],
-                      color: Color.fromRGBO(255, 255, 255, 1),
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 5,
+                  Center(
+                    child: Container(
+                      width: 366 * horizontalScale,
+                      height: 150 * verticalScale,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                          bottomLeft: Radius.circular(15),
+                          bottomRight: Radius.circular(15),
                         ),
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: CachedNetworkImage(
-                              imageUrl: widget.map!['image_url'],
-                              placeholder: (context, url) =>
-                                  Center(child: CircularProgressIndicator()),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                              fit: BoxFit.fill,
-                              height: 110 * verticalScale,
-                              width: 127 * horizontalScale,
+                        boxShadow: [
+                          BoxShadow(
+                              color:
+                              Color.fromRGBO(31, 31, 31, 0.20000000298023224),
+                              offset: Offset(2, 10),
+                              blurRadius: 20)
+                        ],
+                        color: Color.fromRGBO(255, 255, 255, 1),
+                      ),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: CachedNetworkImage(
+                                imageUrl: widget.map!['image_url'],
+                                placeholder: (context, url) =>
+                                    Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                                fit: BoxFit.fill,
+                                height: 110 * verticalScale,
+                                width: 127 * horizontalScale,
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  width: 194 * horizontalScale,
-                                  child: Text(
-                                    widget.map!['name'],
-                                    textScaleFactor:
-                                    min(horizontalScale, verticalScale),
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(0, 0, 0, 1),
-                                      fontFamily: 'Poppins',
-                                      fontSize: 18,
-                                      letterSpacing: 0,
-                                      fontWeight: FontWeight.bold,
-                                      height: 1,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                  width: 194,
-                                  child: Text(
-                                    widget.map!['description'],
-                                    // overflow: TextOverflow.ellipsis,
-                                    textScaleFactor:
-                                    min(horizontalScale, verticalScale),
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(0, 0, 0, 1),
-                                      fontFamily: 'Poppins',
-                                      fontSize: 10,
-                                      letterSpacing: 0,
-                                      fontWeight: FontWeight.normal,
-                                      height: 1,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              // SizedBox(
-                              //   height: 10,
-                              // ),
-                              Expanded(
-                                child: Image.asset(
-                                  'assets/Rating.png',
-                                  fit: BoxFit.fill,
-                                  height: 11,
-                                  width: 71,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'English  ||  ${widget.map!['videosCount']} Videos',
-                                      textAlign: TextAlign.left,
-                                      textScaleFactor:
-                                      min(horizontalScale, verticalScale),
-                                      style: TextStyle(
-                                          color: Color.fromRGBO(88, 88, 88, 1),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 12,
-                                          letterSpacing:
-                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                          fontWeight: FontWeight.normal,
-                                          height: 1),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Text(
-                                      '₹${widget.map!['Course Price']}/-',
-                                      textScaleFactor:
-                                      min(horizontalScale, verticalScale),
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                          color:
-                                          Color.fromRGBO(155, 117, 237, 1),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 18,
-                                          letterSpacing:
-                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                          fontWeight: FontWeight.bold,
-                                          height: 1),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                            ],
+                          SizedBox(
+                            width: 10,
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            flex: 2,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    width: 194 * horizontalScale,
+                                    height: 25 * verticalScale,
+                                    child: Text(
+                                      widget.map!['name'],
+                                      textScaleFactor:
+                                      min(horizontalScale, verticalScale),
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                        color: Color.fromRGBO(0, 0, 0, 1),
+                                        fontFamily: 'Poppins',
+                                        fontSize: 18,
+                                        letterSpacing: 0,
+                                        fontWeight: FontWeight.bold,
+                                        height: 1,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                    width: 194,
+                                    child: Text(
+                                      widget.map!['description'],
+                                      // overflow: TextOverflow.ellipsis,
+                                      textScaleFactor:
+                                      min(horizontalScale, verticalScale),
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                        color: Color.fromRGBO(0, 0, 0, 1),
+                                        fontFamily: 'Poppins',
+                                        fontSize: 10,
+                                        letterSpacing: 0,
+                                        fontWeight: FontWeight.normal,
+                                        height: 1,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // SizedBox(
+                                //   height: 10,
+                                // ),
+                                Expanded(
+                                  child: Image.asset(
+                                    'assets/Rating.png',
+                                    fit: BoxFit.fill,
+                                    height: 11,
+                                    width: 71,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'English  ||  ${widget.map!['videosCount']} Videos',
+                                        textAlign: TextAlign.left,
+                                        textScaleFactor:
+                                        min(horizontalScale, verticalScale),
+                                        style: TextStyle(
+                                            color: Color.fromRGBO(88, 88, 88, 1),
+                                            fontFamily: 'Poppins',
+                                            fontSize: 12,
+                                            letterSpacing:
+                                            0 /*percentages not used in flutter. defaulting to zero*/,
+                                            fontWeight: FontWeight.normal,
+                                            height: 1),
+                                      ),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Text(
+                                        '₹${widget.map!['Course Price']}/-',
+                                        textScaleFactor:
+                                        min(horizontalScale, verticalScale),
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            color:
+                                            Color.fromRGBO(155, 117, 237, 1),
+                                            fontFamily: 'Poppins',
+                                            fontSize: 18,
+                                            letterSpacing:
+                                            0 /*percentages not used in flutter. defaulting to zero*/,
+                                            fontWeight: FontWeight.bold,
+                                            height: 1),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -336,7 +340,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                     style: TextStyle(
                         color: Color.fromRGBO(48, 48, 49, 1),
                         fontFamily: 'Poppins',
-                        fontSize: 20,
+                        fontSize: 34,
                         letterSpacing:
                         0 /*percentages not used in flutter. defaulting to zero*/,
                         fontWeight: FontWeight.bold,
@@ -567,7 +571,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                     style: TextStyle(
                         color: Color.fromRGBO(48, 48, 49, 1),
                         fontFamily: 'Poppins',
-                        fontSize: 20,
+                        fontSize: 34,
                         letterSpacing:
                         0 /*percentages not used in flutter. defaulting to zero*/,
                         fontWeight: FontWeight.bold,
@@ -576,176 +580,181 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                   SizedBox(
                     height: 20,
                   ),
-                  Container(
-                    width: 366 * horizontalScale,
-                    height: 150 * verticalScale,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        topRight: Radius.circular(15),
-                        bottomLeft: Radius.circular(15),
-                        bottomRight: Radius.circular(15),
+                  Center(
+                    child: Container(
+                      width: 366 * horizontalScale,
+                      height: 150 * verticalScale,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                          bottomLeft: Radius.circular(15),
+                          bottomRight: Radius.circular(15),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                              color:
+                              Color.fromRGBO(31, 31, 31, 0.20000000298023224),
+                              offset: Offset(0, 0),
+                              blurRadius: 5)
+                        ],
+                        color: Color.fromRGBO(255, 255, 255, 1),
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                            color:
-                            Color.fromRGBO(31, 31, 31, 0.20000000298023224),
-                            offset: Offset(0, 0),
-                            blurRadius: 5)
-                      ],
-                      color: Color.fromRGBO(255, 255, 255, 1),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 10, left: 10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Expanded(
-                            child: Row(
-                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    'Course Price',
-                                    style: TextStyle(
-                                      color: Color.fromARGB(223, 48, 48, 49),
-                                      fontFamily: 'Poppins',
-                                      fontSize: 18,
-                                      letterSpacing:
-                                      0 /*percentages not used in flutter. defaulting to zero*/,
-                                      fontWeight: FontWeight.w500,
-                                      height: 1,
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 10, left: 10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              child: Row(
+                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      'Course Price',
+                                      style: TextStyle(
+                                        color: Color.fromARGB(223, 48, 48, 49),
+                                        fontFamily: 'Poppins',
+                                        fontSize: 18,
+                                        letterSpacing:
+                                        0 /*percentages not used in flutter. defaulting to zero*/,
+                                        fontWeight: FontWeight.w500,
+                                        height: 1,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  // flex: 2,
-                                  child: Text(
-                                    widget.map!['gst'] != null ? '₹${widget.map!['Course Price']}/-' : widget.map!['Course Price'],
-                                    style: TextStyle(
-                                        color: Color.fromARGB(223, 48, 48, 49),
-                                        fontFamily: 'Poppins',
-                                        fontSize: 18,
-                                        letterSpacing:
-                                        0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.w500,
-                                        height: 1),
+                                  Expanded(
+                                    // flex: 2,
+                                    child: Text(
+                                      widget.map!['gst'] != null ? '₹${widget.map!['Course Price']}/-' : widget.map!['Course Price'],
+                                      style: TextStyle(
+                                          color: Color.fromARGB(223, 48, 48, 49),
+                                          fontFamily: 'Poppins',
+                                          fontSize: 18,
+                                          letterSpacing:
+                                          0 /*percentages not used in flutter. defaulting to zero*/,
+                                          fontWeight: FontWeight.w500,
+                                          height: 1),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    "Discount",
-                                    style: TextStyle(
-                                        color: Color.fromARGB(223, 48, 48, 49),
-                                        fontFamily: 'Poppins',
-                                        fontSize: 18,
-                                        letterSpacing:
-                                        0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.w500,
-                                        height: 1),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      "Discount",
+                                      style: TextStyle(
+                                          color: Color.fromARGB(223, 48, 48, 49),
+                                          fontFamily: 'Poppins',
+                                          fontSize: 18,
+                                          letterSpacing:
+                                          0 /*percentages not used in flutter. defaulting to zero*/,
+                                          fontWeight: FontWeight.w500,
+                                          height: 1),
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    NoCouponApplied
-                                        ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${widget.map!["Discount"]}
-                                        : discountedPrice,
-                                    style: TextStyle(
-                                        color: Color.fromARGB(223, 48, 48, 49),
-                                        fontFamily: 'Poppins',
-                                        fontSize: 18,
-                                        letterSpacing:
-                                        0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.w500,
-                                        height: 1),
+                                  Expanded(
+                                    child: Text(
+                                      NoCouponApplied
+                                          ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${widget.map!["Discount"]}
+                                          : discountedPrice,
+                                      style: TextStyle(
+                                          color: Color.fromARGB(223, 48, 48, 49),
+                                          fontFamily: 'Poppins',
+                                          fontSize: 18,
+                                          letterSpacing:
+                                          0 /*percentages not used in flutter. defaulting to zero*/,
+                                          fontWeight: FontWeight.w500,
+                                          height: 1),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    "GST",
-                                    style: TextStyle(
-                                        color: Color.fromARGB(223, 48, 48, 49),
-                                        fontFamily: 'Poppins',
-                                        fontSize: 18,
-                                        letterSpacing:
-                                        0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.w500,
-                                        height: 1),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      "GST",
+                                      style: TextStyle(
+                                          color: Color.fromARGB(223, 48, 48, 49),
+                                          fontFamily: 'Poppins',
+                                          fontSize: 18,
+                                          letterSpacing:
+                                          0 /*percentages not used in flutter. defaulting to zero*/,
+                                          fontWeight: FontWeight.w500,
+                                          height: 1),
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    widget.map!['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
-                                    style: TextStyle(
-                                        color: Color.fromARGB(223, 48, 48, 49),
-                                        fontFamily: 'Poppins',
-                                        fontSize: 18,
-                                        letterSpacing:
-                                        0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.w500,
-                                        height: 1),
+                                  Expanded(
+                                    child: Text(
+                                      widget.map!['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
+                                      style: TextStyle(
+                                          color: Color.fromARGB(223, 48, 48, 49),
+                                          fontFamily: 'Poppins',
+                                          fontSize: 18,
+                                          letterSpacing:
+                                          0 /*percentages not used in flutter. defaulting to zero*/,
+                                          fontWeight: FontWeight.w500,
+                                          height: 1),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          DottedLine(),
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    'Total Pay',
-                                    style: TextStyle(
-                                        color: Color.fromARGB(223, 48, 48, 49),
-                                        fontFamily: 'Poppins',
-                                        fontSize: 18,
-                                        letterSpacing:
-                                        0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.w500,
-                                        height: 1),
+                            SizedBox(height: 15),
+
+                            DottedLine(),
+                            SizedBox(height: 15),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      'Total Pay',
+                                      style: TextStyle(
+                                          color: Color.fromARGB(223, 48, 48, 49),
+                                          fontFamily: 'Poppins',
+                                          fontSize: 18,
+                                          letterSpacing:
+                                          0 /*percentages not used in flutter. defaulting to zero*/,
+                                          fontWeight: FontWeight.w500,
+                                          height: 1),
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    NoCouponApplied
-                                        ?
-                                    widget.map!['gst'] != null ? '₹${totalAmount.round().toString()}/-' :
-                                    '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //widget.map!["Amount Payable"]
-                                        : finalamountToDisplay,
-                                    style: TextStyle(
-                                        color: Color.fromARGB(223, 48, 48, 49),
-                                        fontFamily: 'Poppins',
-                                        fontSize: 18,
-                                        letterSpacing:
-                                        0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.w500,
-                                        height: 1),
+                                  Expanded(
+                                    child: Text(
+                                      NoCouponApplied
+                                          ?
+                                      widget.map!['gst'] != null ? '₹${totalAmount.round().toString()}/-' :
+                                      '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //widget.map!["Amount Payable"]
+                                          : finalamountToDisplay,
+                                      style: TextStyle(
+                                          color: Color.fromARGB(223, 48, 48, 49),
+                                          fontFamily: 'Poppins',
+                                          fontSize: 18,
+                                          letterSpacing:
+                                          0 /*percentages not used in flutter. defaulting to zero*/,
+                                          fontWeight: FontWeight.w500,
+                                          height: 1),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -753,7 +762,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                     height: 20,
                   ),
                   Center(
-                    child: PaymentButton(
+                    child:  PaymentButton(
                       coursePriceMoneyRef: int.parse(courseprice),
                       amountString: (double.parse(NoCouponApplied
                           ?
@@ -773,7 +782,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                       buttonTextForCode: "Buy Now for $finalamountToDisplay",
                       changeState: () {
                         setState(() {
-                          isPayButtonPressed = !isPayButtonPressed;
+                          // isLoading = !isLoading;
                         });
                       },
                       courseDescription: widget.map!['description'],
@@ -807,19 +816,19 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                   SizedBox(
                     height: 20,
                   ),
-                  Center(
-                    child: Container(
-                      width: 200,
-                      child: Text(
-                        "* Amount payable is inclusive of taxes. TERMS & CONDITIONS APPLY",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Regular',
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Center(
+                  //   child: Container(
+                  //     width: 200,
+                  //     child: Text(
+                  //       "* Amount payable is inclusive of taxes. TERMS & CONDITIONS APPLY",
+                  //       textAlign: TextAlign.center,
+                  //       style: TextStyle(
+                  //         fontFamily: 'Regular',
+                  //         fontSize: 12,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

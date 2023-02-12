@@ -8,6 +8,7 @@ import 'package:cloudyml_app2/api/firebase_api.dart';
 import 'package:cloudyml_app2/authentication/firebase_auth.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/router/login_state_check.dart';
+import 'package:cloudyml_app2/screens/exlusive_offer/seasons_offer_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -119,7 +120,7 @@ class _HomeState extends State<Home> {
         //     !(!(map['payInPartsDetails']['outStandingAmtPaid'] == null));
       });
     } catch (e) {
-      print("ggggggggggg$e");
+      print("ggggggggggg $e");
     }
   }
 
@@ -595,7 +596,7 @@ class _HomeState extends State<Home> {
     fetchCourses();
     dbCheckerForPayInParts();
     userData();
-    // startTimer();
+    startTimer();
     // getuserdetails();
     checkrewardexpiry();
   }
@@ -705,6 +706,78 @@ class _HomeState extends State<Home> {
                                     fit: BoxFit.fill,
                                   )),
                             ),
+                            Positioned(
+                              top: 435,
+                              left: 75,
+                              child: Row(
+                                children: [
+                                  InkWell(
+                                    onTap: (){
+                                      launch('https://apps.apple.com/app/cloudyml-data-science-course/id6444130328');
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.apple_outlined, color: Colors.white, size: 40,),
+                                          Column(
+                                            children: [
+                                              Text('Download our IOS app from', style: TextStyle(color: Colors.white, fontSize: 8),),
+                                              Text('APPLE STORE', style: TextStyle(color: Colors.white, fontSize: 20)),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 20,),
+                                  InkWell(
+                                    onTap: (){
+                                      launch('https://play.google.com/store/apps/details?id=com.cloudyml.cloudymlapp');
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.only(right: 15, top:10, bottom:10, ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.play_arrow, color: Colors.white, size: 40,),
+                                          Column(
+                                            children: [
+                                              Text('Download our Android app from', style: TextStyle(color: Colors.white, fontSize: 8),),
+                                              Text('GOOGLE PLAY', style: TextStyle(color: Colors.white, fontSize: 20)),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // TextButton(
+                            //   onPressed: () {
+                            //
+                            //     Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(
+                            //         builder: (context) => SeasonOffer(
+                            //           days: days,
+                            //         hours: hours,
+                            //         minutes: minutes,
+                            //         seconds: seconds,)
+                            //       ),
+                            //     );
+                            //
+                            //   },
+                            //   child: Text('Offer'),
+                            // ),
                           ],
                         ),
                       ),
@@ -1729,37 +1802,37 @@ class _HomeState extends State<Home> {
                                                                       color: Colors.white,
                                                                       fontWeight: FontWeight.bold),
                                                                 )),
-                                                            course[index].trial! ? SizedBox(width: 15) : SizedBox(),
+                                                            // course[index].trial! ? SizedBox(width: 15) : SizedBox(),
 
-                                                            course[index].trial == true ? ElevatedButton(
-                                                                onPressed: () {
-                                                                  showDialog(
-                                                                    context: context,
-                                                                      builder: (context) {
-                                                                      return AlertDialog(
-                                                                        title: Text('This course is available for $numberOfDays trial '),
-                                                                        content: Container(
-                                                                          height: screenHeight/3,
-                                                                          width: screenWidth/3,
-                                                                          child: Column(
+                                                            // course[index].trial == true ? ElevatedButton(
+                                                            //     onPressed: () {
+                                                            //       showDialog(
+                                                            //         context: context,
+                                                            //           builder: (context) {
+                                                            //           return AlertDialog(
+                                                            //             title: Text('This course is available for $numberOfDays trial '),
+                                                            //             content: Container(
+                                                            //               height: screenHeight/3,
+                                                            //               width: screenWidth/3,
+                                                            //               child: Column(
 
-                                                                          ),
-                                                                        ),
-                                                                      );
-                                                                  });
+                                                            //               ),
+                                                            //             ),
+                                                            //           );
+                                                            //       });
 
-                                                                  print('paidCourseNames before ${userMap['paidCourseNames']}');
-                                                                  userMap['paidCourseNames'].add(course[index].courseId);
+                                                            //       print('paidCourseNames before ${userMap['paidCourseNames']}');
+                                                            //       userMap['paidCourseNames'].add(course[index].courseId);
 
-                                                                  FirebaseFirestore.instance.collection('Users')
-                                                                      .doc(FirebaseAuth.instance.currentUser!.uid)
-                                                                      .update({
-                                                                    'trialCourse': true,
-                                                                    'paidCourseNames': userMap['paidCourseNames'],
-                                                                  });
-                                                                  print('paidCourseNames ${userMap['paidCourseNames']}');
-                                                                },
-                                                                child: Text('Try for $numberOfDays days')) : Container(),
+                                                            //       FirebaseFirestore.instance.collection('Users')
+                                                            //           .doc(FirebaseAuth.instance.currentUser!.uid)
+                                                            //           .update({
+                                                            //         'trialCourse': true,
+                                                            //         'paidCourseNames': userMap['paidCourseNames'],
+                                                            //       });
+                                                            //       print('paidCourseNames ${userMap['paidCourseNames']}');
+                                                            //     },
+                                                            //     child: Text('Try for $numberOfDays days')) : Container(),
                                                           ],
                                                         ),
                                                       ),
@@ -1846,6 +1919,58 @@ class _HomeState extends State<Home> {
                                 Text(
                                   "CloudyML",
                                   style: textStyle,
+                                ),
+                                SizedBox(width: 10,),
+                                Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: (){
+                                        launch('https://apps.apple.com/app/cloudyml-data-science-course/id6444130328');
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          color: Colors.deepPurple,
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.apple_outlined, color: Colors.white, size: 12,),
+                                            Column(
+                                              children: [
+                                                Text('Download our IOS app from', style: TextStyle(color: Colors.white, fontSize: 4),),
+                                                Text('APPLE STORE', style: TextStyle(color: Colors.white, fontSize: 6)),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 10,),
+                                    InkWell(
+                                      onTap: (){
+                                        launch('https://play.google.com/store/apps/details?id=com.cloudyml.cloudymlapp');
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          color: Colors.deepPurple,
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.play_arrow, color: Colors.white, size: 12,),
+                                            Column(
+                                              children: [
+                                                Text('Download our Android app from', style: TextStyle(color: Colors.white, fontSize: 4),),
+                                                Text('GOOGLE PLAY', style: TextStyle(color: Colors.white, fontSize: 6)),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

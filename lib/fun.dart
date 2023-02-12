@@ -22,6 +22,8 @@ import 'homepage.dart';
 import 'my_Courses.dart';
 import 'package:share_extend/share_extend.dart';
 
+bool isLoading  = false;
+
 Row Star() {
   return Row(
     mainAxisAlignment: MainAxisAlignment.start,

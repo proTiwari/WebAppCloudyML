@@ -627,7 +627,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   @override
   Widget build(BuildContext context) {
     final userprovider = Provider.of<UserProvider>(context);
-    return Container(
+    return isLoading ? Center(child: CircularProgressIndicator()) : Container(
       width: 350,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(50),
@@ -636,26 +636,76 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
       child: Column(
         children: [
           InkWell(
-            onTap: () {
-              setState(() {
-                widget.isPayButtonPressed = !widget.isPayButtonPressed;
+            onTap: () async {
+
+              // if (widget.isPayButtonPressed) {
+              //   Future.delayed(Duration(milliseconds: 150), () {
+              //     widget.scrollController.animateTo(
+              //         widget.scrollController.position.maxScrollExtent,
+              //         duration: Duration(milliseconds: 800),
+              //         curve: Curves.easeIn);
+              //   });
+              // } else {
+              //   Future.delayed(Duration(milliseconds: 150), () {
+              //     widget.scrollController.animateTo(
+              //         widget.scrollController.position.minScrollExtent,
+              //         duration: Duration(milliseconds: 400),
+              //         curve: Curves.easeIn);
+              //   });
+              // }
+
+              setState((){
+                isLoading = true;
               });
+
+
+
+              updateAmoutStringForRP(
+                  isPayInPartsPressed,
+                  isMinAmountCheckerPressed,
+                  isOutStandingAmountCheckerPressed);
+              widget.updateCourseIdToCouponDetails();
+              order_id = await generateOrderId(
+                  key_id, ////rzp_live_ESC1ad8QCKo9zb
+                  key_secret, ////D5fscRQB6i7dwCQlZybecQND
+                  amountStringForRp!);
+
+              print('order id is out--$order_id');
+              // Future.delayed(const Duration(milliseconds: 300), () {
+              print('order id is --$order_id');
+              var options = {
+                'key':
+                key_id, ////rzp_live_ESC1ad8QCKo9zb
+                'amount':
+                amountStringForRp, //amount is paid in paises so pay in multiples of 100
+
+                'name': widget.courseName,
+                'description': widget.courseDescription,
+                'timeout': 300, //in seconds
+                'order_id': order_id,
+                'prefill': {
+                  'contact': userprovider.userModel!.mobile,
+                  // '7003482660', //original number and email
+                  'email': userprovider.userModel!.email,
+                  // 'cloudyml.com@gmail.com'
+                  // 'test@razorpay.com'
+                  'name': userprovider.userModel!.name
+                },
+                'notes': {
+                  'contact': userprovider.userModel!.mobile,
+                  'email': userprovider.userModel!.email,
+                  'name': userprovider.userModel!.name
+                }
+              };
+              _razorpay.open(options);
+              setState((){
+                isLoading = false;
+              });
+
+              // setState(() {
+              //   widget.isPayButtonPressed = !widget.isPayButtonPressed;
+              // });
               // widget.changeState;
-              if (widget.isPayButtonPressed) {
-                Future.delayed(Duration(milliseconds: 150), () {
-                  widget.scrollController.animateTo(
-                      widget.scrollController.position.maxScrollExtent,
-                      duration: Duration(milliseconds: 800),
-                      curve: Curves.easeIn);
-                });
-              } else {
-                Future.delayed(Duration(milliseconds: 150), () {
-                  widget.scrollController.animateTo(
-                      widget.scrollController.position.minScrollExtent,
-                      duration: Duration(milliseconds: 400),
-                      curve: Curves.easeIn);
-                });
-              }
             },
             child: Center(
               child: Container(
@@ -800,9 +850,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                                       width: 1.1,
                                     ),
                                     color: userData['payInPartsDetails']
-                                    [widget
-                                        .courseId] !=
-                                        null
+                                    [widget.courseId] != null
                                         ? Colors.grey.shade100
                                         : Colors.white,
                                     // color:if(userData[
@@ -900,12 +948,8 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                                           .grey.shade200,
                                       width: 1.1,
                                     ),
-                                    color: !(userData[
-                                    'payInPartsDetails']
-                                    [widget
-                                        .courseId] ==
-                                        null)
-                                        ? Colors.white
+                                    color: !(userData['payInPartsDetails']
+                                    [widget.courseId] == null) ? Colors.white
                                         : Colors
                                         .grey.shade100,
                                   ),
