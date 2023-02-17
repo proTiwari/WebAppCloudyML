@@ -47,7 +47,8 @@ class DatabaseServices {
                   courseContent: documentSnapshot.data()['courseContent'],
                   show: documentSnapshot.data()['show'],
                   reviews: documentSnapshot.data()['reviews'],
-                  trial: documentSnapshot.data()['trial'],
+                  trialCourse: documentSnapshot.data()['trialCourse'],
+                  trialDays: documentSnapshot.data()['trialDays'],
                 ),
               )
               .toList(),

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,6 +11,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dotted_line/dotted_line.dart';
+import 'package:hexcolor/hexcolor.dart';
+import 'package:star_rating/star_rating.dart';
 import 'fun.dart';
 import 'global_variable.dart' as globals;
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
@@ -69,7 +72,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
   final textStyle = TextStyle(
       color: Color.fromARGB(223, 48, 48, 49),
       fontFamily: 'Poppins',
-      fontSize: 16,
+      fontSize: 12,
       letterSpacing:
       0 /*percentages not used in flutter. defaulting to zero*/,
       fontWeight: FontWeight.w500,
@@ -148,6 +151,12 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
     }
   }
 
+  final congoStyle = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 56,
+    height: 1,
+  );
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -155,477 +164,803 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
     return Scaffold(
-      body: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 65 * max(verticalScale, horizontalScale),
-                  ),
-                  Text(
-                    'Course Details',
-                    textScaleFactor: min(horizontalScale, verticalScale),
-                    style: TextStyle(
-                        color: Color.fromRGBO(48, 48, 49, 1),
-                        fontFamily: 'Poppins',
-                        fontSize: 34,
-                        letterSpacing:
-                        0 /*percentages not used in flutter. defaulting to zero*/,
-                        fontWeight: FontWeight.bold,
-                        height: 1),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: Container(
-                      width: 366 * horizontalScale,
-                      height: 200 * verticalScale,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          topRight: Radius.circular(15),
-                          bottomLeft: Radius.circular(15),
-                          bottomRight: Radius.circular(15),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                              color:
-                              Color.fromRGBO(31, 31, 31, 0.20000000298023224),
-                              offset: Offset(2, 10),
-                              blurRadius: 20)
-                        ],
-                        color: Color.fromRGBO(255, 255, 255, 1),
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 5,
+      // drawer: customDrawer(context),
+      appBar: AppBar(
+        title: Center(
+          child: Text(
+            'Payment Details',
+            textScaleFactor:
+            min(horizontalScale, verticalScale),
+            style: TextStyle(
+                color: Color.fromRGBO(255, 255, 255, 1),
+                fontFamily: 'Poppins',
+                fontSize: 35,
+                letterSpacing: 0,
+                fontWeight: FontWeight.normal,
+                height: 1),
+          ),
+        ),
+        backgroundColor: Colors.deepPurple,
+      ),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      if (constraints.maxWidth >= 650) {
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                height: screenHeight/5,
+                width: screenWidth,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Congratulations',
+                      textScaleFactor: min(horizontalScale, verticalScale),
+                      style: congoStyle,),
+                    Text('🤩You are just one step away🤩',
+                      textScaleFactor: min(horizontalScale, verticalScale),
+                      style: congoStyle,),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 90.0, right: 90, top: 10, bottom: 10),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black26,
+                          offset: Offset(
+                            2, // Move to right 10  horizontally
+                            2.0, // Move to bottom 10 Vertically
                           ),
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: CachedNetworkImage(
-                                imageUrl: widget.map!['image_url'],
-                                placeholder: (context, url) =>
-                                    Center(child: CircularProgressIndicator()),
-                                errorWidget: (context, url, error) =>
-                                    Icon(Icons.error),
-                                fit: BoxFit.fill,
-                                height: 110 * verticalScale,
-                                width: 140 * horizontalScale,
-                              ),
-                            ),
+                          blurRadius: 40)
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 20.0, top: 10, bottom: 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.black, width: 1),
+                            color: Colors.white,
                           ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: 10,
+                          child: Column(
+                            children: [
+                              Container(
+                                height: screenHeight/3.5,
+                                width: screenWidth/3,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      topRight: Radius.circular(10),
+                                  ),
+                                  child: CachedNetworkImage(
+                                    imageUrl: widget.map!['image_url'],
+                                    placeholder: (context, url) =>
+                                        Center(child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                    fit: BoxFit.fill,
+                                    // height: 110 * verticalScale,
+                                    // width: 140 * horizontalScale,
+                                  ),
                                 ),
-                                Expanded(
-                                  child: Container(
-                                    width: 194 * horizontalScale,
-                                    height: 25 * verticalScale,
-                                    child: Text(
+                              ),
+                              Container(
+                                width: screenWidth/3,
+                                padding: EdgeInsets.only(left: 5.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.deepPurple.shade100,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 5.0),
+                                      child: Container(
+                                        height: 20,
+                                        width: 25,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(3.0),
+                                          color: HexColor('440F87'),
+                                        ),
+                                        child: Center(
+                                          child: Text(widget.map!['reviews'] != null ? widget.map!['reviews'] : '5.0',
+                                            style: TextStyle(fontSize: 12, color: Colors.white,
+                                                fontWeight: FontWeight.normal),),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                      const EdgeInsets.only(right: 5.0),
+                                      child: StarRating(
+                                        length: 5,
+                                        rating: widget.map!['reviews'] != null ? double.parse(widget.map!['reviews']) : 5.0,
+                                        color: HexColor('440F87'),
+                                        starSize: 25,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 20,),
+                              Container(
+                                width: screenWidth/3,
+                                padding: EdgeInsets.only(left: 15, right: 15),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
                                       widget.map!['name'],
-                                      textScaleFactor:
-                                      min(horizontalScale, verticalScale),
-                                      textAlign: TextAlign.left,
+                                      textScaleFactor: min(horizontalScale, verticalScale),
                                       style: TextStyle(
-                                        color: Color.fromRGBO(0, 0, 0, 1),
-                                        fontFamily: 'Poppins',
-                                        fontSize: 22,
-                                        letterSpacing: 0,
+                                        fontSize: 36,
                                         fontWeight: FontWeight.bold,
                                         height: 1,
                                       ),
+                                      maxLines: 2,
                                     ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                    width: 194,
-                                    child: Text(
+                                    SizedBox(height: 15 * verticalScale,),
+                                    Text(
                                       widget.map!['description'],
-                                      // overflow: TextOverflow.ellipsis,
-                                      textScaleFactor:
-                                      min(horizontalScale, verticalScale),
-                                      textAlign: TextAlign.left,
+                                      textScaleFactor: min(horizontalScale, verticalScale),
                                       style: TextStyle(
-                                        color: Color.fromRGBO(0, 0, 0, 1),
-                                        fontFamily: 'Poppins',
-                                        fontSize: 10,
-                                        letterSpacing: 0,
-                                        fontWeight: FontWeight.normal,
-                                        height: 1,
+                                        fontSize: 18,
+                                        height: 1
                                       ),
                                     ),
+                                    SizedBox(height: 15 * verticalScale,),
+                                    Text(
+                                      'English  ||  online  ||  lifetime',
+                                      textScaleFactor: min(horizontalScale, verticalScale),
+                                      style: TextStyle(
+                                        color: Colors.deepPurple.shade600,
+                                        fontSize: 24,
+                                        height: 1
+                                      ),
+                                    ),
+                                    SizedBox(height: 15 * verticalScale,),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 50,),
+                      Padding(
+                        padding: EdgeInsets.only(right: 30.0, top: 10, bottom: 10),
+                        child: Container(
+                          width: screenWidth/4,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 25.0),
+                                child: Container(
+                                  child: Center(
+                                    child: Text('BILL SUMMARY',
+                                      textScaleFactor: min(horizontalScale, verticalScale),
+                                      style: TextStyle(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold,
+                                        height: 1,
+                                      ),),
                                   ),
                                 ),
-                                // SizedBox(
-                                //   height: 10,
-                                // ),
-                                Expanded(
-                                  child: Image.asset(
-                                    'assets/Rating.png',
-                                    fit: BoxFit.fill,
-                                    height: 11,
-                                    width: 71,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Expanded(
+                              ),
+                              DottedLine(
+                                dashGapLength: 0,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 10.0, bottom: 10),
+                                child: Container(
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        'English  ||  ${widget.map!['videosCount']} Videos',
-                                        textAlign: TextAlign.left,
-                                        textScaleFactor:
-                                        min(horizontalScale, verticalScale),
+                                      Text('Course Details',
                                         style: TextStyle(
-                                            color: Color.fromRGBO(88, 88, 88, 1),
+                                            color: Color.fromARGB(223, 48, 48, 49),
                                             fontFamily: 'Poppins',
-                                            fontSize: 12,
-                                            letterSpacing:
-                                            0 /*percentages not used in flutter. defaulting to zero*/,
-                                            fontWeight: FontWeight.normal,
-                                            height: 1),
-                                      ),
-                                      SizedBox(
-                                        width: 20,
-                                      ),
-                                      Text(
-                                        '₹${widget.map!['Course Price']}/-',
-                                        textScaleFactor:
-                                        min(horizontalScale, verticalScale),
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                            color:
-                                            Color.fromRGBO(155, 117, 237, 1),
-                                            fontFamily: 'Poppins',
-                                            fontSize: 18,
+                                            fontSize: 14,
                                             letterSpacing:
                                             0 /*percentages not used in flutter. defaulting to zero*/,
                                             fontWeight: FontWeight.bold,
-                                            height: 1),
+                                            height: 1)),
+                                      Text('Unit Price',
+                                        style: TextStyle(
+                                            color: Color.fromARGB(223, 48, 48, 49),
+                                            fontFamily: 'Poppins',
+                                            fontSize: 14,
+                                            letterSpacing:
+                                            0 /*percentages not used in flutter. defaulting to zero*/,
+                                            fontWeight: FontWeight.bold,
+                                            height: 1)),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              DottedLine(
+                                dashGapLength: 0,
+                              ),
+                              SizedBox(height: 15),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Price',
+                                    style: textStyle,
+                                  ),
+                                  Text(
+                                    widget.map!['gst'] != null ? '₹${widget.map!['Course Price']}/-' : widget.map!['Course Price'],
+                                    style: textStyle,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 5),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "GST",
+                                    style: textStyle,
+                                  ),
+                                  Text(
+                                    widget.map!['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
+                                    style: textStyle,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 5),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Discount",
+                                    style: textStyle,
+                                  ),
+                                  Text(
+                                    NoCouponApplied
+                                        ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${widget.map!["Discount"]}
+                                        : discountedPrice,
+                                    style: textStyle,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Container(
+                                height: 30,
+                                width: screenWidth/3.5,
+                                child: TextField(
+                                  textAlignVertical: TextAlignVertical.center,
+                                  enabled: !apply ? true : false,
+                                  controller: couponCodeController,
+                                  style: TextStyle(
+                                    fontSize: 16 * min(horizontalScale, verticalScale),
+                                    letterSpacing: 1.2,
+                                    fontFamily: 'Medium',
+                                  ),
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.only(left: 10),
+                                    // constraints: BoxConstraints(minHeight: 52, minWidth: 366),
+                                    suffixIcon: TextButton(
+                                      child: apply
+                                          ? Text(
+                                        'Applied',
+                                        style: TextStyle(
+                                          color: Color.fromARGB(255, 96, 220, 193),
+                                          fontFamily: 'Medium',
+                                          fontSize:
+                                          18 * min(horizontalScale, verticalScale),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                          : Text(
+                                        'Apply',
+                                        style: TextStyle(
+                                          color: Color(0xFF7860DC),
+                                          fontFamily: 'Medium',
+                                          fontSize:
+                                          18 * min(horizontalScale, verticalScale),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        try {
+                                          print("pressed${couponCodeController.text}");
+                                          await FirebaseFirestore.instance
+                                              .collection("couponcode")
+                                              .where("cname",
+                                              isEqualTo: couponCodeController.text)
+                                              .get()
+                                              .then((value) {
+                                            print(value.docs.first['cname']);
+                                            print(DateTime.now().isBefore(
+                                                value.docs.first['end_date'].toDate()));
+                                            var notexpired = DateTime.now().isBefore(
+                                                value.docs.first['end_date'].toDate());
+                                            if (notexpired) {
+                                              print(widget.map!['name']);
+                                              if (widget.map!['name']
+                                                  .toString()
+                                                  .toLowerCase() ==
+                                                  value.docs.first['coursename']
+                                                      .toString()
+                                                      .toLowerCase()) {
+                                                setState(() {
+                                                  print("fsijfoije");
+                                                  print(widget.map!["Course Price"]);
+                                                  var coursevalue;
+                                                  try {
+                                                    coursevalue = widget.map!['Course Price']
+                                                        .toString()
+                                                        .split("₹")[1]
+                                                        .toString()
+                                                        .split('/-')[0]
+                                                        .toString();
+                                                  } catch (e) {
+                                                    print(e);
+                                                    coursevalue = widget.map!["Course Price"];
+                                                    print('uguy');
+                                                  }
+
+                                                  print(
+                                                      "oooooo${String.fromCharCodes(coursevalue.codeUnits.reversed).substring(0, 2)}");
+                                                  if (String.fromCharCodes(
+                                                      coursevalue.codeUnits.reversed)
+                                                      .substring(0, 2) ==
+                                                      '-/') {
+                                                    print("sdfsdo");
+                                                    coursevalue = String.fromCharCodes(
+                                                        coursevalue.codeUnits.reversed)
+                                                        .substring(2);
+                                                    coursevalue = String.fromCharCodes(
+                                                        coursevalue.codeUnits.reversed);
+                                                  }
+                                                  var courseintvalue = int.parse(coursevalue);
+                                                  print("lllll $courseintvalue");
+                                                  if (value.docs.first['type'] ==
+                                                      'percentage') {
+                                                    setState(() {
+                                                      newcoursevalue = courseintvalue *
+                                                          int.parse(
+                                                              value.docs.first['value']) ~/
+                                                          100;
+                                                    });
+                                                  }
+                                                  if (value.docs.first['type'] == 'number') {
+                                                    setState(() {
+                                                      newcoursevalue = int.parse(
+                                                          value.docs.first['value']);
+                                                    });
+                                                  }
+                                                  apply = true;
+                                                  showToast(
+                                                      "cuponcode applyed successfully!");
+                                                  globals.cuponcode = "applied";
+                                                  globals.cuponname =
+                                                  value.docs.first['cname'];
+                                                  globals.cuponcourse =
+                                                  value.docs.first['coursename'];
+                                                  globals.cupondiscount =
+                                                  value.docs.first['value'];
+                                                  globals.cuponcourseprice =
+                                                      courseintvalue.toString();
+                                                  globals.cupontype =
+                                                  value.docs.first['type'];
+                                                });
+                                              } else {
+                                                showToast(
+                                                    "This cuponcode belongs to '${value.docs.first['coursename']}' course!");
+                                              }
+                                            }
+                                            if (notexpired == false) {
+                                              showToast("invalid cuponcode!");
+                                            }
+                                          });
+                                        } catch (e) {
+                                          print(e);
+                                          print(widget.map!['name']);
+                                          print(widget.map!['Course Price']
+                                              .toString()
+                                              .split("₹")[1]
+                                              .toString()
+                                              .split('/-')[0]
+                                              .toString());
+                                          showToast("invalid cuponcode!");
+                                        }
+
+                                        // setState(() {
+                                        //   NoCouponApplied = whetherCouponApplied(
+                                        //     couponCodeText: couponCodeController.text,
+                                        //   );
+                                        //   couponAppliedResponse = whenCouponApplied(
+                                        //     couponCodeText: couponCodeController.text,
+                                        //   );
+                                        //   finalamountToDisplay = amountToDisplayAfterCCA(
+                                        //     amountPayable: widget.map!['Amount Payable'],
+                                        //     couponCodeText: couponCodeController.text,
+                                        //   );
+                                        //   finalAmountToPay = amountToPayAfterCCA(
+                                        //     couponCodeText: couponCodeController.text,
+                                        //     amountPayable: widget.map!['Amount Payable'],
+                                        //   );
+                                        //   discountedPrice = discountAfterCCA(
+                                        //       couponCodeText: couponCodeController.text,
+                                        //       amountPayable: widget.map!['Amount Payable']);
+                                        // });
+                                      },
+                                    ),
+                                    hintText: 'Enter coupon code',
+                                    fillColor: Colors.deepPurple.shade100,
+                                    filled: true,
+                                    // suffixIconConstraints:
+                                    // BoxConstraints(minHeight: 52, minWidth: 70),
+                                    // contentPadding: EdgeInsets.symmetric(horizontal: 0.0,vertical: 0),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                      borderSide: BorderSide.none
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                        borderSide: BorderSide.none
+                                    ),
+                                    disabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                        borderSide: BorderSide.none
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              SizedBox(height: 15),
+                              DottedLine(
+                                dashGapLength: 0,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Total Pay',
+                                      style: textStyle,
+                                    ),
+                                    Text(
+                                      NoCouponApplied
+                                          ?
+                                      widget.map!['gst'] != null ? '₹${totalAmount.round().toString()}/-' :
+                                      '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //widget.map!["Amount Payable"]
+                                          : finalamountToDisplay,
+                                      style: textStyle,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              DottedLine(
+                                dashGapLength: 0,
+                              ),
+                              SizedBox(height: 25),
+                              Center(
+                                child: PaymentButton(
+                                  coursePriceMoneyRef: int.parse(courseprice),
+                                  amountString: (double.parse(NoCouponApplied
+                                      ?
+                                  widget.map!['gst'] != null ? '${totalAmount.round().toString()}' :
+
+                                  "${int.parse(courseprice) - int.parse(discountvalue)}"
+                                      : finalAmountToPay) * //widget.map!['Amount_Payablepay']
+                                      100)
+                                      .toString(),
+                                  buttonText: NoCouponApplied
+                                      ?
+                                  widget.map!['gst'] != null ?
+                                  'PAY ₹${totalAmount.round().toString()}/-' :
+                                  'PAY ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${widget.map!['Course Price']}
+
+                                      : 'PAY ${finalamountToDisplay}',
+                                  buttonTextForCode: "PAY $finalamountToDisplay",
+                                  changeState: () {
+                                    setState(() {
+                                      // isLoading = !isLoading;
+                                    });
+                                  },
+                                  courseDescription: widget.map!['description'],
+                                  courseName: widget.map!['name'],
+                                  isPayButtonPressed: isPayButtonPressed,
+                                  NoCouponApplied: NoCouponApplied,
+                                  scrollController: _scrollController,
+                                  updateCourseIdToCouponDetails: () {
+                                    void addCourseId() {
+                                      setState(() {
+                                        id = widget.map!['id'];
+                                      });
+                                    }
+
+                                    addCourseId();
+                                    print(NoCouponApplied);
+                                  },
+                                  outStandingAmountString: (
+                                      double.parse( NoCouponApplied
+                                          ? widget.map!['Amount_Payablepay']
+                                          : finalAmountToPay) -
+                                          1000)
+                                      .toStringAsFixed(2),
+                                  courseId: widget.map!['id'],
+                                  courseImageUrl: widget.map!['image_url'],
+                                  couponCodeText: couponCodeController.text,
+                                  isItComboCourse: widget.isItComboCourse,
+                                  whichCouponCode: couponCodeController.text,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      } else {
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10.0),
+                child: Container(
+                  height: screenHeight/5,
+                  width: screenWidth,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Text('Congratulations',
+                          textScaleFactor: min(horizontalScale, verticalScale),
+                          style: congoStyle),
+                      ),
+                      SizedBox(height: 3),
+                      FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Text('🤩You are just one step away🤩',
+                          textScaleFactor: min(horizontalScale, verticalScale),
+                          style: congoStyle),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 30.0, right: 30, top: 15, bottom: 15),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black26,
+                          offset: Offset(
+                            2, // Move to right 10  horizontally
+                            2.0, // Move to bottom 10 Vertically
+                          ),
+                          blurRadius: 40)
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.0, top: 10, bottom: 10, right: 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                // height: screenHeight/3.5,
+                                // width: screenWidth/3,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    bottomLeft: Radius.circular(10),
+                                  ),
+                                  child: CachedNetworkImage(
+                                    imageUrl: widget.map!['image_url'],
+                                    placeholder: (context, url) =>
+                                        Center(child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                    fit: BoxFit.fill,
+                                    height: 110 * verticalScale,
+                                    width: 140 * horizontalScale,
+                                  ),
+                                ),
+                              ),
+                              // Container(
+                              //   width: screenWidth/3,
+                              //   padding: EdgeInsets.only(left: 5.0),
+                              //   decoration: BoxDecoration(
+                              //     color: Colors.deepPurple.shade100,
+                              //   ),
+                              //   child: Row(
+                              //     mainAxisAlignment: MainAxisAlignment.start,
+                              //     children: [
+                              //       Padding(
+                              //         padding: const EdgeInsets.only(right: 5.0),
+                              //         child: Container(
+                              //           height: 20,
+                              //           width: 25,
+                              //           decoration: BoxDecoration(
+                              //             borderRadius: BorderRadius.circular(3.0),
+                              //             color: HexColor('440F87'),
+                              //           ),
+                              //           child: Center(
+                              //             child: Text(widget.map!['reviews'] != null ? widget.map!['reviews'] : '5.0',
+                              //               style: TextStyle(fontSize: 12, color: Colors.white,
+                              //                   fontWeight: FontWeight.normal),),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //       Padding(
+                              //         padding:
+                              //         const EdgeInsets.only(right: 5.0),
+                              //         child: StarRating(
+                              //           length: 5,
+                              //           rating: widget.map!['reviews'] != null ? double.parse(widget.map!['reviews']) : 5.0,
+                              //           color: HexColor('440F87'),
+                              //           starSize: 25,
+                              //           mainAxisAlignment: MainAxisAlignment.start,
+                              //         ),
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
+                              // SizedBox(height: 20,),
+                              Container(
+                                width: screenWidth/3,
+                                padding: EdgeInsets.only(left: 5, right: 5),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    FittedBox(
+                                      fit: BoxFit.fitWidth,
+                                      child: Text(
+                                        widget.map!['name'],
+                                        textScaleFactor: min(horizontalScale, verticalScale),
+                                        style: TextStyle(
+                                          fontSize: 36,
+                                          fontWeight: FontWeight.bold,
+                                          height: 1,
+                                        ),
+                                        maxLines: 2,
+                                      ),
+                                    ),
+                                    SizedBox(height: 15 * verticalScale,),
+                                    FittedBox(
+                                      fit: BoxFit.fitWidth,
+                                      child: Text(
+                                        widget.map!['description'],
+                                        textScaleFactor: min(horizontalScale, verticalScale),
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            height: 1
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 15 * verticalScale,),
+                                    FittedBox(
+                                      fit: BoxFit.fitWidth,
+                                      child: Text(
+                                        'English  ||  online  ||  lifetime',
+                                        textScaleFactor: min(horizontalScale, verticalScale),
+                                        style: TextStyle(
+                                            color: Colors.deepPurple.shade600,
+                                            fontSize: 24,
+                                            height: 1
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 15 * verticalScale,),
+                                  ],
+                                ),
+                              ),
+
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 15,),
+                      Padding(
+                        padding: EdgeInsets.only(right: 10.0, top: 10, bottom: 10, left: 10),
+                        child: Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 25.0),
+                                child: Container(
+                                  child: Center(
+                                    child: FittedBox(
+                                      fit: BoxFit.fitWidth,
+                                      child: Text('BILL SUMMARY',
+                                        textScaleFactor: min(horizontalScale, verticalScale),
+                                        style: TextStyle(
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                          height: 1,
+                                        ),),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              DottedLine(
+                                dashGapLength: 0,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 10.0, bottom: 10),
+                                child: Container(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      FittedBox(
+                                        fit: BoxFit.fitWidth,
+                                        child: Text('Course Details',
+                                            style: TextStyle(
+                                                color: Color.fromARGB(223, 48, 48, 49),
+                                                fontFamily: 'Poppins',
+                                                fontSize: 14,
+                                                letterSpacing:
+                                                0 /*percentages not used in flutter. defaulting to zero*/,
+                                                fontWeight: FontWeight.bold,
+                                                height: 1)),
+                                      ),
+                                      FittedBox(
+                                        fit: BoxFit.fitWidth,
+                                        child: Text('Unit Price',
+                                            style: TextStyle(
+                                                color: Color.fromARGB(223, 48, 48, 49),
+                                                fontFamily: 'Poppins',
+                                                fontSize: 14,
+                                                letterSpacing:
+                                                0 /*percentages not used in flutter. defaulting to zero*/,
+                                                fontWeight: FontWeight.bold,
+                                                height: 1)),
                                       ),
                                     ],
                                   ),
                                 ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Text(
-                    'Coupon Code',
-                    textScaleFactor: min(horizontalScale, verticalScale),
-                    style: TextStyle(
-                        color: Color.fromRGBO(48, 48, 49, 1),
-                        fontFamily: 'Poppins',
-                        fontSize: 34,
-                        letterSpacing:
-                        0 /*percentages not used in flutter. defaulting to zero*/,
-                        fontWeight: FontWeight.bold,
-                        height: 1),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextField(
-                    enabled: !apply ? true : false,
-                    controller: couponCodeController,
-                    style: TextStyle(
-                      fontSize: 16 * min(horizontalScale, verticalScale),
-                      letterSpacing: 1.2,
-                      fontFamily: 'Medium',
-                    ),
-                    decoration: InputDecoration(
-                      // constraints: BoxConstraints(minHeight: 52, minWidth: 366),
-                      suffixIcon: TextButton(
-                        child: apply
-                            ? Text(
-                          'Applied',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 96, 220, 193),
-                            fontFamily: 'Medium',
-                            fontSize:
-                            18 * min(horizontalScale, verticalScale),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                            : Text(
-                          'Apply',
-                          style: TextStyle(
-                            color: Color(0xFF7860DC),
-                            fontFamily: 'Medium',
-                            fontSize:
-                            18 * min(horizontalScale, verticalScale),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () async {
-                          try {
-                            print("pressed${couponCodeController.text}");
-                            await FirebaseFirestore.instance
-                                .collection("couponcode")
-                                .where("cname",
-                                isEqualTo: couponCodeController.text)
-                                .get()
-                                .then((value) {
-                              print(value.docs.first['cname']);
-                              print(DateTime.now().isBefore(
-                                  value.docs.first['end_date'].toDate()));
-                              var notexpired = DateTime.now().isBefore(
-                                  value.docs.first['end_date'].toDate());
-                              if (notexpired) {
-                                print(widget.map!['name']);
-                                if (widget.map!['name']
-                                    .toString()
-                                    .toLowerCase() ==
-                                    value.docs.first['coursename']
-                                        .toString()
-                                        .toLowerCase()) {
-                                  setState(() {
-                                    print("fsijfoije");
-                                    print(widget.map!["Course Price"]);
-                                    var coursevalue;
-                                    try {
-                                      coursevalue = widget.map!['Course Price']
-                                          .toString()
-                                          .split("₹")[1]
-                                          .toString()
-                                          .split('/-')[0]
-                                          .toString();
-                                    } catch (e) {
-                                      print(e);
-                                      coursevalue = widget.map!["Course Price"];
-                                      print('uguy');
-                                    }
-
-                                    print(
-                                        "oooooo${String.fromCharCodes(coursevalue.codeUnits.reversed).substring(0, 2)}");
-                                    if (String.fromCharCodes(
-                                        coursevalue.codeUnits.reversed)
-                                        .substring(0, 2) ==
-                                        '-/') {
-                                      print("sdfsdo");
-                                      coursevalue = String.fromCharCodes(
-                                          coursevalue.codeUnits.reversed)
-                                          .substring(2);
-                                      coursevalue = String.fromCharCodes(
-                                          coursevalue.codeUnits.reversed);
-                                    }
-                                    var courseintvalue = int.parse(coursevalue);
-                                    print("lllll $courseintvalue");
-                                    if (value.docs.first['type'] ==
-                                        'percentage') {
-                                      setState(() {
-                                        newcoursevalue = courseintvalue *
-                                            int.parse(
-                                                value.docs.first['value']) ~/
-                                            100;
-                                      });
-                                    }
-                                    if (value.docs.first['type'] == 'number') {
-                                      setState(() {
-                                        newcoursevalue = int.parse(
-                                            value.docs.first['value']);
-                                      });
-                                    }
-                                    apply = true;
-                                    showToast(
-                                        "cuponcode applyed successfully!");
-                                    globals.cuponcode = "applied";
-                                    globals.cuponname =
-                                    value.docs.first['cname'];
-                                    globals.cuponcourse =
-                                    value.docs.first['coursename'];
-                                    globals.cupondiscount =
-                                    value.docs.first['value'];
-                                    globals.cuponcourseprice =
-                                        courseintvalue.toString();
-                                    globals.cupontype =
-                                    value.docs.first['type'];
-                                  });
-                                } else {
-                                  showToast(
-                                      "This cuponcode belongs to '${value.docs.first['coursename']}' course!");
-                                }
-                              }
-                              if (notexpired == false) {
-                                showToast("invalid cuponcode!");
-                              }
-                            });
-                          } catch (e) {
-                            print(e);
-                            print(widget.map!['name']);
-                            print(widget.map!['Course Price']
-                                .toString()
-                                .split("₹")[1]
-                                .toString()
-                                .split('/-')[0]
-                                .toString());
-                            showToast("invalid cuponcode!");
-                          }
-
-                          // setState(() {
-                          //   NoCouponApplied = whetherCouponApplied(
-                          //     couponCodeText: couponCodeController.text,
-                          //   );
-                          //   couponAppliedResponse = whenCouponApplied(
-                          //     couponCodeText: couponCodeController.text,
-                          //   );
-                          //   finalamountToDisplay = amountToDisplayAfterCCA(
-                          //     amountPayable: widget.map!['Amount Payable'],
-                          //     couponCodeText: couponCodeController.text,
-                          //   );
-                          //   finalAmountToPay = amountToPayAfterCCA(
-                          //     couponCodeText: couponCodeController.text,
-                          //     amountPayable: widget.map!['Amount Payable'],
-                          //   );
-                          //   discountedPrice = discountAfterCCA(
-                          //       couponCodeText: couponCodeController.text,
-                          //       amountPayable: widget.map!['Amount Payable']);
-                          // });
-                        },
-                      ),
-                      hintText: 'Enter coupon code',
-                      fillColor: Colors.grey.shade100,
-                      filled: true,
-                      suffixIconConstraints:
-                      BoxConstraints(minHeight: 52, minWidth: 100),
-                      // contentPadding: EdgeInsets.symmetric(horizontal: 0.0,vertical: 0),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade300,
-                          width: 2,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade300,
-                          width: 2,
-                        ),
-                      ),
-                      disabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade300,
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Center(
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      height: 55,
-                      child: TextButton(
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    side:
-                                    BorderSide(color: Color(0xFF7860DC))))),
-                        onPressed: () {
-                          setcoursevalue();
-                        },
-                        child: rewardvalue == null
-                            ? Text('Redeem Reward 0',
-                            style: TextStyle(color: Color(0xFF7860DC)))
-                            : Text('Redeem Reward $rewardvalue',
-                            style: TextStyle(color: Color(0xFF7860DC))),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  Text(
-                    'Bill Details',
-                    textScaleFactor: min(horizontalScale, verticalScale),
-                    style: TextStyle(
-                        color: Color.fromRGBO(48, 48, 49, 1),
-                        fontFamily: 'Poppins',
-                        fontSize: 34,
-                        letterSpacing:
-                        0 /*percentages not used in flutter. defaulting to zero*/,
-                        fontWeight: FontWeight.bold,
-                        height: 1),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: Container(
-                      width: 366 * horizontalScale,
-                      height: 170 * verticalScale,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          topRight: Radius.circular(15),
-                          bottomLeft: Radius.circular(15),
-                          bottomRight: Radius.circular(15),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                              color:
-                              Color.fromRGBO(31, 31, 31, 0.20000000298023224),
-                              offset: Offset(0, 0),
-                              blurRadius: 5)
-                        ],
-                        color: Color.fromRGBO(255, 255, 255, 1),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              child: Row(
-                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              ),
+                              DottedLine(
+                                dashGapLength: 0,
+                              ),
+                              SizedBox(height: 15),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Expanded(
-                                    flex: 3,
+                                  FittedBox(
+                                    fit: BoxFit.fitWidth,
                                     child: Text(
-                                      'Course Price',
+                                      'Price',
                                       style: textStyle,
                                     ),
                                   ),
-                                  Expanded(
-                                    // flex: 2,
+                                  FittedBox(
+                                    fit: BoxFit.fitWidth,
                                     child: Text(
                                       widget.map!['gst'] != null ? '₹${widget.map!['Course Price']}/-' : widget.map!['Course Price'],
                                       style: textStyle,
@@ -633,20 +968,39 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   ),
                                 ],
                               ),
-                            ),
-                            SizedBox(height: 5),
-                            Expanded(
-                              child: Row(
+                              SizedBox(height: 5),
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Expanded(
-                                    flex: 3,
+                                  FittedBox(
+                                    fit: BoxFit.fitWidth,
+                                    child: Text(
+                                      "GST",
+                                      style: textStyle,
+                                    ),
+                                  ),
+                                  FittedBox(
+                                    fit: BoxFit.fitWidth,
+                                    child: Text(
+                                      widget.map!['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
+                                      style: textStyle,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 5),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  FittedBox(
+                                    fit: BoxFit.fitWidth,
                                     child: Text(
                                       "Discount",
                                       style: textStyle,
                                     ),
                                   ),
-                                  Expanded(
+                                  FittedBox(
+                                    fit: BoxFit.fitWidth,
                                     child: Text(
                                       NoCouponApplied
                                           ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${widget.map!["Discount"]}
@@ -656,191 +1010,925 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   ),
                                 ],
                               ),
-                            ),
-                            SizedBox(height: 5),
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Text(
-                                      "GST",
-                                      style: textStyle,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      widget.map!['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
-                                      style: textStyle,
-                                    ),
-                                  ),
-                                ],
+                              SizedBox(
+                                height: 15,
                               ),
-                            ),
-                            SizedBox(height: 15),
+                              Container(
+                                height: 30,
+                                // width: screenWidth/3.5,
+                                child: TextField(
+                                  textAlignVertical: TextAlignVertical.center,
+                                  enabled: !apply ? true : false,
+                                  controller: couponCodeController,
+                                  style: TextStyle(
+                                    fontSize: 16 * min(horizontalScale, verticalScale),
+                                    letterSpacing: 1.2,
+                                    fontFamily: 'Medium',
+                                  ),
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.only(left: 10),
+                                    // constraints: BoxConstraints(minHeight: 52, minWidth: 366),
+                                    suffixIcon: TextButton(
+                                      child: apply
+                                          ? Text(
+                                        'Applied',
+                                        style: TextStyle(
+                                          color: Color.fromARGB(255, 96, 220, 193),
+                                          fontFamily: 'Medium',
+                                          fontSize:
+                                          18 * min(horizontalScale, verticalScale),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                          : Text(
+                                        'Apply',
+                                        style: TextStyle(
+                                          color: Color(0xFF7860DC),
+                                          fontFamily: 'Medium',
+                                          fontSize:
+                                          18 * min(horizontalScale, verticalScale),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        try {
+                                          print("pressed${couponCodeController.text}");
+                                          await FirebaseFirestore.instance
+                                              .collection("couponcode")
+                                              .where("cname",
+                                              isEqualTo: couponCodeController.text)
+                                              .get()
+                                              .then((value) {
+                                            print(value.docs.first['cname']);
+                                            print(DateTime.now().isBefore(
+                                                value.docs.first['end_date'].toDate()));
+                                            var notexpired = DateTime.now().isBefore(
+                                                value.docs.first['end_date'].toDate());
+                                            if (notexpired) {
+                                              print(widget.map!['name']);
+                                              if (widget.map!['name']
+                                                  .toString()
+                                                  .toLowerCase() ==
+                                                  value.docs.first['coursename']
+                                                      .toString()
+                                                      .toLowerCase()) {
+                                                setState(() {
+                                                  print("fsijfoije");
+                                                  print(widget.map!["Course Price"]);
+                                                  var coursevalue;
+                                                  try {
+                                                    coursevalue = widget.map!['Course Price']
+                                                        .toString()
+                                                        .split("₹")[1]
+                                                        .toString()
+                                                        .split('/-')[0]
+                                                        .toString();
+                                                  } catch (e) {
+                                                    print(e);
+                                                    coursevalue = widget.map!["Course Price"];
+                                                    print('uguy');
+                                                  }
 
-                            DottedLine(),
-                            SizedBox(height: 15),
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Text(
-                                      'Total Pay',
-                                      style: textStyle,
+                                                  print(
+                                                      "oooooo${String.fromCharCodes(coursevalue.codeUnits.reversed).substring(0, 2)}");
+                                                  if (String.fromCharCodes(
+                                                      coursevalue.codeUnits.reversed)
+                                                      .substring(0, 2) ==
+                                                      '-/') {
+                                                    print("sdfsdo");
+                                                    coursevalue = String.fromCharCodes(
+                                                        coursevalue.codeUnits.reversed)
+                                                        .substring(2);
+                                                    coursevalue = String.fromCharCodes(
+                                                        coursevalue.codeUnits.reversed);
+                                                  }
+                                                  var courseintvalue = int.parse(coursevalue);
+                                                  print("lllll $courseintvalue");
+                                                  if (value.docs.first['type'] ==
+                                                      'percentage') {
+                                                    setState(() {
+                                                      newcoursevalue = courseintvalue *
+                                                          int.parse(
+                                                              value.docs.first['value']) ~/
+                                                          100;
+                                                    });
+                                                  }
+                                                  if (value.docs.first['type'] == 'number') {
+                                                    setState(() {
+                                                      newcoursevalue = int.parse(
+                                                          value.docs.first['value']);
+                                                    });
+                                                  }
+                                                  apply = true;
+                                                  showToast(
+                                                      "cuponcode applyed successfully!");
+                                                  globals.cuponcode = "applied";
+                                                  globals.cuponname =
+                                                  value.docs.first['cname'];
+                                                  globals.cuponcourse =
+                                                  value.docs.first['coursename'];
+                                                  globals.cupondiscount =
+                                                  value.docs.first['value'];
+                                                  globals.cuponcourseprice =
+                                                      courseintvalue.toString();
+                                                  globals.cupontype =
+                                                  value.docs.first['type'];
+                                                });
+                                              } else {
+                                                showToast(
+                                                    "This cuponcode belongs to '${value.docs.first['coursename']}' course!");
+                                              }
+                                            }
+                                            if (notexpired == false) {
+                                              showToast("invalid cuponcode!");
+                                            }
+                                          });
+                                        } catch (e) {
+                                          print(e);
+                                          print(widget.map!['name']);
+                                          print(widget.map!['Course Price']
+                                              .toString()
+                                              .split("₹")[1]
+                                              .toString()
+                                              .split('/-')[0]
+                                              .toString());
+                                          showToast("invalid cuponcode!");
+                                        }
+
+                                        // setState(() {
+                                        //   NoCouponApplied = whetherCouponApplied(
+                                        //     couponCodeText: couponCodeController.text,
+                                        //   );
+                                        //   couponAppliedResponse = whenCouponApplied(
+                                        //     couponCodeText: couponCodeController.text,
+                                        //   );
+                                        //   finalamountToDisplay = amountToDisplayAfterCCA(
+                                        //     amountPayable: widget.map!['Amount Payable'],
+                                        //     couponCodeText: couponCodeController.text,
+                                        //   );
+                                        //   finalAmountToPay = amountToPayAfterCCA(
+                                        //     couponCodeText: couponCodeController.text,
+                                        //     amountPayable: widget.map!['Amount Payable'],
+                                        //   );
+                                        //   discountedPrice = discountAfterCCA(
+                                        //       couponCodeText: couponCodeController.text,
+                                        //       amountPayable: widget.map!['Amount Payable']);
+                                        // });
+                                      },
+                                    ),
+                                    hintText: 'Enter coupon code',
+                                    fillColor: Colors.deepPurple.shade100,
+                                    filled: true,
+                                    // suffixIconConstraints:
+                                    // BoxConstraints(minHeight: 52, minWidth: 70),
+                                    // contentPadding: EdgeInsets.symmetric(horizontal: 0.0,vertical: 0),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                        borderSide: BorderSide.none
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                        borderSide: BorderSide.none
+                                    ),
+                                    disabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                        borderSide: BorderSide.none
                                     ),
                                   ),
-                                  Expanded(
-                                    child: Text(
-                                      NoCouponApplied
-                                          ?
-                                      widget.map!['gst'] != null ? '₹${totalAmount.round().toString()}/-' :
-                                      '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //widget.map!["Amount Payable"]
-                                          : finalamountToDisplay,
-                                      style: textStyle,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ],
+
+                              SizedBox(height: 15),
+                              DottedLine(
+                                dashGapLength: 0,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    FittedBox(
+                                      fit: BoxFit.fitWidth,
+                                      child: Text(
+                                        'Total Pay',
+                                        style: textStyle,
+                                      ),
+                                    ),
+                                    FittedBox(
+                                      fit: BoxFit.fitWidth,
+                                      child: Text(
+                                        NoCouponApplied
+                                            ?
+                                        widget.map!['gst'] != null ? '₹${totalAmount.round().toString()}/-' :
+                                        '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //widget.map!["Amount Payable"]
+                                            : finalamountToDisplay,
+                                        style: textStyle,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              DottedLine(
+                                dashGapLength: 0,
+                              ),
+                              SizedBox(height: 25),
+                              Center(
+                                child: PaymentButton(
+                                  coursePriceMoneyRef: int.parse(courseprice),
+                                  amountString: (double.parse(NoCouponApplied
+                                      ?
+                                  widget.map!['gst'] != null ? '${totalAmount.round().toString()}' :
+
+                                  "${int.parse(courseprice) - int.parse(discountvalue)}"
+                                      : finalAmountToPay) * //widget.map!['Amount_Payablepay']
+                                      100)
+                                      .toString(),
+                                  buttonText: NoCouponApplied
+                                      ?
+                                  widget.map!['gst'] != null ?
+                                  'PAY ₹${totalAmount.round().toString()}/-' :
+                                  'PAY ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${widget.map!['Course Price']}
+
+                                      : 'PAY ${finalamountToDisplay}',
+                                  buttonTextForCode: "PAY $finalamountToDisplay",
+                                  changeState: () {
+                                    setState(() {
+                                      // isLoading = !isLoading;
+                                    });
+                                  },
+                                  courseDescription: widget.map!['description'],
+                                  courseName: widget.map!['name'],
+                                  isPayButtonPressed: isPayButtonPressed,
+                                  NoCouponApplied: NoCouponApplied,
+                                  scrollController: _scrollController,
+                                  updateCourseIdToCouponDetails: () {
+                                    void addCourseId() {
+                                      setState(() {
+                                        id = widget.map!['id'];
+                                      });
+                                    }
+
+                                    addCourseId();
+                                    print(NoCouponApplied);
+                                  },
+                                  outStandingAmountString: (
+                                      double.parse( NoCouponApplied
+                                          ? widget.map!['Amount_Payablepay']
+                                          : finalAmountToPay) -
+                                          1000)
+                                      .toStringAsFixed(2),
+                                  courseId: widget.map!['id'],
+                                  courseImageUrl: widget.map!['image_url'],
+                                  couponCodeText: couponCodeController.text,
+                                  isItComboCourse: widget.isItComboCourse,
+                                  whichCouponCode: couponCodeController.text,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child:  PaymentButton(
-                      coursePriceMoneyRef: int.parse(courseprice),
-                      amountString: (double.parse(NoCouponApplied
-                          ?
-                      widget.map!['gst'] != null ? '${totalAmount.round().toString()}' :
-
-                      "${int.parse(courseprice) - int.parse(discountvalue)}"
-                          : finalAmountToPay) * //widget.map!['Amount_Payablepay']
-                          100)
-                          .toString(),
-                      buttonText: NoCouponApplied
-                          ?
-                      widget.map!['gst'] != null ?
-                      'Buy Now for ₹${totalAmount.round().toString()}/-' :
-                      'Buy Now for ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${widget.map!['Course Price']}
-
-                          : 'Buy Now for ${finalamountToDisplay}',
-                      buttonTextForCode: "Buy Now for $finalamountToDisplay",
-                      changeState: () {
-                        setState(() {
-                          // isLoading = !isLoading;
-                        });
-                      },
-                      courseDescription: widget.map!['description'],
-                      courseName: widget.map!['name'],
-                      isPayButtonPressed: isPayButtonPressed,
-                      NoCouponApplied: NoCouponApplied,
-                      scrollController: _scrollController,
-                      updateCourseIdToCouponDetails: () {
-                        void addCourseId() {
-                          setState(() {
-                            id = widget.map!['id'];
-                          });
-                        }
-
-                        addCourseId();
-                        print(NoCouponApplied);
-                      },
-                      outStandingAmountString: (
-                          double.parse( NoCouponApplied
-                              ? widget.map!['Amount_Payablepay']
-                              : finalAmountToPay) -
-                              1000)
-                          .toStringAsFixed(2),
-                      courseId: widget.map!['id'],
-                      courseImageUrl: widget.map!['image_url'],
-                      couponCodeText: couponCodeController.text,
-                      isItComboCourse: widget.isItComboCourse,
-                      whichCouponCode: couponCodeController.text,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  // Center(
-                  //   child: Container(
-                  //     width: 200,
-                  //     child: Text(
-                  //       "* Amount payable is inclusive of taxes. TERMS & CONDITIONS APPLY",
-                  //       textAlign: TextAlign.center,
-                  //       style: TextStyle(
-                  //         fontFamily: 'Regular',
-                  //         fontSize: 12,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            width: screenWidth,
-            height: 193 * verticalScale,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(0),
-                topRight: Radius.circular(0),
-                bottomLeft: Radius.circular(25),
-                bottomRight: Radius.circular(25),
-              ),
-              color: Color.fromRGBO(122, 98, 222, 1),
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  top: 90 * verticalScale,
-                  left: 50 * horizontalScale,
-                  child: Container(
-                    // width: 230,
-                    // height: 81,
-                    child: Row(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                            size: 30 * min(horizontalScale, verticalScale),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Center(
-                          child: Text(
-                            'Payment Details',
-                            textScaleFactor:
-                            min(horizontalScale, verticalScale),
-                            style: TextStyle(
-                                color: Color.fromRGBO(255, 255, 255, 1),
-                                fontFamily: 'Poppins',
-                                fontSize: 35,
-                                letterSpacing: 0,
-                                fontWeight: FontWeight.normal,
-                                height: 1),
-                          ),
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              )
+            ],
           ),
-        ],
+        );
+        //   Stack(
+        //   children: [
+        //     Padding(
+        //       padding: EdgeInsets.symmetric(horizontal: 20),
+        //       child: SingleChildScrollView(
+        //         controller: _scrollController,
+        //         child: Column(
+        //           crossAxisAlignment: CrossAxisAlignment.start,
+        //           children: [
+        //             SizedBox(
+        //               height: 150,
+        //             ),
+        //             Text(
+        //               'Course Details',
+        //               textScaleFactor: min(horizontalScale, verticalScale),
+        //               style: TextStyle(
+        //                   color: Color.fromRGBO(48, 48, 49, 1),
+        //                   fontFamily: 'Poppins',
+        //                   fontSize: 34,
+        //                   letterSpacing:
+        //                   0 /*percentages not used in flutter. defaulting to zero*/,
+        //                   fontWeight: FontWeight.bold,
+        //                   height: 1),
+        //             ),
+        //             SizedBox(
+        //               height: 20,
+        //             ),
+        //             Center(
+        //               child: Container(
+        //                 width: 366 * horizontalScale,
+        //                 height: 170 * verticalScale,
+        //                 decoration: BoxDecoration(
+        //                   borderRadius: BorderRadius.only(
+        //                     topLeft: Radius.circular(15),
+        //                     topRight: Radius.circular(15),
+        //                     bottomLeft: Radius.circular(15),
+        //                     bottomRight: Radius.circular(15),
+        //                   ),
+        //                   boxShadow: [
+        //                     BoxShadow(
+        //                         color:
+        //                         Color.fromRGBO(31, 31, 31, 0.20000000298023224),
+        //                         offset: Offset(2, 10),
+        //                         blurRadius: 20)
+        //                   ],
+        //                   color: Color.fromRGBO(255, 255, 255, 1),
+        //                 ),
+        //                 child: Row(
+        //                   children: [
+        //                     SizedBox(
+        //                       width: 5,
+        //                     ),
+        //                     Container(
+        //                       height: 140 * verticalScale,
+        //                       width: 80 * horizontalScale,
+        //                       child: ClipRRect(
+        //                         borderRadius: BorderRadius.circular(15),
+        //                         child: CachedNetworkImage(
+        //                           imageUrl: widget.map!['image_url'],
+        //                           placeholder: (context, url) =>
+        //                               Center(child: CircularProgressIndicator()),
+        //                           errorWidget: (context, url, error) =>
+        //                               Icon(Icons.error),
+        //                           fit: BoxFit.fill,
+        //                           height: 110 * verticalScale,
+        //                           width: 140 * horizontalScale,
+        //                         ),
+        //                       ),
+        //                     ),
+        //                     SizedBox(
+        //                       width: 10,
+        //                     ),
+        //                     Expanded(
+        //                       flex: 2,
+        //                       child: Column(
+        //                         crossAxisAlignment: CrossAxisAlignment.start,
+        //                         children: [
+        //                           SizedBox(
+        //                             height: 10,
+        //                           ),
+        //                           Container(
+        //                             width: 250 * horizontalScale,
+        //                             height: 30 * verticalScale,
+        //                             child: Text(
+        //                               widget.map!['name'],
+        //                               textScaleFactor:
+        //                               min(horizontalScale, verticalScale),
+        //                               textAlign: TextAlign.left,
+        //                               style: TextStyle(
+        //                                 color: Color.fromRGBO(0, 0, 0, 1),
+        //                                 fontFamily: 'Poppins',
+        //                                 fontSize: 26,
+        //                                 letterSpacing: 0,
+        //                                 fontWeight: FontWeight.bold,
+        //                                 height: 1,
+        //                               ),
+        //                             ),
+        //                           ),
+        //                           SizedBox(
+        //                             height: 10,
+        //                           ),
+        //                           Container(
+        //                             width: 250 * horizontalScale,
+        //                             height: 30 * verticalScale,
+        //                             child: Text(
+        //                               widget.map!['description'],
+        //                               // overflow: TextOverflow.ellipsis,
+        //                               textScaleFactor:
+        //                               min(horizontalScale, verticalScale),
+        //                               textAlign: TextAlign.left,
+        //                               style: TextStyle(
+        //                                 color: Color.fromRGBO(0, 0, 0, 1),
+        //                                 fontFamily: 'Poppins',
+        //                                 fontSize: 18,
+        //                                 letterSpacing: 0,
+        //                                 fontWeight: FontWeight.normal,
+        //                                 height: 1,
+        //                               ),
+        //                             ),
+        //                           ),
+        //                           // SizedBox(
+        //                           //   height: 10,
+        //                           // ),
+        //                           Expanded(
+        //                             child: Image.asset(
+        //                               'assets/Rating.png',
+        //                               fit: BoxFit.fill,
+        //                               height: 15,
+        //                               width: 71,
+        //                             ),
+        //                           ),
+        //                           SizedBox(
+        //                             height: 10,
+        //                           ),
+        //                           Expanded(
+        //                             child: Row(
+        //                               children: [
+        //                                 Text(
+        //                                   'English  ||  ${widget.map!['videosCount']} Videos',
+        //                                   textAlign: TextAlign.left,
+        //                                   textScaleFactor:
+        //                                   min(horizontalScale, verticalScale),
+        //                                   style: TextStyle(
+        //                                       color: Color.fromRGBO(88, 88, 88, 1),
+        //                                       fontFamily: 'Poppins',
+        //                                       fontSize: 14,
+        //                                       letterSpacing:
+        //                                       0 /*percentages not used in flutter. defaulting to zero*/,
+        //                                       fontWeight: FontWeight.normal,
+        //                                       height: 1),
+        //                                 ),
+        //                                 SizedBox(
+        //                                   width: 20,
+        //                                 ),
+        //                                 Text(
+        //                                   '₹${widget.map!['Course Price']}/-',
+        //                                   textScaleFactor:
+        //                                   min(horizontalScale, verticalScale),
+        //                                   textAlign: TextAlign.left,
+        //                                   style: TextStyle(
+        //                                       color:
+        //                                       Color.fromRGBO(155, 117, 237, 1),
+        //                                       fontFamily: 'Poppins',
+        //                                       fontSize: 18,
+        //                                       letterSpacing:
+        //                                       0 /*percentages not used in flutter. defaulting to zero*/,
+        //                                       fontWeight: FontWeight.bold,
+        //                                       height: 1),
+        //                                 ),
+        //                               ],
+        //                             ),
+        //                           ),
+        //                           SizedBox(
+        //                             height: 10,
+        //                           ),
+        //                         ],
+        //                       ),
+        //                     ),
+        //                   ],
+        //                 ),
+        //               ),
+        //             ),
+        //             SizedBox(
+        //               height: 30,
+        //             ),
+        //             Text(
+        //               'Coupon Code',
+        //               textScaleFactor: min(horizontalScale, verticalScale),
+        //               style: TextStyle(
+        //                   color: Color.fromRGBO(48, 48, 49, 1),
+        //                   fontFamily: 'Poppins',
+        //                   fontSize: 34,
+        //                   letterSpacing:
+        //                   0 /*percentages not used in flutter. defaulting to zero*/,
+        //                   fontWeight: FontWeight.bold,
+        //                   height: 1),
+        //             ),
+        //             SizedBox(
+        //               height: 10,
+        //             ),
+        //             TextField(
+        //               enabled: !apply ? true : false,
+        //               controller: couponCodeController,
+        //               style: TextStyle(
+        //                 fontSize: 16 * min(horizontalScale, verticalScale),
+        //                 letterSpacing: 1.2,
+        //                 fontFamily: 'Medium',
+        //               ),
+        //               decoration: InputDecoration(
+        //                 // constraints: BoxConstraints(minHeight: 52, minWidth: 366),
+        //                 suffixIcon: TextButton(
+        //                   child: apply
+        //                       ? Text(
+        //                     'Applied',
+        //                     style: TextStyle(
+        //                       color: Color.fromARGB(255, 96, 220, 193),
+        //                       fontFamily: 'Medium',
+        //                       fontSize:
+        //                       18 * min(horizontalScale, verticalScale),
+        //                       fontWeight: FontWeight.bold,
+        //                     ),
+        //                   )
+        //                       : Text(
+        //                     'Apply',
+        //                     style: TextStyle(
+        //                       color: Color(0xFF7860DC),
+        //                       fontFamily: 'Medium',
+        //                       fontSize:
+        //                       18 * min(horizontalScale, verticalScale),
+        //                       fontWeight: FontWeight.bold,
+        //                     ),
+        //                   ),
+        //                   onPressed: () async {
+        //                     try {
+        //                       print("pressed${couponCodeController.text}");
+        //                       await FirebaseFirestore.instance
+        //                           .collection("couponcode")
+        //                           .where("cname",
+        //                           isEqualTo: couponCodeController.text)
+        //                           .get()
+        //                           .then((value) {
+        //                         print(value.docs.first['cname']);
+        //                         print(DateTime.now().isBefore(
+        //                             value.docs.first['end_date'].toDate()));
+        //                         var notexpired = DateTime.now().isBefore(
+        //                             value.docs.first['end_date'].toDate());
+        //                         if (notexpired) {
+        //                           print(widget.map!['name']);
+        //                           if (widget.map!['name']
+        //                               .toString()
+        //                               .toLowerCase() ==
+        //                               value.docs.first['coursename']
+        //                                   .toString()
+        //                                   .toLowerCase()) {
+        //                             setState(() {
+        //                               print("fsijfoije");
+        //                               print(widget.map!["Course Price"]);
+        //                               var coursevalue;
+        //                               try {
+        //                                 coursevalue = widget.map!['Course Price']
+        //                                     .toString()
+        //                                     .split("₹")[1]
+        //                                     .toString()
+        //                                     .split('/-')[0]
+        //                                     .toString();
+        //                               } catch (e) {
+        //                                 print(e);
+        //                                 coursevalue = widget.map!["Course Price"];
+        //                                 print('uguy');
+        //                               }
+        //
+        //                               print(
+        //                                   "oooooo${String.fromCharCodes(coursevalue.codeUnits.reversed).substring(0, 2)}");
+        //                               if (String.fromCharCodes(
+        //                                   coursevalue.codeUnits.reversed)
+        //                                   .substring(0, 2) ==
+        //                                   '-/') {
+        //                                 print("sdfsdo");
+        //                                 coursevalue = String.fromCharCodes(
+        //                                     coursevalue.codeUnits.reversed)
+        //                                     .substring(2);
+        //                                 coursevalue = String.fromCharCodes(
+        //                                     coursevalue.codeUnits.reversed);
+        //                               }
+        //                               var courseintvalue = int.parse(coursevalue);
+        //                               print("lllll $courseintvalue");
+        //                               if (value.docs.first['type'] ==
+        //                                   'percentage') {
+        //                                 setState(() {
+        //                                   newcoursevalue = courseintvalue *
+        //                                       int.parse(
+        //                                           value.docs.first['value']) ~/
+        //                                       100;
+        //                                 });
+        //                               }
+        //                               if (value.docs.first['type'] == 'number') {
+        //                                 setState(() {
+        //                                   newcoursevalue = int.parse(
+        //                                       value.docs.first['value']);
+        //                                 });
+        //                               }
+        //                               apply = true;
+        //                               showToast(
+        //                                   "cuponcode applyed successfully!");
+        //                               globals.cuponcode = "applied";
+        //                               globals.cuponname =
+        //                               value.docs.first['cname'];
+        //                               globals.cuponcourse =
+        //                               value.docs.first['coursename'];
+        //                               globals.cupondiscount =
+        //                               value.docs.first['value'];
+        //                               globals.cuponcourseprice =
+        //                                   courseintvalue.toString();
+        //                               globals.cupontype =
+        //                               value.docs.first['type'];
+        //                             });
+        //                           } else {
+        //                             showToast(
+        //                                 "This cuponcode belongs to '${value.docs.first['coursename']}' course!");
+        //                           }
+        //                         }
+        //                         if (notexpired == false) {
+        //                           showToast("invalid cuponcode!");
+        //                         }
+        //                       });
+        //                     } catch (e) {
+        //                       print(e);
+        //                       print(widget.map!['name']);
+        //                       print(widget.map!['Course Price']
+        //                           .toString()
+        //                           .split("₹")[1]
+        //                           .toString()
+        //                           .split('/-')[0]
+        //                           .toString());
+        //                       showToast("invalid cuponcode!");
+        //                     }
+        //
+        //                     // setState(() {
+        //                     //   NoCouponApplied = whetherCouponApplied(
+        //                     //     couponCodeText: couponCodeController.text,
+        //                     //   );
+        //                     //   couponAppliedResponse = whenCouponApplied(
+        //                     //     couponCodeText: couponCodeController.text,
+        //                     //   );
+        //                     //   finalamountToDisplay = amountToDisplayAfterCCA(
+        //                     //     amountPayable: widget.map!['Amount Payable'],
+        //                     //     couponCodeText: couponCodeController.text,
+        //                     //   );
+        //                     //   finalAmountToPay = amountToPayAfterCCA(
+        //                     //     couponCodeText: couponCodeController.text,
+        //                     //     amountPayable: widget.map!['Amount Payable'],
+        //                     //   );
+        //                     //   discountedPrice = discountAfterCCA(
+        //                     //       couponCodeText: couponCodeController.text,
+        //                     //       amountPayable: widget.map!['Amount Payable']);
+        //                     // });
+        //                   },
+        //                 ),
+        //                 hintText: 'Enter coupon code',
+        //                 fillColor: Colors.grey.shade100,
+        //                 filled: true,
+        //                 suffixIconConstraints:
+        //                 BoxConstraints(minHeight: 52, minWidth: 100),
+        //                 // contentPadding: EdgeInsets.symmetric(horizontal: 0.0,vertical: 0),
+        //                 enabledBorder: OutlineInputBorder(
+        //                   borderRadius: BorderRadius.circular(15),
+        //                   borderSide: BorderSide(
+        //                     color: Colors.grey.shade300,
+        //                     width: 2,
+        //                   ),
+        //                 ),
+        //                 focusedBorder: OutlineInputBorder(
+        //                   borderRadius: BorderRadius.circular(15),
+        //                   borderSide: BorderSide(
+        //                     color: Colors.grey.shade300,
+        //                     width: 2,
+        //                   ),
+        //                 ),
+        //                 disabledBorder: OutlineInputBorder(
+        //                   borderRadius: BorderRadius.circular(15),
+        //                   borderSide: BorderSide(
+        //                     color: Colors.grey.shade300,
+        //                     width: 2,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //             SizedBox(
+        //               height: 10,
+        //             ),
+        //             Center(
+        //               child: Container(
+        //                 width: MediaQuery.of(context).size.width * 0.9,
+        //                 height: 55,
+        //                 child: TextButton(
+        //                   style: ButtonStyle(
+        //                       shape: MaterialStateProperty.all<
+        //                           RoundedRectangleBorder>(
+        //                           RoundedRectangleBorder(
+        //                               borderRadius: BorderRadius.circular(15.0),
+        //                               side:
+        //                               BorderSide(color: Color(0xFF7860DC))))),
+        //                   onPressed: () {
+        //                     setcoursevalue();
+        //                   },
+        //                   child: rewardvalue == null
+        //                       ? Text('Redeem Reward 0',
+        //                       style: TextStyle(color: Color(0xFF7860DC)))
+        //                       : Text('Redeem Reward $rewardvalue',
+        //                       style: TextStyle(color: Color(0xFF7860DC))),
+        //                 ),
+        //               ),
+        //             ),
+        //             SizedBox(
+        //               height: 40,
+        //             ),
+        //             Text(
+        //               'Bill Details',
+        //               textScaleFactor: min(horizontalScale, verticalScale),
+        //               style: TextStyle(
+        //                   color: Color.fromRGBO(48, 48, 49, 1),
+        //                   fontFamily: 'Poppins',
+        //                   fontSize: 34,
+        //                   letterSpacing:
+        //                   0 /*percentages not used in flutter. defaulting to zero*/,
+        //                   fontWeight: FontWeight.bold,
+        //                   height: 1),
+        //             ),
+        //             SizedBox(
+        //               height: 20,
+        //             ),
+        //             Center(
+        //               child: Container(
+        //                 width: 366 * horizontalScale,
+        //                 // height: 170 * verticalScale,
+        //                 decoration: BoxDecoration(
+        //                   borderRadius: BorderRadius.only(
+        //                     topLeft: Radius.circular(15),
+        //                     topRight: Radius.circular(15),
+        //                     bottomLeft: Radius.circular(15),
+        //                     bottomRight: Radius.circular(15),
+        //                   ),
+        //                   boxShadow: [
+        //                     BoxShadow(
+        //                         color:
+        //                         Color.fromRGBO(31, 31, 31, 0.20000000298023224),
+        //                         offset: Offset(0, 0),
+        //                         blurRadius: 5)
+        //                   ],
+        //                   color: Color.fromRGBO(255, 255, 255, 1),
+        //                 ),
+        //                 child: Padding(
+        //                   padding: EdgeInsets.all(10),
+        //                   child: Column(
+        //                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //                     children: [
+        //                       Container(
+        //                         child: Row(
+        //                           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //                           children: [
+        //                             Expanded(
+        //                               flex: 3,
+        //                               child: Text(
+        //                                 'Course Price',
+        //                                 style: textStyle,
+        //                               ),
+        //                             ),
+        //                             Expanded(
+        //                               // flex: 2,
+        //                               child: Text(
+        //                                 widget.map!['gst'] != null ? '₹${widget.map!['Course Price']}/-' : widget.map!['Course Price'],
+        //                                 style: textStyle,
+        //                               ),
+        //                             ),
+        //                           ],
+        //                         ),
+        //                       ),
+        //                       SizedBox(height: 5),
+        //                       Container(
+        //                         child: Row(
+        //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //                           children: [
+        //                             Expanded(
+        //                               flex: 3,
+        //                               child: Text(
+        //                                 "Discount",
+        //                                 style: textStyle,
+        //                               ),
+        //                             ),
+        //                             Expanded(
+        //                               child: Text(
+        //                                 NoCouponApplied
+        //                                     ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${widget.map!["Discount"]}
+        //                                     : discountedPrice,
+        //                                 style: textStyle,
+        //                               ),
+        //                             ),
+        //                           ],
+        //                         ),
+        //                       ),
+        //                       SizedBox(height: 5),
+        //                       Container(
+        //                         child: Row(
+        //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //                           children: [
+        //                             Expanded(
+        //                               flex: 3,
+        //                               child: Text(
+        //                                 "GST",
+        //                                 style: textStyle,
+        //                               ),
+        //                             ),
+        //                             Expanded(
+        //                               child: Text(
+        //                                 widget.map!['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
+        //                                 style: textStyle,
+        //                               ),
+        //                             ),
+        //                           ],
+        //                         ),
+        //                       ),
+        //                       SizedBox(height: 15),
+        //
+        //                       DottedLine(),
+        //                       SizedBox(height: 15),
+        //                       Container(
+        //                         child: Row(
+        //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //                           children: [
+        //                             Expanded(
+        //                               flex: 3,
+        //                               child: Text(
+        //                                 'Total Pay',
+        //                                 style: textStyle,
+        //                               ),
+        //                             ),
+        //                             Expanded(
+        //                               child: Text(
+        //                                 NoCouponApplied
+        //                                     ?
+        //                                 widget.map!['gst'] != null ? '₹${totalAmount.round().toString()}/-' :
+        //                                 '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //widget.map!["Amount Payable"]
+        //                                     : finalamountToDisplay,
+        //                                 style: textStyle,
+        //                               ),
+        //                             ),
+        //                           ],
+        //                         ),
+        //                       ),
+        //                     ],
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //             SizedBox(
+        //               height: 20,
+        //             ),
+        //             Center(
+        //               child:  PaymentButton(
+        //                 coursePriceMoneyRef: int.parse(courseprice),
+        //                 amountString: (double.parse(NoCouponApplied
+        //                     ?
+        //                 widget.map!['gst'] != null ? '${totalAmount.round().toString()}' :
+        //
+        //                 "${int.parse(courseprice) - int.parse(discountvalue)}"
+        //                     : finalAmountToPay) * //widget.map!['Amount_Payablepay']
+        //                     100)
+        //                     .toString(),
+        //                 buttonText: NoCouponApplied
+        //                     ?
+        //                 widget.map!['gst'] != null ?
+        //                 'Buy Now for ₹${totalAmount.round().toString()}/-' :
+        //                 'Buy Now for ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${widget.map!['Course Price']}
+        //
+        //                     : 'Buy Now for ${finalamountToDisplay}',
+        //                 buttonTextForCode: "Buy Now for $finalamountToDisplay",
+        //                 changeState: () {
+        //                   setState(() {
+        //                     // isLoading = !isLoading;
+        //                   });
+        //                 },
+        //                 courseDescription: widget.map!['description'],
+        //                 courseName: widget.map!['name'],
+        //                 isPayButtonPressed: isPayButtonPressed,
+        //                 NoCouponApplied: NoCouponApplied,
+        //                 scrollController: _scrollController,
+        //                 updateCourseIdToCouponDetails: () {
+        //                   void addCourseId() {
+        //                     setState(() {
+        //                       id = widget.map!['id'];
+        //                     });
+        //                   }
+        //
+        //                   addCourseId();
+        //                   print(NoCouponApplied);
+        //                 },
+        //                 outStandingAmountString: (
+        //                     double.parse( NoCouponApplied
+        //                         ? widget.map!['Amount_Payablepay']
+        //                         : finalAmountToPay) -
+        //                         1000)
+        //                     .toStringAsFixed(2),
+        //                 courseId: widget.map!['id'],
+        //                 courseImageUrl: widget.map!['image_url'],
+        //                 couponCodeText: couponCodeController.text,
+        //                 isItComboCourse: widget.isItComboCourse,
+        //                 whichCouponCode: couponCodeController.text,
+        //               ),
+        //             ),
+        //             SizedBox(
+        //               height: 20,
+        //             ),
+        //             // Center(
+        //             //   child: Container(
+        //             //     width: 200,
+        //             //     child: Text(
+        //             //       "* Amount payable is inclusive of taxes. TERMS & CONDITIONS APPLY",
+        //             //       textAlign: TextAlign.center,
+        //             //       style: TextStyle(
+        //             //         fontFamily: 'Regular',
+        //             //         fontSize: 12,
+        //             //       ),
+        //             //     ),
+        //             //   ),
+        //             // ),
+        //           ],
+        //         ),
+        //       ),
+        //     ),
+        //   ],
+        // );
+      }
+
+        }
       ),
     );
   }

@@ -627,11 +627,14 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   @override
   Widget build(BuildContext context) {
     final userprovider = Provider.of<UserProvider>(context);
-    return isLoading ? Center(child: CircularProgressIndicator()) : Container(
-      width: 350,
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    return isLoading ? Center(child: CircularProgressIndicator()) :
+    Container(
+      width: screenWidth/3.5,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.white,
       ),
       child: Column(
         children: [
@@ -709,8 +712,8 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
             },
             child: Center(
               child: Container(
-                width: 253,
-                height: 48,
+                width: screenWidth/3.5,
+                height: 35,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10),
@@ -718,14 +721,14 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                     bottomLeft: Radius.circular(10),
                     bottomRight: Radius.circular(10),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                        color:
-                        Color.fromRGBO(48, 209, 151, 0.20000000298023224),
-                        offset: Offset(0, 10),
-                        blurRadius: 8)
-                  ],
-                  color: Color.fromRGBO(49, 209, 152, 1),
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //       color:
+                  //       Color.fromRGBO(48, 209, 151, 0.20000000298023224),
+                  //       offset: Offset(0, 10),
+                  //       blurRadius: 8)
+                  // ],
+                  color: Colors.deepPurple.shade600,
                 ),
                 child: Center(
                   child: Padding(
@@ -737,7 +740,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                       style: TextStyle(
                           color: Color.fromRGBO(255, 255, 255, 1),
                           fontFamily: 'Poppins',
-                          fontSize: 20,
+                          fontSize: 14,
                           letterSpacing:
                           0 /*percentages not used in flutter. defaulting to zero*/,
                           fontWeight: FontWeight.bold,

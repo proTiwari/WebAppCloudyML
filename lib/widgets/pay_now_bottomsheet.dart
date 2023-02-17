@@ -43,13 +43,19 @@ class PayNowBottomSheet extends StatelessWidget {
                           ),
                           Expanded(
                             flex: 1,
-                            child: Text(
-                              coursePrice,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Medium',
-                                color: Colors.black,
+                            child: InkWell(
+                              onTap: () {
+
+                              },
+                              child: Text(
+                                coursePrice,
+                                // 'Start your free trial',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Medium',
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
                           ),

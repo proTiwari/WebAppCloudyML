@@ -235,7 +235,7 @@ class _LoginPageState extends State<LoginPage> {
                                           margin: const EdgeInsets.symmetric(
                                               horizontal: 20, vertical: 10),
                                           child: InternationalPhoneNumberInput(
-                                            maxLength: 10,
+                                            // maxLength: 10,
                                             onInputChanged: (PhoneNumber number) {
                                               print(number.phoneNumber);
                                               print(phoneController.text);
@@ -660,7 +660,7 @@ class _LoginPageState extends State<LoginPage> {
                                 margin: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                                 child: InternationalPhoneNumberInput(
-                                  maxLength: 10,
+                                  // maxLength: 10,
                                   onInputChanged: (PhoneNumber number) {
                                     print(number.phoneNumber);
                                     print(phoneController.text);

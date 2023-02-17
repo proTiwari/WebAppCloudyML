@@ -154,7 +154,7 @@ class _splashState extends State<splash> {
     final width = size.width;
     return Scaffold(
       body: Center(
-        child: SpinKitSpinningLines(
+        child: SpinKitCircle(
           color: Colors.deepPurpleAccent,
           size: 150,
           duration: Duration(milliseconds: 200),

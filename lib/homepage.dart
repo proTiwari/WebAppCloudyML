@@ -80,6 +80,15 @@ class _HomeState extends State<Home> {
     }
   }
 
+  void addCoursetoUser(String id) async {
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      'paidCourseNames': FieldValue.arrayUnion([id])
+    });
+  }
+
   List<Icon> list = [];
 
   bool navigateToCatalogueScreen(String id) {
@@ -520,6 +529,42 @@ class _HomeState extends State<Home> {
     }
   }
 
+
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+  void loadCourses(String fID) async {
+    await _firestore.collection("courses").doc(fID).get().then((value) {
+      print(_auth.currentUser!.displayName);
+      Map<String, dynamic> groupData = {
+        "name": value.data()!['name'],
+        "icon": value.data()!["image_url"],
+        "mentors": value.data()!["mentors"],
+        "student_id": _auth.currentUser!.uid,
+        "student_name": _auth.currentUser!.displayName,
+        'groupChatCountNew': {
+          'jbG4j36JiihVuZmpoLov2lhrWF02': 0,
+          'QVtxxzHyc6az2LPpvH210lUOeXl1': 0,
+          "2AS3AK7WVQaAMY999D3xf5ycG3h1": 0,
+          'a2WWgtY2ikS8xjCxra0GEfRft5N2': 0,
+          'BX9662ZGi4MfO4C9CvJm4u2JFo63': 0,
+          '6RsvdRETWmXf1pyVGqCUl0qEDmF2': 0,
+          'jeYDhaZCRWW4EC9qZ0YTHKz4PH63': 0,
+          'I6uXWtzpimTYxtGqEXcM9AXcoAi2': 0,
+          'Kr4pX5EZ6CfigOd5C1xjdIYzMml2': 0,
+          'XhcpQzd6cjXF43gCmna1agAfS2A2': 0,
+          'fKHHbDBbbySVJZu2NMAVVIYZZpu2': 0,
+          'oQQ9CrJ8FkP06OoGdrtcwSwY89q1': 0,
+          'rR0oKFMCaOYIlblKzrjYoYMW3Vl1': 0,
+          'v66PnlwqWERgcCDA6ZZLbI0mHPF2': 0,
+          'TOV5h3ezQhWGTb5cCVvBPca1Iqh1': 0,
+          [_auth.currentUser!.uid]: 0
+        },
+      };
+      _firestore.collection("groups").add(groupData);
+    });
+  }
+
   void startTimer() {
     countDownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       setCountDown();
@@ -587,7 +632,6 @@ class _HomeState extends State<Home> {
     // showNotification();
     _controller = ScrollController();
     print('Helllllllllllo');
-
     super.initState();
     futureFiles = FirebaseApi.listAll('reviews/recent_review');
     futurefilesComboCourseReviews = FirebaseApi.listAll('reviews/combo_course_review');
@@ -1031,7 +1075,6 @@ class _HomeState extends State<Home> {
                                                                           fontWeight: FontWeight.bold,),
                                                                     ),
                                                                   ),
-                                                                  SizedBox(height: 5,),
                                                                   // Align(
                                                                   //   alignment:
                                                                   //   Alignment
@@ -1065,7 +1108,7 @@ class _HomeState extends State<Home> {
                                                                             color: HexColor('440F87'),
                                                                           ),
                                                                           child: Center(
-                                                                            child: Text( course[index].reviews.isNotEmpty ? course[index].reviews : '5.0',
+                                                                            child: Text(course[index].reviews.isNotEmpty ? course[index].reviews : '5.0',
                                                                               style: TextStyle(fontSize: 12, color: Colors.white,
                                                                                   fontWeight: FontWeight.normal),),
                                                                           ),
@@ -1090,8 +1133,8 @@ class _HomeState extends State<Home> {
                                                                     child: Row(
                                                                       children: [
                                                                         Container(
-                                                                          height: 5,
-                                                                          width: 150,
+                                                                          height: 5 * horizontalScale,
+                                                                          width: 150 * verticalScale,
                                                                           child:
                                                                           LinearProgressIndicator(
                                                                             value: coursePercent[course[index].courseId.toString()]!=null ? coursePercent[course[index].courseId]/100 : 0,
@@ -1754,7 +1797,6 @@ class _HomeState extends State<Home> {
                                                           children: [
                                                             ElevatedButton(
                                                                 onPressed: () {
-                                                                  print('value ${course[index].trial!}');
 
                                                                   setState(() {
                                                                     courseId = featuredCourse[index]
@@ -1802,37 +1844,144 @@ class _HomeState extends State<Home> {
                                                                       color: Colors.white,
                                                                       fontWeight: FontWeight.bold),
                                                                 )),
-                                                            // course[index].trial! ? SizedBox(width: 15) : SizedBox(),
-
-                                                            // course[index].trial == true ? ElevatedButton(
-                                                            //     onPressed: () {
-                                                            //       showDialog(
-                                                            //         context: context,
-                                                            //           builder: (context) {
-                                                            //           return AlertDialog(
-                                                            //             title: Text('This course is available for $numberOfDays trial '),
-                                                            //             content: Container(
-                                                            //               height: screenHeight/3,
-                                                            //               width: screenWidth/3,
-                                                            //               child: Column(
-
-                                                            //               ),
-                                                            //             ),
-                                                            //           );
-                                                            //       });
-
-                                                            //       print('paidCourseNames before ${userMap['paidCourseNames']}');
-                                                            //       userMap['paidCourseNames'].add(course[index].courseId);
-
-                                                            //       FirebaseFirestore.instance.collection('Users')
-                                                            //           .doc(FirebaseAuth.instance.currentUser!.uid)
-                                                            //           .update({
-                                                            //         'trialCourse': true,
-                                                            //         'paidCourseNames': userMap['paidCourseNames'],
-                                                            //       });
-                                                            //       print('paidCourseNames ${userMap['paidCourseNames']}');
-                                                            //     },
-                                                            //     child: Text('Try for $numberOfDays days')) : Container(),
+                                                //                         featuredCourse[index].trialCourse! ? SizedBox(width: 15) : Container(),
+                                                //             featuredCourse[index].trialCourse! ? SizedBox(
+                                                //               width: screenWidth/12,
+                                                //               child: ElevatedButton(
+                                                //                   onPressed: () {
+                                                //                     showDialog(
+                                                //                       context: context,
+                                                //                         builder: (context) {
+                                                //                         return AlertDialog(
+                                                //                           backgroundColor: Colors.deepPurpleAccent[700],
+                                                //                           title: Text('This course is available for ${featuredCourse[index].trialDays} days trial.',
+                                                //                             style: TextStyle(color: Colors.white),),
+                                                //                           content: Container(
+                                                //                             height: screenHeight/3.5,
+                                                //                             width: screenWidth/2.5,
+                                                //                             child: Column(
+                                                //                               mainAxisAlignment: MainAxisAlignment.center,
+                                                //                               children: [
+                                                //                                 Container(
+                                                //                                   height: screenHeight/5.2,
+                                                //                                   width: screenWidth/3.5,
+                                                //                                   decoration: BoxDecoration(
+                                                //                                     borderRadius: BorderRadius.circular(10),
+                                                //                                     border: Border.all(color: Colors.white, width: 0.5),
+                                                //                                     color: Colors.white,
+                                                //                                   ),
+                                                //                                   child: Column(
+                                                //                                     mainAxisAlignment: MainAxisAlignment.center,
+                                                //                                     children: [
+                                                //                                       Row(
+                                                //                                         children: [
+                                                //                                           Expanded(
+                                                //                                             flex: 1,
+                                                //                                             child: Container(
+                                                //                                               child: ClipRRect(
+                                                //                                                 borderRadius: BorderRadius.only(
+                                                //                                                     topLeft: Radius
+                                                //                                                         .circular(
+                                                //                                                         15),
+                                                //                                                     topRight: Radius
+                                                //                                                         .circular(
+                                                //                                                         15)),
+                                                //                                                 child:
+                                                //                                                 Image.network(
+                                                //                                                   featuredCourse[index].courseImageUrl,
+                                                //                                                   fit: BoxFit.fill,
+                                                //                                                 ),
+                                                //                                               ),
+                                                //                                             ),
+                                                //                                           ),
+                                                //                                           Expanded(
+                                                //                                             child: Container(
+                                                //                                               child: Text(featuredCourse[index].courseName,
+                                                //                                                   style: TextStyle(fontWeight: FontWeight.bold) ),
+                                                //                                             ),
+                                                //                                           ),
+                                                //                                         ],
+                                                //                                       )
+                                                //                                     ],
+                                                //                                   )
+                                                //                                 ),
+                                                //                                 SizedBox(height: 15),
+                                                //                                 Row(
+                                                //                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                //                                   children: [
+                                                //                                     Container(
+                                                //                                       decoration: BoxDecoration(
+                                                //                                         borderRadius: BorderRadius.circular(10),
+                                                //                                         border: Border.all(color: Colors.white, width: 0.5),
+                                                //                                       ),
+                                                //                                       child: TextButton(
+                                                //                                         onPressed: () {
+                                                // print('this is condition ${userMap['paidCourseNames'].contains(featuredCourse[index].courseId)}');
+                                                //                                         Navigator.of(context).pop();
+                                                //                                       },
+                                                //                                         child: Text('Close',
+                                                //                                         style: TextStyle(
+                                                //                                             color: Colors.white
+                                                //                                         ),
+                                                //                                       ),
+                                                //                                       ),
+                                                //                                     ),
+                                                //                                     Container(
+                                                //                                       decoration: BoxDecoration(
+                                                //                                         borderRadius: BorderRadius.circular(10),
+                                                //                                         border: Border.all(color: Colors.white, width: 0.5),
+                                                //                                       ),
+                                                //                                       child: TextButton(
+                                                //                                           onPressed: () {
+                                                //                                              if (userMap['paidCourseNames'].contains(featuredCourse[index].courseId)) {
+                                                //                                               // AlertDialog(
+                                                //                                               //   content: Container(
+                                                //                                               //     child: Text('This course already exist in your trial course...'),
+                                                //                                               //   ),
+                                                //                                               // );
+                                                //                                               Fluttertoast.showToast(msg: 'This course already exist in your trial course...');
+                                                //                                               Navigator.of(context).pop();
+                                                //                                             } else {
+                                                //                                               print('paidCourseNames before ${userMap['paidCourseNames']}');
+                                                //                                               setState(() {
+                                                //                                                 userMap['paidCourseNames'].add(featuredCourse[index].courseId);
+                                                //                                                 FirebaseFirestore.instance.collection('Users')
+                                                //                                                     .doc(FirebaseAuth.instance.currentUser!.uid)
+                                                //                                                     .update({
+                                                //                                                   'paidCourseNames': userMap['paidCourseNames'],
+                                                //                                                 });
+                                                //                                                 loadCourses(featuredCourse[index].courseId);
+                                                //                                                 Fluttertoast.showToast(msg: 'Congrats!! Course is now available in enrolled courses for ${featuredCourse[index].trialDays}...');
+                                                //                                               });
+                                                //                                               Timer(
+                                                //                                                   Duration(seconds: 1),
+                                                //                                                       () => GoRouter.of(context).pushReplacementNamed('myCourses')
+                                                //
+                                                //                                                 //     Navigator.pushReplacement(
+                                                //                                                 // context, MaterialPageRoute(builder: (context) => Authenticate()))
+                                                //
+                                                //                                               );
+                                                //                                               print('paidCourseNames ${userMap['paidCourseNames']}');
+                                                //                                             }
+                                                //                                           },
+                                                //                                           child: Text('Start your free trial',
+                                                //                                             style: TextStyle(
+                                                //                                             color: Colors.white
+                                                //                                           ),
+                                                //                                           ),
+                                                //                                       ),
+                                                //                                     ),
+                                                //
+                                                //                                   ],
+                                                //                                 ),
+                                                //                               ],
+                                                //                             ),
+                                                //                           ),
+                                                //                         );
+                                                //                     });
+                                                //                   },
+                                                //                   child: Text('${featuredCourse[index].trialDays} days trial')),
+                                                //             ) : Container(),
                                                           ],
                                                         ),
                                                       ),
@@ -1920,65 +2069,72 @@ class _HomeState extends State<Home> {
                                   "CloudyML",
                                   style: textStyle,
                                 ),
-                                SizedBox(width: 10,),
-                                Row(
-                                  children: [
-                                    InkWell(
-                                      onTap: (){
-                                        launch('https://apps.apple.com/app/cloudyml-data-science-course/id6444130328');
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                          color: Colors.deepPurple,
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.apple_outlined, color: Colors.white, size: 12,),
-                                            Column(
-                                              children: [
-                                                Text('Download our IOS app from', style: TextStyle(color: Colors.white, fontSize: 4),),
-                                                Text('APPLE STORE', style: TextStyle(color: Colors.white, fontSize: 6)),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 10,),
-                                    InkWell(
-                                      onTap: (){
-                                        launch('https://play.google.com/store/apps/details?id=com.cloudyml.cloudymlapp');
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                          color: Colors.deepPurple,
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.play_arrow, color: Colors.white, size: 12,),
-                                            Column(
-                                              children: [
-                                                Text('Download our Android app from', style: TextStyle(color: Colors.white, fontSize: 4),),
-                                                Text('GOOGLE PLAY', style: TextStyle(color: Colors.white, fontSize: 6)),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ],
                             ),
                           ),
                         ],
                       ),
                     ),
-
+                    Container(
+                      height: 38,
+                      width: screenWidth,
+                      color: Colors.deepPurpleAccent[300],
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10.0, bottom: 4,),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            InkWell(
+                              onTap: (){
+                                launch('https://apps.apple.com/app/cloudyml-data-science-course/id6444130328');
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.apple_outlined, color: Colors.white, size: 12,),
+                                    Column(
+                                      children: [
+                                        Text('Download our IOS app from', style: TextStyle(color: Colors.white, fontSize: 4),),
+                                        Text('APPLE STORE', style: TextStyle(color: Colors.white, fontSize: 6)),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 50,),
+                            InkWell(
+                              onTap: (){
+                                launch('https://play.google.com/store/apps/details?id=com.cloudyml.cloudymlapp');
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.play_arrow, color: Colors.black, size: 12,),
+                                    Column(
+                                      children: [
+                                        Text('Download our Android app from', style: TextStyle(color: Colors.white, fontSize: 4),),
+                                        Text('GOOGLE PLAY', style: TextStyle(color: Colors.white, fontSize: 6)),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                     Padding(
                       padding: EdgeInsets.only(
                           left: 20 * horizontalScale,

@@ -19,6 +19,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:provider/provider.dart';
@@ -76,7 +77,10 @@ Future<void> main() async {
   await Hive.openBox('myBox');
   await Hive.openBox("NotificationBox");
   setPathUrlStrategy();
+  // WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
+  // SchedulerBinding.instance.addPostFrameCallback((timeStamp) { });
+
   final state = LoginState(await SharedPreferences.getInstance());
   state.checkLoggedIn();
 

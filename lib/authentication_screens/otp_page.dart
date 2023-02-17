@@ -49,7 +49,8 @@ class _OtpPageState extends State<OtpPage> {
 
   Widget darkRoundedPinPut() {
     return Container(
-      child: Pinput(
+      child:
+      Pinput(
         onChanged: (value) => text = value,
         length: 6,
       ),
