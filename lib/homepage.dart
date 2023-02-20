@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'global_variable.dart' as globals;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
@@ -34,7 +35,7 @@ import 'models/referal_model.dart';
 import 'module/pdf_course.dart';
 import 'package:showcaseview/src/showcase.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'dart:html' as html;
 import 'module/video_screen.dart';
 var rewardCount = 0;
 String? linkMessage;
@@ -401,6 +402,7 @@ class _HomeState extends State<Home> {
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get()
           .then((value) {
+            globals.role = value.data()!["role"];
         rewardvalidfrom = value.data()!['rewardvalidfrom'];
       });
       await FirebaseFirestore.instance
@@ -629,9 +631,10 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    // print('this is url ${html.window.location.href}');
+    // print('this is path ${Uri.base.path}');
     // showNotification();
     _controller = ScrollController();
-    print('Helllllllllllo');
     super.initState();
     futureFiles = FirebaseApi.listAll('reviews/recent_review');
     futurefilesComboCourseReviews = FirebaseApi.listAll('reviews/combo_course_review');
@@ -669,7 +672,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: customDrawer(context),
-      floatingActionButton: floatingButton(context),
+      // floatingActionButton: floatingButton(context),
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             if (constraints.maxWidth >= 650) {

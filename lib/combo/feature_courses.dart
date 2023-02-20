@@ -611,25 +611,21 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                           InkWell(
                             onTap: () {
 
-                              // GoRouter.of(context)
-                              //     .pushNamed(
-                              //     'paymentScreen',
-                              //     queryParams: {
-                              //       'isItComboCourse': true,
-                              //       'courseMap': comboMap,
-                              //     }
+                              GoRouter.of(context).pushNamed('comboPaymentPortal',
+                                  queryParams: {
+                                    'cID': courseId});
+
+
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => PaymentScreen(
+                              //       map: comboMap,
+                              //       cID: widget.cID,
+                              //       isItComboCourse: true,
+                              //     ),
+                              //   ),
                               // );
-
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PaymentScreen(
-                                    map: comboMap,
-                                    isItComboCourse: true,
-                                  ),
-                                ),
-                              );
 
                             },
                             child: Container(

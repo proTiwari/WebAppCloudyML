@@ -271,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         key: _scaffoldKey,
         drawer: customDrawer(context),
-        floatingActionButton: floatingButton(context),
+        // floatingActionButton: floatingButton(context),
         body: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
           if (constraints.maxWidth >= 515) {

@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import '../global_variable.dart' as globals;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudyml_app2/payments_history.dart';
 import 'package:cloudyml_app2/privacy_policy.dart';
@@ -793,19 +793,21 @@ Drawer customDrawer(BuildContext context) {
                   GoRouter.of(context).push('/store');
                 },
               ),
+
+
               //navigate to messages
-              InkWell(
-                child: ListTile(
-                  title: Text('Chat with TA'),
-                  leading: Icon(
-                    Icons.chat_bubble_outline_sharp,
-                    color: HexColor('691EC8'),
-                  ),
-                ),
-                onTap: () {
-                  GoRouter.of(context).push('/chat');
-                },
-              ),
+              // InkWell(
+              //   child: ListTile(
+              //     title: Text('Chat with TA'),
+              //     leading: Icon(
+              //       Icons.chat_bubble_outline_sharp,
+              //       color: HexColor('691EC8'),
+              //     ),
+              //   ),
+              //   onTap: () {
+              //     GoRouter.of(context).push('/chat');
+              //   },
+              // ),
               InkWell(
                 child: ListTile(
                   title: Text(''
@@ -831,6 +833,19 @@ Drawer customDrawer(BuildContext context) {
                   GoRouter.of(context).push('/myCourses');
                 },
               ),
+              globals.role == "mentor" ? InkWell(
+                child: ListTile(
+                  title: Text('Admin Quiz Panel'),
+                  leading: Icon(
+                    Icons.quiz,
+                    color: HexColor('691EC8'),
+                  ),
+                ),
+                onTap: () {
+                  GoRouter.of(context).push('/adminquizpanel');
+                },
+              ):Container(),
+
               //Assignments tab for mentors only
               // ref.data() != null && ref.data()!["role"] == 'mentor'
               //     ? InkWell(
@@ -938,20 +953,20 @@ Drawer customDrawer(BuildContext context) {
   );
 }
 
-FloatingActionButton floatingButton(BuildContext context) {
-  return FloatingActionButton.extended(
-    backgroundColor: Colors.black54,
-    onPressed: () {
-      GoRouter.of(context).push('/chat');
-    },
-    label: Text('Chat with TA', style: TextStyle(fontSize: 16)),
-    icon: Icon(
-      Icons.chat_bubble_outline_sharp,
-      color: Colors.white,
-      size: 20,
-    ),
-  );
-}
+// FloatingActionButton floatingButton(BuildContext context) {
+//   return FloatingActionButton.extended(
+//     backgroundColor: Colors.black54,
+//     onPressed: () {
+//       GoRouter.of(context).push('/chat');
+//     },
+//     label: Text('Chat with TA', style: TextStyle(fontSize: 16)),
+//     icon: Icon(
+//       Icons.chat_bubble_outline_sharp,
+//       color: Colors.white,
+//       size: 20,
+//     ),
+//   );
+// }
 
 Drawer dr(BuildContext context) {
 

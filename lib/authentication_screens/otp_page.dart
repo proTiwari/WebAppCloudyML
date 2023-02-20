@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/home.dart';
+import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -603,13 +604,23 @@ class _OtpPageState extends State<OtpPage> {
               User? user = (await _auth.signInWithCredential(crediantial)).user;
               if (user != null) {
                 print("Login Successful======");
+
                 showToast("Login Successful");
                 print(user);
                 print("Login Successful==");
-
+                print(GoRouter.of(context).location);
                 // GoRouter.of(context).pushReplacement('/home');
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (_) => HomePage()));
+                String location = GoRouter.of(context).location;
+
+                if (location == '/paymentPortal?cID=$courseId') {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => PaymentScreen(cID: courseId, isItComboCourse: false)));
+                } else {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => HomePage()));
+                }
+
+
                 // (Route<dynamic> route) => false;
                 saveLoginState(context);
               } else {
@@ -642,7 +653,9 @@ class _OtpPageState extends State<OtpPage> {
         }
       } else {
         if (globals.linked == 'true') {
+
           GoRouter.of(context).pushReplacement('/home');
+
           (Route<dynamic> route) => false;
           saveLoginState(context);
         } else {

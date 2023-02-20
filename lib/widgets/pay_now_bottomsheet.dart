@@ -1,6 +1,9 @@
 import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../globals.dart';
 
 class PayNowBottomSheet extends StatelessWidget {
   ValueListenable<double> currentPosition;
@@ -63,15 +66,20 @@ class PayNowBottomSheet extends StatelessWidget {
                             flex: 2,
                             child: InkWell(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PaymentScreen(
-                                      map: map,
-                                      isItComboCourse: isItComboCourse,
-                                    ),
-                                  ),
-                                );
+
+                            GoRouter.of(context).pushNamed('paymentPortal',
+                                queryParams: {
+                                  'cID': courseId});
+
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => PaymentScreen(
+                                //       map: map,
+                                //       isItComboCourse: isItComboCourse,
+                                //     ),
+                                //   ),
+                                // );
                               },
                               child: Container(
                                 height: 60,

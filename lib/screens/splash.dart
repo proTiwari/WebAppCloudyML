@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/services/local_notificationservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,7 +12,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
-
+import '../global_variable.dart' as globals;
 class splash extends StatefulWidget {
   const splash({Key? key}) : super(key: key);
 
@@ -29,7 +30,7 @@ class _splashState extends State<splash> {
     super.initState();
     GRecaptchaV3.hideBadge();
     Timer(
-        Duration(seconds: 4),
+        Duration(seconds: 2),
             () => GoRouter.of(context).push('/login')
                 
             //     Navigator.pushReplacement(
@@ -60,6 +61,13 @@ class _splashState extends State<splash> {
 
     ////foreground notification
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((value) {
+        globals.role = value.data()!['role'];
+      });
       if (message.data["SenderId"] != null || message.data["SenderId"] != "") {
         print(message.notification!.title);
         print(message.notification!.body);

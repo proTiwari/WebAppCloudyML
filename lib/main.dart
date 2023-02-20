@@ -116,6 +116,13 @@ Future<void> main() async {
     // Switches web renderer to html and reloads the window.
     RendererSwitcher.switchWebRenderer(WebRenderer.html);
   }
+
+  print('this is url ${Uri.base.origin.toString()}');
+
+  // if(Uri.base.path == '/paymentPortal') {
+  //   print('abc home');
+  // }
+
 }
 
 

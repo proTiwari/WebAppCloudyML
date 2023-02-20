@@ -21,6 +21,9 @@ import '../catalogue_screen.dart';
 import '../combo/feature_courses.dart';
 import '../models/course_details.dart';
 import '../my_Courses.dart';
+import '../screens/quiz/admin_quiz.dart';
+import '../screens/quiz/quiz_page.dart';
+import '../screens/quiz/quizentry.dart';
 import '../screens/review_screen/review_screen.dart';
 import 'login_state_check.dart';
 
@@ -32,13 +35,24 @@ class MyRouter {
   late final GoRouter routes = GoRouter(
       initialLocation: '/',
       refreshListenable: loginState,
+
       redirect: (context, GoRouterState state) {
+
         final loggedIn = loginState.loggedIn;
         final goingToLogin = state.location == ('/login');
-        if(!loggedIn && !goingToLogin) return ('/');
 
-        if (loggedIn && goingToLogin) return ('/home');
-        return null;
+        final directToCatalogue = state.location == ('/paymentPortal?cID=');
+
+        if(!loggedIn && !goingToLogin) {
+          return ('/');
+        } else if (loggedIn && goingToLogin) {
+          return ('/home');
+        } else if (loggedIn && goingToLogin && directToCatalogue) {
+          return ('/featuredCourses');
+        } else {
+          return null;
+        }
+
        },
       routes: <RouteBase>[
         GoRoute(
@@ -101,12 +115,26 @@ class MyRouter {
           },
         ),
         GoRoute(
-          name: 'ReWidget',
-          path: '/ReWidget',
+          name: 'AdminQuizPanel',
+          path: '/adminquizpanel',
+          pageBuilder: (context, state) {
+            return MaterialPage(key: state.pageKey, child: AdminQuizPanel());
+          },
+        ), //CongratulationsWidget
+        GoRoute(
+          name: 'QuizPage',
+          path: '/quizpage',
+          pageBuilder: (context, state) {
+            return MaterialPage(key: state.pageKey, child: QuizPage(""));
+          },
+        ),
+
+        GoRoute(
+          name: 'quizentry',
+          path: '/quizentry',
           pageBuilder: (context, state) {
             return MaterialPage(
-                key: state.pageKey,
-                child: ReWidget());
+                key: state.pageKey, child: QuizentrypageWidget('param'));
           },
         ),
         GoRoute(
@@ -204,16 +232,30 @@ class MyRouter {
                     sr: null,));
             }),
         GoRoute(
-          name: 'paymentScreen',
-          path: '/paymentPortal',
+          name: 'comboPaymentPortal',
+          path: '/comboPaymentPortal',
         pageBuilder: (context, state) {
-          final Map<String, dynamic> courseMap = state.queryParams['courseMap']! as Map<String, dynamic>;
-            final bool isItComboCourse = state.queryParams['isItComboCourse']! as bool;
+          // final Map<String, dynamic> courseMap = state.queryParams['courseMap']! as Map<String, dynamic>;
+          String cID = state.queryParams['cID']!;
             return MaterialPage(
                 child: PaymentScreen(
-                    map: courseMap,
-                    isItComboCourse: isItComboCourse),);
+                    cID: cID,
+                    isItComboCourse: true,
+                    map: {},),);
         }),
+        GoRoute(
+            name: 'paymentPortal',
+            path: '/paymentPortal',
+            pageBuilder: (context, state) {
+              String cID = state.queryParams['cID']!;
+              // Map<String, dynamic> courseMap =
+              // state.queryParams['courseMap']! as Map<String, dynamic>;
+              return MaterialPage(
+                child: PaymentScreen(
+                    cID: cID,
+                    // map: courseMap,
+                    isItComboCourse: false),);
+            }),
         GoRoute(
             name: 'chatWindow',
             path: '/chatWindow',

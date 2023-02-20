@@ -32,6 +32,7 @@ import '../api/firebase_api.dart';
 import '../fun.dart';
 import '../models/course_details.dart';
 import '../models/firebase_file.dart';
+import '../screens/quiz/quizentry.dart';
 import 'new_assignment_screen.dart';
 
 class VideoScreen extends StatefulWidget {
@@ -76,6 +77,8 @@ class _VideoScreenState extends State<VideoScreen> {
   bool switchTOAssignment = false;
   bool stopdownloading = true;
   bool showAssignSol = false;
+  bool quizbool = false;
+  var quizdata;
 
   var _delayToInvokeonControlUpdate = 0;
   var _progress = 0.0;
@@ -1113,7 +1116,7 @@ class _VideoScreenState extends State<VideoScreen> {
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
     return Scaffold(
-        floatingActionButton: floatingButton(context),
+        // floatingActionButton: floatingButton(context),
         body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             if (constraints.maxWidth >= 650) {
@@ -1294,6 +1297,9 @@ class _VideoScreenState extends State<VideoScreen> {
                             ],
                           ),
                         )
+                            : quizbool
+                            ? Expanded(
+                            flex: 2, child: QuizentrypageWidget(quizdata))
                             : Expanded(
                           flex: 2,
                           child: Align(
@@ -2297,6 +2303,25 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                 [sectionIndex]["videos"]
                                                             [subsectionIndex]["id"]
                                                         .toString());
+                                              }else if (listOfSectionData[widget
+                                                  .courseName]
+                                              [sectionIndex]
+                                              ["videos"][
+                                              subsectionIndex]["type"] ==
+                                                  "quiz") {
+                                                //QuizentrypageWidget
+                                                print(
+                                                    "sdjfosjdfoisjdofjsodifjsoijdfoisdfsodfiosjiofdjosdjfoisidfjiowjofowejojiojbdf");
+                                                //  GoRouter.of(context).pushNamed('quizpage');
+                                                setState(() {
+                                                  quizdata = listOfSectionData[
+                                                  widget.courseName]
+                                                  [sectionIndex][
+                                                  "videos"][subsectionIndex];
+                                                  quizbool = true;
+                                                  print("iwoe");
+                                                  htmlbool = true;
+                                                });
                                               } else {
                                                 showAssignment = true;
                                                 setState(() {
@@ -2344,44 +2369,52 @@ class _VideoScreenState extends State<VideoScreen> {
                                                   child: Row(
                                                     children: [
                                                       listOfSectionData[widget.courseName]
-                                                                              [
-                                                                              sectionIndex]
-                                                                          [
-                                                                          "videos"]
-                                                                      [
-                                                                      subsectionIndex]
-                                                                  ["type"] ==
-                                                              "video"
+                                                      [sectionIndex]
+                                                      ["videos"]
+                                                      [subsectionIndex]
+                                                      ["type"] ==
+                                                          "video"
                                                           ? Icon(
-                                                              Icons.play_circle)
-                                                          : Icon(
-                                                              Icons.assessment),
+                                                          Icons.play_circle)
+                                                          : listOfSectionData[widget.courseName]
+                                                      [sectionIndex]
+                                                      [
+                                                      "videos"][subsectionIndex]
+                                                      [
+                                                      "type"] ==
+                                                          "quiz"
+                                                          ? Icon(Icons.quiz)
+                                                          : Icon(Icons
+                                                          .assessment),
                                                       SizedBox(
                                                         width: 10,
                                                       ),
                                                       Expanded(
                                                           child: Text(
-                                                        listOfSectionData[widget.courseName][sectionIndex]
-                                                                            ["videos"]
-                                                                        [subsectionIndex]
-                                                                    ["type"] ==
+                                                            listOfSectionData[widget.courseName][sectionIndex]
+                                                            ["videos"]
+                                                            [subsectionIndex]
+                                                            ["type"] ==
                                                                 "video"
-                                                            ? listOfSectionData[widget.courseName]
-                                                                            [sectionIndex]
-                                                                        ["videos"][subsectionIndex]
-                                                                    ["name"]
+                                                                ? listOfSectionData[widget.courseName]
+                                                            [sectionIndex]
+                                                            ["videos"][subsectionIndex]
+                                                            ["name"]
                                                                 .toString()
-                                                            : "Assignment : " +
-                                                                listOfSectionData[widget.courseName]
-                                                                            [sectionIndex]["videos"]
-                                                                        [
-                                                                        subsectionIndex]["name"]
+                                                                : listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] ==
+                                                                "quiz"
+                                                                ? "Quiz : " +
+                                                                listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"]
+                                                                    .toString()
+                                                                : "Assignment : " +
+                                                                listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]
+                                                                ["name"]
                                                                     .toString(),
-                                                        style: TextStyle(
-                                                            overflow:
+                                                            style: TextStyle(
+                                                                overflow:
                                                                 TextOverflow
                                                                     .ellipsis),
-                                                      ))
+                                                          ))
                                                     ],
                                                   ),
                                                 ))),
@@ -2530,7 +2563,24 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                   [sectionIndex]["videos"]
                                                               [subsectionIndex]["id"]
                                                           .toString());
-                                                } else {
+                                                }else if (listOfSectionData[widget
+                                                    .courseName]
+                                                [sectionIndex]
+                                                ["videos"][
+                                                subsectionIndex]["type"] ==
+                                                    "quiz") {
+                                                  print(
+                                                      "ll;;;;;;;;;;;;;;;;;;;");
+                                                  setState(() {
+                                                    quizdata = listOfSectionData[
+                                                    widget
+                                                        .courseName]
+                                                    [sectionIndex][
+                                                    "videos"][subsectionIndex];
+                                                    htmlbool = true;
+                                                    quizbool = true;
+                                                  });
+                                                }  else {
                                                   showAssignment = true;
                                                   setState(() {
                                                     assignmentUrl = listOfSectionData[

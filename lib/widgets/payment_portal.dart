@@ -632,6 +632,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     return isLoading ? Center(child: CircularProgressIndicator()) :
     Container(
       width: screenWidth/3.5,
+      height: 50,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: Colors.white,
@@ -713,14 +714,9 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
             child: Center(
               child: Container(
                 width: screenWidth/3.5,
-                height: 35,
+                height: 50,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10),
-                  ),
+                  borderRadius: BorderRadius.circular(5),
                   // boxShadow: [
                   //   BoxShadow(
                   //       color:
@@ -740,7 +736,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                       style: TextStyle(
                           color: Color.fromRGBO(255, 255, 255, 1),
                           fontFamily: 'Poppins',
-                          fontSize: 14,
+                          fontSize: 18,
                           letterSpacing:
                           0 /*percentages not used in flutter. defaulting to zero*/,
                           fontWeight: FontWeight.bold,

@@ -4,6 +4,7 @@ String phone = "";
 String email = "";
 String name = "";
 String? action;
+String role = "";
 String? signoutvalue;
 var actualCode;
 String phoneNumberexists = 'false';

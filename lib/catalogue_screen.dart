@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
@@ -360,21 +362,20 @@ class _CatelogueScreenState extends State<CatelogueScreen>
                                         InkWell(
                                           onTap: () {
 
-                                            // GoRouter.of(context)
-                                            //     .pushNamed(
-                                            //     'paymentScreen',
-                                            //     queryParams: {'isItComboCourse': false,
-                                            //       'courseMap': courseMap});
 
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => PaymentScreen(
-                                                  map: courseMap,
-                                                  isItComboCourse: false,
-                                                ),
-                                              ),
-                                            );
+                                            GoRouter.of(context).pushNamed('paymentPortal',
+                                                queryParams: {
+                                                  'cID': courseId});
+
+                                            // Navigator.push(
+                                            //   context,
+                                            //   MaterialPageRoute(
+                                            //     builder: (context) => PaymentScreen(
+                                            //       map: courseMap,
+                                            //       isItComboCourse: false,
+                                            //     ),
+                                            //   ),
+                                            // );
 
                                             // Navigator.pushNamed(
                                             //     context, '/paymentscreen'

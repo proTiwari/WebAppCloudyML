@@ -13,15 +13,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:star_rating/star_rating.dart';
+import 'dart:js' as js;
 import 'fun.dart';
 import 'global_variable.dart' as globals;
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
 class PaymentScreen extends StatefulWidget {
   final Map<String, dynamic>? map;
+  final cID;
   final bool isItComboCourse;
   const PaymentScreen(
-      {Key? key, required this.map, required this.isItComboCourse})
+      {Key? key, this.map, required this.cID, required this.isItComboCourse})
       : super(key: key);
 
   @override
@@ -72,38 +74,57 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
   final textStyle = TextStyle(
       color: Color.fromARGB(223, 48, 48, 49),
       fontFamily: 'Poppins',
-      fontSize: 12,
+      fontSize: 14,
       letterSpacing:
       0 /*percentages not used in flutter. defaulting to zero*/,
       fontWeight: FontWeight.w500,
       height: 1);
 
-  getAmounts() {
+
+
+  Map<String, dynamic> courseMap = {};
+
+  void getCourseName() async {
+
     try{
-      if (widget.map!['gst'] != null) {
-        gstAmount = int.parse('${widget.map!['gst']}') * 0.01 * int.parse('${widget.map!['Course Price']}');
-        print('this is gst ${gstAmount.round()}');
+      await FirebaseFirestore.instance
+          .collection('courses')
+          .doc(widget.cID)
+          .get()
+          .then((value) {
+        setState(() {
+          print('course id is ${courseId}');
+          courseMap = value.data()!;
+          print('paymentscree map ${courseMap.toString()} ');
+          // print('gste = ${courseMap['gst'].toString()}');
+        });
+      });
 
-        totalAmount = (int.parse('${widget.map!['gst']}') * 0.01 * int.parse('${widget.map!['Course Price']}')) + int.parse('${widget.map!['Course Price']}');
-        print('this is totalAmount ${totalAmount.round()}');
+      // gst function is here
 
+      try{
+        if (courseMap['gst'] != null) {
+          gstAmount = int.parse('${courseMap['gst']}') * 0.01 * int.parse('${courseMap['Course Price']}');
+          print('this is gst ${gstAmount.round()}');
+
+          totalAmount = (int.parse('${courseMap['gst']}') * 0.01 * int.parse('${courseMap['Course Price']}')) + int.parse('${courseMap['Course Price']}');
+          print('this is totalAmount ${totalAmount.round()}');
+
+        } else {
+          print('gst is nulll');
+        }
+      } catch(e){
+        Fluttertoast.showToast(msg: e.toString());
+        print('amount error is here ${e.toString()}');
       }
-    } catch(e){
-      Fluttertoast.showToast(msg: e.toString());
-      print('amount error is here ${e.toString()}');
+
+    }catch(e){
+      print('catalogue screen ${e.toString()} ');
     }
-  }
 
-  @override
-  void initState() {
-    super.initState();
-    getrewardvalue();
-    getAmounts();
-  }
-
-  Future<void> getrewardvalue() async {
+    // reward function
     print("wewewewewew1");
-    courseprice = widget.map!['Course Price'].toString().replaceAll("₹", "");
+    courseprice = courseMap['Course Price'].toString().replaceAll("₹", "");
 
     courseprice = courseprice.replaceAll("/-", "");
     print(courseprice);
@@ -128,6 +149,23 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
       print(e);
       print("wewewewewew5");
     }
+  }
+
+
+  @override
+  void initState() {
+    // if(Uri.base.path == '/paymentPortal') {
+    //   print('abc home');
+    // }
+    super.initState();
+    var pay= js.context['location'];
+    print(pay);
+    print('course id is ${courseId}');
+    getCourseName();
+  }
+
+  Future<void> getrewardvalue() async {
+
   }
 
   void setcoursevalue() async {
@@ -221,6 +259,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                     ],
                   ),
                   child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Padding(
                         padding: EdgeInsets.only(left: 20.0, top: 10, bottom: 10),
@@ -241,7 +280,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                       topRight: Radius.circular(10),
                                   ),
                                   child: CachedNetworkImage(
-                                    imageUrl: widget.map!['image_url'],
+                                    imageUrl: courseMap['image_url'],
                                     placeholder: (context, url) =>
                                         Center(child: CircularProgressIndicator()),
                                     errorWidget: (context, url, error) =>
@@ -271,7 +310,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                           color: HexColor('440F87'),
                                         ),
                                         child: Center(
-                                          child: Text(widget.map!['reviews'] != null ? widget.map!['reviews'] : '5.0',
+                                          child: Text(courseMap['reviews'] != null ? courseMap['reviews'] : '5.0',
                                             style: TextStyle(fontSize: 12, color: Colors.white,
                                                 fontWeight: FontWeight.normal),),
                                         ),
@@ -282,7 +321,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                       const EdgeInsets.only(right: 5.0),
                                       child: StarRating(
                                         length: 5,
-                                        rating: widget.map!['reviews'] != null ? double.parse(widget.map!['reviews']) : 5.0,
+                                        rating: courseMap['reviews'] != null ? double.parse(courseMap['reviews']) : 5.0,
                                         color: HexColor('440F87'),
                                         starSize: 25,
                                         mainAxisAlignment: MainAxisAlignment.start,
@@ -299,7 +338,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      widget.map!['name'],
+                                      courseMap['name'],
                                       textScaleFactor: min(horizontalScale, verticalScale),
                                       style: TextStyle(
                                         fontSize: 36,
@@ -310,7 +349,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     ),
                                     SizedBox(height: 15 * verticalScale,),
                                     Text(
-                                      widget.map!['description'],
+                                      courseMap['description'],
                                       textScaleFactor: min(horizontalScale, verticalScale),
                                       style: TextStyle(
                                         fontSize: 18,
@@ -335,9 +374,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                           ),
                         ),
                       ),
-                      SizedBox(width: 50,),
                       Padding(
-                        padding: EdgeInsets.only(right: 30.0, top: 10, bottom: 10),
+                        padding: EdgeInsets.only(right: 80.0, left: 80, top: 10, bottom: 10),
                         child: Container(
                           width: screenWidth/4,
                           child: Column(
@@ -400,7 +438,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     style: textStyle,
                                   ),
                                   Text(
-                                    widget.map!['gst'] != null ? '₹${widget.map!['Course Price']}/-' : widget.map!['Course Price'],
+                                    courseMap['gst'] != null ? '₹${courseMap['Course Price']}/-' : courseMap['Course Price'],
                                     style: textStyle,
                                   ),
                                 ],
@@ -414,7 +452,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     style: textStyle,
                                   ),
                                   Text(
-                                    widget.map!['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
+                                    courseMap['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
                                     style: textStyle,
                                   ),
                                 ],
@@ -429,199 +467,199 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   ),
                                   Text(
                                     NoCouponApplied
-                                        ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${widget.map!["Discount"]}
+                                        ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${courseMap["Discount"]}
                                         : discountedPrice,
                                     style: textStyle,
                                   ),
                                 ],
                               ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Container(
-                                height: 30,
-                                width: screenWidth/3.5,
-                                child: TextField(
-                                  textAlignVertical: TextAlignVertical.center,
-                                  enabled: !apply ? true : false,
-                                  controller: couponCodeController,
-                                  style: TextStyle(
-                                    fontSize: 16 * min(horizontalScale, verticalScale),
-                                    letterSpacing: 1.2,
-                                    fontFamily: 'Medium',
-                                  ),
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.only(left: 10),
-                                    // constraints: BoxConstraints(minHeight: 52, minWidth: 366),
-                                    suffixIcon: TextButton(
-                                      child: apply
-                                          ? Text(
-                                        'Applied',
-                                        style: TextStyle(
-                                          color: Color.fromARGB(255, 96, 220, 193),
-                                          fontFamily: 'Medium',
-                                          fontSize:
-                                          18 * min(horizontalScale, verticalScale),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                          : Text(
-                                        'Apply',
-                                        style: TextStyle(
-                                          color: Color(0xFF7860DC),
-                                          fontFamily: 'Medium',
-                                          fontSize:
-                                          18 * min(horizontalScale, verticalScale),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      onPressed: () async {
-                                        try {
-                                          print("pressed${couponCodeController.text}");
-                                          await FirebaseFirestore.instance
-                                              .collection("couponcode")
-                                              .where("cname",
-                                              isEqualTo: couponCodeController.text)
-                                              .get()
-                                              .then((value) {
-                                            print(value.docs.first['cname']);
-                                            print(DateTime.now().isBefore(
-                                                value.docs.first['end_date'].toDate()));
-                                            var notexpired = DateTime.now().isBefore(
-                                                value.docs.first['end_date'].toDate());
-                                            if (notexpired) {
-                                              print(widget.map!['name']);
-                                              if (widget.map!['name']
-                                                  .toString()
-                                                  .toLowerCase() ==
-                                                  value.docs.first['coursename']
-                                                      .toString()
-                                                      .toLowerCase()) {
-                                                setState(() {
-                                                  print("fsijfoije");
-                                                  print(widget.map!["Course Price"]);
-                                                  var coursevalue;
-                                                  try {
-                                                    coursevalue = widget.map!['Course Price']
-                                                        .toString()
-                                                        .split("₹")[1]
-                                                        .toString()
-                                                        .split('/-')[0]
-                                                        .toString();
-                                                  } catch (e) {
-                                                    print(e);
-                                                    coursevalue = widget.map!["Course Price"];
-                                                    print('uguy');
-                                                  }
-
-                                                  print(
-                                                      "oooooo${String.fromCharCodes(coursevalue.codeUnits.reversed).substring(0, 2)}");
-                                                  if (String.fromCharCodes(
-                                                      coursevalue.codeUnits.reversed)
-                                                      .substring(0, 2) ==
-                                                      '-/') {
-                                                    print("sdfsdo");
-                                                    coursevalue = String.fromCharCodes(
-                                                        coursevalue.codeUnits.reversed)
-                                                        .substring(2);
-                                                    coursevalue = String.fromCharCodes(
-                                                        coursevalue.codeUnits.reversed);
-                                                  }
-                                                  var courseintvalue = int.parse(coursevalue);
-                                                  print("lllll $courseintvalue");
-                                                  if (value.docs.first['type'] ==
-                                                      'percentage') {
-                                                    setState(() {
-                                                      newcoursevalue = courseintvalue *
-                                                          int.parse(
-                                                              value.docs.first['value']) ~/
-                                                          100;
-                                                    });
-                                                  }
-                                                  if (value.docs.first['type'] == 'number') {
-                                                    setState(() {
-                                                      newcoursevalue = int.parse(
-                                                          value.docs.first['value']);
-                                                    });
-                                                  }
-                                                  apply = true;
-                                                  showToast(
-                                                      "cuponcode applyed successfully!");
-                                                  globals.cuponcode = "applied";
-                                                  globals.cuponname =
-                                                  value.docs.first['cname'];
-                                                  globals.cuponcourse =
-                                                  value.docs.first['coursename'];
-                                                  globals.cupondiscount =
-                                                  value.docs.first['value'];
-                                                  globals.cuponcourseprice =
-                                                      courseintvalue.toString();
-                                                  globals.cupontype =
-                                                  value.docs.first['type'];
-                                                });
-                                              } else {
-                                                showToast(
-                                                    "This cuponcode belongs to '${value.docs.first['coursename']}' course!");
-                                              }
-                                            }
-                                            if (notexpired == false) {
-                                              showToast("invalid cuponcode!");
-                                            }
-                                          });
-                                        } catch (e) {
-                                          print(e);
-                                          print(widget.map!['name']);
-                                          print(widget.map!['Course Price']
-                                              .toString()
-                                              .split("₹")[1]
-                                              .toString()
-                                              .split('/-')[0]
-                                              .toString());
-                                          showToast("invalid cuponcode!");
-                                        }
-
-                                        // setState(() {
-                                        //   NoCouponApplied = whetherCouponApplied(
-                                        //     couponCodeText: couponCodeController.text,
-                                        //   );
-                                        //   couponAppliedResponse = whenCouponApplied(
-                                        //     couponCodeText: couponCodeController.text,
-                                        //   );
-                                        //   finalamountToDisplay = amountToDisplayAfterCCA(
-                                        //     amountPayable: widget.map!['Amount Payable'],
-                                        //     couponCodeText: couponCodeController.text,
-                                        //   );
-                                        //   finalAmountToPay = amountToPayAfterCCA(
-                                        //     couponCodeText: couponCodeController.text,
-                                        //     amountPayable: widget.map!['Amount Payable'],
-                                        //   );
-                                        //   discountedPrice = discountAfterCCA(
-                                        //       couponCodeText: couponCodeController.text,
-                                        //       amountPayable: widget.map!['Amount Payable']);
-                                        // });
-                                      },
-                                    ),
-                                    hintText: 'Enter coupon code',
-                                    fillColor: Colors.deepPurple.shade100,
-                                    filled: true,
-                                    // suffixIconConstraints:
-                                    // BoxConstraints(minHeight: 52, minWidth: 70),
-                                    // contentPadding: EdgeInsets.symmetric(horizontal: 0.0,vertical: 0),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                      borderSide: BorderSide.none
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                        borderSide: BorderSide.none
-                                    ),
-                                    disabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                        borderSide: BorderSide.none
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              // SizedBox(
+                              //   height: 15,
+                              // ),
+                              // Container(
+                              //   height: 30,
+                              //   width: screenWidth/3.5,
+                              //   child: TextField(
+                              //     textAlignVertical: TextAlignVertical.center,
+                              //     enabled: !apply ? true : false,
+                              //     controller: couponCodeController,
+                              //     style: TextStyle(
+                              //       fontSize: 16 * min(horizontalScale, verticalScale),
+                              //       letterSpacing: 1.2,
+                              //       fontFamily: 'Medium',
+                              //     ),
+                              //     decoration: InputDecoration(
+                              //       contentPadding: EdgeInsets.only(left: 10),
+                              //       // constraints: BoxConstraints(minHeight: 52, minWidth: 366),
+                              //       suffixIcon: TextButton(
+                              //         child: apply
+                              //             ? Text(
+                              //           'Applied',
+                              //           style: TextStyle(
+                              //             color: Color.fromARGB(255, 96, 220, 193),
+                              //             fontFamily: 'Medium',
+                              //             fontSize:
+                              //             18 * min(horizontalScale, verticalScale),
+                              //             fontWeight: FontWeight.bold,
+                              //           ),
+                              //         )
+                              //             : Text(
+                              //           'Apply',
+                              //           style: TextStyle(
+                              //             color: Color(0xFF7860DC),
+                              //             fontFamily: 'Medium',
+                              //             fontSize:
+                              //             18 * min(horizontalScale, verticalScale),
+                              //             fontWeight: FontWeight.bold,
+                              //           ),
+                              //         ),
+                              //         onPressed: () async {
+                              //           try {
+                              //             print("pressed${couponCodeController.text}");
+                              //             await FirebaseFirestore.instance
+                              //                 .collection("couponcode")
+                              //                 .where("cname",
+                              //                 isEqualTo: couponCodeController.text)
+                              //                 .get()
+                              //                 .then((value) {
+                              //               print(value.docs.first['cname']);
+                              //               print(DateTime.now().isBefore(
+                              //                   value.docs.first['end_date'].toDate()));
+                              //               var notexpired = DateTime.now().isBefore(
+                              //                   value.docs.first['end_date'].toDate());
+                              //               if (notexpired) {
+                              //                 print(courseMap['name']);
+                              //                 if (courseMap['name']
+                              //                     .toString()
+                              //                     .toLowerCase() ==
+                              //                     value.docs.first['coursename']
+                              //                         .toString()
+                              //                         .toLowerCase()) {
+                              //                   setState(() {
+                              //                     print("fsijfoije");
+                              //                     print(courseMap["Course Price"]);
+                              //                     var coursevalue;
+                              //                     try {
+                              //                       coursevalue = courseMap['Course Price']
+                              //                           .toString()
+                              //                           .split("₹")[1]
+                              //                           .toString()
+                              //                           .split('/-')[0]
+                              //                           .toString();
+                              //                     } catch (e) {
+                              //                       print(e);
+                              //                       coursevalue = courseMap["Course Price"];
+                              //                       print('uguy');
+                              //                     }
+                              //
+                              //                     print(
+                              //                         "oooooo${String.fromCharCodes(coursevalue.codeUnits.reversed).substring(0, 2)}");
+                              //                     if (String.fromCharCodes(
+                              //                         coursevalue.codeUnits.reversed)
+                              //                         .substring(0, 2) ==
+                              //                         '-/') {
+                              //                       print("sdfsdo");
+                              //                       coursevalue = String.fromCharCodes(
+                              //                           coursevalue.codeUnits.reversed)
+                              //                           .substring(2);
+                              //                       coursevalue = String.fromCharCodes(
+                              //                           coursevalue.codeUnits.reversed);
+                              //                     }
+                              //                     var courseintvalue = int.parse(coursevalue);
+                              //                     print("lllll $courseintvalue");
+                              //                     if (value.docs.first['type'] ==
+                              //                         'percentage') {
+                              //                       setState(() {
+                              //                         newcoursevalue = courseintvalue *
+                              //                             int.parse(
+                              //                                 value.docs.first['value']) ~/
+                              //                             100;
+                              //                       });
+                              //                     }
+                              //                     if (value.docs.first['type'] == 'number') {
+                              //                       setState(() {
+                              //                         newcoursevalue = int.parse(
+                              //                             value.docs.first['value']);
+                              //                       });
+                              //                     }
+                              //                     apply = true;
+                              //                     showToast(
+                              //                         "cuponcode applyed successfully!");
+                              //                     globals.cuponcode = "applied";
+                              //                     globals.cuponname =
+                              //                     value.docs.first['cname'];
+                              //                     globals.cuponcourse =
+                              //                     value.docs.first['coursename'];
+                              //                     globals.cupondiscount =
+                              //                     value.docs.first['value'];
+                              //                     globals.cuponcourseprice =
+                              //                         courseintvalue.toString();
+                              //                     globals.cupontype =
+                              //                     value.docs.first['type'];
+                              //                   });
+                              //                 } else {
+                              //                   showToast(
+                              //                       "This cuponcode belongs to '${value.docs.first['coursename']}' course!");
+                              //                 }
+                              //               }
+                              //               if (notexpired == false) {
+                              //                 showToast("invalid cuponcode!");
+                              //               }
+                              //             });
+                              //           } catch (e) {
+                              //             print(e);
+                              //             print(courseMap['name']);
+                              //             print(courseMap['Course Price']
+                              //                 .toString()
+                              //                 .split("₹")[1]
+                              //                 .toString()
+                              //                 .split('/-')[0]
+                              //                 .toString());
+                              //             showToast("invalid cuponcode!");
+                              //           }
+                              //
+                              //           // setState(() {
+                              //           //   NoCouponApplied = whetherCouponApplied(
+                              //           //     couponCodeText: couponCodeController.text,
+                              //           //   );
+                              //           //   couponAppliedResponse = whenCouponApplied(
+                              //           //     couponCodeText: couponCodeController.text,
+                              //           //   );
+                              //           //   finalamountToDisplay = amountToDisplayAfterCCA(
+                              //           //     amountPayable: courseMap['Amount Payable'],
+                              //           //     couponCodeText: couponCodeController.text,
+                              //           //   );
+                              //           //   finalAmountToPay = amountToPayAfterCCA(
+                              //           //     couponCodeText: couponCodeController.text,
+                              //           //     amountPayable: courseMap['Amount Payable'],
+                              //           //   );
+                              //           //   discountedPrice = discountAfterCCA(
+                              //           //       couponCodeText: couponCodeController.text,
+                              //           //       amountPayable: courseMap['Amount Payable']);
+                              //           // });
+                              //         },
+                              //       ),
+                              //       hintText: 'Enter coupon code',
+                              //       fillColor: Colors.deepPurple.shade100,
+                              //       filled: true,
+                              //       // suffixIconConstraints:
+                              //       // BoxConstraints(minHeight: 52, minWidth: 70),
+                              //       // contentPadding: EdgeInsets.symmetric(horizontal: 0.0,vertical: 0),
+                              //       enabledBorder: OutlineInputBorder(
+                              //         borderRadius: BorderRadius.circular(5),
+                              //         borderSide: BorderSide.none
+                              //       ),
+                              //       focusedBorder: OutlineInputBorder(
+                              //         borderRadius: BorderRadius.circular(5),
+                              //           borderSide: BorderSide.none
+                              //       ),
+                              //       disabledBorder: OutlineInputBorder(
+                              //         borderRadius: BorderRadius.circular(5),
+                              //           borderSide: BorderSide.none
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
 
                               SizedBox(height: 15),
                               DottedLine(
@@ -639,8 +677,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     Text(
                                       NoCouponApplied
                                           ?
-                                      widget.map!['gst'] != null ? '₹${totalAmount.round().toString()}/-' :
-                                      '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //widget.map!["Amount Payable"]
+                                      courseMap['gst'] != null ? '₹${totalAmount.round().toString()}/-' :
+                                      '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //courseMap["Amount Payable"]
                                           : finalamountToDisplay,
                                       style: textStyle,
                                     ),
@@ -653,51 +691,53 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                               SizedBox(height: 25),
                               Center(
                                 child: PaymentButton(
-                                  coursePriceMoneyRef: int.parse(courseprice),
-                                  amountString: (double.parse(NoCouponApplied
-                                      ?
-                                  widget.map!['gst'] != null ? '${totalAmount.round().toString()}' :
-
+                                  coursePriceMoneyRef:
+                                  int.parse(courseprice),
+                                  amountString:
+                                  (double.parse(NoCouponApplied
+                                      ? courseMap['gst'] != null ? '${totalAmount.round().toString()}' :
                                   "${int.parse(courseprice) - int.parse(discountvalue)}"
-                                      : finalAmountToPay) * //widget.map!['Amount_Payablepay']
+                                      : finalAmountToPay) *
                                       100)
                                       .toString(),
-                                  buttonText: NoCouponApplied
-                                      ?
-                                  widget.map!['gst'] != null ?
+                                  buttonText:
+                                  NoCouponApplied ?
+                                  courseMap['gst'] != null ?
                                   'PAY ₹${totalAmount.round().toString()}/-' :
-                                  'PAY ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${widget.map!['Course Price']}
+                                  'PAY ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${courseMap['Course Price']}
 
                                       : 'PAY ${finalamountToDisplay}',
-                                  buttonTextForCode: "PAY $finalamountToDisplay",
+                                  buttonTextForCode:
+                                      "$finalamountToDisplay",
                                   changeState: () {
                                     setState(() {
                                       // isLoading = !isLoading;
                                     });
                                   },
-                                  courseDescription: widget.map!['description'],
-                                  courseName: widget.map!['name'],
+                                  courseDescription: courseMap['description'],
+                                  courseName: courseMap['name'],
                                   isPayButtonPressed: isPayButtonPressed,
                                   NoCouponApplied: NoCouponApplied,
                                   scrollController: _scrollController,
                                   updateCourseIdToCouponDetails: () {
                                     void addCourseId() {
                                       setState(() {
-                                        id = widget.map!['id'];
+                                        id = courseMap['id'];
                                       });
                                     }
 
                                     addCourseId();
                                     print(NoCouponApplied);
                                   },
-                                  outStandingAmountString: (
+                                  outStandingAmountString:
+                                  (
                                       double.parse( NoCouponApplied
-                                          ? widget.map!['Amount_Payablepay']
+                                          ? courseMap['Amount_Payablepay']
                                           : finalAmountToPay) -
                                           1000)
                                       .toStringAsFixed(2),
-                                  courseId: widget.map!['id'],
-                                  courseImageUrl: widget.map!['image_url'],
+                                  courseId: courseMap['id'],
+                                  courseImageUrl: courseMap['image_url'],
                                   couponCodeText: couponCodeController.text,
                                   isItComboCourse: widget.isItComboCourse,
                                   whichCouponCode: couponCodeController.text,
@@ -780,7 +820,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     bottomLeft: Radius.circular(10),
                                   ),
                                   child: CachedNetworkImage(
-                                    imageUrl: widget.map!['image_url'],
+                                    imageUrl: courseMap['image_url'],
                                     placeholder: (context, url) =>
                                         Center(child: CircularProgressIndicator()),
                                     errorWidget: (context, url, error) =>
@@ -810,7 +850,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                               //             color: HexColor('440F87'),
                               //           ),
                               //           child: Center(
-                              //             child: Text(widget.map!['reviews'] != null ? widget.map!['reviews'] : '5.0',
+                              //             child: Text(courseMap['reviews'] != null ? courseMap['reviews'] : '5.0',
                               //               style: TextStyle(fontSize: 12, color: Colors.white,
                               //                   fontWeight: FontWeight.normal),),
                               //           ),
@@ -821,7 +861,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                               //         const EdgeInsets.only(right: 5.0),
                               //         child: StarRating(
                               //           length: 5,
-                              //           rating: widget.map!['reviews'] != null ? double.parse(widget.map!['reviews']) : 5.0,
+                              //           rating: courseMap['reviews'] != null ? double.parse(courseMap['reviews']) : 5.0,
                               //           color: HexColor('440F87'),
                               //           starSize: 25,
                               //           mainAxisAlignment: MainAxisAlignment.start,
@@ -840,7 +880,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     FittedBox(
                                       fit: BoxFit.fitWidth,
                                       child: Text(
-                                        widget.map!['name'],
+                                        courseMap['name'],
                                         textScaleFactor: min(horizontalScale, verticalScale),
                                         style: TextStyle(
                                           fontSize: 36,
@@ -854,7 +894,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     FittedBox(
                                       fit: BoxFit.fitWidth,
                                       child: Text(
-                                        widget.map!['description'],
+                                        courseMap['description'],
                                         textScaleFactor: min(horizontalScale, verticalScale),
                                         style: TextStyle(
                                             fontSize: 18,
@@ -962,7 +1002,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   FittedBox(
                                     fit: BoxFit.fitWidth,
                                     child: Text(
-                                      widget.map!['gst'] != null ? '₹${widget.map!['Course Price']}/-' : widget.map!['Course Price'],
+                                      courseMap['gst'] != null ? '₹${courseMap['Course Price']}/-' : courseMap['Course Price'],
                                       style: textStyle,
                                     ),
                                   ),
@@ -982,7 +1022,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   FittedBox(
                                     fit: BoxFit.fitWidth,
                                     child: Text(
-                                      widget.map!['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
+                                      courseMap['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
                                       style: textStyle,
                                     ),
                                   ),
@@ -1003,7 +1043,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     fit: BoxFit.fitWidth,
                                     child: Text(
                                       NoCouponApplied
-                                          ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${widget.map!["Discount"]}
+                                          ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${courseMap["Discount"]}
                                           : discountedPrice,
                                       style: textStyle,
                                     ),
@@ -1013,192 +1053,192 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                               SizedBox(
                                 height: 15,
                               ),
-                              Container(
-                                height: 30,
-                                // width: screenWidth/3.5,
-                                child: TextField(
-                                  textAlignVertical: TextAlignVertical.center,
-                                  enabled: !apply ? true : false,
-                                  controller: couponCodeController,
-                                  style: TextStyle(
-                                    fontSize: 16 * min(horizontalScale, verticalScale),
-                                    letterSpacing: 1.2,
-                                    fontFamily: 'Medium',
-                                  ),
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.only(left: 10),
-                                    // constraints: BoxConstraints(minHeight: 52, minWidth: 366),
-                                    suffixIcon: TextButton(
-                                      child: apply
-                                          ? Text(
-                                        'Applied',
-                                        style: TextStyle(
-                                          color: Color.fromARGB(255, 96, 220, 193),
-                                          fontFamily: 'Medium',
-                                          fontSize:
-                                          18 * min(horizontalScale, verticalScale),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                          : Text(
-                                        'Apply',
-                                        style: TextStyle(
-                                          color: Color(0xFF7860DC),
-                                          fontFamily: 'Medium',
-                                          fontSize:
-                                          18 * min(horizontalScale, verticalScale),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      onPressed: () async {
-                                        try {
-                                          print("pressed${couponCodeController.text}");
-                                          await FirebaseFirestore.instance
-                                              .collection("couponcode")
-                                              .where("cname",
-                                              isEqualTo: couponCodeController.text)
-                                              .get()
-                                              .then((value) {
-                                            print(value.docs.first['cname']);
-                                            print(DateTime.now().isBefore(
-                                                value.docs.first['end_date'].toDate()));
-                                            var notexpired = DateTime.now().isBefore(
-                                                value.docs.first['end_date'].toDate());
-                                            if (notexpired) {
-                                              print(widget.map!['name']);
-                                              if (widget.map!['name']
-                                                  .toString()
-                                                  .toLowerCase() ==
-                                                  value.docs.first['coursename']
-                                                      .toString()
-                                                      .toLowerCase()) {
-                                                setState(() {
-                                                  print("fsijfoije");
-                                                  print(widget.map!["Course Price"]);
-                                                  var coursevalue;
-                                                  try {
-                                                    coursevalue = widget.map!['Course Price']
-                                                        .toString()
-                                                        .split("₹")[1]
-                                                        .toString()
-                                                        .split('/-')[0]
-                                                        .toString();
-                                                  } catch (e) {
-                                                    print(e);
-                                                    coursevalue = widget.map!["Course Price"];
-                                                    print('uguy');
-                                                  }
+                              // Container(
+                              //   height: 30,
+                              //   // width: screenWidth/3.5,
+                              //   child: TextField(
+                              //     textAlignVertical: TextAlignVertical.center,
+                              //     enabled: !apply ? true : false,
+                              //     controller: couponCodeController,
+                              //     style: TextStyle(
+                              //       fontSize: 16 * min(horizontalScale, verticalScale),
+                              //       letterSpacing: 1.2,
+                              //       fontFamily: 'Medium',
+                              //     ),
+                              //     decoration: InputDecoration(
+                              //       contentPadding: EdgeInsets.only(left: 10),
+                              //       // constraints: BoxConstraints(minHeight: 52, minWidth: 366),
+                              //       suffixIcon: TextButton(
+                              //         child: apply
+                              //             ? Text(
+                              //           'Applied',
+                              //           style: TextStyle(
+                              //             color: Color.fromARGB(255, 96, 220, 193),
+                              //             fontFamily: 'Medium',
+                              //             fontSize:
+                              //             18 * min(horizontalScale, verticalScale),
+                              //             fontWeight: FontWeight.bold,
+                              //           ),
+                              //         )
+                              //             : Text(
+                              //           'Apply',
+                              //           style: TextStyle(
+                              //             color: Color(0xFF7860DC),
+                              //             fontFamily: 'Medium',
+                              //             fontSize:
+                              //             18 * min(horizontalScale, verticalScale),
+                              //             fontWeight: FontWeight.bold,
+                              //           ),
+                              //         ),
+                              //         onPressed: () async {
+                              //           try {
+                              //             print("pressed${couponCodeController.text}");
+                              //             await FirebaseFirestore.instance
+                              //                 .collection("couponcode")
+                              //                 .where("cname",
+                              //                 isEqualTo: couponCodeController.text)
+                              //                 .get()
+                              //                 .then((value) {
+                              //               print(value.docs.first['cname']);
+                              //               print(DateTime.now().isBefore(
+                              //                   value.docs.first['end_date'].toDate()));
+                              //               var notexpired = DateTime.now().isBefore(
+                              //                   value.docs.first['end_date'].toDate());
+                              //               if (notexpired) {
+                              //                 print(courseMap['name']);
+                              //                 if (courseMap['name']
+                              //                     .toString()
+                              //                     .toLowerCase() ==
+                              //                     value.docs.first['coursename']
+                              //                         .toString()
+                              //                         .toLowerCase()) {
+                              //                   setState(() {
+                              //                     print("fsijfoije");
+                              //                     print(courseMap["Course Price"]);
+                              //                     var coursevalue;
+                              //                     try {
+                              //                       coursevalue = courseMap['Course Price']
+                              //                           .toString()
+                              //                           .split("₹")[1]
+                              //                           .toString()
+                              //                           .split('/-')[0]
+                              //                           .toString();
+                              //                     } catch (e) {
+                              //                       print(e);
+                              //                       coursevalue = courseMap["Course Price"];
+                              //                       print('uguy');
+                              //                     }
+                              //
+                              //                     print(
+                              //                         "oooooo${String.fromCharCodes(coursevalue.codeUnits.reversed).substring(0, 2)}");
+                              //                     if (String.fromCharCodes(
+                              //                         coursevalue.codeUnits.reversed)
+                              //                         .substring(0, 2) ==
+                              //                         '-/') {
+                              //                       print("sdfsdo");
+                              //                       coursevalue = String.fromCharCodes(
+                              //                           coursevalue.codeUnits.reversed)
+                              //                           .substring(2);
+                              //                       coursevalue = String.fromCharCodes(
+                              //                           coursevalue.codeUnits.reversed);
+                              //                     }
+                              //                     var courseintvalue = int.parse(coursevalue);
+                              //                     print("lllll $courseintvalue");
+                              //                     if (value.docs.first['type'] ==
+                              //                         'percentage') {
+                              //                       setState(() {
+                              //                         newcoursevalue = courseintvalue *
+                              //                             int.parse(
+                              //                                 value.docs.first['value']) ~/
+                              //                             100;
+                              //                       });
+                              //                     }
+                              //                     if (value.docs.first['type'] == 'number') {
+                              //                       setState(() {
+                              //                         newcoursevalue = int.parse(
+                              //                             value.docs.first['value']);
+                              //                       });
+                              //                     }
+                              //                     apply = true;
+                              //                     showToast(
+                              //                         "cuponcode applyed successfully!");
+                              //                     globals.cuponcode = "applied";
+                              //                     globals.cuponname =
+                              //                     value.docs.first['cname'];
+                              //                     globals.cuponcourse =
+                              //                     value.docs.first['coursename'];
+                              //                     globals.cupondiscount =
+                              //                     value.docs.first['value'];
+                              //                     globals.cuponcourseprice =
+                              //                         courseintvalue.toString();
+                              //                     globals.cupontype =
+                              //                     value.docs.first['type'];
+                              //                   });
+                              //                 } else {
+                              //                   showToast(
+                              //                       "This cuponcode belongs to '${value.docs.first['coursename']}' course!");
+                              //                 }
+                              //               }
+                              //               if (notexpired == false) {
+                              //                 showToast("invalid cuponcode!");
+                              //               }
+                              //             });
+                              //           } catch (e) {
+                              //             print(e);
+                              //             print(courseMap['name']);
+                              //             print(courseMap['Course Price']
+                              //                 .toString()
+                              //                 .split("₹")[1]
+                              //                 .toString()
+                              //                 .split('/-')[0]
+                              //                 .toString());
+                              //             showToast("invalid cuponcode!");
+                              //           }
+                              //
+                              //           // setState(() {
+                              //           //   NoCouponApplied = whetherCouponApplied(
+                              //           //     couponCodeText: couponCodeController.text,
+                              //           //   );
+                              //           //   couponAppliedResponse = whenCouponApplied(
+                              //           //     couponCodeText: couponCodeController.text,
+                              //           //   );
+                              //           //   finalamountToDisplay = amountToDisplayAfterCCA(
+                              //           //     amountPayable: courseMap['Amount Payable'],
+                              //           //     couponCodeText: couponCodeController.text,
+                              //           //   );
+                              //           //   finalAmountToPay = amountToPayAfterCCA(
+                              //           //     couponCodeText: couponCodeController.text,
+                              //           //     amountPayable: courseMap['Amount Payable'],
+                              //           //   );
+                              //           //   discountedPrice = discountAfterCCA(
+                              //           //       couponCodeText: couponCodeController.text,
+                              //           //       amountPayable: courseMap['Amount Payable']);
+                              //           // });
+                              //         },
+                              //       ),
+                              //       hintText: 'Enter coupon code',
+                              //       fillColor: Colors.deepPurple.shade100,
+                              //       filled: true,
+                              //       // suffixIconConstraints:
+                              //       // BoxConstraints(minHeight: 52, minWidth: 70),
+                              //       // contentPadding: EdgeInsets.symmetric(horizontal: 0.0,vertical: 0),
+                              //       enabledBorder: OutlineInputBorder(
+                              //           borderRadius: BorderRadius.circular(5),
+                              //           borderSide: BorderSide.none
+                              //       ),
+                              //       focusedBorder: OutlineInputBorder(
+                              //           borderRadius: BorderRadius.circular(5),
+                              //           borderSide: BorderSide.none
+                              //       ),
+                              //       disabledBorder: OutlineInputBorder(
+                              //           borderRadius: BorderRadius.circular(5),
+                              //           borderSide: BorderSide.none
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
 
-                                                  print(
-                                                      "oooooo${String.fromCharCodes(coursevalue.codeUnits.reversed).substring(0, 2)}");
-                                                  if (String.fromCharCodes(
-                                                      coursevalue.codeUnits.reversed)
-                                                      .substring(0, 2) ==
-                                                      '-/') {
-                                                    print("sdfsdo");
-                                                    coursevalue = String.fromCharCodes(
-                                                        coursevalue.codeUnits.reversed)
-                                                        .substring(2);
-                                                    coursevalue = String.fromCharCodes(
-                                                        coursevalue.codeUnits.reversed);
-                                                  }
-                                                  var courseintvalue = int.parse(coursevalue);
-                                                  print("lllll $courseintvalue");
-                                                  if (value.docs.first['type'] ==
-                                                      'percentage') {
-                                                    setState(() {
-                                                      newcoursevalue = courseintvalue *
-                                                          int.parse(
-                                                              value.docs.first['value']) ~/
-                                                          100;
-                                                    });
-                                                  }
-                                                  if (value.docs.first['type'] == 'number') {
-                                                    setState(() {
-                                                      newcoursevalue = int.parse(
-                                                          value.docs.first['value']);
-                                                    });
-                                                  }
-                                                  apply = true;
-                                                  showToast(
-                                                      "cuponcode applyed successfully!");
-                                                  globals.cuponcode = "applied";
-                                                  globals.cuponname =
-                                                  value.docs.first['cname'];
-                                                  globals.cuponcourse =
-                                                  value.docs.first['coursename'];
-                                                  globals.cupondiscount =
-                                                  value.docs.first['value'];
-                                                  globals.cuponcourseprice =
-                                                      courseintvalue.toString();
-                                                  globals.cupontype =
-                                                  value.docs.first['type'];
-                                                });
-                                              } else {
-                                                showToast(
-                                                    "This cuponcode belongs to '${value.docs.first['coursename']}' course!");
-                                              }
-                                            }
-                                            if (notexpired == false) {
-                                              showToast("invalid cuponcode!");
-                                            }
-                                          });
-                                        } catch (e) {
-                                          print(e);
-                                          print(widget.map!['name']);
-                                          print(widget.map!['Course Price']
-                                              .toString()
-                                              .split("₹")[1]
-                                              .toString()
-                                              .split('/-')[0]
-                                              .toString());
-                                          showToast("invalid cuponcode!");
-                                        }
-
-                                        // setState(() {
-                                        //   NoCouponApplied = whetherCouponApplied(
-                                        //     couponCodeText: couponCodeController.text,
-                                        //   );
-                                        //   couponAppliedResponse = whenCouponApplied(
-                                        //     couponCodeText: couponCodeController.text,
-                                        //   );
-                                        //   finalamountToDisplay = amountToDisplayAfterCCA(
-                                        //     amountPayable: widget.map!['Amount Payable'],
-                                        //     couponCodeText: couponCodeController.text,
-                                        //   );
-                                        //   finalAmountToPay = amountToPayAfterCCA(
-                                        //     couponCodeText: couponCodeController.text,
-                                        //     amountPayable: widget.map!['Amount Payable'],
-                                        //   );
-                                        //   discountedPrice = discountAfterCCA(
-                                        //       couponCodeText: couponCodeController.text,
-                                        //       amountPayable: widget.map!['Amount Payable']);
-                                        // });
-                                      },
-                                    ),
-                                    hintText: 'Enter coupon code',
-                                    fillColor: Colors.deepPurple.shade100,
-                                    filled: true,
-                                    // suffixIconConstraints:
-                                    // BoxConstraints(minHeight: 52, minWidth: 70),
-                                    // contentPadding: EdgeInsets.symmetric(horizontal: 0.0,vertical: 0),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                        borderSide: BorderSide.none
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                        borderSide: BorderSide.none
-                                    ),
-                                    disabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                        borderSide: BorderSide.none
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              SizedBox(height: 15),
+                              // SizedBox(height: 15),
                               DottedLine(
                                 dashGapLength: 0,
                               ),
@@ -1219,8 +1259,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                       child: Text(
                                         NoCouponApplied
                                             ?
-                                        widget.map!['gst'] != null ? '₹${totalAmount.round().toString()}/-' :
-                                        '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //widget.map!["Amount Payable"]
+                                        courseMap['gst'] != null ? '₹${totalAmount.round().toString()}/-' :
+                                        '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //courseMap["Amount Payable"]
                                             : finalamountToDisplay,
                                         style: textStyle,
                                       ),
@@ -1237,17 +1277,17 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   coursePriceMoneyRef: int.parse(courseprice),
                                   amountString: (double.parse(NoCouponApplied
                                       ?
-                                  widget.map!['gst'] != null ? '${totalAmount.round().toString()}' :
+                                  courseMap['gst'] != null ? '${totalAmount.round().toString()}' :
 
                                   "${int.parse(courseprice) - int.parse(discountvalue)}"
-                                      : finalAmountToPay) * //widget.map!['Amount_Payablepay']
+                                      : finalAmountToPay) * //courseMap['Amount_Payablepay']
                                       100)
                                       .toString(),
                                   buttonText: NoCouponApplied
                                       ?
-                                  widget.map!['gst'] != null ?
+                                  courseMap['gst'] != null ?
                                   'PAY ₹${totalAmount.round().toString()}/-' :
-                                  'PAY ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${widget.map!['Course Price']}
+                                  'PAY ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${courseMap['Course Price']}
 
                                       : 'PAY ${finalamountToDisplay}',
                                   buttonTextForCode: "PAY $finalamountToDisplay",
@@ -1256,15 +1296,15 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                       // isLoading = !isLoading;
                                     });
                                   },
-                                  courseDescription: widget.map!['description'],
-                                  courseName: widget.map!['name'],
+                                  courseDescription: courseMap['description'],
+                                  courseName: courseMap['name'],
                                   isPayButtonPressed: isPayButtonPressed,
                                   NoCouponApplied: NoCouponApplied,
                                   scrollController: _scrollController,
                                   updateCourseIdToCouponDetails: () {
                                     void addCourseId() {
                                       setState(() {
-                                        id = widget.map!['id'];
+                                        id = courseMap['id'];
                                       });
                                     }
 
@@ -1273,12 +1313,12 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   },
                                   outStandingAmountString: (
                                       double.parse( NoCouponApplied
-                                          ? widget.map!['Amount_Payablepay']
+                                          ? courseMap['Amount_Payablepay']
                                           : finalAmountToPay) -
                                           1000)
                                       .toStringAsFixed(2),
-                                  courseId: widget.map!['id'],
-                                  courseImageUrl: widget.map!['image_url'],
+                                  courseId: courseMap['id'],
+                                  courseImageUrl: courseMap['image_url'],
                                   couponCodeText: couponCodeController.text,
                                   isItComboCourse: widget.isItComboCourse,
                                   whichCouponCode: couponCodeController.text,
@@ -1353,7 +1393,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                       child: ClipRRect(
         //                         borderRadius: BorderRadius.circular(15),
         //                         child: CachedNetworkImage(
-        //                           imageUrl: widget.map!['image_url'],
+        //                           imageUrl: courseMap['image_url'],
         //                           placeholder: (context, url) =>
         //                               Center(child: CircularProgressIndicator()),
         //                           errorWidget: (context, url, error) =>
@@ -1379,7 +1419,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                             width: 250 * horizontalScale,
         //                             height: 30 * verticalScale,
         //                             child: Text(
-        //                               widget.map!['name'],
+        //                               courseMap['name'],
         //                               textScaleFactor:
         //                               min(horizontalScale, verticalScale),
         //                               textAlign: TextAlign.left,
@@ -1400,7 +1440,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                             width: 250 * horizontalScale,
         //                             height: 30 * verticalScale,
         //                             child: Text(
-        //                               widget.map!['description'],
+        //                               courseMap['description'],
         //                               // overflow: TextOverflow.ellipsis,
         //                               textScaleFactor:
         //                               min(horizontalScale, verticalScale),
@@ -1433,7 +1473,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                             child: Row(
         //                               children: [
         //                                 Text(
-        //                                   'English  ||  ${widget.map!['videosCount']} Videos',
+        //                                   'English  ||  ${courseMap['videosCount']} Videos',
         //                                   textAlign: TextAlign.left,
         //                                   textScaleFactor:
         //                                   min(horizontalScale, verticalScale),
@@ -1450,7 +1490,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                                   width: 20,
         //                                 ),
         //                                 Text(
-        //                                   '₹${widget.map!['Course Price']}/-',
+        //                                   '₹${courseMap['Course Price']}/-',
         //                                   textScaleFactor:
         //                                   min(horizontalScale, verticalScale),
         //                                   textAlign: TextAlign.left,
@@ -1542,8 +1582,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                         var notexpired = DateTime.now().isBefore(
         //                             value.docs.first['end_date'].toDate());
         //                         if (notexpired) {
-        //                           print(widget.map!['name']);
-        //                           if (widget.map!['name']
+        //                           print(courseMap['name']);
+        //                           if (courseMap['name']
         //                               .toString()
         //                               .toLowerCase() ==
         //                               value.docs.first['coursename']
@@ -1551,10 +1591,10 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                                   .toLowerCase()) {
         //                             setState(() {
         //                               print("fsijfoije");
-        //                               print(widget.map!["Course Price"]);
+        //                               print(courseMap["Course Price"]);
         //                               var coursevalue;
         //                               try {
-        //                                 coursevalue = widget.map!['Course Price']
+        //                                 coursevalue = courseMap['Course Price']
         //                                     .toString()
         //                                     .split("₹")[1]
         //                                     .toString()
@@ -1562,7 +1602,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                                     .toString();
         //                               } catch (e) {
         //                                 print(e);
-        //                                 coursevalue = widget.map!["Course Price"];
+        //                                 coursevalue = courseMap["Course Price"];
         //                                 print('uguy');
         //                               }
         //
@@ -1622,8 +1662,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                       });
         //                     } catch (e) {
         //                       print(e);
-        //                       print(widget.map!['name']);
-        //                       print(widget.map!['Course Price']
+        //                       print(courseMap['name']);
+        //                       print(courseMap['Course Price']
         //                           .toString()
         //                           .split("₹")[1]
         //                           .toString()
@@ -1640,16 +1680,16 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                     //     couponCodeText: couponCodeController.text,
         //                     //   );
         //                     //   finalamountToDisplay = amountToDisplayAfterCCA(
-        //                     //     amountPayable: widget.map!['Amount Payable'],
+        //                     //     amountPayable: courseMap['Amount Payable'],
         //                     //     couponCodeText: couponCodeController.text,
         //                     //   );
         //                     //   finalAmountToPay = amountToPayAfterCCA(
         //                     //     couponCodeText: couponCodeController.text,
-        //                     //     amountPayable: widget.map!['Amount Payable'],
+        //                     //     amountPayable: courseMap['Amount Payable'],
         //                     //   );
         //                     //   discountedPrice = discountAfterCCA(
         //                     //       couponCodeText: couponCodeController.text,
-        //                     //       amountPayable: widget.map!['Amount Payable']);
+        //                     //       amountPayable: courseMap['Amount Payable']);
         //                     // });
         //                   },
         //                 ),
@@ -1765,7 +1805,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                             Expanded(
         //                               // flex: 2,
         //                               child: Text(
-        //                                 widget.map!['gst'] != null ? '₹${widget.map!['Course Price']}/-' : widget.map!['Course Price'],
+        //                                 courseMap['gst'] != null ? '₹${courseMap['Course Price']}/-' : courseMap['Course Price'],
         //                                 style: textStyle,
         //                               ),
         //                             ),
@@ -1787,7 +1827,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                             Expanded(
         //                               child: Text(
         //                                 NoCouponApplied
-        //                                     ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${widget.map!["Discount"]}
+        //                                     ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${courseMap["Discount"]}
         //                                     : discountedPrice,
         //                                 style: textStyle,
         //                               ),
@@ -1809,7 +1849,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                             ),
         //                             Expanded(
         //                               child: Text(
-        //                                 widget.map!['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
+        //                                 courseMap['gst'] != null ? '₹${gstAmount.round().toString()}/-' : '18%',
         //                                 style: textStyle,
         //                               ),
         //                             ),
@@ -1835,8 +1875,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                               child: Text(
         //                                 NoCouponApplied
         //                                     ?
-        //                                 widget.map!['gst'] != null ? '₹${totalAmount.round().toString()}/-' :
-        //                                 '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //widget.map!["Amount Payable"]
+        //                                 courseMap['gst'] != null ? '₹${totalAmount.round().toString()}/-' :
+        //                                 '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //courseMap["Amount Payable"]
         //                                     : finalamountToDisplay,
         //                                 style: textStyle,
         //                               ),
@@ -1857,17 +1897,17 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                 coursePriceMoneyRef: int.parse(courseprice),
         //                 amountString: (double.parse(NoCouponApplied
         //                     ?
-        //                 widget.map!['gst'] != null ? '${totalAmount.round().toString()}' :
+        //                 courseMap['gst'] != null ? '${totalAmount.round().toString()}' :
         //
         //                 "${int.parse(courseprice) - int.parse(discountvalue)}"
-        //                     : finalAmountToPay) * //widget.map!['Amount_Payablepay']
+        //                     : finalAmountToPay) * //courseMap['Amount_Payablepay']
         //                     100)
         //                     .toString(),
         //                 buttonText: NoCouponApplied
         //                     ?
-        //                 widget.map!['gst'] != null ?
+        //                 courseMap['gst'] != null ?
         //                 'Buy Now for ₹${totalAmount.round().toString()}/-' :
-        //                 'Buy Now for ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${widget.map!['Course Price']}
+        //                 'Buy Now for ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${courseMap['Course Price']}
         //
         //                     : 'Buy Now for ${finalamountToDisplay}',
         //                 buttonTextForCode: "Buy Now for $finalamountToDisplay",
@@ -1876,15 +1916,15 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                     // isLoading = !isLoading;
         //                   });
         //                 },
-        //                 courseDescription: widget.map!['description'],
-        //                 courseName: widget.map!['name'],
+        //                 courseDescription: courseMap['description'],
+        //                 courseName: courseMap['name'],
         //                 isPayButtonPressed: isPayButtonPressed,
         //                 NoCouponApplied: NoCouponApplied,
         //                 scrollController: _scrollController,
         //                 updateCourseIdToCouponDetails: () {
         //                   void addCourseId() {
         //                     setState(() {
-        //                       id = widget.map!['id'];
+        //                       id = courseMap['id'];
         //                     });
         //                   }
         //
@@ -1893,12 +1933,12 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         //                 },
         //                 outStandingAmountString: (
         //                     double.parse( NoCouponApplied
-        //                         ? widget.map!['Amount_Payablepay']
+        //                         ? courseMap['Amount_Payablepay']
         //                         : finalAmountToPay) -
         //                         1000)
         //                     .toStringAsFixed(2),
-        //                 courseId: widget.map!['id'],
-        //                 courseImageUrl: widget.map!['image_url'],
+        //                 courseId: courseMap['id'],
+        //                 courseImageUrl: courseMap['image_url'],
         //                 couponCodeText: couponCodeController.text,
         //                 isItComboCourse: widget.isItComboCourse,
         //                 whichCouponCode: couponCodeController.text,

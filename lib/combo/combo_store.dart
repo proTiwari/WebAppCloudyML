@@ -464,22 +464,20 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                           InkWell(
                             onTap: () {
 
-                              // GoRouter.of(context)
-                              //     .pushNamed(
-                              //     'paymentScreen',
-                              //     queryParams: {'isItComboCourse': true,
-                              //       'courseMap': comboMap});
+                              GoRouter.of(context).pushNamed('comboPaymentPortal',
+                                  queryParams: {
+                                    'cID': courseId});
 
 
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PaymentScreen(
-                                    map: comboMap,
-                                    isItComboCourse: true,
-                                  ),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => PaymentScreen(
+                              //       map: comboMap,
+                              //       isItComboCourse: true,
+                              //     ),
+                              //   ),
+                              // );
                             },
                             child: Container(
                               decoration: BoxDecoration(
