@@ -1,4 +1,5 @@
 
+import 'package:cloudyml_app2/screens/quiz/quizsolution.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -152,7 +153,7 @@ class _CongratulationsWidgetState extends State<CongratulationsWidget> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                (widget.quizdata)),
+                                                QuizSolutionCopyWidget(widget.quizdata, widget.total)),
                                       );
                                             },
                                             child: Container(

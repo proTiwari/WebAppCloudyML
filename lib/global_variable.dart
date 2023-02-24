@@ -11,7 +11,9 @@ String phoneNumberexists = 'false';
 String linked = 'false';
 dynamic credental;
 String googleAuth = 'false';
-
+List moduleList = [];
+List courseList = [];
+Map coursemoduelmap = {};
 String cuponcode = '';
 String cuponcourse = '';
 String cuponname = '';

@@ -13,6 +13,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 import '../global_variable.dart' as globals;
+
 class splash extends StatefulWidget {
   const splash({Key? key}) : super(key: key);
 
@@ -22,27 +23,25 @@ class splash extends StatefulWidget {
 
 class _splashState extends State<splash> {
   static final FlutterLocalNotificationsPlugin
-  _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+      _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final myBox = Hive.box('myBox');
   @override
   void initState() {
     // TODO:implement initState
     super.initState();
     GRecaptchaV3.hideBadge();
-    Timer(
-        Duration(seconds: 2),
-            () => GoRouter.of(context).push('/login')
-                
-            //     Navigator.pushReplacement(
-            // context, MaterialPageRoute(builder: (context) => Authenticate()))
+    Timer(Duration(seconds: 2), () => GoRouter.of(context).push('/login')
 
-    );
+        //     Navigator.pushReplacement(
+        // context, MaterialPageRoute(builder: (context) => Authenticate()))
+
+        );
 
     //listnerNotifications();
     //gives you the message on which user taps and opens
     //the app from terminated state
     FirebaseMessaging.instance.getInitialMessage().then(
-          (message) {
+      (message) {
         print("FirebaseMessaging.instance.getInitialMessage");
         if (message != null) {
           print("New Notification");
@@ -127,6 +126,54 @@ class _splashState extends State<splash> {
       print("route = " + routeFromMessage);
       Navigator.of(context).pushNamed(routeFromMessage);
     });
+    getcoursemodulename();
+  }
+
+  List coursenamelist = [];
+  List moduelnamelist = [];
+  Map coursemodule = {};
+  List tempmodulelist = [];
+
+  getcoursemodulename() async {
+    //feteching list of courses
+    try {
+      await FirebaseFirestore.instance
+          .collection("courses")
+          .get()
+          .then((value) {
+        for (var i in value.docs) {
+          coursenamelist.add(i['name']);
+        }
+        print("coursenamelist: ${coursenamelist}");
+      }).whenComplete(() async {
+        for (var i in coursenamelist) {
+          try {
+            await FirebaseFirestore.instance
+                .collection("courses")
+                .where("name", isEqualTo: i)
+                .get()
+                .then((value) {
+              var data = value.docs.first.data()['curriculum1'][i];
+              for (var j in data) {
+                moduelnamelist.add(j['modulename']);
+              }
+              setState(() {
+                coursemodule[i] = moduelnamelist;
+              });
+              moduelnamelist = [];
+            });
+          } catch (e) {
+            print(e.toString());
+          }
+        }
+      });
+    } catch (e) {
+      print("error while getting coursename: ${e.toString()}");
+    }
+    print("coursemodulemap : $coursemodule");
+    globals.moduleList = moduelnamelist;
+    globals.courseList = coursenamelist;
+    globals.coursemoduelmap = coursemodule;
   }
 
   // StreamSubscription<String?> listnerNotifications(){
