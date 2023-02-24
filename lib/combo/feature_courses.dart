@@ -8,8 +8,6 @@ import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/widgets/coupon_code.dart';
 import 'package:cloudyml_app2/fun.dart';
 import 'package:cloudyml_app2/globals.dart';
-import 'package:cloudyml_app2/catalogue_screen.dart';
-import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:cloudyml_app2/widgets/pay_now_bottomsheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +15,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ribbon_widget/ribbon_widget.dart';
-import 'package:share_extend/share_extend.dart';
-
+import 'package:http/http.dart' as http;
 import '../Services/code_generator.dart';
 import '../Services/deeplink_service.dart';
 
@@ -97,14 +94,8 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
 
         print('element ${featuredCourse[0].courseId} ');
       }
-      // if(element.FcSerialNumber.isNotEmpty && element.FcSerialNumber != null &&
-      //     element.isItComboCourse == true){
-      //   featuredCourse.add(element);
-      // }
+      
     });
-    // featuredCourse.sort((a, b) {
-    //   return int.parse(a.FcSerialNumber).compareTo(int.parse(b.FcSerialNumber));}
-    // );
     print('function ');
   }
 
@@ -147,7 +138,6 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
         coursePrice = value.data()!['Course Price'];
         name = value.data()!['name'];
         print('ufbufb--$name');
-        print("this is -- $courseId");
         print('fcc $featuredCourse');
       });
     });
@@ -208,39 +198,74 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
     });
   }
 
-  void trialCourse() {
-    if (userMap['paidCourseNames'].contains(featuredCourse[int.parse(widget.id!)].courseId)) {
-      // AlertDialog(
-      //   content: Container(
-      //     child: Text('This course already exist in your trial course...'),
-      //   ),
-      // );
-      Fluttertoast.showToast(msg: 'This course already exist in your trial course...');
-      Navigator.of(context).pop();
-    } else {
-      print('paidCourseNames before ${userMap['paidCourseNames']}');
-      setState(() {
-        userMap['paidCourseNames'].add(featuredCourse[int.parse(widget.id!)].courseId);
-        FirebaseFirestore.instance.collection('Users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .update({
-          'paidCourseNames': userMap['paidCourseNames'],
-          'trialCourseList': [featuredCourse[int.parse(widget.id!)].courseId],
-        });
-        // featuredCourse[int.parse(widget.id!)].courseId
-        loadCourses();
-        Fluttertoast.showToast(msg: 'Congrats!! Course is now available in enrolled courses for ${featuredCourse[int.parse(widget.id!)].trialDays}...');
-      });
-      Timer(
-          Duration(seconds: 1),
-              () => GoRouter.of(context).pushReplacementNamed('myCourses')
+  void trialCourse() async {
 
-        //     Navigator.pushReplacement(
-        // context, MaterialPageRoute(builder: (context) => Authenticate()))
+    print('this is name  : ${userMap['name']} ${widget.cID} ${FirebaseAuth.instance.currentUser!.uid} ${widget.cName}');
 
-      );
-      print('paidCourseNames ${userMap['paidCourseNames']}');
+    try{
+
+      // Map data = {
+      //   "uid": "639Fr79OeBheQclDJiVI1pf9lQd2",
+      //   "cid": "aEGX6kMfHzQrVgP3WCwU",
+      //   "uname": "Dipen",
+      //   "cname": "Data Science & Analytics Placement",
+      // };
+
+
+
+      Map data = {
+        "uid": FirebaseAuth.instance.currentUser!.uid,
+        "cid": widget.cID,
+        "uname": userMap['name'],
+        "cname": widget.cName,
+      };
+      //encode Map to JSON
+      var body = json.encode(data);
+
+
+      var url = Uri.parse('https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/trial');
+      final response =
+      await http.post(url,
+          headers: {
+            "Access-Control-Allow-Origin": "*" ,// Required for CORS support to work
+            "Access-Control-Allow-Methods": "GET, POST",
+          },
+          body:body );
+      print('this is body ${body.toString()}');
+
+      print(response.statusCode);
+
+    }catch(e){
+
+      print('this is api error ${e.toString()}');
+
     }
+
+
+
+    // if (userMap['paidCourseNames'].contains(featuredCourse[int.parse(widget.id!)].courseId)) {
+    //   Fluttertoast.showToast(msg: 'This course already exist in your trial course...');
+    //   Navigator.of(context).pop();
+    // } else {
+    //   print('paidCourseNames before ${userMap['paidCourseNames']}');
+    //
+    //   setState(() async {
+    //
+    //
+    //
+    //     // userMap['paidCourseNames'].add(featuredCourse[int.parse(widget.id!)].courseId);
+    //     // FirebaseFirestore.instance.collection('Users')
+    //     //     .doc(FirebaseAuth.instance.currentUser!.uid)
+    //     //     .update({
+    //     //   'paidCourseNames': userMap['paidCourseNames'],
+    //     //   'trialCourseList': [featuredCourse[int.parse(widget.id!)].courseId],
+    //     // });
+    //     // featuredCourse[int.parse(widget.id!)].courseId
+    //     // loadCourses();
+    //
+    //   });
+    //   print('paidCourseNames ${userMap['paidCourseNames']}');
+    // }
   }
 
 
@@ -621,216 +646,222 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                 color: Colors.white),
                           ),
                           SizedBox(height: 35),
-                          // comboMap['trialCourse'] != null && comboMap['trialCourse'] ?
-                          // Container(
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.center,
-                          //     children: [
-                          //       InkWell(
-                          //         onTap: () {
-                          //
-                          //           showDialog(
-                          //               context: context,
-                          //               builder: (context) {
-                          //                 return AlertDialog(
-                          //                   backgroundColor: Colors.deepPurpleAccent[700],
-                          //                   title: Text('This course is available for ${featuredCourse[int.parse(widget.id!)].trialDays} days trial.',
-                          //                     style: TextStyle(color: Colors.white),),
-                          //                   content: Container(
-                          //                     height: screenHeight/3.5,
-                          //                     width: screenWidth/2.5,
-                          //                     child: Column(
-                          //                       mainAxisAlignment: MainAxisAlignment.center,
-                          //                       children: [
-                          //                         Container(
-                          //                             height: screenHeight/5.2,
-                          //                             width: screenWidth/3.5,
-                          //                             decoration: BoxDecoration(
-                          //                               borderRadius: BorderRadius.circular(10),
-                          //                               border: Border.all(color: Colors.white, width: 0.5),
-                          //                               color: Colors.white,
-                          //                             ),
-                          //                             child: Column(
-                          //                               mainAxisAlignment: MainAxisAlignment.center,
-                          //                               children: [
-                          //                                 Row(
-                          //                                   children: [
-                          //                                     Expanded(
-                          //                                       flex: 1,
-                          //                                       child: Container(
-                          //                                         child: ClipRRect(
-                          //                                           borderRadius: BorderRadius.only(
-                          //                                               topLeft: Radius
-                          //                                                   .circular(
-                          //                                                   15),
-                          //                                               topRight: Radius
-                          //                                                   .circular(
-                          //                                                   15)),
-                          //                                           child:
-                          //                                           Image.network(
-                          //                                             featuredCourse[int.parse(widget.id!)].courseImageUrl,
-                          //                                             fit: BoxFit.fill,
-                          //                                           ),
-                          //                                         ),
-                          //                                       ),
-                          //                                     ),
-                          //                                     Expanded(
-                          //                                       child: Container(
-                          //                                         child: Text(featuredCourse[int.parse(widget.id!)].courseName,
-                          //                                             style: TextStyle(fontWeight: FontWeight.bold) ),
-                          //                                       ),
-                          //                                     ),
-                          //                                   ],
-                          //                                 )
-                          //                               ],
-                          //                             )
-                          //                         ),
-                          //                         SizedBox(height: 15),
-                          //                         Row(
-                          //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //                           children: [
-                          //                             Container(
-                          //                               decoration: BoxDecoration(
-                          //                                 borderRadius: BorderRadius.circular(10),
-                          //                                 border: Border.all(color: Colors.white, width: 0.5),
-                          //                               ),
-                          //                               child: TextButton(
-                          //                                 onPressed: () {
-                          //                                   print('this is condition ${userMap['paidCourseNames'].contains(featuredCourse[int.parse(widget.id!)].courseId)}');
-                          //                                   Navigator.of(context).pop();
-                          //                                 },
-                          //                                 child: Text('Close',
-                          //                                   style: TextStyle(
-                          //                                       color: Colors.white
-                          //                                   ),
-                          //                                 ),
-                          //                               ),
-                          //                             ),
-                          //                             Container(
-                          //                               decoration: BoxDecoration(
-                          //                                 borderRadius: BorderRadius.circular(10),
-                          //                                 border: Border.all(color: Colors.white, width: 0.5),
-                          //                               ),
-                          //                               child: TextButton(
-                          //                                 onPressed: () {
-                          //
-                          //                                   if(userMap['paidCourseNames'].contains(featuredCourse[int.parse(widget.id!)].courseId)) {
-                          //                                     Fluttertoast.showToast(msg: 'You have already enrolled in this course.');
-                          //                                   } else if (userMap['trialCourseList'].contains(featuredCourse[int.parse(widget.id!)].courseId)) {
-                          //                                     Fluttertoast.showToast(msg: 'You have already trialed this course... Please purchase to continue.');
-                          //                                   } else {
-                          //                                     trialCourse();
-                          //                                   }
-                          //
-                          //                                 },
-                          //                                 child: Text('Start your free trial',
-                          //                                   style: TextStyle(
-                          //                                       color: Colors.white
-                          //                                   ),
-                          //                                 ),
-                          //                               ),
-                          //                             ),
-                          //
-                          //                           ],
-                          //                         ),
-                          //                       ],
-                          //                     ),
-                          //                   ),
-                          //                 );
-                          //               });
-                          //
-                          //         },
-                          //         child: Container(
-                          //           decoration: BoxDecoration(
-                          //               borderRadius: BorderRadius.circular(30),
-                          //               // boxShadow: [
-                          //               //   BoxShadow(
-                          //               //     color: Color.fromARGB(255, 176, 224, 250)
-                          //               //         .withOpacity(0.3),
-                          //               //     spreadRadius: 2,
-                          //               //     blurRadius: 3,
-                          //               //     offset: Offset(3,
-                          //               //         6), // changes position of shadow
-                          //               //   ),
-                          //               // ],
-                          //               color: Color.fromARGB(255, 119, 191, 249),
-                          //               gradient: gradient),
-                          //           height: screenHeight * .08,
-                          //           width: screenWidth / 2.5,
-                          //           child: Center(
-                          //             child: Text(
-                          //               'Start your free trial now',
-                          //               textAlign: TextAlign.center,
-                          //               style: TextStyle(
-                          //                   color: Colors.white, fontSize: 20),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //       SizedBox(width: 20),
-                          //       InkWell(
-                          //         onTap: () {
-                          //
-                          //           // GoRouter.of(context)
-                          //           //     .pushNamed(
-                          //           //     'paymentScreen',
-                          //           //     queryParams: {
-                          //           //       'isItComboCourse': true,
-                          //           //       'courseMap': comboMap,
-                          //           //     }
-                          //           // );
-                          //
-                          //           GoRouter.of(context)
-                          //               .pushNamed('comboPaymentPortal',
-                          //               queryParams: {
-                          //                 'cID': widget.cID,
-                          //               }
-                          //           );
-                          //
-                          //
-                          //           // Navigator.push(
-                          //           //   context,
-                          //           //   MaterialPageRoute(
-                          //           //     builder: (context) => PaymentScreen(
-                          //           //       map: comboMap,
-                          //           //       isItComboCourse: true,
-                          //           //       cID: widget.cID,
-                          //           //     ),
-                          //           //   ),
-                          //           // );
-                          //
-                          //         },
-                          //         child: Container(
-                          //           decoration: BoxDecoration(
-                          //               borderRadius: BorderRadius.circular(30),
-                          //               // boxShadow: [
-                          //               //   BoxShadow(
-                          //               //     color: Color.fromARGB(255, 176, 224, 250)
-                          //               //         .withOpacity(0.3),
-                          //               //     spreadRadius: 2,
-                          //               //     blurRadius: 3,
-                          //               //     offset: Offset(3,
-                          //               //         6), // changes position of shadow
-                          //               //   ),
-                          //               // ],
-                          //               color: Color.fromARGB(255, 119, 191, 249),
-                          //               gradient: gradient),
-                          //           height: screenHeight * .08,
-                          //           width: screenWidth / 2.5,
-                          //           child: Center(
-                          //             child: Text(
-                          //               'Buy Now',
-                          //               textAlign: TextAlign.center,
-                          //               style: TextStyle(
-                          //                   color: Colors.white, fontSize: 20),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // )
-                          //  :
+                          comboMap['trialCourse'] != null && comboMap['trialCourse'] ?
+                          Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            backgroundColor: Colors.deepPurpleAccent[700],
+                                            title: Text('This course is available for ${featuredCourse[0].trialDays} days trial.',
+                                              style: TextStyle(color: Colors.white),),
+                                            content: Container(
+                                              height: screenHeight/3.5,
+                                              width: screenWidth/2.5,
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                      height: screenHeight/5.2,
+                                                      width: screenWidth/3.5,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        border: Border.all(color: Colors.white, width: 0.5),
+                                                        color: Colors.white,
+                                                      ),
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                flex: 1,
+                                                                child: Container(
+                                                                  child: ClipRRect(
+                                                                    borderRadius: BorderRadius.only(
+                                                                        topLeft: Radius
+                                                                            .circular(
+                                                                            15),
+                                                                        topRight: Radius
+                                                                            .circular(
+                                                                            15)),
+                                                                    child:
+                                                                    Image.network(
+                                                                      featuredCourse[0].courseImageUrl,
+                                                                      fit: BoxFit.fill,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                child: Container(
+                                                                  child: Text(featuredCourse[0].courseName,
+                                                                      style: TextStyle(fontWeight: FontWeight.bold) ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          )
+                                                        ],
+                                                      )
+                                                  ),
+                                                  SizedBox(height: 30 * verticalScale),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Container(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          border: Border.all(color: Colors.white, width: 0.5),
+                                                        ),
+                                                        child: TextButton(
+                                                          onPressed: () {
+                                                            print('idd ${widget.id} ${featuredCourse[0].courseName}');
+                                                            // print('this is condition ${userMap['paidCourseNames'].contains(featuredCourse[int.parse(widget.id!)].courseId)}');
+                                                            Navigator.of(context).pop();
+                                                          },
+                                                          child: Text('Close',
+                                                            style: TextStyle(
+                                                                color: Colors.white
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          border: Border.all(color: Colors.white, width: 0.5),
+                                                        ),
+                                                        child: TextButton(
+                                                          onPressed: () {
+
+                                                            if(userMap['paidCourseNames'].contains(featuredCourse[0].courseId)) {
+                                                              Fluttertoast.showToast(msg: 'You have already enrolled in this course.');
+                                                            } else if (userMap['trialCourseList'].contains(featuredCourse[0].courseId)) {
+                                                              Fluttertoast.showToast(msg: 'You have already tried this course... Please purchase the course.');
+                                                            } else {
+                                                              setState(() {
+                                                                trialCourse();
+                                                                Fluttertoast.showToast(msg: 'Congrats!! Course is now available in enrolled courses for ${featuredCourse[0].trialDays}...');
+                                                                Timer(
+                                                                    Duration(seconds: 1),
+                                                                        () => GoRouter.of(context).pushReplacementNamed('myCourses')
+                                                                );
+                                                              });
+                                                            }
+
+                                                          },
+                                                          child: Text('Start your free trial',
+                                                            style: TextStyle(
+                                                                color: Colors.white
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        });
+
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        // boxShadow: [
+                                        //   BoxShadow(
+                                        //     color: Color.fromARGB(255, 176, 224, 250)
+                                        //         .withOpacity(0.3),
+                                        //     spreadRadius: 2,
+                                        //     blurRadius: 3,
+                                        //     offset: Offset(3,
+                                        //         6), // changes position of shadow
+                                        //   ),
+                                        // ],
+                                        color: Color.fromARGB(255, 119, 191, 249),
+                                        gradient: gradient),
+                                    height: screenHeight * .08,
+                                    width: screenWidth / 2.5,
+                                    child: Center(
+                                      child: Text(
+                                        'Start your free trial now',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 20),
+                                InkWell(
+                                  onTap: () {
+
+                                    // GoRouter.of(context)
+                                    //     .pushNamed(
+                                    //     'paymentScreen',
+                                    //     queryParams: {
+                                    //       'isItComboCourse': true,
+                                    //       'courseMap': comboMap,
+                                    //     }
+                                    // );
+
+                                    GoRouter.of(context)
+                                        .pushNamed('comboPaymentPortal',
+                                        queryParams: {
+                                          'cID': widget.cID,
+                                        }
+                                    );
+
+
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) => PaymentScreen(
+                                    //       map: comboMap,
+                                    //       isItComboCourse: true,
+                                    //       cID: widget.cID,
+                                    //     ),
+                                    //   ),
+                                    // );
+
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        // boxShadow: [
+                                        //   BoxShadow(
+                                        //     color: Color.fromARGB(255, 176, 224, 250)
+                                        //         .withOpacity(0.3),
+                                        //     spreadRadius: 2,
+                                        //     blurRadius: 3,
+                                        //     offset: Offset(3,
+                                        //         6), // changes position of shadow
+                                        //   ),
+                                        // ],
+                                        color: Color.fromARGB(255, 119, 191, 249),
+                                        gradient: gradient),
+                                    height: screenHeight * .08,
+                                    width: screenWidth / 2.5,
+                                    child: Center(
+                                      child: Text(
+                                        'Buy Now',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                           :
                           InkWell(
                             onTap: () {
 

@@ -71,7 +71,7 @@ class MyRouter {
             name: 'home',
             path: '/home',
             pageBuilder: (context, state) {
-              return MaterialPage(child: LandingScreen());
+              return MaterialPage(child: Home());
             }
         ),
         GoRoute(

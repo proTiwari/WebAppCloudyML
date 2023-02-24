@@ -153,7 +153,7 @@ class _CongratulationsWidgetState extends State<CongratulationsWidget> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                QuizSolutionCopyWidget(widget.quizdata, widget.total)),
+                                                (widget.quizdata)),
                                       );
                                             },
                                             child: Container(
