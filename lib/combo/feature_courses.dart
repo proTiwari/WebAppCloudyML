@@ -33,7 +33,10 @@ class FeatureCourses extends StatefulWidget {
   static ValueNotifier<double> _currentPosition = ValueNotifier<double>(0.0);
   static ValueNotifier<double> _closeBottomSheetAtInCombo =
   ValueNotifier<double>(0.0);
-  FeatureCourses({Key? key, this.id, this.cID, this.cName, this.courseP}) : super(key: key);
+  FeatureCourses(
+      {Key? key, this.id,
+    this.cID, this.cName,
+    this.courseP}) : super(key: key);
 
   @override
   State<FeatureCourses> createState() => _FeatureCoursesState();
@@ -87,7 +90,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
     featuredCourse.clear();
 
     course.forEach((element) {
-      print('dipen $element ');
+      print(' $element ');
       if(element.courseDocumentId == widget.cID) {
         featuredCourse.add(element);
         // featuredCourse.add(element.courses);
@@ -129,13 +132,18 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
   }
 
   void getCourseName() async {
+    print('this idd ${widget.cID}');
     await FirebaseFirestore.instance
         .collection('courses')
-        .doc(courseId)
+        .doc(widget.cID)
         .get()
         .then((value) {
       setState(() {
         comboMap = value.data()!;
+        print('this is $courseId');
+        print('this is $comboMap');
+        print('cid is ${comboMap['trialCourse']} ${int.parse(widget.id!)}');
+
         coursePrice = value.data()!['Course Price'];
         name = value.data()!['name'];
         print('ufbufb--$name');
@@ -167,78 +175,82 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // void loadCourses(String fID) async {
-  //   await _firestore.collection("courses").doc(fID).get().then((value) {
-  //     print(_auth.currentUser!.displayName);
-  //     Map<String, dynamic> groupData = {
-  //       "name": value.data()!['name'],
-  //       "icon": value.data()!["image_url"],
-  //       "mentors": value.data()!["mentors"],
-  //       "student_id": _auth.currentUser!.uid,
-  //       "student_name": _auth.currentUser!.displayName,
-  //       'groupChatCountNew': {
-  //         'jbG4j36JiihVuZmpoLov2lhrWF02': 0,
-  //         'QVtxxzHyc6az2LPpvH210lUOeXl1': 0,
-  //         "2AS3AK7WVQaAMY999D3xf5ycG3h1": 0,
-  //         'a2WWgtY2ikS8xjCxra0GEfRft5N2': 0,
-  //         'BX9662ZGi4MfO4C9CvJm4u2JFo63': 0,
-  //         '6RsvdRETWmXf1pyVGqCUl0qEDmF2': 0,
-  //         'jeYDhaZCRWW4EC9qZ0YTHKz4PH63': 0,
-  //         'I6uXWtzpimTYxtGqEXcM9AXcoAi2': 0,
-  //         'Kr4pX5EZ6CfigOd5C1xjdIYzMml2': 0,
-  //         'XhcpQzd6cjXF43gCmna1agAfS2A2': 0,
-  //         'fKHHbDBbbySVJZu2NMAVVIYZZpu2': 0,
-  //         'oQQ9CrJ8FkP06OoGdrtcwSwY89q1': 0,
-  //         'rR0oKFMCaOYIlblKzrjYoYMW3Vl1': 0,
-  //         'v66PnlwqWERgcCDA6ZZLbI0mHPF2': 0,
-  //         'TOV5h3ezQhWGTb5cCVvBPca1Iqh1': 0,
-  //         [_auth.currentUser!.uid]: 0
-  //       },
-  //     };
-  //     _firestore.collection("groups").add(groupData);
-  //   });
-  // }
+  void loadCourses() async {
+    await _firestore.collection("courses").doc(widget.cID).get().then((value) {
 
-  // void trialCourse() {
-  //   if (userMap['paidCourseNames'].contains(featuredCourse[int.parse(widget.id!)].courseId)) {
-  //     // AlertDialog(
-  //     //   content: Container(
-  //     //     child: Text('This course already exist in your trial course...'),
-  //     //   ),
-  //     // );
-  //     Fluttertoast.showToast(msg: 'This course already exist in your trial course...');
-  //     Navigator.of(context).pop();
-  //   } else {
-  //     print('paidCourseNames before ${userMap['paidCourseNames']}');
-  //     setState(() {
-  //       userMap['paidCourseNames'].add(featuredCourse[int.parse(widget.id!)].courseId);
-  //       FirebaseFirestore.instance.collection('Users')
-  //           .doc(FirebaseAuth.instance.currentUser!.uid)
-  //           .update({
-  //         'paidCourseNames': userMap['paidCourseNames'],
-  //       });
-  //       loadCourses(featuredCourse[int.parse(widget.id!)].courseId);
-  //       Fluttertoast.showToast(msg: 'Congrats!! Course is now available in enrolled courses for ${featuredCourse[int.parse(widget.id!)].trialDays}...');
-  //     });
-  //     Timer(
-  //         Duration(seconds: 1),
-  //             () => GoRouter.of(context).pushReplacementNamed('myCourses')
-  //
-  //       //     Navigator.pushReplacement(
-  //       // context, MaterialPageRoute(builder: (context) => Authenticate()))
-  //
-  //     );
-  //     print('paidCourseNames ${userMap['paidCourseNames']}');
-  //   }
-  // }
+      print(_auth.currentUser!.displayName);
+      Map<String, dynamic> groupData = {
+        "name": value.data()!['name'],
+        "icon": value.data()!["image_url"],
+        "mentors": value.data()!["mentors"],
+        "student_id": _auth.currentUser!.uid,
+        "student_name": _auth.currentUser!.displayName,
+        'groupChatCountNew': {
+          'jbG4j36JiihVuZmpoLov2lhrWF02': 0,
+          'QVtxxzHyc6az2LPpvH210lUOeXl1': 0,
+          "2AS3AK7WVQaAMY999D3xf5ycG3h1": 0,
+          'a2WWgtY2ikS8xjCxra0GEfRft5N2': 0,
+          'BX9662ZGi4MfO4C9CvJm4u2JFo63': 0,
+          '6RsvdRETWmXf1pyVGqCUl0qEDmF2': 0,
+          'jeYDhaZCRWW4EC9qZ0YTHKz4PH63': 0,
+          'I6uXWtzpimTYxtGqEXcM9AXcoAi2': 0,
+          'Kr4pX5EZ6CfigOd5C1xjdIYzMml2': 0,
+          'XhcpQzd6cjXF43gCmna1agAfS2A2': 0,
+          'fKHHbDBbbySVJZu2NMAVVIYZZpu2': 0,
+          'oQQ9CrJ8FkP06OoGdrtcwSwY89q1': 0,
+          'rR0oKFMCaOYIlblKzrjYoYMW3Vl1': 0,
+          'v66PnlwqWERgcCDA6ZZLbI0mHPF2': 0,
+          'TOV5h3ezQhWGTb5cCVvBPca1Iqh1': 0,
+          [_auth.currentUser!.uid]: 0
+        },
+      };
+      _firestore.collection("groups").add(groupData);
+    });
+  }
+
+  void trialCourse() {
+    if (userMap['paidCourseNames'].contains(featuredCourse[int.parse(widget.id!)].courseId)) {
+      // AlertDialog(
+      //   content: Container(
+      //     child: Text('This course already exist in your trial course...'),
+      //   ),
+      // );
+      Fluttertoast.showToast(msg: 'This course already exist in your trial course...');
+      Navigator.of(context).pop();
+    } else {
+      print('paidCourseNames before ${userMap['paidCourseNames']}');
+      setState(() {
+        userMap['paidCourseNames'].add(featuredCourse[int.parse(widget.id!)].courseId);
+        FirebaseFirestore.instance.collection('Users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          'paidCourseNames': userMap['paidCourseNames'],
+          'trialCourseList': [featuredCourse[int.parse(widget.id!)].courseId],
+        });
+        // featuredCourse[int.parse(widget.id!)].courseId
+        loadCourses();
+        Fluttertoast.showToast(msg: 'Congrats!! Course is now available in enrolled courses for ${featuredCourse[int.parse(widget.id!)].trialDays}...');
+      });
+      Timer(
+          Duration(seconds: 1),
+              () => GoRouter.of(context).pushReplacementNamed('myCourses')
+
+        //     Navigator.pushReplacement(
+        // context, MaterialPageRoute(builder: (context) => Authenticate()))
+
+      );
+      print('paidCourseNames ${userMap['paidCourseNames']}');
+    }
+  }
+
+
 
   @override
   void initState() {
     super.initState();
+    getCourseName();
     dbCheckerForPayInParts();
     lookformoneyref();
-    getCourseName();
-    // print(widget.courses);
     _scrollController.addListener(_scrollListener);
   }
 
@@ -292,6 +304,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
         map: comboMap,
         popBottomSheetAt: FeatureCourses._closeBottomSheetAtInCombo,
         isItComboCourse: true,
+        cID: widget.cID!,
       ),
       body: Stack(
         children: [
@@ -608,54 +621,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                 color: Colors.white),
                           ),
                           SizedBox(height: 35),
-                          InkWell(
-                            onTap: () {
-
-                              GoRouter.of(context).pushNamed('comboPaymentPortal',
-                                  queryParams: {
-                                    'cID': courseId});
-
-
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => PaymentScreen(
-                              //       map: comboMap,
-                              //       cID: widget.cID,
-                              //       isItComboCourse: true,
-                              //     ),
-                              //   ),
-                              // );
-
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  // boxShadow: [
-                                  //   BoxShadow(
-                                  //     color: Color.fromARGB(255, 176, 224, 250)
-                                  //         .withOpacity(0.3),
-                                  //     spreadRadius: 2,
-                                  //     blurRadius: 3,
-                                  //     offset: Offset(3,
-                                  //         6), // changes position of shadow
-                                  //   ),
-                                  // ],
-                                  color: Color.fromARGB(255, 119, 191, 249),
-                                  gradient: gradient),
-                              height: screenHeight * .08,
-                              width: screenWidth * .6,
-                              child: Center(
-                                child: Text(
-                                  'Buy Now',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 20),
-                                ),
-                              ),
-                            ),
-                          ),
-                          // featuredCourse[int.parse(widget.id!)].trialCourse! ?
+                          // comboMap['trialCourse'] != null && comboMap['trialCourse'] ?
                           // Container(
                           //   child: Row(
                           //     mainAxisAlignment: MainAxisAlignment.center,
@@ -747,7 +713,15 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                           //                               ),
                           //                               child: TextButton(
                           //                                 onPressed: () {
-                          //                                   trialCourse();
+                          //
+                          //                                   if(userMap['paidCourseNames'].contains(featuredCourse[int.parse(widget.id!)].courseId)) {
+                          //                                     Fluttertoast.showToast(msg: 'You have already enrolled in this course.');
+                          //                                   } else if (userMap['trialCourseList'].contains(featuredCourse[int.parse(widget.id!)].courseId)) {
+                          //                                     Fluttertoast.showToast(msg: 'You have already trialed this course... Please purchase to continue.');
+                          //                                   } else {
+                          //                                     trialCourse();
+                          //                                   }
+                          //
                           //                                 },
                           //                                 child: Text('Start your free trial',
                           //                                   style: TextStyle(
@@ -806,16 +780,24 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                           //           //     }
                           //           // );
                           //
-                          //
-                          //           Navigator.push(
-                          //             context,
-                          //             MaterialPageRoute(
-                          //               builder: (context) => PaymentScreen(
-                          //                 map: comboMap,
-                          //                 isItComboCourse: true,
-                          //               ),
-                          //             ),
+                          //           GoRouter.of(context)
+                          //               .pushNamed('comboPaymentPortal',
+                          //               queryParams: {
+                          //                 'cID': widget.cID,
+                          //               }
                           //           );
+                          //
+                          //
+                          //           // Navigator.push(
+                          //           //   context,
+                          //           //   MaterialPageRoute(
+                          //           //     builder: (context) => PaymentScreen(
+                          //           //       map: comboMap,
+                          //           //       isItComboCourse: true,
+                          //           //       cID: widget.cID,
+                          //           //     ),
+                          //           //   ),
+                          //           // );
                           //
                           //         },
                           //         child: Container(
@@ -848,57 +830,57 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                           //     ],
                           //   ),
                           // )
-                          //  : InkWell(
-                          //   onTap: () {
-                          //
-                          //     // GoRouter.of(context)
-                          //     //     .pushNamed(
-                          //     //     'paymentScreen',
-                          //     //     queryParams: {
-                          //     //       'isItComboCourse': true,
-                          //     //       'courseMap': comboMap,
-                          //     //     }
-                          //     // );
-                          //
-                          //
-                          //     Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (context) => PaymentScreen(
-                          //           map: comboMap,
-                          //           isItComboCourse: true,
-                          //         ),
-                          //       ),
-                          //     );
-                          //
-                          //   },
-                          //   child: Container(
-                          //     decoration: BoxDecoration(
-                          //         borderRadius: BorderRadius.circular(30),
-                          //         // boxShadow: [
-                          //         //   BoxShadow(
-                          //         //     color: Color.fromARGB(255, 176, 224, 250)
-                          //         //         .withOpacity(0.3),
-                          //         //     spreadRadius: 2,
-                          //         //     blurRadius: 3,
-                          //         //     offset: Offset(3,
-                          //         //         6), // changes position of shadow
-                          //         //   ),
-                          //         // ],
-                          //         color: Color.fromARGB(255, 119, 191, 249),
-                          //         gradient: gradient),
-                          //     height: screenHeight * .08,
-                          //     width: screenWidth * .6,
-                          //     child: Center(
-                          //       child: Text(
-                          //         'Buy Now',
-                          //         textAlign: TextAlign.center,
-                          //         style: TextStyle(
-                          //             color: Colors.white, fontSize: 20),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
+                          //  :
+                          InkWell(
+                            onTap: () {
+
+                              GoRouter.of(context)
+                                  .pushNamed('comboPaymentPortal',
+                                  queryParams: {
+                                    'cID': widget.cID,
+                                  }
+                              );
+
+
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => PaymentScreen(
+                              //       map: comboMap,
+                              //       isItComboCourse: true,
+                              //       cID: widget.cID,
+                              //     ),
+                              //   ),
+                              // );
+
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  // boxShadow: [
+                                  //   BoxShadow(
+                                  //     color: Color.fromARGB(255, 176, 224, 250)
+                                  //         .withOpacity(0.3),
+                                  //     spreadRadius: 2,
+                                  //     blurRadius: 3,
+                                  //     offset: Offset(3,
+                                  //         6), // changes position of shadow
+                                  //   ),
+                                  // ],
+                                  color: Color.fromARGB(255, 119, 191, 249),
+                                  gradient: gradient),
+                              height: screenHeight * .08,
+                              width: screenWidth * .6,
+                              child: Center(
+                                child: Text(
+                                  'Buy Now',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),

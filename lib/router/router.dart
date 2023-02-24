@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/MyAccount/myaccount.dart';
 import 'package:cloudyml_app2/combo/combo_course.dart';
 import 'package:cloudyml_app2/combo/combo_store.dart';
+import 'package:cloudyml_app2/combo/updated_combo_course.dart';
 import 'package:cloudyml_app2/homepage.dart';
+import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:cloudyml_app2/module/video_screen.dart';
 import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:cloudyml_app2/payments_history.dart';
@@ -47,8 +49,6 @@ class MyRouter {
           return ('/');
         } else if (loggedIn && goingToLogin) {
           return ('/home');
-        } else if (loggedIn && goingToLogin && directToCatalogue) {
-          return ('/featuredCourses');
         } else {
           return null;
         }
@@ -71,22 +71,25 @@ class MyRouter {
             name: 'home',
             path: '/home',
             pageBuilder: (context, state) {
-              return MaterialPage(child: Home());
+              return MaterialPage(child: LandingScreen());
             }
         ),
         GoRoute(
+            name: 'store',
             path: '/store',
             pageBuilder: (context, state) {
               return MaterialPage(child: StoreScreen());
             }
         ),
         GoRoute(
+          name: 'reviews',
           path: '/reviews',
           pageBuilder: (context, state) {
             return MaterialPage(child:  ReviewsScreen());
           },
         ),
         GoRoute(
+            name: 'myAccount',
             path: '/myAccount',
             pageBuilder: (context, state) {
               return MaterialPage(child: MyAccountPage());
@@ -186,6 +189,21 @@ class MyRouter {
                   ));
             }
         ),
+        GoRoute(
+            name: 'NewScreen',
+            path: '/NewScreen',
+            pageBuilder: (context, state){
+              List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
+              final String id = state.queryParams['id']!;
+              final String courseName = state.queryParams['courseName']!;
+              return MaterialPage(
+                  key: state.pageKey,
+                  child: NewScreen(
+                    courses: course[int.parse(id)].courses,
+                    id: id,
+                    courseName: courseName,
+                  ));
+            }),
         GoRoute(
           name: 'comboCourse',
           path: '/comboCourse',

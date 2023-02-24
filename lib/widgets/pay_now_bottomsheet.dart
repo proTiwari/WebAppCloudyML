@@ -11,6 +11,7 @@ class PayNowBottomSheet extends StatelessWidget {
   String coursePrice;
   Map<String, dynamic> map;
   bool isItComboCourse;
+  String cID;
   // double closeBottomSheetAt;
 
   PayNowBottomSheet({
@@ -19,6 +20,7 @@ class PayNowBottomSheet extends StatelessWidget {
     required this.map,
     required this.popBottomSheetAt,
     required this.isItComboCourse,
+    required this.cID,
     Key? key,
   }) : super(key: key);
 
@@ -67,9 +69,12 @@ class PayNowBottomSheet extends StatelessWidget {
                             child: InkWell(
                               onTap: () {
 
-                            GoRouter.of(context).pushNamed('paymentPortal',
-                                queryParams: {
-                                  'cID': courseId});
+                                GoRouter.of(context)
+                                    .pushNamed('comboPaymentPortal',
+                                    queryParams: {
+                                      'cID': cID,
+                                    }
+                                );
 
                                 // Navigator.push(
                                 //   context,

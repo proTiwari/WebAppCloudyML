@@ -27,9 +27,9 @@ class DeepLinkService {
   Future<void> handleDynamicLinks() async {
     //Get initial dynamic link if app is started using the link
     final data = await dynamicLink.getInitialLink();
-    print("sdfffffffffffffffasdjfaaaaaaaaaaaaaaaaaaaaaaaaaaaanull: ${data}");
+    print("link data is null: ${data}");
     if (data != null) {
-      print("sdfffffffffffffffasdjfaaaaaaaaaaaaaaaaaaaaaaaaaaaa ${data}");
+      print("link data is not null ${data}");
       _handleDeepLink(data);
     }
 

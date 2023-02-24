@@ -84,6 +84,17 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
 
   Map<String, dynamic> courseMap = {};
 
+  void url_del()
+  {
+    FirebaseFirestore.instance.collection('Notice')..doc("7A85zuoLi4YQpbXlbOAh_redirect").update({
+      'url' : "" }).whenComplete((){
+      print('feature Deleted');});
+
+    FirebaseFirestore.instance.collection('Notice')..doc("NBrEm6KGry8gxOJJkegG_redirect_pay").update({
+      'url' :"" }).whenComplete((){
+      print('pay Deleted');});
+  }
+
   void getCourseName() async {
 
     try{
@@ -93,7 +104,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
           .get()
           .then((value) {
         setState(() {
-          print('course id is ${courseId}');
+          print('course id is ${widget.cID}');
           courseMap = value.data()!;
           print('paymentscree map ${courseMap.toString()} ');
           // print('gste = ${courseMap['gst'].toString()}');
@@ -154,19 +165,12 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
 
   @override
   void initState() {
-    // if(Uri.base.path == '/paymentPortal') {
-    //   print('abc home');
-    // }
+
     super.initState();
-    var pay= js.context['location'];
-    print(pay);
-    print('course id is ${courseId}');
+    url_del();
     getCourseName();
   }
 
-  Future<void> getrewardvalue() async {
-
-  }
 
   void setcoursevalue() async {
     if (rewardvalue != "0") {
@@ -374,30 +378,31 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                           ),
                         ),
                       ),
+                      SizedBox(width: 40 * horizontalScale,),
                       Padding(
-                        padding: EdgeInsets.only(right: 80.0, left: 80, top: 10, bottom: 10),
+                          padding: EdgeInsets.only(top: 10, bottom: 10),
                         child: Container(
-                          width: screenWidth/4,
+                          width: screenWidth/3.5,
+                          height: screenHeight/2,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 25.0),
-                                child: Container(
-                                  child: Center(
-                                    child: Text('BILL SUMMARY',
-                                      textScaleFactor: min(horizontalScale, verticalScale),
-                                      style: TextStyle(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold,
-                                        height: 1,
-                                      ),),
-                                  ),
+                              Container(
+                                child: Center(
+                                  child: Text('BILL SUMMARY',
+                                    textScaleFactor: min(horizontalScale, verticalScale),
+                                    style: TextStyle(
+                                      fontSize: 45 * verticalScale,
+                                      fontWeight: FontWeight.bold,
+                                      height: 1,
+                                    ),),
                                 ),
                               ),
-                              DottedLine(
-                                dashGapLength: 0,
-                              ),
+                              SizedBox(height: 25 * verticalScale,),
+                              SizedBox(
+                                  child: Divider(
+                                    color: Colors.black,
+                                  )),
                               Padding(
                                 padding: EdgeInsets.only(top: 10.0, bottom: 10),
                                 child: Container(
@@ -426,9 +431,10 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   ),
                                 ),
                               ),
-                              DottedLine(
-                                dashGapLength: 0,
-                              ),
+                              SizedBox(
+                                  child: Divider(
+                                    color: Colors.black,
+                                  )),
                               SizedBox(height: 15),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -662,11 +668,12 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                               // ),
 
                               SizedBox(height: 15),
-                              DottedLine(
-                                dashGapLength: 0,
-                              ),
+                              SizedBox(
+                                  child: Divider(
+                                    color: Colors.black,
+                                  )),
                               Padding(
-                                padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                                padding: const EdgeInsets.only(top: 5.0, bottom: 5),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
@@ -685,10 +692,11 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   ],
                                 ),
                               ),
-                              DottedLine(
-                                dashGapLength: 0,
-                              ),
-                              SizedBox(height: 25),
+                              SizedBox(
+                                  child: Divider(
+                                    color: Colors.black,
+                                  )),
+                              SizedBox(height: 15 * verticalScale),
                               Center(
                                 child: PaymentButton(
                                   coursePriceMoneyRef:

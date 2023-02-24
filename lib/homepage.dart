@@ -982,7 +982,8 @@ class _HomeState extends State<Home> {
                                                     final id = index.toString();
                                                     final courseName = course[index].courseName;
 
-                                                    GoRouter.of(context).pushNamed('comboCourse', queryParams: {'id': id, 'courseName': courseName});
+                                                    GoRouter.of(context).pushNamed('NewScreen', queryParams:
+                                                    {'id': id, 'courseName': courseName});
                                                     // Navigator.push(
                                                     //   context,
                                                     //   PageTransition(
@@ -1830,7 +1831,9 @@ class _HomeState extends State<Home> {
 
                                                                   } else {
                                                                     final id = index.toString();
-                                                                    GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                                                                    GoRouter.of(context).pushNamed('catalogue',
+                                                                        queryParams: {
+                                                                      'id': id,});
                                                                   }
                                                                 },
                                                                 style: ElevatedButton

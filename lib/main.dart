@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:core';
+import 'dart:core';
+import 'dart:core';
 import 'dart:html' as html;
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/AppProvider.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/Providers/chat_screen_provider.dart';
@@ -117,13 +121,34 @@ Future<void> main() async {
     RendererSwitcher.switchWebRenderer(WebRenderer.html);
   }
 
-  print('this is url ${Uri.base.origin.toString()}');
+  print('this is url ${Uri.base.path}');
 
-  // if(Uri.base.path == '/paymentPortal') {
-  //   print('abc home');
-  // }
+
+  if(Uri.base.path == '/comboPaymentPortal') {
+    print('abc home');
+
+    final url=Uri.base.path;
+    FirebaseFirestore.instance.collection("Notice")
+        .doc("NBrEm6KGry8gxOJJkegG_redirect_pay").set({
+      'url' : url });
+// navigatorKey.currentState?.pushNamed('/login');
+
+    print('pushed');
+  }
+  else if(Uri.base.path == '/featuredCourses'){
+
+    final url=Uri.base.path;
+    FirebaseFirestore.instance.collection("Notice")
+        .doc("7A85zuoLi4YQpbXlbOAh_redirect").set({
+      'url' : url });
+// navigatorKey.currentState?.pushNamed('/login');
+
+    print('pushed');
+
+  }
 
 }
+
 
 
 class MyApp extends StatefulWidget {

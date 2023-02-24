@@ -296,9 +296,22 @@ class _StoreScreenState extends State<StoreScreen> {
                             if (cou[index].isItComboCourse) {
 
                               final id = index.toString();
+                              final cID = cou[index].courseDocumentId;
                               final courseName = cou[index].courseName;
                               final courseP = cou[index].coursePrice;
-                              GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
+                              // GoRouter.of(context).pushNamed('comboStore',
+                              //     queryParams: {
+                              //       'courseName': courseName,
+                              //       'id': id,
+                              //       'coursePrice': courseP});
+
+                              GoRouter.of(context).pushNamed(
+                                  'featuredCourses',
+                                  queryParams: {
+                                    'cID': cID,
+                                    'courseName': courseName,
+                                    'id': id,
+                                    'coursePrice': courseP});
 
                               // Navigator.push(
                               //   context,
@@ -313,7 +326,9 @@ class _StoreScreenState extends State<StoreScreen> {
 
                             } else {
                               final id = index.toString();
-                              GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                              GoRouter.of(context).pushNamed(
+                                  'catalogue',
+                                  queryParams: {'id': id});
                             }
                           },
                           child: Padding(
