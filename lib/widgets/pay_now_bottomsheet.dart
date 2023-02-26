@@ -11,6 +11,7 @@ class PayNowBottomSheet extends StatelessWidget {
   String coursePrice;
   Map<String, dynamic> map;
   bool isItComboCourse;
+  final String? cID;
   // double closeBottomSheetAt;
 
   PayNowBottomSheet({
@@ -19,6 +20,7 @@ class PayNowBottomSheet extends StatelessWidget {
     required this.map,
     required this.popBottomSheetAt,
     required this.isItComboCourse,
+    required this.cID,
     Key? key,
   }) : super(key: key);
 
@@ -69,7 +71,7 @@ class PayNowBottomSheet extends StatelessWidget {
 
                             GoRouter.of(context).pushNamed('paymentPortal',
                                 queryParams: {
-                                  'cID': courseId});
+                                  'cID': cID});
 
                                 // Navigator.push(
                                 //   context,

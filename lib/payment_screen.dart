@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:html' as html;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/globals.dart';
@@ -12,11 +13,14 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:path/path.dart';
 import 'package:star_rating/star_rating.dart';
 import 'dart:js' as js;
 import 'fun.dart';
 import 'global_variable.dart' as globals;
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class PaymentScreen extends StatefulWidget {
   final Map<String, dynamic>? map;
@@ -83,6 +87,20 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
 
 
   Map<String, dynamic> courseMap = {};
+
+  void url_del()
+  {
+   
+   FirebaseFirestore.instance.collection('Notice')..doc("7A85zuoLi4YQpbXlbOAh_redirect").update({
+       'url' : "" }).whenComplete((){
+  print('feature Deleted');});
+
+    FirebaseFirestore.instance.collection('Notice')..doc("NBrEm6KGry8gxOJJkegG_redirect_pay").update({
+       'url' :"" }).whenComplete((){
+  print('pay Deleted');});
+
+   
+  }
 
   void getCourseName() async {
 
@@ -159,9 +177,14 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
     // }
     super.initState();
     var pay= js.context['location'];
-    print(pay);
+    print("location iss===$pay");
     print('course id is ${courseId}');
     getCourseName();
+    url_del();
+    // final url = html.window.location.href;
+    // final hostname = html.window.location.hostname; 
+    // print(url);
+    // print(hostname);
   }
 
   Future<void> getrewardvalue() async {

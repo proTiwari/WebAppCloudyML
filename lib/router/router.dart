@@ -41,15 +41,20 @@ class MyRouter {
         final loggedIn = loginState.loggedIn;
         final goingToLogin = state.location == ('/login');
 
-        final directToCatalogue = state.location == ('/paymentPortal?cID=');
+        // final dc = state.location == ('/comboPaymentPortal?cID=aEGX6kMfHzQrVgP3WCwU');
+
+        // final pc=state.location==('/featuredCourses?cID=aEGX6kMfHzQrVgP3WCwU&courseName=Data+Science+%26+Analytics+Placement+Assurance+Program&id=0&coursePrice=9999');
 
         if(!loggedIn && !goingToLogin) {
           return ('/');
         } else if (loggedIn && goingToLogin) {
           return ('/home');
-        } else if (loggedIn && goingToLogin && directToCatalogue) {
-          return ('/featuredCourses');
-        } else {
+        // } else if (!loggedIn || goingToLogin) {
+        //   return ('/login');
+        }
+        //  else if (dc && pc && !loggedIn) {
+        //   return ('/login');}
+        else {
           return null;
         }
 

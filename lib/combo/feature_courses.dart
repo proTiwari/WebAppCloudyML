@@ -83,6 +83,15 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
 
   List<CourseDetails> featuredCourse = [];
 
+    void furl_del()
+  {
+  FirebaseFirestore.instance.collection('Notice')..doc("7A85zuoLi4YQpbXlbOAh_redirect").update({
+       'url' : "" }).whenComplete((){
+  print('feature Deleted');});
+   
+  }
+
+
   setFeaturedCourse(List<CourseDetails> course){
     featuredCourse.clear();
 
@@ -240,6 +249,8 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
     getCourseName();
     // print(widget.courses);
     _scrollController.addListener(_scrollListener);
+    print("course id is===${widget.cID}");
+    
   }
 
   void _scrollListener() {
@@ -292,6 +303,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
         map: comboMap,
         popBottomSheetAt: FeatureCourses._closeBottomSheetAtInCombo,
         isItComboCourse: true,
+        cID: widget.cID,
       ),
       body: Stack(
         children: [
@@ -613,7 +625,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
 
                               GoRouter.of(context).pushNamed('comboPaymentPortal',
                                   queryParams: {
-                                    'cID': courseId});
+                                    'cID': widget.cID});
 
 
                               // Navigator.push(

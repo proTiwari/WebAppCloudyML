@@ -1,7 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloudyml_app2/combo/combo_course.dart';
+import 'package:cloudyml_app2/combo/combo_store.dart';
+import 'package:cloudyml_app2/combo/feature_courses.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/payment_screen.dart';
+import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
 import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -9,10 +13,12 @@ import 'package:numeric_keyboard/numeric_keyboard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:path/path.dart';
 import 'package:pinput/pinput.dart';
 import 'package:cloudyml_app2/theme.dart';
 import 'package:cloudyml_app2/global_variable.dart' as globals;
 import 'package:provider/provider.dart';
+import '../models/course_details.dart';
 import '../router/login_state_check.dart';
 import 'google_auth.dart';
 import 'login_email.dart';
@@ -42,10 +48,27 @@ class _OtpPageState extends State<OtpPage> {
   bool loading = false;
   late String actualCode;
 
+  late String diurl;
+  late String payurl;
+
   void _onKeyboardTap(String value) {
     setState(() {
       text = text + value;
     });
+  }
+  List<CourseDetails> featuredCourse = [];
+
+  setFeaturedCourse(List<CourseDetails> course){
+    featuredCourse.clear();
+    course.forEach((element) {
+      if(element.FcSerialNumber.isNotEmpty && element.FcSerialNumber != null &&
+          element.isItComboCourse == true){
+        featuredCourse.add(element);
+      }
+    });
+    featuredCourse.sort((a, b) {
+      return int.parse(a.FcSerialNumber).compareTo(int.parse(b.FcSerialNumber));}
+    );
   }
 
   Widget darkRoundedPinPut() {
@@ -126,11 +149,31 @@ class _OtpPageState extends State<OtpPage> {
     }
   }
 
+    
+    void url () async{
+        diurl= await FirebaseFirestore.instance.collection("Notice")
+    .doc("7A85zuoLi4YQpbXlbOAh_redirect").get().then((value) {print(value.data()!.values.first);
+    return value.data()!.values.first;} );
+
+    print("url is=====$diurl");
+
+    payurl= await FirebaseFirestore.instance.collection("Notice")
+    .doc("NBrEm6KGry8gxOJJkegG_redirect_pay").get().then((value) {print(value.data()!.values.first);
+    return value.data()!.values.first;} );
+
+    print("url is=====$payurl");
+
+    }
+    
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     GRecaptchaV3.hideBadge();
+     url();
+   
+    
   }
 
   @override
@@ -612,10 +655,34 @@ class _OtpPageState extends State<OtpPage> {
                 // GoRouter.of(context).pushReplacement('/home');
                 String location = GoRouter.of(context).location;
 
-                if (location == '/paymentPortal?cID=$courseId') {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (_) => PaymentScreen(cID: courseId, isItComboCourse: false)));
-                } else {
+                if (diurl=='/featuredCourses') {
+                  print("i am in otp if");
+
+     
+                                    final id = "0";
+                                    final cID = "aEGX6kMfHzQrVgP3WCwU";
+                                    final courseName ="Data Science & Analytics Placement Assurance Program";
+                                    final courseP = "9999";
+                                    GoRouter.of(context).goNamed(
+                                        'featuredCourses',
+                                        queryParams: {
+                                          'cID': cID,
+                                          'courseName': courseName,
+                                          'id': id,
+                                          'coursePrice': courseP});
+    
+                }
+                 else if(payurl=='/comboPaymentPortal')
+                {
+                    final cID = "aEGX6kMfHzQrVgP3WCwU";
+                   GoRouter.of(context).go(
+                                        '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
+                                        // queryParams: {
+                                        //   'cID': cID,
+                                        //   }
+                                          );
+                }
+                else {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (_) => HomePage()));
                 }
