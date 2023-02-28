@@ -23,7 +23,7 @@ class splash extends StatefulWidget {
 
 class _splashState extends State<splash> {
   static final FlutterLocalNotificationsPlugin
-      _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final myBox = Hive.box('myBox');
   @override
   void initState() {
@@ -32,16 +32,16 @@ class _splashState extends State<splash> {
     GRecaptchaV3.hideBadge();
     Timer(Duration(seconds: 2), () => GoRouter.of(context).push('/login')
 
-        //     Navigator.pushReplacement(
-        // context, MaterialPageRoute(builder: (context) => Authenticate()))
+      //     Navigator.pushReplacement(
+      // context, MaterialPageRoute(builder: (context) => Authenticate()))
 
-        );
+    );
 
     //listnerNotifications();
     //gives you the message on which user taps and opens
     //the app from terminated state
     FirebaseMessaging.instance.getInitialMessage().then(
-      (message) {
+          (message) {
         print("FirebaseMessaging.instance.getInitialMessage");
         if (message != null) {
           print("New Notification");

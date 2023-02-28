@@ -125,7 +125,7 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                         height: 205,
                         decoration: BoxDecoration(
                           color:
-                              FlutterFlowTheme.of(context).secondaryBackground,
+                          FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
@@ -140,20 +140,20 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                   labelStyle: FlutterFlowTheme.of(context)
                                       .bodyText1
                                       .override(
-                                        fontFamily: 'Lexend Deca',
-                                        color: Color(0xFF57636C),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                      ),
+                                    fontFamily: 'Lexend Deca',
+                                    color: Color(0xFF57636C),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal,
+                                  ),
                                   hintText: 'Quiz Name',
                                   hintStyle: FlutterFlowTheme.of(context)
                                       .bodyText1
                                       .override(
-                                        fontFamily: 'Lexend Deca',
-                                        color: Color(0xFF57636C),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                      ),
+                                    fontFamily: 'Lexend Deca',
+                                    color: Color(0xFF57636C),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal,
+                                  ),
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Color(0xFFDBE2E7),
@@ -185,17 +185,17 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                   filled: true,
                                   fillColor: Colors.white,
                                   contentPadding:
-                                      EdgeInsetsDirectional.fromSTEB(
-                                          24, 24, 20, 24),
+                                  EdgeInsetsDirectional.fromSTEB(
+                                      24, 24, 20, 24),
                                 ),
                                 style: FlutterFlowTheme.of(context)
                                     .bodyText1
                                     .override(
-                                      fontFamily: 'Lexend Deca',
-                                      color: Color(0xFF1D2429),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal,
-                                    ),
+                                  fontFamily: 'Lexend Deca',
+                                  color: Color(0xFF1D2429),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                ),
                                 maxLines: null,
                               ),
                             ),
@@ -210,35 +210,35 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       children: [
                                         Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  5, 5, 5, 5),
+                                          EdgeInsetsDirectional.fromSTEB(
+                                              5, 5, 5, 5),
                                           child: Container(
                                             width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 0.88,
                                             height: 50,
                                             decoration: BoxDecoration(
                                               color: Color.fromARGB(
                                                   255, 255, 255, 255),
                                               borderRadius:
-                                                  BorderRadius.circular(5),
+                                              BorderRadius.circular(5),
                                             ),
                                             child: Padding(
                                               padding: EdgeInsetsDirectional
                                                   .fromSTEB(15, 5, 5, 5),
                                               child: ListView.builder(
                                                   scrollDirection:
-                                                      Axis.horizontal,
+                                                  Axis.horizontal,
                                                   itemCount:
-                                                      questionslist.length,
+                                                  questionslist.length,
                                                   itemBuilder:
                                                       (BuildContext context,
-                                                          int index) {
+                                                      int index) {
                                                     // return Container();
                                                     return GestureDetector(
                                                       //                 print("yhbuyjbyhbjhb$questionslist");
@@ -322,39 +322,39 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                       },
                                                       child: Padding(
                                                         padding:
-                                                            const EdgeInsets
-                                                                    .fromLTRB(
-                                                                20, 0, 20, 0),
+                                                        const EdgeInsets
+                                                            .fromLTRB(
+                                                            20, 0, 20, 0),
                                                         child: Container(
                                                           height: 180,
                                                           decoration:
-                                                              BoxDecoration(
+                                                          BoxDecoration(
                                                             color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    238,
-                                                                    232,
-                                                                    232),
+                                                            Color.fromARGB(
+                                                                255,
+                                                                238,
+                                                                232,
+                                                                232),
                                                             borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        30),
+                                                            BorderRadius
+                                                                .circular(
+                                                                30),
                                                           ),
                                                           child: Padding(
                                                             padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
+                                                            const EdgeInsets
+                                                                .all(8.0),
                                                             child: Row(
                                                               children: [
                                                                 Align(
                                                                   alignment:
-                                                                      AlignmentDirectional(
-                                                                          -0.5,
-                                                                          0),
+                                                                  AlignmentDirectional(
+                                                                      -0.5,
+                                                                      0),
                                                                   child: Text(
                                                                     'Question ${index + 1}',
                                                                     style: FlutterFlowTheme.of(
-                                                                            context)
+                                                                        context)
                                                                         .bodyText1,
                                                                   ),
                                                                 ),
@@ -362,11 +362,11 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                                   onTap: () {
                                                                     questionslist
                                                                         .removeAt(
-                                                                            index);
+                                                                        index);
                                                                     setState(
-                                                                        () {
-                                                                      questionslist;
-                                                                    });
+                                                                            () {
+                                                                          questionslist;
+                                                                        });
                                                                   },
                                                                   child: Icon(
                                                                     Icons
@@ -431,15 +431,15 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                         decoration: InputDecoration(
                                           hintText: 'Question...',
                                           hintStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyText2,
+                                          FlutterFlowTheme.of(context)
+                                              .bodyText2,
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
                                               color: Color(0xFFDBE2E7),
                                               width: 2,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8),
+                                            BorderRadius.circular(8),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
@@ -447,7 +447,7 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                               width: 1,
                                             ),
                                             borderRadius:
-                                                const BorderRadius.only(
+                                            const BorderRadius.only(
                                               topLeft: Radius.circular(4.0),
                                               topRight: Radius.circular(4.0),
                                             ),
@@ -458,19 +458,19 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                               width: 1,
                                             ),
                                             borderRadius:
-                                                const BorderRadius.only(
+                                            const BorderRadius.only(
                                               topLeft: Radius.circular(4.0),
                                               topRight: Radius.circular(4.0),
                                             ),
                                           ),
                                           focusedErrorBorder:
-                                              OutlineInputBorder(
+                                          OutlineInputBorder(
                                             borderSide: BorderSide(
                                               color: Color(0x00000000),
                                               width: 1,
                                             ),
                                             borderRadius:
-                                                const BorderRadius.only(
+                                            const BorderRadius.only(
                                               topLeft: Radius.circular(4.0),
                                               topRight: Radius.circular(4.0),
                                             ),
@@ -512,148 +512,148 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                     },
                                                     child: Align(
                                                         child: enabledList
-                                                                .contains("A")
+                                                            .contains("A")
                                                             ? Icon(
-                                                                Icons.circle,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        45,
-                                                                        212,
-                                                                        114),
-                                                              )
+                                                          Icons.circle,
+                                                          color: Color
+                                                              .fromARGB(
+                                                              255,
+                                                              45,
+                                                              212,
+                                                              114),
+                                                        )
                                                             : Icon(
-                                                                Icons
-                                                                    .circle_outlined,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        122,
-                                                                        128,
-                                                                        125),
-                                                              )),
+                                                          Icons
+                                                              .circle_outlined,
+                                                          color: Color
+                                                              .fromARGB(
+                                                              255,
+                                                              122,
+                                                              128,
+                                                              125),
+                                                        )),
                                                   ),
                                                   Container(
                                                     width: 300,
                                                     height: 162.5,
                                                     decoration: BoxDecoration(
                                                       color: FlutterFlowTheme
-                                                              .of(context)
+                                                          .of(context)
                                                           .secondaryBackground,
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(10, 10,
-                                                                  35, 0),
+                                                      EdgeInsetsDirectional
+                                                          .fromSTEB(10, 10,
+                                                          35, 0),
                                                       child: Container(
                                                         width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
+                                                            context)
+                                                            .size
+                                                            .width *
                                                             0.8,
                                                         child: TextFormField(
                                                           controller: Option1,
                                                           obscureText: false,
                                                           decoration:
-                                                              InputDecoration(
+                                                          InputDecoration(
                                                             hintText: 'A',
                                                             hintStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyText2,
+                                                            FlutterFlowTheme.of(
+                                                                context)
+                                                                .bodyText2,
                                                             enabledBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: enabledList
-                                                                        .contains(
-                                                                            "A")
+                                                                    .contains(
+                                                                    "A")
                                                                     ? Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            45,
-                                                                            212,
-                                                                            114)
+                                                                    .fromARGB(
+                                                                    255,
+                                                                    45,
+                                                                    212,
+                                                                    114)
                                                                     : Color(
-                                                                        0xFFDBE2E7),
+                                                                    0xFFDBE2E7),
                                                                 width: 2,
                                                               ),
                                                               borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8),
                                                             ),
                                                             focusedBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: Color
                                                                     .fromARGB(
-                                                                        0,
-                                                                        0,
-                                                                        0,
-                                                                        0),
+                                                                    0,
+                                                                    0,
+                                                                    0,
+                                                                    0),
                                                                 width: 1,
                                                               ),
                                                               borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
+                                                              const BorderRadius
+                                                                  .only(
                                                                 topLeft: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                                 topRight: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                               ),
                                                             ),
                                                             errorBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: Color(
                                                                     0x00000000),
                                                                 width: 1,
                                                               ),
                                                               borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
+                                                              const BorderRadius
+                                                                  .only(
                                                                 topLeft: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                                 topRight: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                               ),
                                                             ),
                                                             focusedErrorBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: Color(
                                                                     0x00000000),
                                                                 width: 1,
                                                               ),
                                                               borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
+                                                              const BorderRadius
+                                                                  .only(
                                                                 topLeft: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                                 topRight: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                               ),
                                                             ),
                                                             filled: true,
                                                             fillColor:
-                                                                Colors.white,
+                                                            Colors.white,
                                                           ),
                                                           style: FlutterFlowTheme
-                                                                  .of(context)
+                                                              .of(context)
                                                               .bodyText1,
                                                           textAlign:
-                                                              TextAlign.start,
+                                                          TextAlign.start,
                                                           maxLines: 30,
                                                           minLines: 15,
                                                         ),
@@ -678,148 +678,148 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                     },
                                                     child: Align(
                                                         child: enabledList
-                                                                .contains("B")
+                                                            .contains("B")
                                                             ? Icon(
-                                                                Icons.circle,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        45,
-                                                                        212,
-                                                                        114),
-                                                              )
+                                                          Icons.circle,
+                                                          color: Color
+                                                              .fromARGB(
+                                                              255,
+                                                              45,
+                                                              212,
+                                                              114),
+                                                        )
                                                             : Icon(
-                                                                Icons
-                                                                    .circle_outlined,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        122,
-                                                                        128,
-                                                                        125),
-                                                              )),
+                                                          Icons
+                                                              .circle_outlined,
+                                                          color: Color
+                                                              .fromARGB(
+                                                              255,
+                                                              122,
+                                                              128,
+                                                              125),
+                                                        )),
                                                   ),
                                                   Container(
                                                     width: 300,
                                                     height: 162.5,
                                                     decoration: BoxDecoration(
                                                       color: FlutterFlowTheme
-                                                              .of(context)
+                                                          .of(context)
                                                           .secondaryBackground,
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(10, 20,
-                                                                  35, 0),
+                                                      EdgeInsetsDirectional
+                                                          .fromSTEB(10, 20,
+                                                          35, 0),
                                                       child: Container(
                                                         width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
+                                                            context)
+                                                            .size
+                                                            .width *
                                                             0.8,
                                                         child: TextFormField(
                                                           controller: Option2,
                                                           obscureText: false,
                                                           decoration:
-                                                              InputDecoration(
+                                                          InputDecoration(
                                                             hintText: 'B',
                                                             hintStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyText2,
+                                                            FlutterFlowTheme.of(
+                                                                context)
+                                                                .bodyText2,
                                                             enabledBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: enabledList
-                                                                        .contains(
-                                                                            "B")
+                                                                    .contains(
+                                                                    "B")
                                                                     ? Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            45,
-                                                                            212,
-                                                                            114)
+                                                                    .fromARGB(
+                                                                    255,
+                                                                    45,
+                                                                    212,
+                                                                    114)
                                                                     : Color(
-                                                                        0xFFDBE2E7),
+                                                                    0xFFDBE2E7),
                                                                 width: 2,
                                                               ),
                                                               borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8),
                                                             ),
                                                             focusedBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: Color
                                                                     .fromARGB(
-                                                                        0,
-                                                                        0,
-                                                                        0,
-                                                                        0),
+                                                                    0,
+                                                                    0,
+                                                                    0,
+                                                                    0),
                                                                 width: 1,
                                                               ),
                                                               borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
+                                                              const BorderRadius
+                                                                  .only(
                                                                 topLeft: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                                 topRight: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                               ),
                                                             ),
                                                             errorBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: Color(
                                                                     0x00000000),
                                                                 width: 1,
                                                               ),
                                                               borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
+                                                              const BorderRadius
+                                                                  .only(
                                                                 topLeft: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                                 topRight: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                               ),
                                                             ),
                                                             focusedErrorBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: Color(
                                                                     0x00000000),
                                                                 width: 1,
                                                               ),
                                                               borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
+                                                              const BorderRadius
+                                                                  .only(
                                                                 topLeft: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                                 topRight: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                               ),
                                                             ),
                                                             filled: true,
                                                             fillColor:
-                                                                Colors.white,
+                                                            Colors.white,
                                                           ),
                                                           style: FlutterFlowTheme
-                                                                  .of(context)
+                                                              .of(context)
                                                               .bodyText1,
                                                           textAlign:
-                                                              TextAlign.start,
+                                                          TextAlign.start,
                                                           maxLines: 30,
                                                           minLines: 15,
                                                         ),
@@ -848,148 +848,148 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                     },
                                                     child: Align(
                                                         child: enabledList
-                                                                .contains("C")
+                                                            .contains("C")
                                                             ? Icon(
-                                                                Icons.circle,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        45,
-                                                                        212,
-                                                                        114),
-                                                              )
+                                                          Icons.circle,
+                                                          color: Color
+                                                              .fromARGB(
+                                                              255,
+                                                              45,
+                                                              212,
+                                                              114),
+                                                        )
                                                             : Icon(
-                                                                Icons
-                                                                    .circle_outlined,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        122,
-                                                                        128,
-                                                                        125),
-                                                              )),
+                                                          Icons
+                                                              .circle_outlined,
+                                                          color: Color
+                                                              .fromARGB(
+                                                              255,
+                                                              122,
+                                                              128,
+                                                              125),
+                                                        )),
                                                   ),
                                                   Container(
                                                     width: 300,
                                                     height: 162.5,
                                                     decoration: BoxDecoration(
                                                       color: FlutterFlowTheme
-                                                              .of(context)
+                                                          .of(context)
                                                           .secondaryBackground,
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(10, 10,
-                                                                  35, 0),
+                                                      EdgeInsetsDirectional
+                                                          .fromSTEB(10, 10,
+                                                          35, 0),
                                                       child: Container(
                                                         width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
+                                                            context)
+                                                            .size
+                                                            .width *
                                                             0.8,
                                                         child: TextFormField(
                                                           controller: Option3,
                                                           obscureText: false,
                                                           decoration:
-                                                              InputDecoration(
+                                                          InputDecoration(
                                                             hintText: 'C',
                                                             hintStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyText2,
+                                                            FlutterFlowTheme.of(
+                                                                context)
+                                                                .bodyText2,
                                                             enabledBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: enabledList
-                                                                        .contains(
-                                                                            "C")
+                                                                    .contains(
+                                                                    "C")
                                                                     ? Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            45,
-                                                                            212,
-                                                                            114)
+                                                                    .fromARGB(
+                                                                    255,
+                                                                    45,
+                                                                    212,
+                                                                    114)
                                                                     : Color(
-                                                                        0xFFDBE2E7),
+                                                                    0xFFDBE2E7),
                                                                 width: 2,
                                                               ),
                                                               borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8),
                                                             ),
                                                             focusedBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: Color
                                                                     .fromARGB(
-                                                                        0,
-                                                                        0,
-                                                                        0,
-                                                                        0),
+                                                                    0,
+                                                                    0,
+                                                                    0,
+                                                                    0),
                                                                 width: 1,
                                                               ),
                                                               borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
+                                                              const BorderRadius
+                                                                  .only(
                                                                 topLeft: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                                 topRight: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                               ),
                                                             ),
                                                             errorBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: Color(
                                                                     0x00000000),
                                                                 width: 1,
                                                               ),
                                                               borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
+                                                              const BorderRadius
+                                                                  .only(
                                                                 topLeft: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                                 topRight: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                               ),
                                                             ),
                                                             focusedErrorBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: Color(
                                                                     0x00000000),
                                                                 width: 1,
                                                               ),
                                                               borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
+                                                              const BorderRadius
+                                                                  .only(
                                                                 topLeft: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                                 topRight: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                               ),
                                                             ),
                                                             filled: true,
                                                             fillColor:
-                                                                Colors.white,
+                                                            Colors.white,
                                                           ),
                                                           style: FlutterFlowTheme
-                                                                  .of(context)
+                                                              .of(context)
                                                               .bodyText1,
                                                           textAlign:
-                                                              TextAlign.start,
+                                                          TextAlign.start,
                                                           maxLines: 30,
                                                           minLines: 15,
                                                         ),
@@ -1014,148 +1014,148 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                     },
                                                     child: Align(
                                                         child: enabledList
-                                                                .contains("D")
+                                                            .contains("D")
                                                             ? Icon(
-                                                                Icons.circle,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        45,
-                                                                        212,
-                                                                        114),
-                                                              )
+                                                          Icons.circle,
+                                                          color: Color
+                                                              .fromARGB(
+                                                              255,
+                                                              45,
+                                                              212,
+                                                              114),
+                                                        )
                                                             : Icon(
-                                                                Icons
-                                                                    .circle_outlined,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        122,
-                                                                        128,
-                                                                        125),
-                                                              )),
+                                                          Icons
+                                                              .circle_outlined,
+                                                          color: Color
+                                                              .fromARGB(
+                                                              255,
+                                                              122,
+                                                              128,
+                                                              125),
+                                                        )),
                                                   ),
                                                   Container(
                                                     width: 300,
                                                     height: 162.5,
                                                     decoration: BoxDecoration(
                                                       color: FlutterFlowTheme
-                                                              .of(context)
+                                                          .of(context)
                                                           .secondaryBackground,
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(10, 20,
-                                                                  35, 0),
+                                                      EdgeInsetsDirectional
+                                                          .fromSTEB(10, 20,
+                                                          35, 0),
                                                       child: Container(
                                                         width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
+                                                            context)
+                                                            .size
+                                                            .width *
                                                             0.8,
                                                         child: TextFormField(
                                                           controller: Option4,
                                                           obscureText: false,
                                                           decoration:
-                                                              InputDecoration(
+                                                          InputDecoration(
                                                             hintText: 'D',
                                                             hintStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyText2,
+                                                            FlutterFlowTheme.of(
+                                                                context)
+                                                                .bodyText2,
                                                             enabledBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: enabledList
-                                                                        .contains(
-                                                                            "D")
+                                                                    .contains(
+                                                                    "D")
                                                                     ? Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            45,
-                                                                            212,
-                                                                            114)
+                                                                    .fromARGB(
+                                                                    255,
+                                                                    45,
+                                                                    212,
+                                                                    114)
                                                                     : Color(
-                                                                        0xFFDBE2E7),
+                                                                    0xFFDBE2E7),
                                                                 width: 2,
                                                               ),
                                                               borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8),
                                                             ),
                                                             focusedBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: Color
                                                                     .fromARGB(
-                                                                        0,
-                                                                        0,
-                                                                        0,
-                                                                        0),
+                                                                    0,
+                                                                    0,
+                                                                    0,
+                                                                    0),
                                                                 width: 1,
                                                               ),
                                                               borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
+                                                              const BorderRadius
+                                                                  .only(
                                                                 topLeft: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                                 topRight: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                               ),
                                                             ),
                                                             errorBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: Color(
                                                                     0x00000000),
                                                                 width: 1,
                                                               ),
                                                               borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
+                                                              const BorderRadius
+                                                                  .only(
                                                                 topLeft: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                                 topRight: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                               ),
                                                             ),
                                                             focusedErrorBorder:
-                                                                OutlineInputBorder(
+                                                            OutlineInputBorder(
                                                               borderSide:
-                                                                  BorderSide(
+                                                              BorderSide(
                                                                 color: Color(
                                                                     0x00000000),
                                                                 width: 1,
                                                               ),
                                                               borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
+                                                              const BorderRadius
+                                                                  .only(
                                                                 topLeft: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                                 topRight: Radius
                                                                     .circular(
-                                                                        4.0),
+                                                                    4.0),
                                                               ),
                                                             ),
                                                             filled: true,
                                                             fillColor:
-                                                                Colors.white,
+                                                            Colors.white,
                                                           ),
                                                           style: FlutterFlowTheme
-                                                                  .of(context)
+                                                              .of(context)
                                                               .bodyText1,
                                                           textAlign:
-                                                              TextAlign.start,
+                                                          TextAlign.start,
                                                           maxLines: 30,
                                                           minLines: 15,
                                                         ),
@@ -1191,8 +1191,8 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                               height: 325,
                                               decoration: BoxDecoration(
                                                 color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
+                                                FlutterFlowTheme.of(context)
+                                                    .secondaryBackground,
                                               ),
                                               child: Padding(
                                                 padding: EdgeInsetsDirectional
@@ -1202,84 +1202,84 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                   height: 325,
                                                   child: TextFormField(
                                                     controller:
-                                                        SolutionController,
+                                                    SolutionController,
                                                     obscureText: false,
                                                     decoration: InputDecoration(
                                                       hintText: 'Solution',
                                                       hintStyle:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyText2,
+                                                      FlutterFlowTheme.of(
+                                                          context)
+                                                          .bodyText2,
                                                       enabledBorder:
-                                                          OutlineInputBorder(
+                                                      OutlineInputBorder(
                                                         borderSide: BorderSide(
                                                           color:
-                                                              Color(0xFFDBE2E7),
+                                                          Color(0xFFDBE2E7),
                                                           width: 2,
                                                         ),
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
+                                                        BorderRadius
+                                                            .circular(8),
                                                       ),
                                                       focusedBorder:
-                                                          OutlineInputBorder(
+                                                      OutlineInputBorder(
                                                         borderSide: BorderSide(
                                                           color: Color.fromARGB(
                                                               0, 0, 0, 0),
                                                           width: 1,
                                                         ),
                                                         borderRadius:
-                                                            const BorderRadius
-                                                                .only(
+                                                        const BorderRadius
+                                                            .only(
                                                           topLeft:
-                                                              Radius.circular(
-                                                                  4.0),
+                                                          Radius.circular(
+                                                              4.0),
                                                           topRight:
-                                                              Radius.circular(
-                                                                  4.0),
+                                                          Radius.circular(
+                                                              4.0),
                                                         ),
                                                       ),
                                                       errorBorder:
-                                                          OutlineInputBorder(
+                                                      OutlineInputBorder(
                                                         borderSide: BorderSide(
                                                           color:
-                                                              Color(0x00000000),
+                                                          Color(0x00000000),
                                                           width: 1,
                                                         ),
                                                         borderRadius:
-                                                            const BorderRadius
-                                                                .only(
+                                                        const BorderRadius
+                                                            .only(
                                                           topLeft:
-                                                              Radius.circular(
-                                                                  4.0),
+                                                          Radius.circular(
+                                                              4.0),
                                                           topRight:
-                                                              Radius.circular(
-                                                                  4.0),
+                                                          Radius.circular(
+                                                              4.0),
                                                         ),
                                                       ),
                                                       focusedErrorBorder:
-                                                          OutlineInputBorder(
+                                                      OutlineInputBorder(
                                                         borderSide: BorderSide(
                                                           color:
-                                                              Color(0x00000000),
+                                                          Color(0x00000000),
                                                           width: 1,
                                                         ),
                                                         borderRadius:
-                                                            const BorderRadius
-                                                                .only(
+                                                        const BorderRadius
+                                                            .only(
                                                           topLeft:
-                                                              Radius.circular(
-                                                                  4.0),
+                                                          Radius.circular(
+                                                              4.0),
                                                           topRight:
-                                                              Radius.circular(
-                                                                  4.0),
+                                                          Radius.circular(
+                                                              4.0),
                                                         ),
                                                       ),
                                                       filled: true,
                                                       fillColor: Colors.white,
                                                     ),
                                                     style: FlutterFlowTheme.of(
-                                                            context)
+                                                        context)
                                                         .bodyText1,
                                                     textAlign: TextAlign.start,
                                                     maxLines: 30,
@@ -1304,65 +1304,65 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                               children: [
                                 showupdatebutton
                                     ? Expanded(
-                                        child: Align(
-                                          alignment: Alignment.center,
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    90, 0, 0, 0),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                questionslist[tempquiz] = {
-                                                  'questionNumber':
-                                                      questionNumber?.text,
-                                                  'question':
-                                                      questioncontroller?.text,
-                                                  'options': {
-                                                    'A': Option1?.text,
-                                                    'B': Option2?.text,
-                                                    'C': Option3?.text,
-                                                    'D': Option4?.text,
-                                                  },
-                                                  'solution':
-                                                      SolutionController?.text,
-                                                  'answer':
-                                                      AnswerController?.text,
-                                                  'answerIndex':
-                                                      AnswerIndexController
-                                                          ?.text,
-                                                };
-                                              },
-                                              child: Container(
-                                                width: 170,
-                                                height: 60,
-                                                decoration: BoxDecoration(
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .primaryColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: Align(
-                                                  alignment:
-                                                      AlignmentDirectional(
-                                                          0, 0),
-                                                  child: Text(
-                                                    'Update Question',
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyText1
-                                                        .override(
-                                                          fontFamily: 'Poppins',
-                                                          color: Colors.white,
-                                                          fontSize: 16,
-                                                        ),
-                                                  ),
-                                                ),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Padding(
+                                      padding:
+                                      EdgeInsetsDirectional.fromSTEB(
+                                          90, 0, 0, 0),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          questionslist[tempquiz] = {
+                                            'questionNumber':
+                                            questionNumber?.text,
+                                            'question':
+                                            questioncontroller?.text,
+                                            'options': {
+                                              'A': Option1?.text,
+                                              'B': Option2?.text,
+                                              'C': Option3?.text,
+                                              'D': Option4?.text,
+                                            },
+                                            'solution':
+                                            SolutionController?.text,
+                                            'answer':
+                                            AnswerController?.text,
+                                            'answerIndex':
+                                            AnswerIndexController
+                                                ?.text,
+                                          };
+                                        },
+                                        child: Container(
+                                          width: 170,
+                                          height: 60,
+                                          decoration: BoxDecoration(
+                                            color: FlutterFlowTheme.of(
+                                                context)
+                                                .primaryColor,
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+                                          ),
+                                          child: Align(
+                                            alignment:
+                                            AlignmentDirectional(
+                                                0, 0),
+                                            child: Text(
+                                              'Update Question',
+                                              style: FlutterFlowTheme.of(
+                                                  context)
+                                                  .bodyText1
+                                                  .override(
+                                                fontFamily: 'Poppins',
+                                                color: Colors.white,
+                                                fontSize: 16,
                                               ),
                                             ),
                                           ),
                                         ),
-                                      )
+                                      ),
+                                    ),
+                                  ),
+                                )
                                     : SizedBox(),
                                 Expanded(
                                   child: Align(
@@ -1370,9 +1370,9 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                     child: Padding(
                                       padding: showupdatebutton
                                           ? EdgeInsetsDirectional.fromSTEB(
-                                              0, 0, 0, 0)
+                                          0, 0, 0, 0)
                                           : EdgeInsetsDirectional.fromSTEB(
-                                              90, 0, 0, 0),
+                                          90, 0, 0, 0),
                                       child: GestureDetector(
                                         onTap: () {
                                           print(enabledList);
@@ -1397,7 +1397,7 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                           print("jjj${enabledList}");
                                           questionslist.add({
                                             'question':
-                                                questioncontroller?.text,
+                                            questioncontroller?.text,
                                             'options': {
                                               'A': Option1?.text,
                                               'B': Option2?.text,
@@ -1405,7 +1405,7 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                               'D': Option4?.text,
                                             },
                                             'solution':
-                                                SolutionController?.text,
+                                            SolutionController?.text,
                                             'answer': answersList,
                                             'answerIndex': answerindexlist,
                                           });
@@ -1435,21 +1435,21 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                             color: FlutterFlowTheme.of(context)
                                                 .primaryColor,
                                             borderRadius:
-                                                BorderRadius.circular(10),
+                                            BorderRadius.circular(10),
                                           ),
                                           child: Align(
                                             alignment:
-                                                AlignmentDirectional(0, 0),
+                                            AlignmentDirectional(0, 0),
                                             child: Text(
                                               'Add Question',
                                               style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyText1
-                                                      .override(
-                                                        fontFamily: 'Poppins',
-                                                        color: Colors.white,
-                                                        fontSize: 16,
-                                                      ),
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyText1
+                                                  .override(
+                                                fontFamily: 'Poppins',
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -1470,18 +1470,18 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                         height: 200,
                         decoration: BoxDecoration(
                           color:
-                              FlutterFlowTheme.of(context).secondaryBackground,
+                          FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Padding(
                               padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                              EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                MainAxisAlignment.spaceAround,
                                 children: [
                                   Expanded(
                                     child: Padding(
@@ -1498,23 +1498,23 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                           items: globals.courseList
                                               .map<DropdownMenuItem<String>>(
                                                   (value) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(
-                                                value,
-                                                style: FlutterFlowTheme.of(
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Text(
+                                                    value,
+                                                    style: FlutterFlowTheme.of(
                                                         context)
-                                                    .bodyText1
-                                                    .override(
+                                                        .bodyText1
+                                                        .override(
                                                       fontFamily: 'Lexend Deca',
                                                       color: Color(0xFF57636C),
                                                       fontSize: 14,
                                                       fontWeight:
-                                                          FontWeight.normal,
+                                                      FontWeight.normal,
                                                     ),
-                                              ),
-                                            );
-                                          }).toList(),
+                                                  ),
+                                                );
+                                              }).toList(),
                                           // Step 5.
                                           onChanged: (String? newValue) {
                                             setState(() {
@@ -1531,52 +1531,52 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                   ),
                                   tempmodulelist.length != 1
                                       ? Expanded(
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    10, 0, 0, 0),
-                                            child: DropdownButton<String>(
-                                              underline: Container(),
-                                              isExpanded: true,
-                                              // Step 3.
-                                              value: tempmodulename,
-                                              // Step 4.
+                                    child: Padding(
+                                      padding:
+                                      EdgeInsetsDirectional.fromSTEB(
+                                          10, 0, 0, 0),
+                                      child: DropdownButton<String>(
+                                        underline: Container(),
+                                        isExpanded: true,
+                                        // Step 3.
+                                        value: tempmodulename,
+                                        // Step 4.
 
-                                              items: tempmodulelist.map<
-                                                      DropdownMenuItem<String>>(
-                                                  (value) {
-                                                return DropdownMenuItem<String>(
-                                                  value: value,
-                                                  child: Text(
-                                                    value,
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyText1
-                                                        .override(
-                                                          fontFamily:
-                                                              'Lexend Deca',
-                                                          color:
-                                                              Color(0xFF57636C),
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                        ),
+                                        items: tempmodulelist.map<
+                                            DropdownMenuItem<String>>(
+                                                (value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(
+                                                  value,
+                                                  style: FlutterFlowTheme.of(
+                                                      context)
+                                                      .bodyText1
+                                                      .override(
+                                                    fontFamily:
+                                                    'Lexend Deca',
+                                                    color:
+                                                    Color(0xFF57636C),
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                    FontWeight.normal,
                                                   ),
-                                                );
-                                              }).toList(),
-                                              // Step 5.
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  tempmodulename = newValue!;
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                        )
+                                                ),
+                                              );
+                                            }).toList(),
+                                        // Step 5.
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            tempmodulename = newValue!;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  )
                                       : Container(
-                                          height: 0,
-                                          width: 0,
-                                        ),
+                                    height: 0,
+                                    width: 0,
+                                  ),
                                   Expanded(
                                     child: Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
@@ -1586,33 +1586,33 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                         obscureText: false,
                                         decoration: InputDecoration(
                                           labelStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyText1
-                                                  .override(
-                                                    fontFamily: 'Lexend Deca',
-                                                    color: Color(0xFF57636C),
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                  ),
+                                          FlutterFlowTheme.of(context)
+                                              .bodyText1
+                                              .override(
+                                            fontFamily: 'Lexend Deca',
+                                            color: Color(0xFF57636C),
+                                            fontSize: 14,
+                                            fontWeight:
+                                            FontWeight.normal,
+                                          ),
                                           hintText: 'Time',
                                           hintStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyText1
-                                                  .override(
-                                                    fontFamily: 'Lexend Deca',
-                                                    color: Color(0xFF57636C),
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                  ),
+                                          FlutterFlowTheme.of(context)
+                                              .bodyText1
+                                              .override(
+                                            fontFamily: 'Lexend Deca',
+                                            color: Color(0xFF57636C),
+                                            fontSize: 14,
+                                            fontWeight:
+                                            FontWeight.normal,
+                                          ),
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
                                               color: Color(0xFFDBE2E7),
                                               width: 2,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8),
+                                            BorderRadius.circular(8),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
@@ -1620,7 +1620,7 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                               width: 2,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8),
+                                            BorderRadius.circular(8),
                                           ),
                                           errorBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
@@ -1628,31 +1628,31 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                               width: 2,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8),
+                                            BorderRadius.circular(8),
                                           ),
                                           focusedErrorBorder:
-                                              OutlineInputBorder(
+                                          OutlineInputBorder(
                                             borderSide: BorderSide(
                                               color: Color(0x00000000),
                                               width: 2,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8),
+                                            BorderRadius.circular(8),
                                           ),
                                           filled: true,
                                           fillColor: Colors.white,
                                           contentPadding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24, 24, 20, 24),
+                                          EdgeInsetsDirectional.fromSTEB(
+                                              24, 24, 20, 24),
                                         ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyText1
                                             .override(
-                                              fontFamily: 'Lexend Deca',
-                                              color: Color(0xFF1D2429),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.normal,
-                                            ),
+                                          fontFamily: 'Lexend Deca',
+                                          color: Color(0xFF1D2429),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                        ),
                                         maxLines: null,
                                       ),
                                     ),
@@ -1666,33 +1666,33 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                         obscureText: false,
                                         decoration: InputDecoration(
                                           labelStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyText1
-                                                  .override(
-                                                    fontFamily: 'Lexend Deca',
-                                                    color: Color(0xFF57636C),
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                  ),
+                                          FlutterFlowTheme.of(context)
+                                              .bodyText1
+                                              .override(
+                                            fontFamily: 'Lexend Deca',
+                                            color: Color(0xFF57636C),
+                                            fontSize: 14,
+                                            fontWeight:
+                                            FontWeight.normal,
+                                          ),
                                           hintText: 'Negative marking',
                                           hintStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyText1
-                                                  .override(
-                                                    fontFamily: 'Lexend Deca',
-                                                    color: Color(0xFF57636C),
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                  ),
+                                          FlutterFlowTheme.of(context)
+                                              .bodyText1
+                                              .override(
+                                            fontFamily: 'Lexend Deca',
+                                            color: Color(0xFF57636C),
+                                            fontSize: 14,
+                                            fontWeight:
+                                            FontWeight.normal,
+                                          ),
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
                                               color: Color(0xFFDBE2E7),
                                               width: 2,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8),
+                                            BorderRadius.circular(8),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
@@ -1700,7 +1700,7 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                               width: 2,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8),
+                                            BorderRadius.circular(8),
                                           ),
                                           errorBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
@@ -1708,31 +1708,31 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                               width: 2,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8),
+                                            BorderRadius.circular(8),
                                           ),
                                           focusedErrorBorder:
-                                              OutlineInputBorder(
+                                          OutlineInputBorder(
                                             borderSide: BorderSide(
                                               color: Color(0x00000000),
                                               width: 2,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(8),
+                                            BorderRadius.circular(8),
                                           ),
                                           filled: true,
                                           fillColor: Colors.white,
                                           contentPadding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24, 24, 20, 24),
+                                          EdgeInsetsDirectional.fromSTEB(
+                                              24, 24, 20, 24),
                                         ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyText1
                                             .override(
-                                              fontFamily: 'Lexend Deca',
-                                              color: Color(0xFF1D2429),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.normal,
-                                            ),
+                                          fontFamily: 'Lexend Deca',
+                                          color: Color(0xFF1D2429),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                        ),
                                         maxLines: null,
                                       ),
                                     ),
@@ -1762,13 +1762,13 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                               FirebaseFirestore.instance
                                                   .collection("courses")
                                                   .where("name",
-                                                      isEqualTo: tempcoursename
-                                                          .toString())
+                                                  isEqualTo: tempcoursename
+                                                      .toString())
                                                   .get()
                                                   .then((value) {
                                                 coursedata = value.docs.first
-                                                        .data()['curriculum1']
-                                                    [tempcoursename.toString()];
+                                                    .data()['curriculum1']
+                                                [tempcoursename.toString()];
 
                                                 var curriculum1 = value
                                                     .docs.first
@@ -1790,15 +1790,15 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                           "courselevel",
                                                       "module": tempmodulename,
                                                       "negativemarking":
-                                                          NegativeMarkingController
-                                                              ?.text,
+                                                      NegativeMarkingController
+                                                          ?.text,
                                                       "questionbucket":
-                                                          questionslist,
+                                                      questionslist,
                                                       "quiztiming":
-                                                          timecontroller?.text,
+                                                      timecontroller?.text,
                                                       "type": enabledList
-                                                                  .length ==
-                                                              1
+                                                          .length ==
+                                                          1
                                                           ? "One Correct Option"
                                                           : "Multiple Correct Options",
                                                       "name": quiznameController
@@ -1913,8 +1913,8 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                         },
                                         child: Container(
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               0.9,
                                           height: 50,
                                           decoration: BoxDecoration(
@@ -1926,16 +1926,16 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                           ),
                                           child: Align(
                                             alignment:
-                                                AlignmentDirectional(0, 0),
+                                            AlignmentDirectional(0, 0),
                                             child: Text(
                                               'Upload Quiz',
                                               style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyText1
-                                                      .override(
-                                                        fontFamily: 'Poppins',
-                                                        color: Colors.white,
-                                                      ),
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyText1
+                                                  .override(
+                                                fontFamily: 'Poppins',
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
                                         ),

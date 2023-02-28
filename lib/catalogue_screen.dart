@@ -21,8 +21,9 @@ import 'Services/deeplink_service.dart';
 
 class CatelogueScreen extends StatefulWidget {
   final String? id;
+  final String? cID;
   final List<dynamic>? courses;
-  const CatelogueScreen({Key? key,  this.id, this.courses}) : super(key: key);
+  const CatelogueScreen({Key? key,  this.id, this.courses, this.cID}) : super(key: key);
   static ValueNotifier<String> coursePrice = ValueNotifier('');
   // static ValueNotifier<Map<String, dynamic>>? map = ValueNotifier({});
   static ValueNotifier<double> _currentPosition = ValueNotifier<double>(0.0);
@@ -198,6 +199,7 @@ class _CatelogueScreenState extends State<CatelogueScreen>
         map: courseMap,
         popBottomSheetAt: CatelogueScreen._closeBottomSheetAt,
         isItComboCourse: false,
+        cID: widget.cID!,
         // closeBottomSheetAt: closeBottomSheetAt(positionKey),
       ),
       backgroundColor: Colors.white,

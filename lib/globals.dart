@@ -14,6 +14,8 @@ const String loggedInKey = 'LoggedIn';
 String? moduleId;
 String? topicId;
 
+late String diurl;
+late String payurl;
 const mockUpHeight = 896;
 const mockUpWidth = 414;
 

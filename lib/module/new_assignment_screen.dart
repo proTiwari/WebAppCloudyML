@@ -75,30 +75,43 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
     }
   }
 
+  var user;
+
   void getModuleId() async {
     ref = await FirebaseFirestore.instance
         .collection('courses')
         .doc('lLorGjaJf2m6hTzCdIxU')
         .get();
+
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get().then((value) {
+          user = value.data()!['name'].toString();
+          print('this is email ${user.toString()}');
+    });
   }
+
+
 
   Future downloadFile(String fileUrl) async {
     FirebaseStorage _storage = FirebaseStorage.instance;
-
-    await _storage.ref('Assignments/${fileUrl}');
+    await _storage.ref('Assignments/${user.toString()}/${fileUrl}');
   }
 
   @override
   void initState() {
     super.initState();
-    print(widget.dataSetUrl);
     getModuleId();
   }
+
+
+
 
   Future submissionTask() async {
     try {
       var storageRef =
-      FirebaseStorage.instance.ref().child('Assignments').child(fileName!);
+      FirebaseStorage.instance.ref().child('Assignments').child('${user.toString()}').child(fileName!);
 
       var sentData = await _reference.collection('assignment').add({
         "email": FirebaseAuth.instance.currentUser?.email,
@@ -110,14 +123,15 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
         "note": noteText.text,
       });
 
+
       final UploadTask uploadTask = storageRef.putData(uploadedFile!);
 
       final TaskSnapshot downloadUrl = await uploadTask;
       final String fileURL = (await downloadUrl.ref.getDownloadURL());
       await sentData.update({"link": fileURL});
       print('Assignment file link is here: $fileURL');
-
       Fluttertoast.showToast(msg: "Your file has been uploaded successfully");
+
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
     }
@@ -420,12 +434,16 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                               ElevatedButton(
                                 onPressed: () async {
                                   if (uploadedFile == null) {
-                                    Fluttertoast.showToast(
-                                        msg: 'Please upload a file');
+                                    Fluttertoast.showToast(msg: 'Please upload a file');
                                   } else {
+
                                     await submissionTask();
-                                    noteText.clear();
-                                    uploadedFile!.clear();
+
+                                    setState(() {
+                                      noteText.clear();
+                                      uploadedFile = null;
+                                    });
+
                                   }
                                 },
                                 child: Text("Submit"),

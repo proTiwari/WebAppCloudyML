@@ -36,9 +36,27 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
   bool _passwordVisible = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool loading = false;
+
+
+  void url() async{
+    diurl= await FirebaseFirestore.instance.collection("Notice")
+        .doc("7A85zuoLi4YQpbXlbOAh_redirect").get().then((value) {print(value.data()!.values.first);
+    return value.data()!.values.first;} );
+
+    print("url is=====$diurl");
+
+    payurl= await FirebaseFirestore.instance.collection("Notice")
+        .doc("NBrEm6KGry8gxOJJkegG_redirect_pay").get().then((value) {print(value.data()!.values.first);
+    return value.data()!.values.first;} );
+
+    print("url is=====$payurl");
+
+  }
+
   @override
   void initState() {
     super.initState();
+    url();
     print("rrrrrrrrrrrrrrrrr: ${widget.user}");
     print(globals.action);
   }
@@ -586,14 +604,45 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                             const Duration(
                                                                 seconds: 2),
                                                             () {
-                                                          Navigator.of(
-                                                                  context)
-                                                              .pushReplacement(
-                                                            MaterialPageRoute(
-                                                              builder: (_) =>
-                                                                  HomePage(),
-                                                            ),
-                                                          );
+                                                              if (diurl=='/featuredCourses') {
+                                                                print("i am in otp if");
+
+
+                                                                final id = "0";
+                                                                final cID = "aEGX6kMfHzQrVgP3WCwU";
+                                                                final courseName ="Data Science & Analytics Placement Assurance Program";
+                                                                final courseP = "9999";
+                                                                GoRouter.of(context).goNamed(
+                                                                    'featuredCourses',
+                                                                    queryParams: {
+                                                                      'cID': cID,
+                                                                      'courseName': courseName,
+                                                                      'id': id,
+                                                                      'coursePrice': courseP});
+
+                                                              }
+                                                              else if(payurl=='/comboPaymentPortal')
+                                                              {
+                                                                final cID = "aEGX6kMfHzQrVgP3WCwU";
+                                                                GoRouter.of(context).go(
+                                                                  '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
+                                                                  // queryParams: {
+                                                                  //   'cID': cID,
+                                                                  //   }
+                                                                );
+                                                              }
+                                                              else {
+                                                                Navigator.of(context)
+                                                                    .push(MaterialPageRoute(builder: (_) => HomePage()));
+                                                              }
+                                                          // Navigator.of(
+                                                          //         context)
+                                                          //     .pushReplacement(
+                                                          //   MaterialPageRoute(
+                                                          //     builder: (_) =>
+                                                          //         HomePage(),
+                                                          //   ),
+                                                          // );
                                                           saveLoginState(context);
                                                           setState(() {
                                                             loading = false;
@@ -851,13 +900,44 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                   // } else {
                                                   //adding condition for handling otp verification error
                                                   if (otpverified) {
-                                                    Navigator.of(context)
-                                                        .pushReplacement(
-                                                      MaterialPageRoute(
-                                                        builder: (_) =>
-                                                            HomePage(),
-                                                      ),
-                                                    );
+                                                    // Navigator.of(context)
+                                                    //     .pushReplacement(
+                                                    //   MaterialPageRoute(
+                                                    //     builder: (_) =>
+                                                    //         HomePage(),
+                                                    //   ),
+                                                    // );
+                                                    if (diurl=='/featuredCourses') {
+                                                      print("i am in otp if");
+
+
+                                                      final id = "0";
+                                                      final cID = "aEGX6kMfHzQrVgP3WCwU";
+                                                      final courseName ="Data Science & Analytics Placement Assurance Program";
+                                                      final courseP = "9999";
+                                                      GoRouter.of(context).goNamed(
+                                                          'featuredCourses',
+                                                          queryParams: {
+                                                            'cID': cID,
+                                                            'courseName': courseName,
+                                                            'id': id,
+                                                            'coursePrice': courseP});
+
+                                                    }
+                                                    else if(payurl=='/comboPaymentPortal')
+                                                    {
+                                                      final cID = "aEGX6kMfHzQrVgP3WCwU";
+                                                      GoRouter.of(context).go(
+                                                        '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
+                                                        // queryParams: {
+                                                        //   'cID': cID,
+                                                        //   }
+                                                      );
+                                                    }
+                                                    else {
+                                                      Navigator.of(context)
+                                                          .push(MaterialPageRoute(builder: (_) => HomePage()));
+                                                    }
                                                     saveLoginState(context);
                                                     // }
                                                   }
@@ -1408,13 +1488,44 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                 Future.delayed(
                                                     const Duration(
                                                         seconds: 2), () {
-                                                  Navigator.of(context)
-                                                      .pushReplacement(
-                                                    MaterialPageRoute(
-                                                      builder: (_) =>
-                                                          HomePage(),
-                                                    ),
-                                                  );
+                                                  if (diurl=='/featuredCourses') {
+                                                    print("i am in otp if");
+
+
+                                                    final id = "0";
+                                                    final cID = "aEGX6kMfHzQrVgP3WCwU";
+                                                    final courseName ="Data Science & Analytics Placement Assurance Program";
+                                                    final courseP = "9999";
+                                                    GoRouter.of(context).goNamed(
+                                                        'featuredCourses',
+                                                        queryParams: {
+                                                          'cID': cID,
+                                                          'courseName': courseName,
+                                                          'id': id,
+                                                          'coursePrice': courseP});
+
+                                                  }
+                                                  else if(payurl=='/comboPaymentPortal')
+                                                  {
+                                                    final cID = "aEGX6kMfHzQrVgP3WCwU";
+                                                    GoRouter.of(context).go(
+                                                      '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
+                                                      // queryParams: {
+                                                      //   'cID': cID,
+                                                      //   }
+                                                    );
+                                                  }
+                                                  else {
+                                                    Navigator.of(context)
+                                                        .push(MaterialPageRoute(builder: (_) => HomePage()));
+                                                  }
+                                                  // Navigator.of(context)
+                                                  //     .pushReplacement(
+                                                  //   MaterialPageRoute(
+                                                  //     builder: (_) =>
+                                                  //         HomePage(),
+                                                  //   ),
+                                                  // );
                                                   saveLoginState(context);
                                                   setState(() {
                                                     loading = false;
@@ -1668,7 +1779,38 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                             //     builder: (_) => HomePage(),
                                             //   ),
                                             // );
-                                            GoRouter.of(context).pushReplacementNamed('home');
+                                            if (diurl=='/featuredCourses') {
+                                              print("i am in otp if");
+
+
+                                              final id = "0";
+                                              final cID = "aEGX6kMfHzQrVgP3WCwU";
+                                              final courseName ="Data Science & Analytics Placement Assurance Program";
+                                              final courseP = "9999";
+                                              GoRouter.of(context).goNamed(
+                                                  'featuredCourses',
+                                                  queryParams: {
+                                                    'cID': cID,
+                                                    'courseName': courseName,
+                                                    'id': id,
+                                                    'coursePrice': courseP});
+
+                                            }
+                                            else if(payurl=='/comboPaymentPortal')
+                                            {
+                                              final cID = "aEGX6kMfHzQrVgP3WCwU";
+                                              GoRouter.of(context).go(
+                                                '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
+                                                // queryParams: {
+                                                //   'cID': cID,
+                                                //   }
+                                              );
+                                            }
+                                            else {
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(builder: (_) => HomePage()));
+                                            }
+                                            // GoRouter.of(context).pushReplacementNamed('home');
                                             saveLoginState(context);
                                             // }
                                           }
