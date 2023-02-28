@@ -717,6 +717,157 @@ SingleChildScrollView safearea1(BuildContext context) {
   );
 }
 
+final buttonTextStyle = TextStyle(
+  color: Colors.white,
+  fontWeight: FontWeight.w500,
+  fontSize: 16,
+  letterSpacing: 1.1,
+);
+
+var textStyle = TextStyle(
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+  fontSize: 14,
+  fontFamily: "Semibold",
+);
+
+String numberOfLearners = '12000+ learners';
+var items = ['My Courses','My Profile', 'Logout'];
+String dropdownValue = '';
+
+Row customMenuBar(BuildContext context) {
+  void saveLoginOutState(BuildContext context) {
+    Provider.of<LoginState>(context, listen: false).loggedIn = false;
+  }
+
+  final screenHeight = MediaQuery.of(context).size.height;
+  final screenWidth = MediaQuery.of(context).size.width;
+  var verticalScale = screenHeight / mockUpHeight;
+  var horizontalScale = screenWidth / mockUpWidth;
+  return Row(
+    children: [
+      // IconButton(
+      //     onPressed: () {
+      //       Scaffold.of(context).openDrawer();
+      //     },
+      //     icon: Icon(
+      //       Icons.menu,
+      //       color: Colors.white,
+      //       size: 30,
+      //     )),
+      SizedBox(
+        width: horizontalScale * 15,
+      ),
+      Image.asset(
+        "assets/logo2.png",
+        width: 50,
+        height: 40,
+      ),
+      Text(
+        "CloudyML",
+        style: textStyle,
+      ),
+      Spacer(),
+      TextButton(
+          onPressed: () {
+            GoRouter.of(context).pushNamed('home');
+          },
+          child: Text(
+            'Home',
+            style: buttonTextStyle,
+          )),
+      SizedBox(
+        width: horizontalScale * 15,
+      ),
+      TextButton(
+          onPressed: () {
+            GoRouter.of(context).pushNamed('store');
+          },
+          child: Text(
+              'Store',
+              style: buttonTextStyle
+          )),
+      SizedBox(
+        width: horizontalScale * 15,
+      ),
+      TextButton(
+          onPressed: () {
+            GoRouter.of(context).pushNamed('reviews');
+          },
+          child: Text(
+            'Reviews',
+            style:  buttonTextStyle,
+          )),
+      SizedBox(
+        width: horizontalScale * 15,
+      ),
+      DropdownButton(
+        underline: Container(),
+        hint: Text('Profile',
+          style: buttonTextStyle,),
+        enableFeedback: false,
+        isExpanded: false,
+        isDense: false,
+        borderRadius: BorderRadius.circular(10),
+        dropdownColor: Colors.deepPurple,
+        // value: dropdownValue,
+        icon: Icon(Icons.arrow_drop_down, color: Colors.white,),
+        items: items.map((String items) {
+          return DropdownMenuItem(
+              value: items,
+              child: Text(items,
+                style: buttonTextStyle,
+              ));
+        }).toList(),
+        onChanged: (String? value) {
+          if (value != dropdownValue) {
+            switch (value) {
+              case 'My Courses':
+                GoRouter.of(context).pushNamed('myCourses');
+                break;
+              case 'My Profile':
+                GoRouter.of(context).pushNamed('myAccount');
+                break;
+              case 'Logout':
+                logOut(context);
+                saveLoginOutState(context);
+                GoRouter.of(context).pushReplacement('/login');
+                break;
+            }
+          }
+          dropdownValue = value!;
+        },
+      ),
+      SizedBox(width: 15 * horizontalScale,),
+      // TextButton(
+      //     onPressed: () {
+      //       logOut(context);
+      //       saveLoginOutState(context);
+      //       GoRouter.of(context).pushReplacement('/login');
+      //     },
+      //     child: Text(
+      //       'Logout',
+      //       style:  buttonTextStyle,
+      //     )),
+
+      // ElevatedButton(
+      //     onPressed: () {
+  // logOut(context);
+  // saveLoginOutState(context);
+  // GoRouter.of(context).pushReplacement('/login');
+      //     },
+      //     style: ElevatedButton.styleFrom(
+      //       backgroundColor: HexColor("8346E1"),
+      //       shape: RoundedRectangleBorder(
+      //         borderRadius:
+      //         BorderRadius.circular(50),
+      //       ),
+      //     ),
+      //     child: Text("Log out",
+      //         style: textStyle)),
+    ],
+  );
+}
 
 
 Drawer customDrawer(BuildContext context) {

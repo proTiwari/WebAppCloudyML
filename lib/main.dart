@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:core';
+import 'dart:core';
+import 'dart:core';
 import 'dart:html' as html;
 import 'dart:js';
 import 'dart:ui';
@@ -120,32 +123,33 @@ Future<void> main() async {
   }
 
   print('this is url ${Uri.base.path}');
-  
+
 
   if(Uri.base.path == '/comboPaymentPortal') {
     print('abc home');
 
     final url=Uri.base.path;
     FirebaseFirestore.instance.collection("Notice")
-    .doc("NBrEm6KGry8gxOJJkegG_redirect_pay").set({
-       'url' : url });
-    // navigatorKey.currentState?.pushNamed('/login');
-  
+        .doc("NBrEm6KGry8gxOJJkegG_redirect_pay").set({
+      'url' : url });
+// navigatorKey.currentState?.pushNamed('/login');
+
     print('pushed');
-  } 
+  }
   else if(Uri.base.path == '/featuredCourses'){
 
     final url=Uri.base.path;
     FirebaseFirestore.instance.collection("Notice")
-    .doc("7A85zuoLi4YQpbXlbOAh_redirect").set({
-       'url' : url });
-    // navigatorKey.currentState?.pushNamed('/login');
-  
+        .doc("7A85zuoLi4YQpbXlbOAh_redirect").set({
+      'url' : url });
+// navigatorKey.currentState?.pushNamed('/login');
+
     print('pushed');
 
   }
 
 }
+
 
 
 class MyApp extends StatefulWidget {

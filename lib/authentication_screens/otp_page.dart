@@ -81,6 +81,21 @@ class _OtpPageState extends State<OtpPage> {
     );
   }
 
+  void url() async{
+    diurl= await FirebaseFirestore.instance.collection("Notice")
+        .doc("7A85zuoLi4YQpbXlbOAh_redirect").get().then((value) {print(value.data()!.values.first);
+    return value.data()!.values.first;} );
+
+    print("url is=====$diurl");
+
+    payurl= await FirebaseFirestore.instance.collection("Notice")
+        .doc("NBrEm6KGry8gxOJJkegG_redirect_pay").get().then((value) {print(value.data()!.values.first);
+    return value.data()!.values.first;} );
+
+    print("url is=====$payurl");
+
+  }
+
   Widget _otpTextField(BuildContext context, bool autoFocus, int position) {
     return Container(
       height: MediaQuery.of(context).size.shortestSide * 0.04,
@@ -148,28 +163,13 @@ class _OtpPageState extends State<OtpPage> {
       );
     }
   }
-
-    
-    void url () async{
-        diurl= await FirebaseFirestore.instance.collection("Notice")
-    .doc("7A85zuoLi4YQpbXlbOAh_redirect").get().then((value) {print(value.data()!.values.first);
-    return value.data()!.values.first;} );
-
-    print("url is=====$diurl");
-
-    payurl= await FirebaseFirestore.instance.collection("Notice")
-    .doc("NBrEm6KGry8gxOJJkegG_redirect_pay").get().then((value) {print(value.data()!.values.first);
-    return value.data()!.values.first;} );
-
-    print("url is=====$payurl");
-
-    }
     
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    url();
     GRecaptchaV3.hideBadge();
      url();
    
@@ -658,34 +658,41 @@ class _OtpPageState extends State<OtpPage> {
                 if (diurl=='/featuredCourses') {
                   print("i am in otp if");
 
-     
-                                    final id = "0";
-                                    final cID = "aEGX6kMfHzQrVgP3WCwU";
-                                    final courseName ="Data Science & Analytics Placement Assurance Program";
-                                    final courseP = "9999";
-                                    GoRouter.of(context).goNamed(
-                                        'featuredCourses',
-                                        queryParams: {
-                                          'cID': cID,
-                                          'courseName': courseName,
-                                          'id': id,
-                                          'coursePrice': courseP});
-    
+
+                  final id = "0";
+                  final cID = "aEGX6kMfHzQrVgP3WCwU";
+                  final courseName ="Data Science & Analytics Placement Assurance Program";
+                  final courseP = "9999";
+                  GoRouter.of(context).goNamed(
+                      'featuredCourses',
+                      queryParams: {
+                        'cID': cID,
+                        'courseName': courseName,
+                        'id': id,
+                        'coursePrice': courseP});
+
                 }
-                 else if(payurl=='/comboPaymentPortal')
+                else if(payurl=='/comboPaymentPortal')
                 {
-                    final cID = "aEGX6kMfHzQrVgP3WCwU";
-                   GoRouter.of(context).go(
-                                        '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
-                                        // queryParams: {
-                                        //   'cID': cID,
-                                        //   }
-                                          );
+                  final cID = "aEGX6kMfHzQrVgP3WCwU";
+                  GoRouter.of(context).go(
+                    '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
+                    // queryParams: {
+                    //   'cID': cID,
+                    //   }
+                  );
                 }
                 else {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (_) => HomePage()));
+
+                      //  GoRouter.of(context).go('/home');
                 }
+
+                  //
+                  // Navigator.of(context)
+                  //     .push(MaterialPageRoute(builder: (_) => HomePage()));
+                  //
 
 
                 // (Route<dynamic> route) => false;

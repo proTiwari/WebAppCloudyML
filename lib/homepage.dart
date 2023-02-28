@@ -719,7 +719,7 @@ class _HomeState extends State<Home> {
                                     onPressed: () {
                                       logOut(context);
                                       saveLoginOutState(context);
-                                      GoRouter.of(context).pushReplacement('/login');
+                                      GoRouter.of(context).go('/login');
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: HexColor("8346E1"),
@@ -982,7 +982,8 @@ class _HomeState extends State<Home> {
                                                     final id = index.toString();
                                                     final courseName = course[index].courseName;
 
-                                                    GoRouter.of(context).pushNamed('comboCourse', queryParams: {'id': id, 'courseName': courseName});
+                                                    GoRouter.of(context).pushNamed('comboCourse',
+                                                        queryParams: {'id': id, 'courseName': courseName});
                                                     // Navigator.push(
                                                     //   context,
                                                     //   PageTransition(
@@ -1830,7 +1831,9 @@ class _HomeState extends State<Home> {
 
                                                                   } else {
                                                                     final id = index.toString();
-                                                                    GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                                                                    GoRouter.of(context).pushNamed('catalogue',
+                                                                        queryParams: {
+                                                                      'id': id,});
                                                                   }
                                                                 },
                                                                 style: ElevatedButton

@@ -159,7 +159,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
         map: comboMap,
         popBottomSheetAt: ComboStore._closeBottomSheetAtInCombo,
         isItComboCourse: true,
-        cID: widget.cID,
+        cID: courseId!,
       ),
       body: Stack(
         children: [
@@ -465,7 +465,7 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                           InkWell(
                             onTap: () {
 
-                              GoRouter.of(context).pushNamed('comboPaymentPortal',
+                              GoRouter.of(context).pushNamed('paymentPortal',
                                   queryParams: {
                                     'cID': courseId});
 
