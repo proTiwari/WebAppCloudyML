@@ -3072,7 +3072,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                       Container(
                                         child: ExpansionTile(
                                           title: Text(
-                                            'Quizs',
+                                            'Quizes',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),
