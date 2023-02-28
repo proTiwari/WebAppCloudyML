@@ -419,8 +419,6 @@ class _VideoScreenState extends State<VideoScreen> {
   List<dynamic>? _getVideoPercentageList;
   String? CourseID;
 
-
-
   getProgressData() async {
     await FirebaseFirestore.instance
         .collection("courseprogress")
@@ -434,11 +432,10 @@ class _VideoScreenState extends State<VideoScreen> {
           .collection("courses")
           .doc(widget.cID)
           .get();
-      CourseID  = await res.get("id");
+      CourseID = await res.get("id");
       print('course id - $CourseID ');
 
       var list = await res.get("curriculum1")[widget.courseName];
-
 
       // if (value.exists && value.data()![CourseID]!=null)
       // {
@@ -655,16 +652,14 @@ class _VideoScreenState extends State<VideoScreen> {
       //   _initialVideoPercentageList[widget.courseName.toString()];
       // }
 
-      if(value.exists)
-      {
-        if(value.data()![CourseID]!=null)
-        {
+      if (value.exists) {
+        if (value.data()![CourseID] != null) {
           print("List-----$list");
-          for(int i=0;i<list.length;i++)
-          {
-            for(int j=0;j<list[i]["videos"].length;j++)
-            {
-              list[i]["videos"][j]["type"]=="video"?null:list[i]["videos"].removeAt(j);
+          for (int i = 0; i < list.length; i++) {
+            for (int j = 0; j < list[i]["videos"].length; j++) {
+              list[i]["videos"][j]["type"] == "video"
+                  ? null
+                  : list[i]["videos"].removeAt(j);
             }
           }
           list.sort((a, b) {
@@ -678,13 +673,10 @@ class _VideoScreenState extends State<VideoScreen> {
           var finalProgressData = [];
           var progressData = value.data()![CourseID];
 
-          for(int i=0;i<list.length;i++)
-          {
+          for (int i = 0; i < list.length; i++) {
             // int counter = 0;
-            for(int k=0;k<progressData.length;k++)
-            {
-              if(progressData[k][list[i]["id"]]!=null)
-              {
+            for (int k = 0; k < progressData.length; k++) {
+              if (progressData[k][list[i]["id"]] != null) {
                 print("((((((( ${progressData[k]}");
                 finalProgressData.add(progressData[k]);
                 // counter=1;
@@ -704,119 +696,107 @@ class _VideoScreenState extends State<VideoScreen> {
 
           print("UUUUUUUUU $finalProgressData");
 
-
-          await FirebaseFirestore.instance.collection("courseprogress").doc(_auth.currentUser!.uid).update({CourseID.toString():finalProgressData});
-
+          await FirebaseFirestore.instance
+              .collection("courseprogress")
+              .doc(_auth.currentUser!.uid)
+              .update({CourseID.toString(): finalProgressData});
 
           print("yyyyyyy $list");
           // value.data()![CourseID][0][list[0]["id"]];
-
 
           // print("&&&&&&&& ${_initialVideoPercentageList[widget.courseName]}");
 
           print("data((--- ${finalProgressData}");
           var data = finalProgressData;
           print("oooo ${list.length}");
-          if(list.length==finalProgressData.length)
-          {
-            for(int k=0;k<list.length;k++)
-            {
-              if(list[k]["videos"].length==finalProgressData[k][list[k]["id"]].length)
-              {
-
-              }
-              else
-              {
-                if(list[k]["videos"].length>finalProgressData[k][list[k]["id"]].length)
-                {
-                  for(int g=0;g<list[k]["videos"].length;g++)
-                  {
+          if (list.length == finalProgressData.length) {
+            for (int k = 0; k < list.length; k++) {
+              if (list[k]["videos"].length ==
+                  finalProgressData[k][list[k]["id"]].length) {
+              } else {
+                if (list[k]["videos"].length >
+                    finalProgressData[k][list[k]["id"]].length) {
+                  for (int g = 0; g < list[k]["videos"].length; g++) {
                     int count = 0;
-                    finalProgressData[k][list[k]["id"]].forEach((ele)=>{
-                      if(ele.containsKey(list[k]["videos"][g]["id"]))
-                        {
-                          // print("True")
-                          count =1
-                        }
-                      else{
-                        print("false")
-                        // data[k][list[k]["id"]].add(ele)
-                      }
-                    });
-                    count==1?null:data[k][list[k]["id"]].add({list[k]["videos"][g]["id"].toString():0});
+                    finalProgressData[k][list[k]["id"]].forEach((ele) => {
+                          if (ele.containsKey(list[k]["videos"][g]["id"]))
+                            {
+                              // print("True")
+                              count = 1
+                            }
+                          else
+                            {
+                              print("false")
+                              // data[k][list[k]["id"]].add(ele)
+                            }
+                        });
+                    count == 1
+                        ? null
+                        : data[k][list[k]["id"]]
+                            .add({list[k]["videos"][g]["id"].toString(): 0});
                   }
-                }
-                else
-                {
-                  for(int g=0;g<data[k][list[k]["id"]].length;g++)
-                  {
+                } else {
+                  for (int g = 0; g < data[k][list[k]["id"]].length; g++) {
                     int count = 0;
                     print("====${data[k][list[k]["id"]][g]}");
-                    list[k]["videos"].forEach((ele)=>{
-                      if(data[k][list[k]["id"]][g].containsKey(ele["id"]))
-                        {
-                          count =1
-                        }
-                      else{
-                        print("false ${ele["id"]}")
-                      }
-                    });
-                    count==0?data[k][list[k]["id"]].removeAt(g):null;
+                    list[k]["videos"].forEach((ele) => {
+                          if (data[k][list[k]["id"]][g].containsKey(ele["id"]))
+                            {count = 1}
+                          else
+                            {print("false ${ele["id"]}")}
+                        });
+                    count == 0 ? data[k][list[k]["id"]].removeAt(g) : null;
                   }
                 }
               }
             }
-          }
-          else
-          {
-            if(list.length>finalProgressData.length)
-            {
-              for(int i=0;i<list.length;i++)
-              {
+          } else {
+            if (list.length > finalProgressData.length) {
+              for (int i = 0; i < list.length; i++) {
                 int count = 0;
-                finalProgressData.forEach((ele)=>{
-                  // print("tyypypypyp $ele")
-                  if(ele.containsKey(list[i]["id"]))
-                    {
-                      // print("True")
-                      count =1
-                    }
-                  else{
-                    print("false")
-                    // data[k][list[k]["id"]].add(ele)
-                  }
-                });
+                finalProgressData.forEach((ele) => {
+                      // print("tyypypypyp $ele")
+                      if (ele.containsKey(list[i]["id"]))
+                        {
+                          // print("True")
+                          count = 1
+                        }
+                      else
+                        {
+                          print("false")
+                          // data[k][list[k]["id"]].add(ele)
+                        }
+                    });
                 var listOfID = [];
-                for(int j=0;j<list[i]["videos"].length;j++)
-                {
-                  listOfID.add({list[i]["videos"][j]["id"]:0});
+                for (int j = 0; j < list[i]["videos"].length; j++) {
+                  listOfID.add({list[i]["videos"][j]["id"]: 0});
                 }
                 print("iddddddd");
                 print(listOfID);
-                count==1?null:data.add({list[i]["id"].toString():listOfID});
+                count == 1
+                    ? null
+                    : data.add({list[i]["id"].toString(): listOfID});
               }
-            }
-            else
-            {
-              for(int j=0;j<data.length;j++)
-              {
-                int count =0;
-                list.forEach((ele){
-                  if(data[j].containsKey(ele["id"]))
-                  {
-                    count =1;
+            } else {
+              for (int j = 0; j < data.length; j++) {
+                int count = 0;
+                list.forEach((ele) {
+                  if (data[j].containsKey(ele["id"])) {
+                    count = 1;
                   }
                 });
-                count==1?null:data.removeAt(j);
+                count == 1 ? null : data.removeAt(j);
               }
             }
           }
 
-          await FirebaseFirestore.instance.collection("courseprogress").doc(_auth.currentUser!.uid).update({CourseID.toString():data});
+          await FirebaseFirestore.instance
+              .collection("courseprogress")
+              .doc(_auth.currentUser!.uid)
+              .update({CourseID.toString(): data});
           print("finally  $data");
           _getVideoPercentageList = data;
-        }
-        else{
+        } else {
           var list = await res.get("curriculum1")[widget.courseName];
           list.sort((a, b) {
             if (a["sr"] > b["sr"]) {
@@ -831,9 +811,11 @@ class _VideoScreenState extends State<VideoScreen> {
             _initialVideoPercentageList[widget.courseName.toString()]
                 .add({list[i]["id"].toString(): []});
             for (int j = 0; j < list[i]["videos"].length; j++) {
-              list[i]["videos"][j]["type"]=="video"?_initialVideoPercentageList[widget.courseName][i]
-              [list[i]["id"]]
-                  .add({list[i]["videos"][j]["id"]: 0}):null;
+              list[i]["videos"][j]["type"] == "video"
+                  ? _initialVideoPercentageList[widget.courseName][i]
+                          [list[i]["id"]]
+                      .add({list[i]["videos"][j]["id"]: 0})
+                  : null;
             }
           }
           print("**** $_initialVideoPercentageList");
@@ -843,15 +825,14 @@ class _VideoScreenState extends State<VideoScreen> {
               .doc(_auth.currentUser!.uid.toString())
               .update({
             CourseID.toString():
-            _initialVideoPercentageList[widget.courseName.toString()],
+                _initialVideoPercentageList[widget.courseName.toString()],
             "email": userEmail,
-          }).catchError((err)=>print("Error$err"));
+          }).catchError((err) => print("Error$err"));
           print("done----");
           _getVideoPercentageList =
-          _initialVideoPercentageList[widget.courseName.toString()];
+              _initialVideoPercentageList[widget.courseName.toString()];
         }
-      }
-      else{
+      } else {
         var list = await res.get("curriculum1")[widget.courseName];
         list.sort((a, b) {
           if (a["sr"] > b["sr"]) {
@@ -866,9 +847,11 @@ class _VideoScreenState extends State<VideoScreen> {
           _initialVideoPercentageList[widget.courseName.toString()]
               .add({list[i]["id"].toString(): []});
           for (int j = 0; j < list[i]["videos"].length; j++) {
-            list[i]["videos"][j]["type"]=="video"?_initialVideoPercentageList[widget.courseName][i]
-            [list[i]["id"]]
-                .add({list[i]["videos"][j]["id"]: 0}):null;
+            list[i]["videos"][j]["type"] == "video"
+                ? _initialVideoPercentageList[widget.courseName][i]
+                        [list[i]["id"]]
+                    .add({list[i]["videos"][j]["id"]: 0})
+                : null;
           }
         }
         print("**** $_initialVideoPercentageList");
@@ -878,21 +861,18 @@ class _VideoScreenState extends State<VideoScreen> {
             .doc(_auth.currentUser!.uid.toString())
             .set({
           CourseID.toString():
-          _initialVideoPercentageList[widget.courseName.toString()],
+              _initialVideoPercentageList[widget.courseName.toString()],
           "email": userEmail,
-        }).catchError((err)=>print("Error$err"));
+        }).catchError((err) => print("Error$err"));
         print("done----");
         _getVideoPercentageList =
-        _initialVideoPercentageList[widget.courseName.toString()];
+            _initialVideoPercentageList[widget.courseName.toString()];
       }
-
     });
     setState(() {
       _getVideoPercentageList;
     });
   }
-
-
 
   Future download({
     Dio? dio,
@@ -1036,7 +1016,6 @@ class _VideoScreenState extends State<VideoScreen> {
     });
   }
 
-
   streamVideoData() async {
     print("Videoss;");
     print(widget.cID);
@@ -1050,8 +1029,6 @@ class _VideoScreenState extends State<VideoScreen> {
       Counter.counterSinkVideos.add(data != null ? data : null);
     });
   }
-
-
 
   String? currentPlayingVideoName;
 
@@ -1086,7 +1063,6 @@ class _VideoScreenState extends State<VideoScreen> {
     );
   }
 
-
   @override
   void initState() {
     // html.window.document.onContextMenu.listen((evt) => evt.preventDefault());
@@ -1094,6 +1070,7 @@ class _VideoScreenState extends State<VideoScreen> {
     // getData();
     // getCourseData();
     streamVideoData();
+    getCourseQuiz();
     getUserRole();
     getProgressData();
     getpathway(widget.courseName);
@@ -1102,6 +1079,22 @@ class _VideoScreenState extends State<VideoScreen> {
     });
 
     super.initState();
+  }
+
+  var coursequiz = [];
+
+  getCourseQuiz() async {
+    await FirebaseFirestore.instance
+        .collection("courses")
+        .where("name", isEqualTo: widget.courseName)
+        .get()
+        .then((value) {
+          setState(() {
+            coursequiz = value.docs.first.data()['coursequiz'];
+          });
+      
+      print("coursequiz1: ${coursequiz}");
+    });
   }
 
   bool menuClicked = false;
@@ -1118,20 +1111,20 @@ class _VideoScreenState extends State<VideoScreen> {
     return Scaffold(
         // floatingActionButton: floatingButton(context),
         body: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            if (constraints.maxWidth >= 650) {
-              return Container(
-                color: Colors.white,
-                child: OrientationBuilder(
-                  builder: (BuildContext context, Orientation orientation) {
-                    final isPortrait = orientation == Orientation.portrait;
-                    return Row(
-                      children: [
-                        menuClicked
-                            ? isPortrait
-                            ? Container()
-                            : SizedBox()
-                            : Expanded(
+            builder: (BuildContext context, BoxConstraints constraints) {
+      if (constraints.maxWidth >= 650) {
+        return Container(
+          color: Colors.white,
+          child: OrientationBuilder(
+            builder: (BuildContext context, Orientation orientation) {
+              final isPortrait = orientation == Orientation.portrait;
+              return Row(
+                children: [
+                  menuClicked
+                      ? isPortrait
+                          ? Container()
+                          : SizedBox()
+                      : Expanded(
                           flex: 1,
                           child: Column(
                             children: [
@@ -1140,197 +1133,197 @@ class _VideoScreenState extends State<VideoScreen> {
                                   widget.isDemo == null
                                       ? Navigator.of(context).pop()
                                       : GoRouter.of(context)
-                                      .pushReplacementNamed('myCourses');
+                                          .pushReplacementNamed('myCourses');
                                   // Navigator.pop(context);
                                 },
                                 child: Container(
                                     child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.arrow_back_ios),
-                                          Text(
-                                            'Back to courses',
-                                            style:
-                                            TextStyle(fontWeight: FontWeight.bold),
-                                          )
-                                        ],
-                                      ),
-                                    )),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.arrow_back_ios),
+                                      Text(
+                                        'Back to courses',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                )),
                               ),
                               Expanded(
                                 child: _buildVideoDetails(
-                                  // horizontalScale,
-                                  // verticalScale,
-                                ),
+                                    // horizontalScale,
+                                    // verticalScale,
+                                    ),
                               ),
                             ],
                           ),
                         ),
-                        !htmlbool
-                            ? Expanded(
+                  !htmlbool
+                      ? Expanded(
                           flex: 2,
                           child: showAssignment
                               ? AssignmentScreen(
-                            selectedSection: selectedSection,
-                            courseData: courseData,
-                            courseName: widget.courseName,
-                            assignmentUrl: assignmentUrl,
-                            dataSetUrl: dataSetUrl,
-                            solutionUrl: solutionUrl,
-                            assignmentName: assignmentName,
-                          )
+                                  selectedSection: selectedSection,
+                                  courseData: courseData,
+                                  courseName: widget.courseName,
+                                  assignmentUrl: assignmentUrl,
+                                  dataSetUrl: dataSetUrl,
+                                  solutionUrl: solutionUrl,
+                                  assignmentName: assignmentName,
+                                )
                               : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              FutureBuilder(
-                                future: playVideo,
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<dynamic> snapshot) {
-                                  if (ConnectionState.done ==
-                                      snapshot.connectionState) {
-                                    return Stack(
-                                      children: [
-                                        Container(
-                                          height: menuClicked
-                                              ? screenHeight
-                                              : screenHeight / 1.2,
-                                          child: Center(
-                                            child: AspectRatio(
-                                              aspectRatio: 16 / 9,
-                                              child: VideoPlayer(
-                                                  _videoController!),
-                                            ),
-                                          ),
-                                        ),
-                                        InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                enablePauseScreen =
-                                                !enablePauseScreen;
-                                                // print(
-                                                //     'Container of column clicked');
-                                              });
-                                            },
-                                            child: Container(
-                                              height: menuClicked
-                                                  ? screenHeight
-                                                  : screenHeight / 1.2,
-                                              width: screenWidth,
-                                            )),
-                                        enablePauseScreen
-                                            ? Container(
-                                          height: menuClicked
-                                              ? screenHeight
-                                              : screenHeight / 1.2,
-                                          child: _buildControls(
-                                            context,
-                                            isPortrait,
-                                            horizontalScale,
-                                            verticalScale,
-                                          ),
-                                        )
-                                            : SizedBox(),
-                                        _isBuffering && !enablePauseScreen
-                                            ? Center(
-                                          heightFactor: 6.2,
-                                          child: Container(
-                                            width: 60,
-                                            height: 60,
-                                            child:
-                                            CircularProgressIndicator(
-                                              color: Color.fromARGB(
-                                                114,
-                                                255,
-                                                255,
-                                                255,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    FutureBuilder(
+                                      future: playVideo,
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<dynamic> snapshot) {
+                                        if (ConnectionState.done ==
+                                            snapshot.connectionState) {
+                                          return Stack(
+                                            children: [
+                                              Container(
+                                                height: menuClicked
+                                                    ? screenHeight
+                                                    : screenHeight / 1.2,
+                                                child: Center(
+                                                  child: AspectRatio(
+                                                    aspectRatio: 16 / 9,
+                                                    child: VideoPlayer(
+                                                        _videoController!),
+                                                  ),
+                                                ),
+                                              ),
+                                              InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      enablePauseScreen =
+                                                          !enablePauseScreen;
+                                                      // print(
+                                                      //     'Container of column clicked');
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    height: menuClicked
+                                                        ? screenHeight
+                                                        : screenHeight / 1.2,
+                                                    width: screenWidth,
+                                                  )),
+                                              enablePauseScreen
+                                                  ? Container(
+                                                      height: menuClicked
+                                                          ? screenHeight
+                                                          : screenHeight / 1.2,
+                                                      child: _buildControls(
+                                                        context,
+                                                        isPortrait,
+                                                        horizontalScale,
+                                                        verticalScale,
+                                                      ),
+                                                    )
+                                                  : SizedBox(),
+                                              _isBuffering && !enablePauseScreen
+                                                  ? Center(
+                                                      heightFactor: 6.2,
+                                                      child: Container(
+                                                        width: 60,
+                                                        height: 60,
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          color: Color.fromARGB(
+                                                            114,
+                                                            255,
+                                                            255,
+                                                            255,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Container(),
+                                            ],
+                                          );
+                                        } else {
+                                          return Container(
+                                            height: screenHeight / 1.2,
+                                            child: Center(
+                                              child: CircularProgressIndicator(
+                                                color: Color(0xFF7860DC),
                                               ),
                                             ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                    menuClicked
+                                        ? Container()
+                                        : Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 15.0),
+                                            child: Text(
+                                              videoTitle.toString() != 'null'
+                                                  ? videoTitle.toString()
+                                                  : '',
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontFamily: 'SemiBold'),
+                                            ),
                                           ),
-                                        )
-                                            : Container(),
-                                      ],
-                                    );
-                                  } else {
-                                    return Container(
-                                      height: screenHeight / 1.2,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          color: Color(0xFF7860DC),
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
-                              menuClicked
-                                  ? Container()
-                                  : Padding(
-                                padding:
-                                const EdgeInsets.only(top: 15.0),
-                                child: Text(
-                                  videoTitle.toString() != 'null'
-                                      ? videoTitle.toString()
-                                      : '',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontFamily: 'SemiBold'),
+                                    isPortrait
+                                        ? _buildPartition(
+                                            context,
+                                            horizontalScale,
+                                            verticalScale,
+                                          )
+                                        : SizedBox(),
+                                    isPortrait
+                                        ? SizedBox()
+                                        // Expanded(
+                                        //   flex: 2,
+                                        //   child: _buildVideoDetailsListTile(
+                                        //     horizontalScale,
+                                        //     verticalScale,
+                                        //   ),
+                                        // )
+                                        : SizedBox(),
+                                  ],
                                 ),
-                              ),
-                              isPortrait
-                                  ? _buildPartition(
-                                context,
-                                horizontalScale,
-                                verticalScale,
-                              )
-                                  : SizedBox(),
-                              isPortrait
-                                  ? SizedBox()
-                              // Expanded(
-                              //   flex: 2,
-                              //   child: _buildVideoDetailsListTile(
-                              //     horizontalScale,
-                              //     verticalScale,
-                              //   ),
-                              // )
-                                  : SizedBox(),
-                            ],
-                          ),
                         )
-                            : quizbool
-                            ? Expanded(
-                            flex: 2, child: QuizentrypageWidget(quizdata))
-                            : Expanded(
-                          flex: 2,
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Padding(
-                              padding: const EdgeInsets.all(50.0),
-                              child: SingleChildScrollView(
-                                child: HtmlWidget('''
+                      : quizbool
+                          ? Expanded(
+                              flex: 2, child: QuizentrypageWidget(quizdata))
+                          : Expanded(
+                              flex: 2,
+                              child: Align(
+                                alignment: Alignment.topCenter,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(50.0),
+                                  child: SingleChildScrollView(
+                                    child: HtmlWidget('''
                                                 $htmltext
                                                 '''),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
+                ],
               );
-            } else {
-              return Container(
-                color: Colors.white,
-                child: OrientationBuilder(
-                  builder: (BuildContext context, Orientation orientation) {
-                    final isPortrait = orientation == Orientation.portrait;
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          !htmlbool
-                              ? showAssignment
-                                  ? AssignmentScreen(
+            },
+          ),
+        );
+      } else {
+        return Container(
+          color: Colors.white,
+          child: OrientationBuilder(
+            builder: (BuildContext context, Orientation orientation) {
+              final isPortrait = orientation == Orientation.portrait;
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    !htmlbool
+                        ? showAssignment
+                            ? AssignmentScreen(
                                 selectedSection: selectedSection,
                                 courseData: courseData,
                                 courseName: widget.courseName,
@@ -1339,7 +1332,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                 solutionUrl: solutionUrl,
                                 assignmentName: assignmentName,
                               )
-                                  : Column(
+                            : Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   FutureBuilder(
@@ -1365,7 +1358,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                 onTap: () {
                                                   setState(() {
                                                     enablePauseScreen =
-                                                    !enablePauseScreen;
+                                                        !enablePauseScreen;
                                                     // print(
                                                     //     'Container of column clicked');
                                                   });
@@ -1376,32 +1369,32 @@ class _VideoScreenState extends State<VideoScreen> {
                                                 )),
                                             enablePauseScreen
                                                 ? Container(
-                                              height: screenHeight / 3,
-                                              child: _buildControls(
-                                                context,
-                                                isPortrait,
-                                                horizontalScale,
-                                                verticalScale,
-                                              ),
-                                            )
+                                                    height: screenHeight / 3,
+                                                    child: _buildControls(
+                                                      context,
+                                                      isPortrait,
+                                                      horizontalScale,
+                                                      verticalScale,
+                                                    ),
+                                                  )
                                                 : SizedBox(),
                                             _isBuffering && !enablePauseScreen
                                                 ? Center(
-                                              heightFactor: 6.2,
-                                              child: Container(
-                                                width: 60,
-                                                height: 60,
-                                                child:
-                                                CircularProgressIndicator(
-                                                  color: Color.fromARGB(
-                                                    114,
-                                                    255,
-                                                    255,
-                                                    255,
-                                                  ),
-                                                ),
-                                              ),
-                                            )
+                                                    heightFactor: 6.2,
+                                                    child: Container(
+                                                      width: 60,
+                                                      height: 60,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        color: Color.fromARGB(
+                                                          114,
+                                                          255,
+                                                          255,
+                                                          255,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
                                                 : Container(),
                                           ],
                                         );
@@ -1418,92 +1411,88 @@ class _VideoScreenState extends State<VideoScreen> {
                                     },
                                   ),
                                   Padding(
-                                      padding: const EdgeInsets.only(top: 15.0),
-                                        child: Text(
+                                    padding: const EdgeInsets.only(top: 15.0),
+                                    child: Text(
                                       videoTitle.toString() != 'null'
                                           ? videoTitle.toString()
                                           : '',
                                       style: TextStyle(
-                                          fontSize: 18,
-                                          fontFamily: 'SemiBold'),
+                                          fontSize: 18, fontFamily: 'SemiBold'),
                                     ),
                                   ),
                                   isPortrait
                                       ? SizedBox()
-                                  // Expanded(
-                                  //   flex: 2,
-                                  //   child: _buildVideoDetailsListTile(
-                                  //     horizontalScale,
-                                  //     verticalScale,
-                                  //   ),
-                                  // )
+                                      // Expanded(
+                                      //   flex: 2,
+                                      //   child: _buildVideoDetailsListTile(
+                                      //     horizontalScale,
+                                      //     verticalScale,
+                                      //   ),
+                                      // )
                                       : SizedBox(),
                                 ],
                               )
-                              : Align(
-                                alignment: Alignment.topCenter,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(50.0),
-                                  child: SingleChildScrollView(
-                                    child: HtmlWidget('''
+                        : Align(
+                            alignment: Alignment.topCenter,
+                            child: Padding(
+                              padding: const EdgeInsets.all(50.0),
+                              child: SingleChildScrollView(
+                                child: HtmlWidget('''
                                                    $htmltext
                                                     '''),
-                                  ),
-                                ),
                               ),
-                          _buildVideoDetails(),
-                        ],
-                      ),
-                    );
-
-
-                    //   Row(
-                    //   children: [
-                    //     menuClicked
-                    //         ? isPortrait
-                    //         ? Container()
-                    //         : SizedBox()
-                    //         : Expanded(
-                    //       flex: 1,
-                    //       child: Column(
-                    //         children: [
-                    //           InkWell(
-                    //             onTap: () {
-                    //               widget.isDemo == null
-                    //                   ? Navigator.of(context).pop()
-                    //                   : GoRouter.of(context)
-                    //                   .pushReplacementNamed('myCourses');
-                    //               // Navigator.pop(context);
-                    //             },
-                    //             child: Container(
-                    //                 child: Padding(
-                    //                   padding: const EdgeInsets.all(8.0),
-                    //                   child: Row(
-                    //                     children: [
-                    //                       Icon(Icons.arrow_back_ios),
-                    //                       Text(
-                    //                         'Back to courses',
-                    //                         style:
-                    //                         TextStyle(fontWeight: FontWeight.bold),
-                    //                       )
-                    //                     ],
-                    //                   ),
-                    //                 )),
-                    //           ),
-                    //
-                    //         ],
-                    //       ),
-                    //     ),
-                    //
-                    //   ],
-                    // );
-                  },
+                            ),
+                          ),
+                    _buildVideoDetails(),
+                  ],
                 ),
               );
-            }
 
-          }
-        ));
+              //   Row(
+              //   children: [
+              //     menuClicked
+              //         ? isPortrait
+              //         ? Container()
+              //         : SizedBox()
+              //         : Expanded(
+              //       flex: 1,
+              //       child: Column(
+              //         children: [
+              //           InkWell(
+              //             onTap: () {
+              //               widget.isDemo == null
+              //                   ? Navigator.of(context).pop()
+              //                   : GoRouter.of(context)
+              //                   .pushReplacementNamed('myCourses');
+              //               // Navigator.pop(context);
+              //             },
+              //             child: Container(
+              //                 child: Padding(
+              //                   padding: const EdgeInsets.all(8.0),
+              //                   child: Row(
+              //                     children: [
+              //                       Icon(Icons.arrow_back_ios),
+              //                       Text(
+              //                         'Back to courses',
+              //                         style:
+              //                         TextStyle(fontWeight: FontWeight.bold),
+              //                       )
+              //                     ],
+              //                   ),
+              //                 )),
+              //           ),
+              //
+              //         ],
+              //       ),
+              //     ),
+              //
+              //   ],
+              // );
+            },
+          ),
+        );
+      }
+    }));
   }
 
   Widget _buildControls(
@@ -1521,7 +1510,7 @@ class _VideoScreenState extends State<VideoScreen> {
         });
       },
       child: Container(
-        height: screenHeight/3,
+        height: screenHeight / 3,
         width: screenWidth,
         color: Color.fromARGB(114, 0, 0, 0),
         child: Column(
@@ -2303,11 +2292,11 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                 [sectionIndex]["videos"]
                                                             [subsectionIndex]["id"]
                                                         .toString());
-                                              }else if (listOfSectionData[widget
-                                                  .courseName]
-                                              [sectionIndex]
-                                              ["videos"][
-                                              subsectionIndex]["type"] ==
+                                              } else if (listOfSectionData[widget
+                                                                  .courseName]
+                                                              [sectionIndex]
+                                                          ["videos"][
+                                                      subsectionIndex]["type"] ==
                                                   "quiz") {
                                                 //QuizentrypageWidget
                                                 print(
@@ -2315,9 +2304,9 @@ class _VideoScreenState extends State<VideoScreen> {
                                                 //  GoRouter.of(context).pushNamed('quizpage');
                                                 setState(() {
                                                   quizdata = listOfSectionData[
-                                                  widget.courseName]
-                                                  [sectionIndex][
-                                                  "videos"][subsectionIndex];
+                                                              widget.courseName]
+                                                          [sectionIndex][
+                                                      "videos"][subsectionIndex];
                                                   quizbool = true;
                                                   print("iwoe");
                                                   htmlbool = true;
@@ -2369,52 +2358,52 @@ class _VideoScreenState extends State<VideoScreen> {
                                                   child: Row(
                                                     children: [
                                                       listOfSectionData[widget.courseName]
-                                                      [sectionIndex]
-                                                      ["videos"]
-                                                      [subsectionIndex]
-                                                      ["type"] ==
-                                                          "video"
+                                                                              [sectionIndex]
+                                                                          ["videos"]
+                                                                      [subsectionIndex]
+                                                                  ["type"] ==
+                                                              "video"
                                                           ? Icon(
-                                                          Icons.play_circle)
+                                                              Icons.play_circle)
                                                           : listOfSectionData[widget.courseName]
-                                                      [sectionIndex]
-                                                      [
-                                                      "videos"][subsectionIndex]
-                                                      [
-                                                      "type"] ==
-                                                          "quiz"
-                                                          ? Icon(Icons.quiz)
-                                                          : Icon(Icons
-                                                          .assessment),
+                                                                              [sectionIndex]
+                                                                          [
+                                                                          "videos"][subsectionIndex]
+                                                                      [
+                                                                      "type"] ==
+                                                                  "quiz"
+                                                              ? Icon(Icons.quiz)
+                                                              : Icon(Icons
+                                                                  .assessment),
                                                       SizedBox(
                                                         width: 10,
                                                       ),
                                                       Expanded(
                                                           child: Text(
-                                                            listOfSectionData[widget.courseName][sectionIndex]
-                                                            ["videos"]
-                                                            [subsectionIndex]
-                                                            ["type"] ==
+                                                        listOfSectionData[widget.courseName][sectionIndex]
+                                                                            ["videos"]
+                                                                        [subsectionIndex]
+                                                                    ["type"] ==
                                                                 "video"
-                                                                ? listOfSectionData[widget.courseName]
-                                                            [sectionIndex]
-                                                            ["videos"][subsectionIndex]
-                                                            ["name"]
+                                                            ? listOfSectionData[widget.courseName]
+                                                                            [sectionIndex]
+                                                                        ["videos"][subsectionIndex]
+                                                                    ["name"]
                                                                 .toString()
-                                                                : listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] ==
-                                                                "quiz"
+                                                            : listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] ==
+                                                                    "quiz"
                                                                 ? "Quiz : " +
-                                                                listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"]
-                                                                    .toString()
+                                                                    listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"]
+                                                                        .toString()
                                                                 : "Assignment : " +
-                                                                listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]
-                                                                ["name"]
-                                                                    .toString(),
-                                                            style: TextStyle(
-                                                                overflow:
+                                                                    listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]
+                                                                            ["name"]
+                                                                        .toString(),
+                                                        style: TextStyle(
+                                                            overflow:
                                                                 TextOverflow
                                                                     .ellipsis),
-                                                          ))
+                                                      ))
                                                     ],
                                                   ),
                                                 ))),
@@ -2462,7 +2451,17 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                       [subIndex]
                                                                   ["name"]
                                                               .toString()
-                                                          : "Assignment : " +
+                                                          : listOfSectionData[widget.courseName]
+                                                                              [index]
+                                                                          ["videos"]
+                                                                      [subIndex]
+                                                                  ["type"] ==
+                                                              "quiz"?"Quiz : " +
+                                                              listOfSectionData[widget.courseName]
+                                                                              [index]
+                                                                          ["videos"]
+                                                                      [subIndex]["name"]
+                                                                  .toString():"Assignment : " +
                                                               listOfSectionData[widget.courseName]
                                                                               [index]
                                                                           ["videos"]
@@ -2563,24 +2562,24 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                   [sectionIndex]["videos"]
                                                               [subsectionIndex]["id"]
                                                           .toString());
-                                                }else if (listOfSectionData[widget
-                                                    .courseName]
-                                                [sectionIndex]
-                                                ["videos"][
-                                                subsectionIndex]["type"] ==
+                                                } else if (listOfSectionData[widget
+                                                                    .courseName]
+                                                                [sectionIndex]
+                                                            ["videos"][
+                                                        subsectionIndex]["type"] ==
                                                     "quiz") {
                                                   print(
                                                       "ll;;;;;;;;;;;;;;;;;;;");
                                                   setState(() {
                                                     quizdata = listOfSectionData[
-                                                    widget
-                                                        .courseName]
-                                                    [sectionIndex][
-                                                    "videos"][subsectionIndex];
+                                                                widget
+                                                                    .courseName]
+                                                            [sectionIndex][
+                                                        "videos"][subsectionIndex];
                                                     htmlbool = true;
                                                     quizbool = true;
                                                   });
-                                                }  else {
+                                                } else {
                                                   showAssignment = true;
                                                   setState(() {
                                                     assignmentUrl = listOfSectionData[
@@ -2733,7 +2732,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                                       )),
                                                                                 )
                                                                               : Text(
-                                                                                  listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] == "video" ? listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString() : "Assignment : " + listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString(),
+                                                                                  listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] == "video" ? listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString() :listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] == "quiz"? "Quiz : " + listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString():"Assignment : " + listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString(),
                                                                                   style: TextStyle(overflow: TextOverflow.ellipsis, color: _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] == 100 ? Colors.green : Colors.black),
                                                                                 );
                                                                         } else {
@@ -2759,7 +2758,12 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                               "type"] ==
                                                                           "video"
                                                                       ? ''
-                                                                      : "Assignment : " +
+                                                                      :listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]
+                                                                              [
+                                                                              "type"] ==
+                                                                          "quiz"? "Quiz : " +
+                                                                          listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"]
+                                                                              .toString():"Assignment : " +
                                                                           listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"]
                                                                               .toString(),
                                                                   style: TextStyle(
@@ -3058,6 +3062,62 @@ class _VideoScreenState extends State<VideoScreen> {
                               );
                             })),
                       ),
+                      sectionIndex ==
+                              listOfSectionData[widget.courseName].length-1
+                          ? Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        child: ExpansionTile(
+                                          title: Text(
+                                            'Quizs',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          children: List.generate(
+                                            coursequiz.length,
+                                            (index1) {
+                                              // print("ppppp ${valueMap}");
+                                              return Column(
+                                                children: [
+                                                  // videoPercentageList.length != 0 ?
+                                                  // Text(videoPercentageList[index][courseData.entries.elementAt(index).key][courseData.entries.elementAt(index).value[index1].videoTitle].toString()) : SizedBox(),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                  quizdata = coursequiz[index1];
+                                                  quizbool = true;
+                                                  htmlbool = true;
+                                                });
+                                                    },
+                                                    child: Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 60,
+                                                          top: 15,
+                                                          bottom: 15),
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Text(
+                                                         coursequiz[index1]['name'],
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                          : SizedBox()
                     ],
                   );
                 }),

@@ -67,32 +67,64 @@ class _QuizPageState extends State<QuizPage> {
   bool submitvalue = false;
 
   submit() async {
-    // Navigation
-    setState(() {
-      submitvalue = true;
-    });
-    // upload quiz data
-    var correctint = 0;
-
-    for (var i in quizdata) {
-      if (i['answeredValue'] == i['answerIndex']) {
-        correctint += 1;
+    print("lll1");
+    try {
+// Navigation
+      print("lll001");
+      setState(() {
+        submitvalue = true;
+      });
+      // upload quiz data
+      var correctint = 0;
+      print("lll002: $quizdata");
+      
+      for (var i in quizdata) {
+        if (i['answeredValue'] == i['answerIndex'][0]) {
+          correctint += 1;
+        }
       }
+      print("lll2");
+      var unanswered = 0;
+      print("dsfosweweweeeeeeeee");
+      for (var i in quizdata) {
+        print(i['answeredValue']);
+        if (i['answeredValue'] == null) {
+          unanswered += 1;
+        }
+      }
+      print("lll3 ${[quizdata[0]['answeredValue']]}");
+      var wronganswered = 0;
+      for (var i in quizdata) {
+        var answeredvaluelist = [i['answeredValue']];
+        if (answeredvaluelist != i['answerIndex'] &&
+            answeredvaluelist[0] != null) {
+          wronganswered += 1;
+        }
+      }
+      print("lll4");
+      var total = (correctint / widget.quizdata['questionbucket'].length) * 100;
+      print("lll5");
+      await FirebaseFirestore.instance.collection("quizTaken").add({
+        "uid": FirebaseAuth.instance.currentUser!.uid,
+        "quizInfo": quizdata,
+        "date": DateTime.now()
+      });
+      print("lll6");
+      print("isfojsoiefj${total} ${unanswered} ${wronganswered} ${correctint}");
+      print("lll7");
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CongratulationsWidget(
+                total, quizdata, unanswered, wronganswered, correctint)),
+      );
+      print("lll8");
+    } catch (e) {
+      print("llllllllll//: ${e.toString()}");
+      setState(() {
+        submitvalue = false;
+      });
     }
-
-    var total = (correctint / widget.quizdata['questionbucket'].length) * 100;
-
-    await FirebaseFirestore.instance.collection("quizTaken").add({
-      "uid": FirebaseAuth.instance.currentUser!.uid,
-      "quizInfo": quizdata,
-      "date": DateTime.now()
-    });
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-          builder: (context) => CongratulationsWidget(total, quizdata)),
-    );
   }
 
   String _printDuration(Duration duration) {
@@ -360,7 +392,6 @@ class _QuizPageState extends State<QuizPage> {
                     child: Align(
                       alignment: AlignmentDirectional(-1, -1),
                       child: SingleChildScrollView(
-                        
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -395,22 +426,22 @@ class _QuizPageState extends State<QuizPage> {
                                                     AlignmentDirectional(0, 0),
                                                 child: Text(
                                                   '$answeredM',
-                                                  style:
-                                                      FlutterFlowTheme.of(context)
-                                                          .bodyText1
-                                                          .override(
-                                                            fontFamily: 'Poppins',
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyText1
+                                                      .override(
+                                                        fontFamily: 'Poppins',
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
                                                                 .primaryBtnText,
-                                                          ),
+                                                      ),
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      10, 0, 0, 0),
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(10, 0, 0, 0),
                                               child: Text(
                                                 'Answered',
                                                 style:
@@ -441,22 +472,22 @@ class _QuizPageState extends State<QuizPage> {
                                                     AlignmentDirectional(0, 0),
                                                 child: Text(
                                                   '$notAnsweredM',
-                                                  style:
-                                                      FlutterFlowTheme.of(context)
-                                                          .bodyText1
-                                                          .override(
-                                                            fontFamily: 'Poppins',
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyText1
+                                                      .override(
+                                                        fontFamily: 'Poppins',
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
                                                                 .primaryBtnText,
-                                                          ),
+                                                      ),
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      10, 0, 0, 0),
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(10, 0, 0, 0),
                                               child: Text(
                                                 'Not Answered',
                                                 style:
@@ -490,22 +521,22 @@ class _QuizPageState extends State<QuizPage> {
                                                     AlignmentDirectional(0, 0),
                                                 child: Text(
                                                   '$notVisitedM',
-                                                  style:
-                                                      FlutterFlowTheme.of(context)
-                                                          .bodyText1
-                                                          .override(
-                                                            fontFamily: 'Poppins',
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyText1
+                                                      .override(
+                                                        fontFamily: 'Poppins',
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
                                                                 .primaryBtnText,
-                                                          ),
+                                                      ),
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      10, 0, 0, 0),
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(10, 0, 0, 0),
                                               child: Text(
                                                 'Not Visited',
                                                 style:
@@ -527,14 +558,15 @@ class _QuizPageState extends State<QuizPage> {
                                                 width: 50,
                                                 height: 50,
                                                 decoration: BoxDecoration(
-                                                  color:
-                                                      FlutterFlowTheme.of(context)
-                                                          .primaryColor,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryColor,
                                                   shape: BoxShape.circle,
                                                 ),
                                                 child: Align(
                                                   alignment:
-                                                      AlignmentDirectional(0, 0),
+                                                      AlignmentDirectional(
+                                                          0, 0),
                                                   child: Text(
                                                     '$MFR_M',
                                                     style: FlutterFlowTheme.of(
@@ -542,19 +574,17 @@ class _QuizPageState extends State<QuizPage> {
                                                         .bodyText1
                                                         .override(
                                                           fontFamily: 'Poppins',
-                                                          color:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .primaryBtnText,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryBtnText,
                                                         ),
                                                   ),
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      10, 0, 0, 0),
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(10, 0, 0, 0),
                                               child: Text(
                                                 'Marked for \nReview',
                                                 style:
@@ -574,8 +604,9 @@ class _QuizPageState extends State<QuizPage> {
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         Padding(
-                                          padding: EdgeInsetsDirectional.fromSTEB(
-                                              20, 20, 0, 0),
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  20, 20, 0, 0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
@@ -588,7 +619,8 @@ class _QuizPageState extends State<QuizPage> {
                                                 ),
                                                 child: Align(
                                                   alignment:
-                                                      AlignmentDirectional(0, 0),
+                                                      AlignmentDirectional(
+                                                          0, 0),
                                                   child: Text(
                                                     '$AMFR_M',
                                                     style: FlutterFlowTheme.of(
@@ -596,10 +628,9 @@ class _QuizPageState extends State<QuizPage> {
                                                         .bodyText1
                                                         .override(
                                                           fontFamily: 'Poppins',
-                                                          color:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .primaryBtnText,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryBtnText,
                                                         ),
                                                   ),
                                                 ),
@@ -609,9 +640,9 @@ class _QuizPageState extends State<QuizPage> {
                                                     .fromSTEB(10, 0, 0, 0),
                                                 child: Text(
                                                   'Answered and Marked for review\n(will be considered for evaluation)',
-                                                  style:
-                                                      FlutterFlowTheme.of(context)
-                                                          .bodyText1,
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyText1,
                                                 ),
                                               ),
                                             ],
@@ -678,10 +709,9 @@ class _QuizPageState extends State<QuizPage> {
                                                         .bodyText1
                                                         .override(
                                                           fontFamily: 'Poppins',
-                                                          color:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .primaryBtnText,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryBtnText,
                                                         ),
                                               ),
                                             ),
@@ -723,9 +753,8 @@ class _QuizPageState extends State<QuizPage> {
                                             alignment:
                                                 AlignmentDirectional(-1, 0),
                                             child: Padding(
-                                              padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      20, 10, 0, 0),
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(20, 10, 0, 0),
                                               child: Text(
                                                 'R Certification Quiz',
                                                 style: FlutterFlowTheme.of(
@@ -735,25 +764,29 @@ class _QuizPageState extends State<QuizPage> {
                                                       fontFamily: 'Poppins',
                                                       color:
                                                           valueOrDefault<Color>(
-                                                        random_data.randomColor(),
+                                                        random_data
+                                                            .randomColor(),
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .primaryColor,
                                                       ),
                                                       fontSize: 18,
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                     ),
                                               ),
                                             ),
                                           ),
                                         Align(
-                                          alignment: AlignmentDirectional(-1, 0),
+                                          alignment:
+                                              AlignmentDirectional(-1, 0),
                                           child: Container(
                                             width: 325.9,
                                             height: 62.4,
                                             decoration: BoxDecoration(
-                                              color: FlutterFlowTheme.of(context)
-                                                  .primaryBtnText,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryBtnText,
                                             ),
                                             alignment:
                                                 AlignmentDirectional(-1, 0),
@@ -763,10 +796,11 @@ class _QuizPageState extends State<QuizPage> {
                                                 phone: false,
                                               ),
                                               child: Align(
-                                                alignment:
-                                                    AlignmentDirectional(-1, -1),
+                                                alignment: AlignmentDirectional(
+                                                    -1, -1),
                                                 child: Row(
-                                                  mainAxisSize: MainAxisSize.min,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
                                                   children: [
                                                     Align(
                                                       alignment:
@@ -775,8 +809,8 @@ class _QuizPageState extends State<QuizPage> {
                                                       child: Padding(
                                                         padding:
                                                             EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    0, 10, 10, 0),
+                                                                .fromSTEB(0, 10,
+                                                                    10, 0),
                                                         child: Icon(
                                                           Icons
                                                               .fullscreen_exit_sharp,
@@ -792,21 +826,20 @@ class _QuizPageState extends State<QuizPage> {
                                                       child: Padding(
                                                         padding:
                                                             EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    0, 10, 0, 0),
+                                                                .fromSTEB(0, 10,
+                                                                    0, 0),
                                                         child: Text(
                                                           'Remaining Time:',
                                                           textAlign:
                                                               TextAlign.start,
-                                                          style:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .title3
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontSize: 18,
-                                                                  ),
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .title3
+                                                              .override(
+                                                                fontFamily:
+                                                                    'Poppins',
+                                                                fontSize: 18,
+                                                              ),
                                                         ),
                                                       ),
                                                     ),
@@ -821,16 +854,16 @@ class _QuizPageState extends State<QuizPage> {
                                                         child: Card(
                                                           // clipBehavior:
                                                           //     Clip.antiAliasWithSaveLayer,
-                                                          color:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .primaryColor,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryColor,
                                                           elevation: 1,
                                                           shape:
                                                               RoundedRectangleBorder(
                                                             borderRadius:
                                                                 BorderRadius
-                                                                    .circular(25),
+                                                                    .circular(
+                                                                        25),
                                                           ),
                                                           child: Align(
                                                             alignment:
@@ -849,8 +882,8 @@ class _QuizPageState extends State<QuizPage> {
                                                                 textAlign:
                                                                     TextAlign
                                                                         .center,
-                                                                style: FlutterFlowTheme
-                                                                        .of(context)
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
                                                                     .title3
                                                                     .override(
                                                                       fontFamily:
@@ -894,21 +927,23 @@ class _QuizPageState extends State<QuizPage> {
                                       child: Align(
                                         alignment: AlignmentDirectional(0, 0),
                                         child: Padding(
-                                          padding: EdgeInsetsDirectional.fromSTEB(
-                                              60, 0, 60, 0),
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  60, 0, 60, 0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Align(
-                                                alignment: AlignmentDirectional(0, 0),
+                                                alignment:
+                                                    AlignmentDirectional(0, 0),
                                                 child: Padding(
-                                                  padding:
-                                                      EdgeInsetsDirectional.fromSTEB(
-                                                          0, 10, 0, 10),
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(0, 10, 0, 10),
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.max,
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
                                                     children: [
@@ -923,28 +958,31 @@ class _QuizPageState extends State<QuizPage> {
                                                           child: Card(
                                                             clipBehavior: Clip
                                                                 .antiAliasWithSaveLayer,
-                                                            color: FlutterFlowTheme.of(
-                                                                    context)
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
                                                                 .primaryColor,
                                                             child: Padding(
                                                               padding:
                                                                   EdgeInsetsDirectional
-                                                                      .fromSTEB(15, 10,
-                                                                          15, 10),
+                                                                      .fromSTEB(
+                                                                          15,
+                                                                          10,
+                                                                          15,
+                                                                          10),
                                                               child: Text(
                                                                 'R',
-                                                                style:
-                                                                    FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyText1
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Poppins',
-                                                                          color: FlutterFlowTheme.of(
-                                                                                  context)
-                                                                              .primaryBackground,
-                                                                          fontSize: 17,
-                                                                        ),
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyText1
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'Poppins',
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primaryBackground,
+                                                                      fontSize:
+                                                                          17,
+                                                                    ),
                                                               ),
                                                             ),
                                                           ),
@@ -956,23 +994,27 @@ class _QuizPageState extends State<QuizPage> {
                                                         Card(
                                                           clipBehavior: Clip
                                                               .antiAliasWithSaveLayer,
-                                                          color: FlutterFlowTheme.of(
-                                                                  context)
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
                                                               .primaryColor,
                                                           child: Row(
                                                             mainAxisSize:
-                                                                MainAxisSize.max,
+                                                                MainAxisSize
+                                                                    .max,
                                                             children: [
                                                               Padding(
                                                                 padding:
                                                                     EdgeInsetsDirectional
-                                                                        .fromSTEB(15, 0,
-                                                                            0, 0),
+                                                                        .fromSTEB(
+                                                                            15,
+                                                                            0,
+                                                                            0,
+                                                                            0),
                                                                 child: FaIcon(
                                                                   FontAwesomeIcons
                                                                       .clipboardList,
-                                                                  color: FlutterFlowTheme
-                                                                          .of(context)
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
                                                                       .primaryBackground,
                                                                   size: 24,
                                                                 ),
@@ -980,20 +1022,23 @@ class _QuizPageState extends State<QuizPage> {
                                                               Padding(
                                                                 padding:
                                                                     EdgeInsetsDirectional
-                                                                        .fromSTEB(15,
-                                                                            10, 15, 10),
+                                                                        .fromSTEB(
+                                                                            15,
+                                                                            10,
+                                                                            15,
+                                                                            10),
                                                                 child: Text(
                                                                   'Question Paper',
-                                                                  style: FlutterFlowTheme
-                                                                          .of(context)
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
                                                                       .bodyText1
                                                                       .override(
                                                                         fontFamily:
                                                                             'Poppins',
-                                                                        color: FlutterFlowTheme.of(
-                                                                                context)
+                                                                        color: FlutterFlowTheme.of(context)
                                                                             .primaryBackground,
-                                                                        fontSize: 16,
+                                                                        fontSize:
+                                                                            16,
                                                                       ),
                                                                 ),
                                                               ),
@@ -1012,61 +1057,66 @@ class _QuizPageState extends State<QuizPage> {
                                               ))
                                                 Align(
                                                   alignment:
-                                                      AlignmentDirectional(0.05, -1),
+                                                      AlignmentDirectional(
+                                                          0.05, -1),
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.end,
                                                     children: [
                                                       Align(
-                                                        alignment: AlignmentDirectional(
-                                                            0.05, 0),
+                                                        alignment:
+                                                            AlignmentDirectional(
+                                                                0.05, 0),
                                                         child: Padding(
-                                                          padding: EdgeInsetsDirectional
-                                                              .fromSTEB(0, 0, 0, 5),
+                                                          padding:
+                                                              EdgeInsetsDirectional
+                                                                  .fromSTEB(0,
+                                                                      0, 0, 5),
                                                           child: SizedBox(
                                                             height: 50,
                                                             width: 100,
                                                             child: Card(
                                                               // clipBehavior:
                                                               //     Clip.antiAliasWithSaveLayer,
-                                                              color:
-                                                                  FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryColor,
+                                                              color: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .primaryColor,
                                                               elevation: 1,
                                                               shape:
                                                                   RoundedRectangleBorder(
                                                                 borderRadius:
                                                                     BorderRadius
-                                                                        .circular(25),
+                                                                        .circular(
+                                                                            25),
                                                               ),
                                                               child: Align(
                                                                 alignment:
                                                                     AlignmentDirectional(
                                                                         0, 0),
                                                                 child: Padding(
-                                                                  padding:
-                                                                      EdgeInsetsDirectional
-                                                                          .fromSTEB(
-                                                                              16,
-                                                                              10,
-                                                                              16,
-                                                                              10),
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          16,
+                                                                          10,
+                                                                          16,
+                                                                          10),
                                                                   child: Text(
                                                                     '$timer',
-                                                                    textAlign: TextAlign
-                                                                        .center,
-                                                                    style: FlutterFlowTheme
-                                                                            .of(context)
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
                                                                         .title3
                                                                         .override(
                                                                           fontFamily:
                                                                               'Poppins',
-                                                                          color: FlutterFlowTheme.of(
-                                                                                  context)
-                                                                              .primaryBackground,
-                                                                          fontSize: 17,
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).primaryBackground,
+                                                                          fontSize:
+                                                                              17,
                                                                         ),
                                                                   ),
                                                                 ),
@@ -1085,1107 +1135,1002 @@ class _QuizPageState extends State<QuizPage> {
                                     ),
                                   ),
                                   Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Expanded(
-                                    flex: 2,
-                                    child: Align(
-                                      alignment: AlignmentDirectional(-0.55, -1),
-                                      child: Container(
-                                        width: 874,
-                                        height:
-                                            MediaQuery.of(context).size.height * 1.3,
-                                        decoration: BoxDecoration(
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryBackground,
-                                        ),
-                                        child: Wrap(
-                                          spacing: 0,
-                                          runSpacing: 0,
-                                          alignment: WrapAlignment.start,
-                                          crossAxisAlignment:
-                                              WrapCrossAlignment.start,
-                                          direction: Axis.horizontal,
-                                          runAlignment: WrapAlignment.start,
-                                          verticalDirection: VerticalDirection.down,
-                                          clipBehavior: Clip.none,
-                                          children: [
-                                            Align(
-                                              alignment:
-                                                  AlignmentDirectional(-1, -1),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  if (responsiveVisibility(
-                                                    context: context,
-                                                    tablet: false,
-                                                    tabletLandscape: false,
-                                                    desktop: false,
-                                                  ))
-                                                    Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              -1, 0),
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    0, 10, 0, 0),
-                                                        child: Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(20,
-                                                                          0, 0, 0),
-                                                              child: Text(
-                                                                'Question ${questionindex + 1}',
-                                                                style: FlutterFlowTheme
-                                                                        .of(context)
-                                                                    .title3
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Poppins',
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                    ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  if (responsiveVisibility(
-                                                      context: context,
-                                                      phone: false,
-                                                      tablet: false))
-                                                    Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              -1, 0),
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    0, 10, 0, 0),
-                                                        child: Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(20,
-                                                                          0, 0, 0),
-                                                              child: Text(
-                                                                'Question ${questionindex + 1}',
-                                                                style: FlutterFlowTheme
-                                                                        .of(context)
-                                                                    .title3
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Poppins',
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                    ),
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              child: Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                children: [
-                                                                  Padding(
-                                                                    padding:
-                                                                        EdgeInsetsDirectional
-                                                                            .fromSTEB(
-                                                                                40,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                    child: Text(
-                                                                      'Single Correct Option,',
-                                                                      style: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyText1
-                                                                          .override(
-                                                                            fontFamily:
-                                                                                'Poppins',
-                                                                            fontSize:
-                                                                                15,
-                                                                            fontWeight:
-                                                                                FontWeight.normal,
-                                                                          ),
-                                                                    ),
-                                                                  ),
-                                                                  Text(
-                                                                    ' +1.00, ',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyText1
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Poppins',
-                                                                          color: Color(
-                                                                              0xFF4AAF0D),
-                                                                          fontSize:
-                                                                              15,
-                                                                          fontWeight:
-                                                                              FontWeight
-                                                                                  .normal,
-                                                                        ),
-                                                                  ),
-                                                                  Text(
-                                                                    ' -0.00',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyText1
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Poppins',
-                                                                          color: Color(
-                                                                              0xFFDD2D68),
-                                                                          fontSize:
-                                                                              15,
-                                                                          fontWeight:
-                                                                              FontWeight
-                                                                                  .normal,
-                                                                        ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  Divider(
-                                                    thickness: 1,
-                                                    color: Color(0xFF918888),
-                                                  ),
-                                                  // height: 500,
-                                                  Container(
-                                                    width: 1000,
-                                                    height: 600,
-                                                    decoration: BoxDecoration(
-                                                      color: FlutterFlowTheme.of(
-                                                              context)
-                                                          .secondaryBackground,
-                                                    ),
-                                                    child: SingleChildScrollView(
-                                                      child: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          Align(
-                                                            alignment:
-                                                                AlignmentDirectional(
-                                                                    -1, 0),
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(0,
-                                                                          70, 0, 0),
-                                                              child: Wrap(
-                                                                spacing: 0,
-                                                                runSpacing: 0,
-                                                                alignment:
-                                                                    WrapAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    WrapCrossAlignment
-                                                                        .start,
-                                                                direction:
-                                                                    Axis.horizontal,
-                                                                runAlignment:
-                                                                    WrapAlignment
-                                                                        .start,
-                                                                verticalDirection:
-                                                                    VerticalDirection
-                                                                        .down,
-                                                                clipBehavior:
-                                                                    Clip.none,
-                                                                children: [
-                                                                  Align(
-                                                                    alignment:
-                                                                        AlignmentDirectional(
-                                                                            -1, 0),
-                                                                    child: Padding(
-                                                                      padding: EdgeInsetsDirectional
-                                                                          .fromSTEB(
-                                                                              20,
-                                                                              0,
-                                                                              0,
-                                                                              30),
-                                                                      child: Text(
-                                                                        // "",
-                                                                        // "TEXT | English meaning - Cambridge Dictionaryhttps://dictionary.cambridge.org › dictionary › text08-Feb-2023 — text definition: 1. the written words in a book, magazine, etc., not the pictures: 2. a text message: 3. the exact…. Learn more.Text definition and meaning | Collins English Dictionaryhttps://www.collinsdictionary.com › dictionary › textA text is a written TEXT | English meaning - Cambridge Dictionaryhttps://dictionary.cambridge.org › dictionary › text08-Feb-2023 — text definition: 1. the written words in a book, magazine, etc., not the pictures: 2. a text message: 3. the exact…. Learn more.Text definition and meaning | Collins English Dictionaryhttps://www.collinsdictionary.com › dictionary › textA text is a written or spoken passage, especially one that is used in a school or university for discussion or in an examination. I'll read the text aloud ...or spoken passage, especially one that is used in a school or university for discussion or in an examination. I'll read the text aloud ...TEXT | English meaning - Cambridge Dictionaryhttps://dictionary.cambridge.org › dictionary › text08-Feb-2023 — text definition: 1. the written words in a book, magazine, etc., not the pictures: 2. a text message: 3. the exact…. Learn more.Text definition and meaning | Collins English Dictionaryhttps://www.collinsdictionary.com › dictionary › textA text is a written or spoken passage, especially one that is used in a school or university for discussion or in an examination. I'll read the text aloud ...",
-                                                                        '${quizdata[questionindex]["question"]}',
-                                                                        textAlign:
-                                                                            TextAlign
-                                                                                .start,
-                                                                        style: FlutterFlowTheme.of(
-                                                                                context)
-                                                                            .bodyText1
-                                                                            .override(
-                                                                              fontFamily:
-                                                                                  'Poppins',
-                                                                              fontSize:
-                                                                                  17,
-                                                                              fontWeight:
-                                                                                  FontWeight.normal,
-                                                                            ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Align(
-                                                            alignment:
-                                                                AlignmentDirectional(
-                                                                    -1, 0),
-                                                            child: GestureDetector(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  A = !A;
-                                                                  B = false;
-                                                                  C = false;
-                                                                  D = false;
-                                                                });
-                                                                save();
-                                                              },
-                                                              child: Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                children: [
-                                                                  Padding(
-                                                                    padding:
-                                                                        EdgeInsetsDirectional
-                                                                            .fromSTEB(
-                                                                                20,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                    child:
-                                                                        Container(
-                                                                      width: 50,
-                                                                      height: 50,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: quizdata[questionindex]["answeredValue"] ==
-                                                                                    "A" ||
-                                                                                A ==
-                                                                                    true
-                                                                            ? Color.fromARGB(
-                                                                                255,
-                                                                                117,
-                                                                                255,
-                                                                                121)
-                                                                            : Color(
-                                                                                0xFFC9C1C1),
-                                                                      ),
-                                                                      child: Align(
-                                                                        alignment:
-                                                                            AlignmentDirectional(
-                                                                                0.05,
-                                                                                0),
-                                                                        child: Text(
-                                                                          'A',
-                                                                          style: FlutterFlowTheme.of(
-                                                                                  context)
-                                                                              .bodyText1
-                                                                              .override(
-                                                                                fontFamily:
-                                                                                    'Poppins',
-                                                                                fontSize:
-                                                                                    22,
-                                                                                fontWeight:
-                                                                                    FontWeight.normal,
-                                                                              ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  Expanded(
-                                                                    child: Align(
-                                                                      alignment:
-                                                                          AlignmentDirectional(
-                                                                              -1,
-                                                                              0),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: EdgeInsetsDirectional
-                                                                            .fromSTEB(
-                                                                                30,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                        child: Text(
-                                                                          // "TEXT | English meaning - Cambridge Dictionaryhttps://dictionary.cambridge.org › dictionary › text08-Feb-2023 — text definition: 1. the written words in a book, magazine, etc., not the pictures: 2. a text message: 3. the exact…. Learn more.Text definition and meaning | Collins English Dictionaryhttps://www.collinsdictionary.com › dictionary › textA text is a written TEXT | English meaning - Cambridge Dictionaryhttps://dictionary.cambridge.org › dictionary › text08-Feb-2023 — text definition: 1. the written words in a book, magazine, etc., not the pictures: 2. a text message: 3. the exact…. Learn more.Text definition and meaning | Collins English Dictionaryhttps://www.collinsdictionary.com › dictionary › textA text is a written or spoken passage, especially one that is used in a school or university for discussion or in an examination. I'll read the text aloud ...or spoken passage, especially one that is used in a school or university for discussion or in an examination. I'll read the text aloud ...TEXT | English meaning - Cambridge Dictionaryhttps://dictionary.cambridge.org › dictionary › text08-Feb-2023 — text definition: 1. the written words in a book, magazine, etc., not the pictures: 2. a text message: 3. the exact…. Learn more.Text definition and meaning | Collins English \nDictionaryhttps://www.collinsdictionary.com › dictionary › textA text is a written or spoken passage, especially one that is \nused in a school or university for discussion or in an examination. I'll read the text aloud ...",
-                                                                          '${quizdata[questionindex]["options"]['A']}',
-                                                                          textAlign:
-                                                                              TextAlign
-                                                                                  .start,
-                                                                          style: FlutterFlowTheme.of(
-                                                                                  context)
-                                                                              .bodyText1
-                                                                              .override(
-                                                                                fontFamily:
-                                                                                    'Poppins',
-                                                                                fontSize:
-                                                                                    17,
-                                                                                fontWeight:
-                                                                                    FontWeight.normal,
-                                                                              ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Padding(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Expanded(
+                                        flex: 2,
+                                        child: Align(
+                                          alignment:
+                                              AlignmentDirectional(-0.55, -1),
+                                          child: Container(
+                                            width: 874,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                1.3,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryBackground,
+                                            ),
+                                            child: Wrap(
+                                              spacing: 0,
+                                              runSpacing: 0,
+                                              alignment: WrapAlignment.start,
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.start,
+                                              direction: Axis.horizontal,
+                                              runAlignment: WrapAlignment.start,
+                                              verticalDirection:
+                                                  VerticalDirection.down,
+                                              clipBehavior: Clip.none,
+                                              children: [
+                                                Align(
+                                                  alignment:
+                                                      AlignmentDirectional(
+                                                          -1, -1),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      if (responsiveVisibility(
+                                                        context: context,
+                                                        tablet: false,
+                                                        tabletLandscape: false,
+                                                        desktop: false,
+                                                      ))
+                                                        Align(
+                                                          alignment:
+                                                              AlignmentDirectional(
+                                                                  -1, 0),
+                                                          child: Padding(
                                                             padding:
                                                                 EdgeInsetsDirectional
                                                                     .fromSTEB(
-                                                                        0, 5, 0, 0),
-                                                            child: Wrap(
-                                                              spacing: 0,
-                                                              runSpacing: 0,
-                                                              alignment:
-                                                                  WrapAlignment
-                                                                      .start,
+                                                                        0,
+                                                                        10,
+                                                                        0,
+                                                                        0),
+                                                            child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
                                                               crossAxisAlignment:
-                                                                  WrapCrossAlignment
-                                                                      .start,
-                                                              direction:
-                                                                  Axis.horizontal,
-                                                              runAlignment:
-                                                                  WrapAlignment
-                                                                      .start,
-                                                              verticalDirection:
-                                                                  VerticalDirection
-                                                                      .down,
-                                                              clipBehavior:
-                                                                  Clip.none,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
-                                                                Align(
-                                                                  alignment:
-                                                                      AlignmentDirectional(
-                                                                          -1, 0),
-                                                                  child:
-                                                                      GestureDetector(
-                                                                    onTap: () {
-                                                                      setState(() {
-                                                                        B = !B;
-                                                                        A = false;
-                                                                        C = false;
-                                                                        D = false;
-                                                                      });
-                                                                      save();
-                                                                    },
-                                                                    child: Row(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .min,
-                                                                      children: [
-                                                                        Padding(
-                                                                          padding: EdgeInsetsDirectional
-                                                                              .fromSTEB(
-                                                                                  20,
-                                                                                  0,
-                                                                                  0,
-                                                                                  0),
-                                                                          child:
-                                                                              Container(
-                                                                            width:
-                                                                                50,
-                                                                            height:
-                                                                                50,
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              color: quizdata[questionindex]["answeredValue"] == "B" || B == true
-                                                                                  ? Color.fromARGB(255, 117, 255, 121)
-                                                                                  : Color(0xFFC9C1C1),
-                                                                            ),
-                                                                            child:
-                                                                                Align(
-                                                                              alignment: AlignmentDirectional(
-                                                                                  0.05,
-                                                                                  0),
-                                                                              child:
-                                                                                  Text(
-                                                                                'B',
-                                                                                style: FlutterFlowTheme.of(context).bodyText1.override(
-                                                                                      fontFamily: 'Poppins',
-                                                                                      fontSize: 22,
-                                                                                      fontWeight: FontWeight.normal,
-                                                                                    ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
+                                                                Padding(
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          20,
+                                                                          0,
+                                                                          0,
+                                                                          0),
+                                                                  child: Text(
+                                                                    'Question ${questionindex + 1}',
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .title3
+                                                                        .override(
+                                                                          fontFamily:
+                                                                              'Poppins',
+                                                                          fontWeight:
+                                                                              FontWeight.normal,
                                                                         ),
-                                                                        Expanded(
-                                                                          child:
-                                                                              Align(
-                                                                            alignment: AlignmentDirectional(
-                                                                                -1,
-                                                                                0),
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(
-                                                                                  30,
-                                                                                  0,
-                                                                                  0,
-                                                                                  0),
-                                                                              child:
-                                                                                  Text(
-                                                                                '${quizdata[questionindex]["options"]['B']}',
-                                                                                textAlign:
-                                                                                    TextAlign.start,
-                                                                                style: FlutterFlowTheme.of(context).bodyText1.override(
-                                                                                      fontFamily: 'Poppins',
-                                                                                      fontSize: 17,
-                                                                                      fontWeight: FontWeight.normal,
-                                                                                    ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
                                                                   ),
                                                                 ),
                                                               ],
                                                             ),
                                                           ),
-                                                          Align(
-                                                            alignment:
-                                                                AlignmentDirectional(
-                                                                    -1, -1),
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(0,
-                                                                          5, 0, 0),
-                                                              child: Wrap(
-                                                                spacing: 0,
-                                                                runSpacing: 0,
+                                                        ),
+                                                      if (responsiveVisibility(
+                                                          context: context,
+                                                          phone: false,
+                                                          tablet: false))
+                                                        Align(
+                                                          alignment:
+                                                              AlignmentDirectional(
+                                                                  -1, 0),
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        0,
+                                                                        10,
+                                                                        0,
+                                                                        0),
+                                                            child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Padding(
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          20,
+                                                                          0,
+                                                                          0,
+                                                                          0),
+                                                                  child: Text(
+                                                                    'Question ${questionindex + 1}',
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .title3
+                                                                        .override(
+                                                                          fontFamily:
+                                                                              'Poppins',
+                                                                          fontWeight:
+                                                                              FontWeight.normal,
+                                                                        ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .max,
+                                                                    children: [
+                                                                      Padding(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            40,
+                                                                            0,
+                                                                            0,
+                                                                            0),
+                                                                        child:
+                                                                            Text(
+                                                                          'Single Correct Option,',
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .bodyText1
+                                                                              .override(
+                                                                                fontFamily: 'Poppins',
+                                                                                fontSize: 15,
+                                                                                fontWeight: FontWeight.normal,
+                                                                              ),
+                                                                        ),
+                                                                      ),
+                                                                      Text(
+                                                                        ' +1.00, ',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyText1
+                                                                            .override(
+                                                                              fontFamily: 'Poppins',
+                                                                              color: Color(0xFF4AAF0D),
+                                                                              fontSize: 15,
+                                                                              fontWeight: FontWeight.normal,
+                                                                            ),
+                                                                      ),
+                                                                      Text(
+                                                                        ' -0.00',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyText1
+                                                                            .override(
+                                                                              fontFamily: 'Poppins',
+                                                                              color: Color(0xFFDD2D68),
+                                                                              fontSize: 15,
+                                                                              fontWeight: FontWeight.normal,
+                                                                            ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      Divider(
+                                                        thickness: 1,
+                                                        color:
+                                                            Color(0xFF918888),
+                                                      ),
+                                                      // height: 500,
+                                                      Container(
+                                                        width: 1000,
+                                                        height: 600,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .secondaryBackground,
+                                                        ),
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              Align(
                                                                 alignment:
-                                                                    WrapAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    WrapCrossAlignment
-                                                                        .start,
-                                                                direction:
-                                                                    Axis.horizontal,
-                                                                runAlignment:
-                                                                    WrapAlignment
-                                                                        .start,
-                                                                verticalDirection:
-                                                                    VerticalDirection
-                                                                        .down,
-                                                                clipBehavior:
-                                                                    Clip.none,
-                                                                children: [
-                                                                  Align(
+                                                                    AlignmentDirectional(
+                                                                        -1, 0),
+                                                                child: Padding(
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0,
+                                                                          70,
+                                                                          0,
+                                                                          0),
+                                                                  child: Wrap(
+                                                                    spacing: 0,
+                                                                    runSpacing:
+                                                                        0,
                                                                     alignment:
-                                                                        AlignmentDirectional(
-                                                                            -1, 0),
-                                                                    child:
-                                                                        GestureDetector(
-                                                                      onTap: () {
-                                                                        setState(
-                                                                            () {
-                                                                          C = !C;
-                                                                          B = false;
-                                                                          A = false;
-                                                                          D = false;
-                                                                        });
-                                                                        save();
-                                                                      },
-                                                                      child: Row(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize
-                                                                                .min,
-                                                                        children: [
-                                                                          Padding(
+                                                                        WrapAlignment
+                                                                            .start,
+                                                                    crossAxisAlignment:
+                                                                        WrapCrossAlignment
+                                                                            .start,
+                                                                    direction: Axis
+                                                                        .horizontal,
+                                                                    runAlignment:
+                                                                        WrapAlignment
+                                                                            .start,
+                                                                    verticalDirection:
+                                                                        VerticalDirection
+                                                                            .down,
+                                                                    clipBehavior:
+                                                                        Clip.none,
+                                                                    children: [
+                                                                      Align(
+                                                                        alignment: AlignmentDirectional(
+                                                                            -1,
+                                                                            0),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                              20,
+                                                                              0,
+                                                                              0,
+                                                                              30),
+                                                                          child:
+                                                                              Text(
+                                                                            // "",
+                                                                            // "TEXT | English meaning - Cambridge Dictionaryhttps://dictionary.cambridge.org › dictionary › text08-Feb-2023 — text definition: 1. the written words in a book, magazine, etc., not the pictures: 2. a text message: 3. the exact…. Learn more.Text definition and meaning | Collins English Dictionaryhttps://www.collinsdictionary.com › dictionary › textA text is a written TEXT | English meaning - Cambridge Dictionaryhttps://dictionary.cambridge.org › dictionary › text08-Feb-2023 — text definition: 1. the written words in a book, magazine, etc., not the pictures: 2. a text message: 3. the exact…. Learn more.Text definition and meaning | Collins English Dictionaryhttps://www.collinsdictionary.com › dictionary › textA text is a written or spoken passage, especially one that is used in a school or university for discussion or in an examination. I'll read the text aloud ...or spoken passage, especially one that is used in a school or university for discussion or in an examination. I'll read the text aloud ...TEXT | English meaning - Cambridge Dictionaryhttps://dictionary.cambridge.org › dictionary › text08-Feb-2023 — text definition: 1. the written words in a book, magazine, etc., not the pictures: 2. a text message: 3. the exact…. Learn more.Text definition and meaning | Collins English Dictionaryhttps://www.collinsdictionary.com › dictionary › textA text is a written or spoken passage, especially one that is used in a school or university for discussion or in an examination. I'll read the text aloud ...",
+                                                                            '${quizdata[questionindex]["question"]}',
+                                                                            textAlign:
+                                                                                TextAlign.start,
+                                                                            style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                  fontFamily: 'Poppins',
+                                                                                  fontSize: 17,
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Align(
+                                                                alignment:
+                                                                    AlignmentDirectional(
+                                                                        -1, 0),
+                                                                child:
+                                                                    GestureDetector(
+                                                                  onTap: () {
+                                                                    setState(
+                                                                        () {
+                                                                      A = !A;
+                                                                      B = false;
+                                                                      C = false;
+                                                                      D = false;
+                                                                    });
+                                                                    save();
+                                                                  },
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                      Padding(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            20,
+                                                                            0,
+                                                                            0,
+                                                                            0),
+                                                                        child:
+                                                                            Container(
+                                                                          width:
+                                                                              50,
+                                                                          height:
+                                                                              50,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color: quizdata[questionindex]["answeredValue"] == "A" || A == true
+                                                                                ? Color.fromARGB(255, 117, 255, 121)
+                                                                                : Color(0xFFC9C1C1),
+                                                                          ),
+                                                                          child:
+                                                                              Align(
+                                                                            alignment:
+                                                                                AlignmentDirectional(0.05, 0),
+                                                                            child:
+                                                                                Text(
+                                                                              'A',
+                                                                              style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                    fontFamily: 'Poppins',
+                                                                                    fontSize: 22,
+                                                                                    fontWeight: FontWeight.normal,
+                                                                                  ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Expanded(
+                                                                        child:
+                                                                            Align(
+                                                                          alignment: AlignmentDirectional(
+                                                                              -1,
+                                                                              0),
+                                                                          child:
+                                                                              Padding(
                                                                             padding: EdgeInsetsDirectional.fromSTEB(
-                                                                                20,
+                                                                                30,
                                                                                 0,
                                                                                 0,
                                                                                 0),
                                                                             child:
-                                                                                Container(
-                                                                              width:
-                                                                                  50,
-                                                                              height:
-                                                                                  50,
-                                                                              decoration:
-                                                                                  BoxDecoration(
-                                                                                color: quizdata[questionindex]["answeredValue"] == "C" || C == true
-                                                                                    ? Color.fromARGB(255, 117, 255, 121)
-                                                                                    : Color(0xFFC9C1C1),
-                                                                              ),
-                                                                              child:
-                                                                                  Align(
-                                                                                alignment:
-                                                                                    AlignmentDirectional(0.05, 0),
-                                                                                child:
-                                                                                    Text(
-                                                                                  'C',
-                                                                                  style: FlutterFlowTheme.of(context).bodyText1.override(
-                                                                                        fontFamily: 'Poppins',
-                                                                                        fontSize: 22,
-                                                                                        fontWeight: FontWeight.normal,
-                                                                                      ),
+                                                                                Text(
+                                                                              // "TEXT | English meaning - Cambridge Dictionaryhttps://dictionary.cambridge.org › dictionary › text08-Feb-2023 — text definition: 1. the written words in a book, magazine, etc., not the pictures: 2. a text message: 3. the exact…. Learn more.Text definition and meaning | Collins English Dictionaryhttps://www.collinsdictionary.com › dictionary › textA text is a written TEXT | English meaning - Cambridge Dictionaryhttps://dictionary.cambridge.org › dictionary › text08-Feb-2023 — text definition: 1. the written words in a book, magazine, etc., not the pictures: 2. a text message: 3. the exact…. Learn more.Text definition and meaning | Collins English Dictionaryhttps://www.collinsdictionary.com › dictionary › textA text is a written or spoken passage, especially one that is used in a school or university for discussion or in an examination. I'll read the text aloud ...or spoken passage, especially one that is used in a school or university for discussion or in an examination. I'll read the text aloud ...TEXT | English meaning - Cambridge Dictionaryhttps://dictionary.cambridge.org › dictionary › text08-Feb-2023 — text definition: 1. the written words in a book, magazine, etc., not the pictures: 2. a text message: 3. the exact…. Learn more.Text definition and meaning | Collins English \nDictionaryhttps://www.collinsdictionary.com › dictionary › textA text is a written or spoken passage, especially one that is \nused in a school or university for discussion or in an examination. I'll read the text aloud ...",
+                                                                              '${quizdata[questionindex]["options"]['A']}',
+                                                                              textAlign: TextAlign.start,
+                                                                              style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                    fontFamily: 'Poppins',
+                                                                                    fontSize: 17,
+                                                                                    fontWeight: FontWeight.normal,
+                                                                                  ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0,
+                                                                            5,
+                                                                            0,
+                                                                            0),
+                                                                child: Wrap(
+                                                                  spacing: 0,
+                                                                  runSpacing: 0,
+                                                                  alignment:
+                                                                      WrapAlignment
+                                                                          .start,
+                                                                  crossAxisAlignment:
+                                                                      WrapCrossAlignment
+                                                                          .start,
+                                                                  direction: Axis
+                                                                      .horizontal,
+                                                                  runAlignment:
+                                                                      WrapAlignment
+                                                                          .start,
+                                                                  verticalDirection:
+                                                                      VerticalDirection
+                                                                          .down,
+                                                                  clipBehavior:
+                                                                      Clip.none,
+                                                                  children: [
+                                                                    Align(
+                                                                      alignment:
+                                                                          AlignmentDirectional(
+                                                                              -1,
+                                                                              0),
+                                                                      child:
+                                                                          GestureDetector(
+                                                                        onTap:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            B = !B;
+                                                                            A = false;
+                                                                            C = false;
+                                                                            D = false;
+                                                                          });
+                                                                          save();
+                                                                        },
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.min,
+                                                                          children: [
+                                                                            Padding(
+                                                                              padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
+                                                                              child: Container(
+                                                                                width: 50,
+                                                                                height: 50,
+                                                                                decoration: BoxDecoration(
+                                                                                  color: quizdata[questionindex]["answeredValue"] == "B" || B == true ? Color.fromARGB(255, 117, 255, 121) : Color(0xFFC9C1C1),
+                                                                                ),
+                                                                                child: Align(
+                                                                                  alignment: AlignmentDirectional(0.05, 0),
+                                                                                  child: Text(
+                                                                                    'B',
+                                                                                    style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                          fontFamily: 'Poppins',
+                                                                                          fontSize: 22,
+                                                                                          fontWeight: FontWeight.normal,
+                                                                                        ),
+                                                                                  ),
                                                                                 ),
                                                                               ),
                                                                             ),
+                                                                            Expanded(
+                                                                              child: Align(
+                                                                                alignment: AlignmentDirectional(-1, 0),
+                                                                                child: Padding(
+                                                                                  padding: EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0),
+                                                                                  child: Text(
+                                                                                    '${quizdata[questionindex]["options"]['B']}',
+                                                                                    textAlign: TextAlign.start,
+                                                                                    style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                          fontFamily: 'Poppins',
+                                                                                          fontSize: 17,
+                                                                                          fontWeight: FontWeight.normal,
+                                                                                        ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Align(
+                                                                alignment:
+                                                                    AlignmentDirectional(
+                                                                        -1, -1),
+                                                                child: Padding(
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0,
+                                                                          5,
+                                                                          0,
+                                                                          0),
+                                                                  child: Wrap(
+                                                                    spacing: 0,
+                                                                    runSpacing:
+                                                                        0,
+                                                                    alignment:
+                                                                        WrapAlignment
+                                                                            .start,
+                                                                    crossAxisAlignment:
+                                                                        WrapCrossAlignment
+                                                                            .start,
+                                                                    direction: Axis
+                                                                        .horizontal,
+                                                                    runAlignment:
+                                                                        WrapAlignment
+                                                                            .start,
+                                                                    verticalDirection:
+                                                                        VerticalDirection
+                                                                            .down,
+                                                                    clipBehavior:
+                                                                        Clip.none,
+                                                                    children: [
+                                                                      Align(
+                                                                        alignment: AlignmentDirectional(
+                                                                            -1,
+                                                                            0),
+                                                                        child:
+                                                                            GestureDetector(
+                                                                          onTap:
+                                                                              () {
+                                                                            setState(() {
+                                                                              C = !C;
+                                                                              B = false;
+                                                                              A = false;
+                                                                              D = false;
+                                                                            });
+                                                                            save();
+                                                                          },
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.min,
+                                                                            children: [
+                                                                              Padding(
+                                                                                padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
+                                                                                child: Container(
+                                                                                  width: 50,
+                                                                                  height: 50,
+                                                                                  decoration: BoxDecoration(
+                                                                                    color: quizdata[questionindex]["answeredValue"] == "C" || C == true ? Color.fromARGB(255, 117, 255, 121) : Color(0xFFC9C1C1),
+                                                                                  ),
+                                                                                  child: Align(
+                                                                                    alignment: AlignmentDirectional(0.05, 0),
+                                                                                    child: Text(
+                                                                                      'C',
+                                                                                      style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                            fontFamily: 'Poppins',
+                                                                                            fontSize: 22,
+                                                                                            fontWeight: FontWeight.normal,
+                                                                                          ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              Expanded(
+                                                                                child: Align(
+                                                                                  alignment: AlignmentDirectional(-1, 0),
+                                                                                  child: Padding(
+                                                                                    padding: EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0),
+                                                                                    child: Text(
+                                                                                      '${quizdata[questionindex]["options"]['C']}',
+                                                                                      textAlign: TextAlign.start,
+                                                                                      style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                            fontFamily: 'Poppins',
+                                                                                            fontSize: 17,
+                                                                                            fontWeight: FontWeight.normal,
+                                                                                          ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
                                                                           ),
-                                                                          Expanded(
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0,
+                                                                            5,
+                                                                            0,
+                                                                            110),
+                                                                child: Wrap(
+                                                                  spacing: 0,
+                                                                  runSpacing: 0,
+                                                                  alignment:
+                                                                      WrapAlignment
+                                                                          .start,
+                                                                  crossAxisAlignment:
+                                                                      WrapCrossAlignment
+                                                                          .start,
+                                                                  direction: Axis
+                                                                      .horizontal,
+                                                                  runAlignment:
+                                                                      WrapAlignment
+                                                                          .start,
+                                                                  verticalDirection:
+                                                                      VerticalDirection
+                                                                          .down,
+                                                                  clipBehavior:
+                                                                      Clip.none,
+                                                                  children: [
+                                                                    Align(
+                                                                      alignment:
+                                                                          AlignmentDirectional(
+                                                                              -1,
+                                                                              0),
+                                                                      child:
+                                                                          GestureDetector(
+                                                                        onTap:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            D = !D;
+                                                                            B = false;
+                                                                            C = false;
+                                                                            A = false;
+                                                                          });
+                                                                          save();
+                                                                        },
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.min,
+                                                                          children: [
+                                                                            Padding(
+                                                                              padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
+                                                                              child: Container(
+                                                                                width: 50,
+                                                                                height: 50,
+                                                                                decoration: BoxDecoration(
+                                                                                  color: quizdata[questionindex]["answeredValue"] == "D" || D == true ? Color.fromARGB(255, 117, 255, 121) : Color(0xFFC9C1C1),
+                                                                                ),
+                                                                                child: Align(
+                                                                                  alignment: AlignmentDirectional(0.05, 0),
+                                                                                  child: Text(
+                                                                                    'D',
+                                                                                    style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                          fontFamily: 'Poppins',
+                                                                                          fontSize: 22,
+                                                                                          fontWeight: FontWeight.normal,
+                                                                                        ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            Expanded(
+                                                                              child: Align(
+                                                                                alignment: AlignmentDirectional(-1, 0),
+                                                                                child: Padding(
+                                                                                  padding: EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0),
+                                                                                  child: Text(
+                                                                                    '${quizdata[questionindex]["options"]['D']}',
+                                                                                    textAlign: TextAlign.start,
+                                                                                    style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                          fontFamily: 'Poppins',
+                                                                                          fontSize: 17,
+                                                                                          fontWeight: FontWeight.normal,
+                                                                                        ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Divider(
+                                                        thickness: 1,
+                                                        color:
+                                                            Color(0xFF918888),
+                                                      ),
+                                                      if (responsiveVisibility(
+                                                        context: context,
+                                                        phone: false,
+                                                        tablet: false,
+                                                        tabletLandscape: false,
+                                                        desktop: false,
+                                                      ))
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          height: 92.8,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondaryBackground,
+                                                          ),
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              Container(
+                                                                width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                                height: 50,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryBackground,
+                                                                ),
+                                                                child: Align(
+                                                                  alignment:
+                                                                      AlignmentDirectional(
+                                                                          -1,
+                                                                          0),
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                      Padding(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            0,
+                                                                            0,
+                                                                            10,
+                                                                            0),
+                                                                        child:
+                                                                            GestureDetector(
+                                                                          onTap:
+                                                                              () {
+                                                                            saveNext();
+                                                                          },
+                                                                          child:
+                                                                              FFButtonWidget(
+                                                                            onPressed:
+                                                                                () {
+                                                                              print('Button pressed ...');
+                                                                            },
+                                                                            text:
+                                                                                'SAVE & NEXT',
+                                                                            options:
+                                                                                FFButtonOptions(
+                                                                              width: 100,
+                                                                              height: 30,
+                                                                              color: Color(0xFF0AAB4E),
+                                                                              textStyle: FlutterFlowTheme.of(context).subtitle2.override(
+                                                                                    fontFamily: 'Poppins',
+                                                                                    color: Colors.white,
+                                                                                    fontSize: 10,
+                                                                                    fontWeight: FontWeight.normal,
+                                                                                  ),
+                                                                              borderSide: BorderSide(
+                                                                                color: Colors.transparent,
+                                                                                width: 0,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      GestureDetector(
+                                                                        onTap:
+                                                                            () {
+                                                                          saveNext();
+                                                                        },
+                                                                        child:
+                                                                            FFButtonWidget(
+                                                                          onPressed:
+                                                                              () {
+                                                                            print('Button pressed ...');
+                                                                          },
+                                                                          text:
+                                                                              'MARK FOR REVIEW & NEXT',
+                                                                          options:
+                                                                              FFButtonOptions(
+                                                                            width:
+                                                                                180,
+                                                                            height:
+                                                                                30,
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).primaryColor,
+                                                                            textStyle: FlutterFlowTheme.of(context).subtitle2.override(
+                                                                                  fontFamily: 'Poppins',
+                                                                                  color: Colors.white,
+                                                                                  fontSize: 10,
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                ),
+                                                                            borderSide:
+                                                                                BorderSide(
+                                                                              color: Colors.transparent,
+                                                                              width: 0,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Padding(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            10,
+                                                                            0,
+                                                                            0,
+                                                                            0),
+                                                                        child:
+                                                                            GestureDetector(
+                                                                          onTap:
+                                                                              () {
+                                                                            setState(() {
+                                                                              A = false;
+                                                                              B = false;
+                                                                              C = false;
+                                                                              D = false;
+                                                                            });
+                                                                          },
+                                                                          child:
+                                                                              FFButtonWidget(
+                                                                            onPressed:
+                                                                                () {
+                                                                              print('Button pressed ...');
+                                                                            },
+                                                                            text:
+                                                                                'CLEAR RESPONSE',
+                                                                            options:
+                                                                                FFButtonOptions(
+                                                                              width: 125,
+                                                                              height: 30,
+                                                                              color: Color(0xFF9A98A9),
+                                                                              textStyle: FlutterFlowTheme.of(context).subtitle2.override(
+                                                                                    fontFamily: 'Poppins',
+                                                                                    color: Colors.white,
+                                                                                    fontSize: 10,
+                                                                                    fontWeight: FontWeight.normal,
+                                                                                  ),
+                                                                              borderSide: BorderSide(
+                                                                                color: Colors.transparent,
+                                                                                width: 0,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Padding(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            10,
+                                                                            0,
+                                                                            0,
+                                                                            0),
+                                                                        child:
+                                                                            Text(
+                                                                          'Report an error',
+                                                                          textAlign:
+                                                                              TextAlign.end,
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .bodyText1
+                                                                              .override(
+                                                                                fontFamily: 'Poppins',
+                                                                                fontSize: 10,
+                                                                                fontWeight: FontWeight.normal,
+                                                                              ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                                height: 50,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryBackground,
+                                                                ),
+                                                                child: Align(
+                                                                  alignment:
+                                                                      AlignmentDirectional(
+                                                                          -1,
+                                                                          0),
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .max,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Row(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.max,
+                                                                        children: [
+                                                                          GestureDetector(
+                                                                            onTap:
+                                                                                () {
+                                                                              setState(
+                                                                                () {
+                                                                                  if (questionindex != 0) {
+                                                                                    questionindex -= 1;
+                                                                                    saveNext();
+                                                                                  }
+                                                                                },
+                                                                              );
+                                                                            },
                                                                             child:
-                                                                                Align(
-                                                                              alignment: AlignmentDirectional(
-                                                                                  -1,
-                                                                                  0),
-                                                                              child:
-                                                                                  Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(
-                                                                                    30,
-                                                                                    0,
-                                                                                    0,
-                                                                                    0),
-                                                                                child:
-                                                                                    Text(
-                                                                                  '${quizdata[questionindex]["options"]['C']}',
-                                                                                  textAlign: TextAlign.start,
-                                                                                  style: FlutterFlowTheme.of(context).bodyText1.override(
-                                                                                        fontFamily: 'Poppins',
-                                                                                        fontSize: 17,
-                                                                                        fontWeight: FontWeight.normal,
-                                                                                      ),
+                                                                                FFButtonWidget(
+                                                                              onPressed: () {
+                                                                                print('Button pressed ...');
+                                                                              },
+                                                                              text: 'PREVIOUS',
+                                                                              options: FFButtonOptions(
+                                                                                width: 90,
+                                                                                height: 30,
+                                                                                color: Color(0xFF918888),
+                                                                                textStyle: FlutterFlowTheme.of(context).subtitle2.override(
+                                                                                      fontFamily: 'Poppins',
+                                                                                      color: FlutterFlowTheme.of(context).primaryBtnText,
+                                                                                      fontSize: 10,
+                                                                                      fontWeight: FontWeight.normal,
+                                                                                    ),
+                                                                                borderSide: BorderSide(
+                                                                                  color: Colors.transparent,
+                                                                                  width: 1,
+                                                                                ),
+                                                                                borderRadius: BorderRadius.circular(8),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                10,
+                                                                                0,
+                                                                                0,
+                                                                                0),
+                                                                            child:
+                                                                                GestureDetector(
+                                                                              onTap: () {
+                                                                                setState(() {
+                                                                                  if (questionindex != quizdata.length) {
+                                                                                    questionindex += 1;
+                                                                                  }
+                                                                                });
+                                                                              },
+                                                                              child: GestureDetector(
+                                                                                onTap: () {
+                                                                                  questionindex += 1;
+                                                                                },
+                                                                                child: FFButtonWidget(
+                                                                                  onPressed: () {
+                                                                                    print('Button pressed ...');
+                                                                                  },
+                                                                                  text: 'NEXT QUESTION',
+                                                                                  options: FFButtonOptions(
+                                                                                    width: 115,
+                                                                                    height: 30,
+                                                                                    color: FlutterFlowTheme.of(context).primaryColor,
+                                                                                    textStyle: FlutterFlowTheme.of(context).subtitle2.override(
+                                                                                          fontFamily: 'Poppins',
+                                                                                          color: Colors.white,
+                                                                                          fontSize: 10,
+                                                                                          fontWeight: FontWeight.normal,
+                                                                                        ),
+                                                                                    borderSide: BorderSide(
+                                                                                      color: Colors.transparent,
+                                                                                      width: 1,
+                                                                                    ),
+                                                                                    borderRadius: BorderRadius.circular(8),
+                                                                                  ),
                                                                                 ),
                                                                               ),
                                                                             ),
                                                                           ),
                                                                         ],
                                                                       ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(0, 5,
-                                                                        0, 110),
-                                                            child: Wrap(
-                                                              spacing: 0,
-                                                              runSpacing: 0,
-                                                              alignment:
-                                                                  WrapAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  WrapCrossAlignment
-                                                                      .start,
-                                                              direction:
-                                                                  Axis.horizontal,
-                                                              runAlignment:
-                                                                  WrapAlignment
-                                                                      .start,
-                                                              verticalDirection:
-                                                                  VerticalDirection
-                                                                      .down,
-                                                              clipBehavior:
-                                                                  Clip.none,
-                                                              children: [
-                                                                Align(
-                                                                  alignment:
-                                                                      AlignmentDirectional(
-                                                                          -1, 0),
-                                                                  child:
-                                                                      GestureDetector(
-                                                                    onTap: () {
-                                                                      setState(() {
-                                                                        D = !D;
-                                                                        B = false;
-                                                                        C = false;
-                                                                        A = false;
-                                                                      });
-                                                                      save();
-                                                                    },
-                                                                    child: Row(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .min,
-                                                                      children: [
-                                                                        Padding(
-                                                                          padding: EdgeInsetsDirectional
-                                                                              .fromSTEB(
-                                                                                  20,
-                                                                                  0,
-                                                                                  0,
-                                                                                  0),
-                                                                          child:
-                                                                              Container(
-                                                                            width:
-                                                                                50,
-                                                                            height:
-                                                                                50,
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              color: quizdata[questionindex]["answeredValue"] == "D" || D == true
-                                                                                  ? Color.fromARGB(255, 117, 255, 121)
-                                                                                  : Color(0xFFC9C1C1),
-                                                                            ),
-                                                                            child:
-                                                                                Align(
-                                                                              alignment: AlignmentDirectional(
-                                                                                  0.05,
-                                                                                  0),
-                                                                              child:
-                                                                                  Text(
-                                                                                'D',
-                                                                                style: FlutterFlowTheme.of(context).bodyText1.override(
-                                                                                      fontFamily: 'Poppins',
-                                                                                      fontSize: 22,
-                                                                                      fontWeight: FontWeight.normal,
-                                                                                    ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          child:
-                                                                              Align(
-                                                                            alignment: AlignmentDirectional(
-                                                                                -1,
-                                                                                0),
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(
-                                                                                  30,
-                                                                                  0,
-                                                                                  0,
-                                                                                  0),
-                                                                              child:
-                                                                                  Text(
-                                                                                '${quizdata[questionindex]["options"]['D']}',
-                                                                                textAlign:
-                                                                                    TextAlign.start,
-                                                                                style: FlutterFlowTheme.of(context).bodyText1.override(
-                                                                                      fontFamily: 'Poppins',
-                                                                                      fontSize: 17,
-                                                                                      fontWeight: FontWeight.normal,
-                                                                                    ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Divider(
-                                                    thickness: 1,
-                                                    color: Color(0xFF918888),
-                                                  ),
-                                                  if (responsiveVisibility(
-                                                    context: context,
-                                                    phone: false,
-                                                    tablet: false,
-                                                    tabletLandscape: false,
-                                                    desktop: false,
-                                                  ))
-                                                    Container(
-                                                      width: MediaQuery.of(context)
-                                                          .size
-                                                          .width,
-                                                      height: 92.8,
-                                                      decoration: BoxDecoration(
-                                                        color: FlutterFlowTheme.of(
-                                                                context)
-                                                            .secondaryBackground,
-                                                      ),
-                                                      child: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          Container(
-                                                            width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width,
-                                                            height: 50,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .primaryBackground,
-                                                            ),
-                                                            child: Align(
-                                                              alignment:
-                                                                  AlignmentDirectional(
-                                                                      -1, 0),
-                                                              child: Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                children: [
-                                                                  Padding(
-                                                                    padding:
-                                                                        EdgeInsetsDirectional
-                                                                            .fromSTEB(
-                                                                                0,
-                                                                                0,
-                                                                                10,
-                                                                                0),
-                                                                    child:
-                                                                        GestureDetector(
-                                                                      onTap: () {
-                                                                        saveNext();
-                                                                      },
-                                                                      child:
-                                                                          FFButtonWidget(
-                                                                        onPressed:
-                                                                            () {
-                                                                          print(
-                                                                              'Button pressed ...');
-                                                                        },
-                                                                        text:
-                                                                            'SAVE & NEXT',
-                                                                        options:
-                                                                            FFButtonOptions(
-                                                                          width:
-                                                                              100,
-                                                                          height:
-                                                                              30,
-                                                                          color: Color(
-                                                                              0xFF0AAB4E),
-                                                                          textStyle: FlutterFlowTheme.of(
-                                                                                  context)
-                                                                              .subtitle2
-                                                                              .override(
-                                                                                fontFamily:
-                                                                                    'Poppins',
-                                                                                color:
-                                                                                    Colors.white,
-                                                                                fontSize:
-                                                                                    10,
-                                                                                fontWeight:
-                                                                                    FontWeight.normal,
-                                                                              ),
-                                                                          borderSide:
-                                                                              BorderSide(
-                                                                            color: Colors
-                                                                                .transparent,
-                                                                            width:
-                                                                                0,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  GestureDetector(
-                                                                    onTap: () {
-                                                                      saveNext();
-                                                                    },
-                                                                    child:
-                                                                        FFButtonWidget(
-                                                                      onPressed:
-                                                                          () {
-                                                                        print(
-                                                                            'Button pressed ...');
-                                                                      },
-                                                                      text:
-                                                                          'MARK FOR REVIEW & NEXT',
-                                                                      options:
-                                                                          FFButtonOptions(
-                                                                        width: 180,
-                                                                        height: 30,
-                                                                        color: FlutterFlowTheme.of(
-                                                                                context)
-                                                                            .primaryColor,
-                                                                        textStyle: FlutterFlowTheme.of(
-                                                                                context)
-                                                                            .subtitle2
-                                                                            .override(
-                                                                              fontFamily:
-                                                                                  'Poppins',
-                                                                              color:
-                                                                                  Colors.white,
-                                                                              fontSize:
-                                                                                  10,
-                                                                              fontWeight:
-                                                                                  FontWeight.normal,
-                                                                            ),
-                                                                        borderSide:
-                                                                            BorderSide(
-                                                                          color: Colors
-                                                                              .transparent,
-                                                                          width: 0,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding:
-                                                                        EdgeInsetsDirectional
-                                                                            .fromSTEB(
-                                                                                10,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                    child:
-                                                                        GestureDetector(
-                                                                      onTap: () {
-                                                                        setState(
-                                                                            () {
-                                                                          A = false;
-                                                                          B = false;
-                                                                          C = false;
-                                                                          D = false;
-                                                                        });
-                                                                      },
-                                                                      child:
-                                                                          FFButtonWidget(
-                                                                        onPressed:
-                                                                            () {
-                                                                          print(
-                                                                              'Button pressed ...');
-                                                                        },
-                                                                        text:
-                                                                            'CLEAR RESPONSE',
-                                                                        options:
-                                                                            FFButtonOptions(
-                                                                          width:
-                                                                              125,
-                                                                          height:
-                                                                              30,
-                                                                          color: Color(
-                                                                              0xFF9A98A9),
-                                                                          textStyle: FlutterFlowTheme.of(
-                                                                                  context)
-                                                                              .subtitle2
-                                                                              .override(
-                                                                                fontFamily:
-                                                                                    'Poppins',
-                                                                                color:
-                                                                                    Colors.white,
-                                                                                fontSize:
-                                                                                    10,
-                                                                                fontWeight:
-                                                                                    FontWeight.normal,
-                                                                              ),
-                                                                          borderSide:
-                                                                              BorderSide(
-                                                                            color: Colors
-                                                                                .transparent,
-                                                                            width:
-                                                                                0,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding:
-                                                                        EdgeInsetsDirectional
-                                                                            .fromSTEB(
-                                                                                10,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                    child: Text(
-                                                                      'Report an error',
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .end,
-                                                                      style: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyText1
-                                                                          .override(
-                                                                            fontFamily:
-                                                                                'Poppins',
-                                                                            fontSize:
-                                                                                10,
-                                                                            fontWeight:
-                                                                                FontWeight.normal,
-                                                                          ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                            width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width,
-                                                            height: 50,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .primaryBackground,
-                                                            ),
-                                                            child: Align(
-                                                              alignment:
-                                                                  AlignmentDirectional(
-                                                                      -1, 0),
-                                                              child: Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Row(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .max,
-                                                                    children: [
-                                                                      GestureDetector(
-                                                                        onTap: () {
-                                                                          setState(
-                                                                            () {
-                                                                              if (questionindex !=
-                                                                                  0) {
-                                                                                questionindex -=
-                                                                                    1;
-                                                                                saveNext();
-                                                                              }
-                                                                            },
-                                                                          );
-                                                                        },
-                                                                        child:
-                                                                            FFButtonWidget(
-                                                                          onPressed:
-                                                                              () {
-                                                                            print(
-                                                                                'Button pressed ...');
-                                                                          },
-                                                                          text:
-                                                                              'PREVIOUS',
-                                                                          options:
-                                                                              FFButtonOptions(
-                                                                            width:
-                                                                                90,
-                                                                            height:
-                                                                                30,
-                                                                            color: Color(
-                                                                                0xFF918888),
-                                                                            textStyle: FlutterFlowTheme.of(context)
-                                                                                .subtitle2
-                                                                                .override(
-                                                                                  fontFamily: 'Poppins',
-                                                                                  color: FlutterFlowTheme.of(context).primaryBtnText,
-                                                                                  fontSize: 10,
-                                                                                  fontWeight: FontWeight.normal,
-                                                                                ),
-                                                                            borderSide:
-                                                                                BorderSide(
-                                                                              color:
-                                                                                  Colors.transparent,
-                                                                              width:
-                                                                                  1,
-                                                                            ),
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(8),
-                                                                          ),
-                                                                        ),
-                                                                      ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional
-                                                                            .fromSTEB(
-                                                                                10,
-                                                                                0,
-                                                                                0,
-                                                                                0),
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            10,
+                                                                            0,
+                                                                            0,
+                                                                            0),
                                                                         child:
                                                                             GestureDetector(
                                                                           onTap:
                                                                               () {
-                                                                            setState(
-                                                                                () {
-                                                                              if (questionindex !=
-                                                                                  quizdata.length) {
-                                                                                questionindex +=
-                                                                                    1;
-                                                                              }
-                                                                            });
+                                                                            submit();
                                                                           },
                                                                           child:
-                                                                              GestureDetector(
-                                                                            onTap:
+                                                                              FFButtonWidget(
+                                                                            onPressed:
                                                                                 () {
-                                                                              questionindex +=
-                                                                                  1;
+                                                                              submit();
                                                                             },
-                                                                            child:
-                                                                                FFButtonWidget(
-                                                                              onPressed:
-                                                                                  () {
-                                                                                print('Button pressed ...');
-                                                                              },
-                                                                              text:
-                                                                                  'NEXT QUESTION',
-                                                                              options:
-                                                                                  FFButtonOptions(
-                                                                                width:
-                                                                                    115,
-                                                                                height:
-                                                                                    30,
-                                                                                color:
-                                                                                    FlutterFlowTheme.of(context).primaryColor,
-                                                                                textStyle: FlutterFlowTheme.of(context).subtitle2.override(
-                                                                                      fontFamily: 'Poppins',
-                                                                                      color: Colors.white,
-                                                                                      fontSize: 10,
-                                                                                      fontWeight: FontWeight.normal,
-                                                                                    ),
-                                                                                borderSide:
-                                                                                    BorderSide(
-                                                                                  color: Colors.transparent,
-                                                                                  width: 1,
-                                                                                ),
-                                                                                borderRadius:
-                                                                                    BorderRadius.circular(8),
+                                                                            text:
+                                                                                'SUBMIT',
+                                                                            options:
+                                                                                FFButtonOptions(
+                                                                              width: 90,
+                                                                              height: 30,
+                                                                              color: Color(0xFF00C356),
+                                                                              textStyle: FlutterFlowTheme.of(context).subtitle2.override(
+                                                                                    fontFamily: 'Poppins',
+                                                                                    color: Colors.white,
+                                                                                    fontSize: 10,
+                                                                                    fontWeight: FontWeight.normal,
+                                                                                  ),
+                                                                              borderSide: BorderSide(
+                                                                                color: Color(0xFFC39A9A),
+                                                                                width: 0,
                                                                               ),
                                                                             ),
                                                                           ),
@@ -2193,289 +2138,66 @@ class _QuizPageState extends State<QuizPage> {
                                                                       ),
                                                                     ],
                                                                   ),
-                                                                  Padding(
-                                                                    padding:
-                                                                        EdgeInsetsDirectional
-                                                                            .fromSTEB(
-                                                                                10,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                    child:
-                                                                        GestureDetector(
-                                                                      onTap: () {
-                                                                        submit();
-                                                                      },
-                                                                      child:
-                                                                          FFButtonWidget(
-                                                                        onPressed:
-                                                                            () {
-                                                                          submit();
-                                                                        },
-                                                                        text:
-                                                                            'SUBMIT',
-                                                                        options:
-                                                                            FFButtonOptions(
-                                                                          width: 90,
-                                                                          height:
-                                                                              30,
-                                                                          color: Color(
-                                                                              0xFF00C356),
-                                                                          textStyle: FlutterFlowTheme.of(
-                                                                                  context)
-                                                                              .subtitle2
-                                                                              .override(
-                                                                                fontFamily:
-                                                                                    'Poppins',
-                                                                                color:
-                                                                                    Colors.white,
-                                                                                fontSize:
-                                                                                    10,
-                                                                                fontWeight:
-                                                                                    FontWeight.normal,
-                                                                              ),
-                                                                          borderSide:
-                                                                              BorderSide(
-                                                                            color: Color(
-                                                                                0xFFC39A9A),
-                                                                            width:
-                                                                                0,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
+                                                                ),
                                                               ),
-                                                            ),
+                                                            ],
                                                           ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  GestureDetector(
-                                                    child: Container(
-                                                      width: MediaQuery.of(context)
-                                                          .size
-                                                          .width,
-                                                      height: 300,
-                                                      decoration: BoxDecoration(),
-                                                      child: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          Row(
+                                                        ),
+                                                      GestureDetector(
+                                                        child: Container(
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          height: 300,
+                                                          decoration:
+                                                              BoxDecoration(),
+                                                          child: Column(
                                                             mainAxisSize:
-                                                                MainAxisSize.max,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceAround,
+                                                                MainAxisSize
+                                                                    .max,
                                                             children: [
-                                                              Padding(
-                                                                padding:
-                                                                    EdgeInsetsDirectional
+                                                              Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceAround,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             10,
                                                                             0,
                                                                             10,
                                                                             0),
-                                                                child:
-                                                                    GestureDetector(
-                                                                  onTap: () {
-                                                                    saveNext();
-                                                                  },
-                                                                  child: Container(
-                                                                    width: 100,
-                                                                    height: 40,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: Color(
-                                                                          0xFF0A9E04),
-                                                                    ),
-                                                                    child: Align(
-                                                                      alignment:
-                                                                          AlignmentDirectional(
-                                                                              0, 0),
-                                                                      child: Text(
-                                                                        'SAVE & NEXT',
-                                                                        style: FlutterFlowTheme.of(
-                                                                                context)
-                                                                            .bodyText1
-                                                                            .override(
-                                                                              fontFamily:
-                                                                                  'Poppins',
-                                                                              color:
-                                                                                  FlutterFlowTheme.of(context).primaryBtnText,
-                                                                              fontSize:
-                                                                                  10,
-                                                                            ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                flex: 1,
-                                                                child:
-                                                                    GestureDetector(
-                                                                  onTap: () {
-                                                                    markreview =
-                                                                        true;
-                                                                    saveNext();
-                                                                  },
-                                                                  child: Container(
-                                                                    width: 100,
-                                                                    height: 40,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .primaryColor,
-                                                                    ),
-                                                                    child: Align(
-                                                                      alignment:
-                                                                          AlignmentDirectional(
-                                                                              0, 0),
-                                                                      child: Text(
-                                                                        'MARK FOR REVIEW',
-                                                                        style: FlutterFlowTheme.of(
-                                                                                context)
-                                                                            .bodyText1
-                                                                            .override(
-                                                                              fontFamily:
-                                                                                  'Poppins',
-                                                                              color:
-                                                                                  FlutterFlowTheme.of(context).primaryBtnText,
-                                                                              fontSize:
-                                                                                  10,
-                                                                            ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    A = false;
-                                                                    B = false;
-                                                                    C = false;
-                                                                    D = false;
-                                                                    quizdata[questionindex]
-                                                                            [
-                                                                            "Answered"] =
-                                                                        false;
-                                                                    quizdata[questionindex]
-                                                                            [
-                                                                            'notAnswered'] =
-                                                                        true;
-                                                                    quizdata[questionindex]
-                                                                            [
-                                                                            'answeredValue'] =
-                                                                        null;
-                                                                    countParameter(
-                                                                        'save');
-                                                                  });
-                                                                },
-                                                                child: Expanded(
-                                                                  flex: 1,
-                                                                  child: Padding(
-                                                                    padding:
-                                                                        EdgeInsetsDirectional
-                                                                            .fromSTEB(
-                                                                                10,
-                                                                                0,
-                                                                                10,
-                                                                                0),
-                                                                    child:
-                                                                        Container(
-                                                                      width: 100,
-                                                                      height: 40,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Color(
-                                                                            0xFF868585),
-                                                                      ),
-                                                                      child: Align(
-                                                                        alignment:
-                                                                            AlignmentDirectional(
-                                                                                0,
-                                                                                0),
-                                                                        child: Text(
-                                                                          'CLEAR RESPONCE',
-                                                                          style: FlutterFlowTheme.of(
-                                                                                  context)
-                                                                              .bodyText1
-                                                                              .override(
-                                                                                fontFamily:
-                                                                                    'Poppins',
-                                                                                color:
-                                                                                    FlutterFlowTheme.of(context).primaryBtnText,
-                                                                                fontSize:
-                                                                                    10,
-                                                                              ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(0, 10,
-                                                                        0, 0),
-                                                            child: Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize.max,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceAround,
-                                                              children: [
-                                                                Expanded(
-                                                                  child: Padding(
-                                                                    padding:
-                                                                        EdgeInsetsDirectional
-                                                                            .fromSTEB(
-                                                                                10,
-                                                                                0,
-                                                                                10,
-                                                                                0),
                                                                     child:
                                                                         GestureDetector(
-                                                                      onTap: () {
-                                                                        setState(
-                                                                            () {
-                                                                          if (questionindex !=
-                                                                              0) {
-                                                                            saveNext();
-                                                                            questionindex -=
-                                                                                1;
-                                                                          }
-                                                                        });
+                                                                      onTap:
+                                                                          () {
+                                                                        saveNext();
                                                                       },
                                                                       child:
                                                                           Container(
-                                                                        width: 100,
-                                                                        height: 40,
+                                                                        width:
+                                                                            100,
+                                                                        height:
+                                                                            40,
                                                                         decoration:
                                                                             BoxDecoration(
-                                                                          color: Color(
-                                                                              0xFF0A9E04),
+                                                                          color:
+                                                                              Color(0xFF0A9E04),
                                                                         ),
                                                                         child:
                                                                             Align(
-                                                                          alignment:
-                                                                              AlignmentDirectional(
-                                                                                  0,
-                                                                                  0),
+                                                                          alignment: AlignmentDirectional(
+                                                                              0,
+                                                                              0),
                                                                           child:
                                                                               Text(
-                                                                            'PREVIOUS',
-                                                                            style: FlutterFlowTheme.of(context)
-                                                                                .bodyText1
-                                                                                .override(
+                                                                            'SAVE & NEXT',
+                                                                            style: FlutterFlowTheme.of(context).bodyText1.override(
                                                                                   fontFamily: 'Poppins',
                                                                                   color: FlutterFlowTheme.of(context).primaryBtnText,
                                                                                   fontSize: 10,
@@ -2485,39 +2207,73 @@ class _QuizPageState extends State<QuizPage> {
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                ),
-                                                                Expanded(
-                                                                  flex: 1,
-                                                                  child: Padding(
-                                                                    padding:
-                                                                        EdgeInsetsDirectional
-                                                                            .fromSTEB(
-                                                                                10,
-                                                                                0,
-                                                                                10,
-                                                                                0),
+                                                                  Expanded(
+                                                                    flex: 1,
                                                                     child:
                                                                         GestureDetector(
-                                                                      onTap: () {
-                                                                        setState(
-                                                                            () {
-                                                                          if (quizdata
-                                                                                  .length !=
-                                                                              questionindex +
-                                                                                  1) {
-                                                                            questionindex +=
-                                                                                1;
-                                                                          }
-                                                                        });
+                                                                      onTap:
+                                                                          () {
+                                                                        markreview =
+                                                                            true;
+                                                                        saveNext();
                                                                       },
                                                                       child:
-                                                                          GestureDetector(
-                                                                        onTap: () {
-                                                                          setState(
-                                                                              () {
-                                                                            saveNext();
-                                                                          });
-                                                                        },
+                                                                          Container(
+                                                                        width:
+                                                                            100,
+                                                                        height:
+                                                                            40,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).primaryColor,
+                                                                        ),
+                                                                        child:
+                                                                            Align(
+                                                                          alignment: AlignmentDirectional(
+                                                                              0,
+                                                                              0),
+                                                                          child:
+                                                                              Text(
+                                                                            'MARK FOR REVIEW',
+                                                                            style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                  fontFamily: 'Poppins',
+                                                                                  color: FlutterFlowTheme.of(context).primaryBtnText,
+                                                                                  fontSize: 10,
+                                                                                ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  GestureDetector(
+                                                                    onTap: () {
+                                                                      setState(
+                                                                          () {
+                                                                        A = false;
+                                                                        B = false;
+                                                                        C = false;
+                                                                        D = false;
+                                                                        quizdata[questionindex]["Answered"] =
+                                                                            false;
+                                                                        quizdata[questionindex]['notAnswered'] =
+                                                                            true;
+                                                                        quizdata[questionindex]['answeredValue'] =
+                                                                            null;
+                                                                        countParameter(
+                                                                            'save');
+                                                                      });
+                                                                    },
+                                                                    child:
+                                                                        Expanded(
+                                                                      flex: 1,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            10,
+                                                                            0,
+                                                                            10,
+                                                                            0),
                                                                         child:
                                                                             Container(
                                                                           width:
@@ -2526,20 +2282,17 @@ class _QuizPageState extends State<QuizPage> {
                                                                               40,
                                                                           decoration:
                                                                               BoxDecoration(
-                                                                            color: Color(
-                                                                                0xFF868585),
+                                                                            color:
+                                                                                Color(0xFF868585),
                                                                           ),
                                                                           child:
                                                                               Align(
-                                                                            alignment: AlignmentDirectional(
-                                                                                0,
-                                                                                0),
+                                                                            alignment:
+                                                                                AlignmentDirectional(0, 0),
                                                                             child:
                                                                                 Text(
-                                                                              'NEXT QUESTION',
-                                                                              style: FlutterFlowTheme.of(context)
-                                                                                  .bodyText1
-                                                                                  .override(
+                                                                              'CLEAR RESPONCE',
+                                                                              style: FlutterFlowTheme.of(context).bodyText1.override(
                                                                                     fontFamily: 'Poppins',
                                                                                     color: FlutterFlowTheme.of(context).primaryBtnText,
                                                                                     fontSize: 10,
@@ -2550,395 +2303,782 @@ class _QuizPageState extends State<QuizPage> {
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Align(
-                                                            alignment:
-                                                                AlignmentDirectional(
-                                                                    0, 0.05),
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(0,
-                                                                          60, 0, 0),
-                                                              child: Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Align(
-                                                                    alignment:
-                                                                        AlignmentDirectional(
-                                                                            0, 1),
-                                                                    child: Text(
-                                                                      '   Report an error',
-                                                                      style: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyText1
-                                                                          .override(
-                                                                            fontFamily:
-                                                                                'Poppins',
-                                                                            fontWeight:
-                                                                                FontWeight.w300,
-                                                                          ),
-                                                                    ),
-                                                                  ),
-                                                                  Align(
-                                                                    alignment:
-                                                                        AlignmentDirectional(
-                                                                            0.1,
-                                                                            0.15),
-                                                                    child: Padding(
-                                                                      padding: EdgeInsetsDirectional
-                                                                          .fromSTEB(
-                                                                              0,
-                                                                              0,
-                                                                              10,
-                                                                              0),
+                                                                ],
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0,
+                                                                            10,
+                                                                            0,
+                                                                            0),
+                                                                child: Row(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .max,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceAround,
+                                                                  children: [
+                                                                    Expanded(
                                                                       child:
-                                                                          GestureDetector(
-                                                                        onTap: () {
-                                                                          submit();
-                                                                        },
+                                                                          Padding(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            10,
+                                                                            0,
+                                                                            10,
+                                                                            0),
                                                                         child:
-                                                                            Container(
-                                                                          width:
-                                                                              100,
-                                                                          height:
-                                                                              40,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color: Color(
-                                                                                0xFF0A9E04),
-                                                                            border:
-                                                                                Border.all(
-                                                                              color:
-                                                                                  Colors.transparent,
-                                                                            ),
-                                                                          ),
+                                                                            GestureDetector(
+                                                                          onTap:
+                                                                              () {
+                                                                            setState(() {
+                                                                              if (questionindex != 0) {
+                                                                                saveNext();
+                                                                                questionindex -= 1;
+                                                                              }
+                                                                            });
+                                                                          },
                                                                           child:
-                                                                              Align(
-                                                                            alignment: AlignmentDirectional(
-                                                                                0,
-                                                                                0),
+                                                                              Container(
+                                                                            width:
+                                                                                100,
+                                                                            height:
+                                                                                40,
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              color: Color(0xFF0A9E04),
+                                                                            ),
                                                                             child:
-                                                                                Text(
-                                                                              'SUBMIT',
-                                                                              style: FlutterFlowTheme.of(context)
-                                                                                  .bodyText1
-                                                                                  .override(
-                                                                                    fontFamily: 'Poppins',
-                                                                                    color: FlutterFlowTheme.of(context).primaryBtnText,
-                                                                                  ),
+                                                                                Align(
+                                                                              alignment: AlignmentDirectional(0, 0),
+                                                                              child: Text(
+                                                                                'PREVIOUS',
+                                                                                style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                      fontFamily: 'Poppins',
+                                                                                      color: FlutterFlowTheme.of(context).primaryBtnText,
+                                                                                      fontSize: 10,
+                                                                                    ),
+                                                                              ),
                                                                             ),
                                                                           ),
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                    Expanded(
+                                                                      flex: 1,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            10,
+                                                                            0,
+                                                                            10,
+                                                                            0),
+                                                                        child:
+                                                                            GestureDetector(
+                                                                          onTap:
+                                                                              () {
+                                                                            setState(() {
+                                                                              if (quizdata.length != questionindex + 1) {
+                                                                                questionindex += 1;
+                                                                              }
+                                                                            });
+                                                                          },
+                                                                          child:
+                                                                              GestureDetector(
+                                                                            onTap:
+                                                                                () {
+                                                                              setState(() {
+                                                                                saveNext();
+                                                                              });
+                                                                            },
+                                                                            child:
+                                                                                Container(
+                                                                              width: 100,
+                                                                              height: 40,
+                                                                              decoration: BoxDecoration(
+                                                                                color: Color(0xFF868585),
+                                                                              ),
+                                                                              child: Align(
+                                                                                alignment: AlignmentDirectional(0, 0),
+                                                                                child: Text(
+                                                                                  'NEXT QUESTION',
+                                                                                  style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                        fontFamily: 'Poppins',
+                                                                                        color: FlutterFlowTheme.of(context).primaryBtnText,
+                                                                                        fontSize: 10,
+                                                                                      ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Align(
+                                                                alignment:
+                                                                    AlignmentDirectional(
+                                                                        0,
+                                                                        0.05),
+                                                                child: Padding(
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0,
+                                                                          60,
+                                                                          0,
+                                                                          0),
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .max,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Align(
+                                                                        alignment: AlignmentDirectional(
+                                                                            0,
+                                                                            1),
+                                                                        child:
+                                                                            Text(
+                                                                          '   Report an error',
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .bodyText1
+                                                                              .override(
+                                                                                fontFamily: 'Poppins',
+                                                                                fontWeight: FontWeight.w300,
+                                                                              ),
+                                                                        ),
+                                                                      ),
+                                                                      Align(
+                                                                        alignment: AlignmentDirectional(
+                                                                            0.1,
+                                                                            0.15),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                              0,
+                                                                              0,
+                                                                              10,
+                                                                              0),
+                                                                          child:
+                                                                              GestureDetector(
+                                                                            onTap:
+                                                                                () {
+                                                                              submit();
+                                                                            },
+                                                                            child:
+                                                                                Container(
+                                                                              width: 100,
+                                                                              height: 40,
+                                                                              decoration: BoxDecoration(
+                                                                                color: Color(0xFF0A9E04),
+                                                                                border: Border.all(
+                                                                                  color: Colors.transparent,
+                                                                                ),
+                                                                              ),
+                                                                              child: Align(
+                                                                                alignment: AlignmentDirectional(0, 0),
+                                                                                child: Text(
+                                                                                  'SUBMIT',
+                                                                                  style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                        fontFamily: 'Poppins',
+                                                                                        color: FlutterFlowTheme.of(context).primaryBtnText,
+                                                                                      ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      if (responsiveVisibility(
+                                        context: context,
+                                        phone: false,
+                                        tablet: false,
+                                        tabletLandscape: false,
+                                      ))
+                                        Expanded(
+                                          flex: 1,
+                                          child: Container(
+                                            width: 100,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                1.1,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                              border: Border.all(
+                                                color: Color(0x95000000),
+                                              ),
+                                            ),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  children: [
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(20,
+                                                                    20, 0, 0),
+                                                        child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.max,
+                                                          children: [
+                                                            Container(
+                                                              width: 50,
+                                                              height: 50,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Color(
+                                                                    0xFF19F80F),
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                              ),
+                                                              child: Align(
+                                                                alignment:
+                                                                    AlignmentDirectional(
+                                                                        0, 0),
+                                                                child: Text(
+                                                                  '$answeredM',
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyText1
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Poppins',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryBtnText,
+                                                                      ),
+                                                                ),
                                                               ),
                                                             ),
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          10,
+                                                                          0,
+                                                                          0,
+                                                                          0),
+                                                              child: Text(
+                                                                'Answered',
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyText1,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(20,
+                                                                    20, 0, 0),
+                                                        child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.max,
+                                                          children: [
+                                                            Container(
+                                                              width: 50,
+                                                              height: 50,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .alternate,
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                              ),
+                                                              child: Align(
+                                                                alignment:
+                                                                    AlignmentDirectional(
+                                                                        0, 0),
+                                                                child: Text(
+                                                                  '$notAnsweredM',
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyText1
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Poppins',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryBtnText,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Expanded(
+                                                              child: Padding(
+                                                                padding:
+                                                                    EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            10,
+                                                                            0,
+                                                                            0,
+                                                                            0),
+                                                                child: Text(
+                                                                  'Not Answered',
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyText1,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  children: [
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(20,
+                                                                    20, 0, 0),
+                                                        child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.max,
+                                                          children: [
+                                                            Container(
+                                                              width: 50,
+                                                              height: 50,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Color(
+                                                                    0x8F57636C),
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                              ),
+                                                              child: Align(
+                                                                alignment:
+                                                                    AlignmentDirectional(
+                                                                        0, 0),
+                                                                child: Text(
+                                                                  '$notVisitedM',
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyText1
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Poppins',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryBtnText,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Expanded(
+                                                              child: Padding(
+                                                                padding:
+                                                                    EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            10,
+                                                                            0,
+                                                                            0,
+                                                                            0),
+                                                                child: Text(
+                                                                  'Not Visited',
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyText1,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(20,
+                                                                    20, 0, 0),
+                                                        child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.max,
+                                                          children: [
+                                                            Container(
+                                                              width: 50,
+                                                              height: 50,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryColor,
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                              ),
+                                                              child: Align(
+                                                                alignment:
+                                                                    AlignmentDirectional(
+                                                                        0, 0),
+                                                                child: Text(
+                                                                  '$MFR_M',
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyText1
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Poppins',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryBtnText,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                child: Padding(
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          10,
+                                                                          0,
+                                                                          0,
+                                                                          0),
+                                                                  child: Text(
+                                                                    'Marked For \nReview',
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyText1,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(0, 0, 0, 50),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsetsDirectional
+                                                                  .fromSTEB(20,
+                                                                      20, 0, 0),
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              Container(
+                                                                width: 50,
+                                                                height: 50,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Color(
+                                                                      0x8F1487DD),
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                ),
+                                                                child: Align(
+                                                                  alignment:
+                                                                      AlignmentDirectional(
+                                                                          0, 0),
+                                                                  child: Text(
+                                                                    '$AMFR_M',
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyText1
+                                                                        .override(
+                                                                          fontFamily:
+                                                                              'Poppins',
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).primaryBtnText,
+                                                                        ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                child: Padding(
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          10,
+                                                                          0,
+                                                                          0,
+                                                                          0),
+                                                                  child: Text(
+                                                                    'Answered & Marked For Review\n( will be considered for evaluation)',
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyText1,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Align(
+                                                    alignment:
+                                                        AlignmentDirectional(
+                                                            -1, 0),
+                                                    child: Container(
+                                                      width: 400,
+                                                      height: 300,
+                                                      decoration: BoxDecoration(
+                                                        color: FlutterFlowTheme
+                                                                .of(context)
+                                                            .secondaryBackground,
+                                                        border: Border.all(
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryBtnText,
+                                                        ),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(20,
+                                                                    20, 20, 20),
+                                                        child: GridView.builder(
+                                                          padding:
+                                                              EdgeInsets.zero,
+                                                          gridDelegate:
+                                                              SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisCount: 6,
+                                                            crossAxisSpacing:
+                                                                10,
+                                                            mainAxisSpacing: 10,
+                                                            childAspectRatio: 1,
+                                                          ),
+                                                          shrinkWrap: true,
+                                                          scrollDirection:
+                                                              Axis.vertical,
+                                                          itemCount:
+                                                              quizdata.length,
+                                                          itemBuilder:
+                                                              (BuildContext
+                                                                      context,
+                                                                  int index) {
+                                                            print(
+                                                                quizdata[index]
+                                                                    ['AMRF']);
+                                                            return Container(
+                                                              width: 50,
+                                                              height: 50,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: (quizdata[index]['AMFR'] !=
+                                                                            null &&
+                                                                        quizdata[index]['AMFR'] !=
+                                                                            false
+                                                                    ? Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            80,
+                                                                            142,
+                                                                            218)
+                                                                    : quizdata[index]['MFR'] !=
+                                                                                null &&
+                                                                            quizdata[index]['MFR'] !=
+                                                                                false
+                                                                        ? Color.fromARGB(
+                                                                            255,
+                                                                            50,
+                                                                            41,
+                                                                            219)
+                                                                        : quizdata[index]['Answered'] != null &&
+                                                                                quizdata[index]['Answered'] != false
+                                                                            ? Color.fromARGB(255, 5, 217, 76)
+                                                                            : quizdata[index]['notAnswered'] != null && quizdata[index]['notAnswered'] != false
+                                                                                ? Color.fromARGB(255, 233, 26, 26)
+                                                                                : quizdata[index]['visited'] == null
+                                                                                    ? Color.fromARGB(255, 207, 196, 196)
+                                                                                    : Color.fromARGB(255, 207, 196, 196)),
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                              ),
+                                                              child: Align(
+                                                                alignment:
+                                                                    AlignmentDirectional(
+                                                                        0, 0),
+                                                                child: Text(
+                                                                  '${index + 1}',
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyText1
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Poppins',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryBtnText,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                    tabletLandscape: false,
-                                  ))
-                                    Expanded(
-                                      flex: 1,
-                                      child: Container(
-                                        width: 100,
-                                        height:
-                                            MediaQuery.of(context).size.height * 1.1,
-                                        decoration: BoxDecoration(
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
-                                          border: Border.all(
-                                            color: Color(0x95000000),
                                           ),
                                         ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Row(
+                                      if (responsiveVisibility(
+                                        context: context,
+                                        phone: false,
+                                        desktop: false,
+                                      ))
+                                        Expanded(
+                                          flex: 1,
+                                          child: Container(
+                                            width: 100,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                1,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                              border: Border.all(
+                                                color: Color(0x95000000),
+                                              ),
+                                            ),
+                                            child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding: EdgeInsetsDirectional
-                                                        .fromSTEB(20, 20, 0, 0),
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      children: [
-                                                        Container(
-                                                          width: 50,
-                                                          height: 50,
-                                                          decoration: BoxDecoration(
-                                                            color:
-                                                                Color(0xFF19F80F),
-                                                            shape: BoxShape.circle,
-                                                          ),
-                                                          child: Align(
-                                                            alignment:
-                                                                AlignmentDirectional(
-                                                                    0, 0),
-                                                            child: Text(
-                                                              '$answeredM',
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyText1
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primaryBtnText,
-                                                                  ),
-                                                            ),
-                                                          ),
+                                                Padding(
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(20, 20, 0, 0),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    children: [
+                                                      Container(
+                                                        width: 30,
+                                                        height: 30,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .alternate,
+                                                          shape:
+                                                              BoxShape.circle,
                                                         ),
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                      10, 0, 0, 0),
+                                                        child: Align(
+                                                          alignment:
+                                                              AlignmentDirectional(
+                                                                  0, 0),
                                                           child: Text(
-                                                            'Answered',
-                                                            style:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyText1,
+                                                            '$notAnsweredM',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyText1
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryBtnText,
+                                                                  fontSize: 12,
+                                                                ),
                                                           ),
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding: EdgeInsetsDirectional
-                                                        .fromSTEB(20, 20, 0, 0),
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      children: [
-                                                        Container(
-                                                          width: 50,
-                                                          height: 50,
-                                                          decoration: BoxDecoration(
-                                                            color:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .alternate,
-                                                            shape: BoxShape.circle,
-                                                          ),
-                                                          child: Align(
-                                                            alignment:
-                                                                AlignmentDirectional(
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(10, 0,
                                                                     0, 0),
-                                                            child: Text(
-                                                              '$notAnsweredM',
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyText1
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primaryBtnText,
-                                                                  ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(10, 0,
-                                                                        0, 0),
-                                                            child: Text(
-                                                              'Not Answered',
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyText1,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding: EdgeInsetsDirectional
-                                                        .fromSTEB(20, 20, 0, 0),
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      children: [
-                                                        Container(
-                                                          width: 50,
-                                                          height: 50,
-                                                          decoration: BoxDecoration(
-                                                            color:
-                                                                Color(0x8F57636C),
-                                                            shape: BoxShape.circle,
-                                                          ),
-                                                          child: Align(
-                                                            alignment:
-                                                                AlignmentDirectional(
-                                                                    0, 0),
-                                                            child: Text(
-                                                              '$notVisitedM',
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyText1
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primaryBtnText,
-                                                                  ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(10, 0,
-                                                                        0, 0),
-                                                            child: Text(
-                                                              'Not Visited',
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyText1,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding: EdgeInsetsDirectional
-                                                        .fromSTEB(20, 20, 0, 0),
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      children: [
-                                                        Container(
-                                                          width: 50,
-                                                          height: 50,
-                                                          decoration: BoxDecoration(
-                                                            color:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .primaryColor,
-                                                            shape: BoxShape.circle,
-                                                          ),
-                                                          child: Align(
-                                                            alignment:
-                                                                AlignmentDirectional(
-                                                                    0, 0),
-                                                            child: Text(
-                                                              '$MFR_M',
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyText1
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primaryBtnText,
-                                                                  ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          child: GestureDetector(
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(10,
-                                                                          0, 0, 0),
-                                                              child: Text(
-                                                                'Marked For \nReview',
-                                                                style: FlutterFlowTheme
-                                                                        .of(context)
-                                                                    .bodyText1,
+                                                        child: Text(
+                                                          'Not nswered',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyText1
+                                                              .override(
+                                                                fontFamily:
+                                                                    'Poppins',
+                                                                fontSize: 12,
                                                               ),
-                                                            ),
-                                                          ),
                                                         ),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      0, 0, 0, 50),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding: EdgeInsetsDirectional
-                                                          .fromSTEB(20, 20, 0, 0),
+                                                Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  20, 20, 0, 0),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
                                                         children: [
                                                           Container(
-                                                            width: 50,
-                                                            height: 50,
+                                                            width: 30,
+                                                            height: 30,
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color:
-                                                                  Color(0x8F1487DD),
-                                                              shape:
-                                                                  BoxShape.circle,
+                                                              color: Color(
+                                                                  0xFF19F80F),
+                                                              shape: BoxShape
+                                                                  .circle,
                                                             ),
                                                             child: Align(
                                                               alignment:
                                                                   AlignmentDirectional(
                                                                       0, 0),
                                                               child: Text(
-                                                                '$AMFR_M',
-                                                                style: FlutterFlowTheme
-                                                                        .of(context)
+                                                                '$answeredM',
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
                                                                     .bodyText1
                                                                     .override(
                                                                       fontFamily:
@@ -2946,51 +3086,264 @@ class _QuizPageState extends State<QuizPage> {
                                                                       color: FlutterFlowTheme.of(
                                                                               context)
                                                                           .primaryBtnText,
+                                                                      fontSize:
+                                                                          12,
                                                                     ),
                                                               ),
                                                             ),
                                                           ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(10,
-                                                                          0, 0, 0),
-                                                              child: Text(
-                                                                'Answered & Marked For Review\n( will be considered for evaluation)',
-                                                                style: FlutterFlowTheme
-                                                                        .of(context)
-                                                                    .bodyText1,
-                                                              ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        10,
+                                                                        0,
+                                                                        0,
+                                                                        0),
+                                                            child: Text(
+                                                              'Answered',
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyText1
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'Poppins',
+                                                                    fontSize:
+                                                                        12,
+                                                                  ),
                                                             ),
                                                           ),
                                                         ],
                                                       ),
                                                     ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  20, 20, 0, 0),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        children: [
+                                                          Container(
+                                                            width: 30,
+                                                            height: 30,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Color(
+                                                                  0x8F57636C),
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                            ),
+                                                            child: Align(
+                                                              alignment:
+                                                                  AlignmentDirectional(
+                                                                      0, 0),
+                                                              child: Text(
+                                                                '$notVisitedM',
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyText1
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'Poppins',
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primaryBtnText,
+                                                                      fontSize:
+                                                                          12,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        10,
+                                                                        0,
+                                                                        0,
+                                                                        0),
+                                                            child: Text(
+                                                              'Not Visited',
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyText1
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'Poppins',
+                                                                    fontSize:
+                                                                        12,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(20, 20, 0, 0),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    children: [
+                                                      Container(
+                                                        width: 30,
+                                                        height: 30,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryColor,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                        child: Align(
+                                                          alignment:
+                                                              AlignmentDirectional(
+                                                                  0, 0),
+                                                          child: Text(
+                                                            '$MFR_M',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyText1
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryBtnText,
+                                                                  fontSize: 12,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(10, 0,
+                                                                    0, 0),
+                                                        child: Text(
+                                                          'Marked For\n Review',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyText1
+                                                              .override(
+                                                                fontFamily:
+                                                                    'Poppins',
+                                                                fontSize: 12,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Align(
-                                                alignment:
-                                                    AlignmentDirectional(-1, 0),
-                                                child: Container(
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(0, 0, 0, 50),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsetsDirectional
+                                                                  .fromSTEB(20,
+                                                                      20, 0, 0),
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              Container(
+                                                                width: 30,
+                                                                height: 30,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Color(
+                                                                      0x8F1487DD),
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                ),
+                                                                child: Align(
+                                                                  alignment:
+                                                                      AlignmentDirectional(
+                                                                          0, 0),
+                                                                  child: Text(
+                                                                    '$AMFR_M',
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyText1
+                                                                        .override(
+                                                                          fontFamily:
+                                                                              'Poppins',
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).primaryBtnText,
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                child: Padding(
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          10,
+                                                                          0,
+                                                                          10,
+                                                                          0),
+                                                                  child: Text(
+                                                                    'Answered & Marked For Review\n(will be considered for evaluation)',
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyText1
+                                                                        .override(
+                                                                          fontFamily:
+                                                                              'Poppins',
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Container(
                                                   width: 400,
                                                   height: 300,
                                                   decoration: BoxDecoration(
-                                                    color:
-                                                        FlutterFlowTheme.of(context)
-                                                            .secondaryBackground,
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryBackground,
                                                     border: Border.all(
-                                                      color: FlutterFlowTheme.of(
-                                                              context)
-                                                          .primaryBtnText,
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primaryBtnText,
                                                     ),
                                                   ),
                                                   child: Padding(
-                                                    padding: EdgeInsetsDirectional
-                                                        .fromSTEB(20, 20, 20, 20),
+                                                    padding:
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                                20, 20, 20, 20),
                                                     child: GridView.builder(
                                                       padding: EdgeInsets.zero,
                                                       gridDelegate:
@@ -3003,50 +3356,27 @@ class _QuizPageState extends State<QuizPage> {
                                                       shrinkWrap: true,
                                                       scrollDirection:
                                                           Axis.vertical,
-                                                      itemCount: quizdata.length,
+                                                      itemCount:
+                                                          quizdata.length,
                                                       itemBuilder:
                                                           (BuildContext context,
                                                               int index) {
-                                                        print(quizdata[index]
-                                                            ['AMRF']);
                                                         return Container(
                                                           width: 50,
                                                           height: 50,
-                                                          decoration: BoxDecoration(
-                                                            color: (quizdata[index]['AMFR'] !=
-                                                                        null &&
-                                                                    quizdata[index]['AMFR'] !=
-                                                                        false
-                                                                ? Color.fromARGB(
-                                                                    255, 80, 142, 218)
-                                                                : quizdata[index]['MFR'] !=
-                                                                            null &&
-                                                                        quizdata[index]['MFR'] !=
-                                                                            false
-                                                                    ? Color.fromARGB(
-                                                                        255, 50, 41, 219)
-                                                                    : quizdata[index]['Answered'] != null &&
-                                                                            quizdata[index]['Answered'] !=
-                                                                                false
-                                                                        ? Color.fromARGB(
-                                                                            255,
-                                                                            5,
-                                                                            217,
-                                                                            76)
-                                                                        : quizdata[index]['notAnswered'] != null &&
-                                                                                quizdata[index]['notAnswered'] != false
-                                                                            ? Color.fromARGB(255, 233, 26, 26)
-                                                                            : quizdata[index]['visited'] == null
-                                                                                ? Color.fromARGB(255, 207, 196, 196)
-                                                                                : Color.fromARGB(255, 207, 196, 196)),
-                                                            shape: BoxShape.circle,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Color(
+                                                                0xFF19F80F),
+                                                            shape:
+                                                                BoxShape.circle,
                                                           ),
                                                           child: Align(
                                                             alignment:
                                                                 AlignmentDirectional(
                                                                     0, 0),
                                                             child: Text(
-                                                              '${index + 1}',
+                                                              '2',
                                                               style: FlutterFlowTheme
                                                                       .of(context)
                                                                   .bodyText1
@@ -3064,404 +3394,15 @@ class _QuizPageState extends State<QuizPage> {
                                                     ),
                                                   ),
                                                 ),
-                                              ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    desktop: false,
-                                  ))
-                                    Expanded(
-                                      flex: 1,
-                                      child: Container(
-                                        width: 100,
-                                        height:
-                                            MediaQuery.of(context).size.height * 1,
-                                        decoration: BoxDecoration(
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
-                                          border: Border.all(
-                                            color: Color(0x95000000),
                                           ),
                                         ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      20, 20, 0, 0),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                  Container(
-                                                    width: 30,
-                                                    height: 30,
-                                                    decoration: BoxDecoration(
-                                                      color: FlutterFlowTheme.of(
-                                                              context)
-                                                          .alternate,
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                    child: Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              0, 0),
-                                                      child: Text(
-                                                        '$notAnsweredM',
-                                                        style: FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyText1
-                                                            .override(
-                                                              fontFamily: 'Poppins',
-                                                              color: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .primaryBtnText,
-                                                              fontSize: 12,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: EdgeInsetsDirectional
-                                                        .fromSTEB(10, 0, 0, 0),
-                                                    child: Text(
-                                                      'Not nswered',
-                                                      style: FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyText1
-                                                          .override(
-                                                            fontFamily: 'Poppins',
-                                                            fontSize: 12,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(20, 20, 0, 0),
-                                                  child: Row(
-                                                    mainAxisSize: MainAxisSize.max,
-                                                    children: [
-                                                      Container(
-                                                        width: 30,
-                                                        height: 30,
-                                                        decoration: BoxDecoration(
-                                                          color: Color(0xFF19F80F),
-                                                          shape: BoxShape.circle,
-                                                        ),
-                                                        child: Align(
-                                                          alignment:
-                                                              AlignmentDirectional(
-                                                                  0, 0),
-                                                          child: Text(
-                                                            '$answeredM',
-                                                            style:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyText1
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Poppins',
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .primaryBtnText,
-                                                                      fontSize: 12,
-                                                                    ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    10, 0, 0, 0),
-                                                        child: Text(
-                                                          'Answered',
-                                                          style:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyText1
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontSize: 12,
-                                                                  ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(20, 20, 0, 0),
-                                                  child: Row(
-                                                    mainAxisSize: MainAxisSize.max,
-                                                    children: [
-                                                      Container(
-                                                        width: 30,
-                                                        height: 30,
-                                                        decoration: BoxDecoration(
-                                                          color: Color(0x8F57636C),
-                                                          shape: BoxShape.circle,
-                                                        ),
-                                                        child: Align(
-                                                          alignment:
-                                                              AlignmentDirectional(
-                                                                  0, 0),
-                                                          child: Text(
-                                                            '$notVisitedM',
-                                                            style:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyText1
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Poppins',
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .primaryBtnText,
-                                                                      fontSize: 12,
-                                                                    ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    10, 0, 0, 0),
-                                                        child: Text(
-                                                          'Not Visited',
-                                                          style:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyText1
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontSize: 12,
-                                                                  ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      20, 20, 0, 0),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                  Container(
-                                                    width: 30,
-                                                    height: 30,
-                                                    decoration: BoxDecoration(
-                                                      color: FlutterFlowTheme.of(
-                                                              context)
-                                                          .primaryColor,
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                    child: Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              0, 0),
-                                                      child: Text(
-                                                        '$MFR_M',
-                                                        style: FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyText1
-                                                            .override(
-                                                              fontFamily: 'Poppins',
-                                                              color: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .primaryBtnText,
-                                                              fontSize: 12,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: EdgeInsetsDirectional
-                                                        .fromSTEB(10, 0, 0, 0),
-                                                    child: Text(
-                                                      'Marked For\n Review',
-                                                      style: FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyText1
-                                                          .override(
-                                                            fontFamily: 'Poppins',
-                                                            fontSize: 12,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      0, 0, 0, 50),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding: EdgeInsetsDirectional
-                                                          .fromSTEB(20, 20, 0, 0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          Container(
-                                                            width: 30,
-                                                            height: 30,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color:
-                                                                  Color(0x8F1487DD),
-                                                              shape:
-                                                                  BoxShape.circle,
-                                                            ),
-                                                            child: Align(
-                                                              alignment:
-                                                                  AlignmentDirectional(
-                                                                      0, 0),
-                                                              child: Text(
-                                                                '$AMFR_M',
-                                                                style: FlutterFlowTheme
-                                                                        .of(context)
-                                                                    .bodyText1
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Poppins',
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .primaryBtnText,
-                                                                      fontSize: 12,
-                                                                    ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(10,
-                                                                          0, 10, 0),
-                                                              child: Text(
-                                                                'Answered & Marked For Review\n(will be considered for evaluation)',
-                                                                style: FlutterFlowTheme
-                                                                        .of(context)
-                                                                    .bodyText1
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Poppins',
-                                                                      fontSize: 12,
-                                                                    ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              width: 400,
-                                              height: 300,
-                                              decoration: BoxDecoration(
-                                                color: FlutterFlowTheme.of(context)
-                                                    .secondaryBackground,
-                                                border: Border.all(
-                                                  color:
-                                                      FlutterFlowTheme.of(context)
-                                                          .primaryBtnText,
-                                                ),
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    EdgeInsetsDirectional.fromSTEB(
-                                                        20, 20, 20, 20),
-                                                child: GridView.builder(
-                                                  padding: EdgeInsets.zero,
-                                                  gridDelegate:
-                                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 6,
-                                                    crossAxisSpacing: 10,
-                                                    mainAxisSpacing: 10,
-                                                    childAspectRatio: 1,
-                                                  ),
-                                                  shrinkWrap: true,
-                                                  scrollDirection: Axis.vertical,
-                                                  itemCount: quizdata.length,
-                                                  itemBuilder:
-                                                      (BuildContext context,
-                                                          int index) {
-                                                    return Container(
-                                                      width: 50,
-                                                      height: 50,
-                                                      decoration: BoxDecoration(
-                                                        color: Color(0xFF19F80F),
-                                                        shape: BoxShape.circle,
-                                                      ),
-                                                      child: Align(
-                                                        alignment:
-                                                            AlignmentDirectional(
-                                                                0, 0),
-                                                        child: Text(
-                                                          '2',
-                                                          style:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyText1
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primaryBtnText,
-                                                                  ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
-                            
                           ],
                         ),
                       ),

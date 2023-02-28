@@ -257,46 +257,68 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                       //   'answerIndex':
                                                       //       AnswerIndexCon
                                                       onTap: () {
-                                                        tempquiz = index;
-                                                        questionNumber?.text =
-                                                            questionslist[index]
-                                                                [
-                                                                'questionNumber'];
-                                                        questioncontroller
-                                                                ?.text =
-                                                            questionslist[index]
-                                                                ['question'];
-                                                        Option1?.text =
-                                                            questionslist[index]
-                                                                    ['options']
-                                                                ['A'];
-                                                        Option2?.text =
-                                                            questionslist[index]
-                                                                    ['options']
-                                                                ['B'];
-                                                        Option3?.text =
-                                                            questionslist[index]
-                                                                    ['options']
-                                                                ['C'];
-                                                        Option4?.text =
-                                                            questionslist[index]
-                                                                    ['options']
-                                                                ['D'];
-                                                        SolutionController
-                                                                ?.text =
-                                                            questionslist[index]
-                                                                ['solution'];
-                                                        AnswerController?.text =
-                                                            questionslist[index]
-                                                                ['answer'];
-                                                        AnswerIndexController
-                                                                ?.text =
-                                                            questionslist[index]
-                                                                ['answerIndex'];
-                                                        setState(() {
-                                                          showupdatebutton =
-                                                              true;
-                                                        });
+                                                        print(
+                                                            "hhhhhhhhh: ${questionslist}");
+                                                        try {
+                                                          tempquiz = index;
+                                                          print("hhhhhhhhh:1");
+                                                          questioncontroller
+                                                                  ?.text =
+                                                              questionslist[
+                                                                      index]
+                                                                  ['question'];
+
+                                                          Option1?.text =
+                                                              questionslist[
+                                                                          index]
+                                                                      [
+                                                                      'options']
+                                                                  ['A'];
+                                                          Option2?.text =
+                                                              questionslist[
+                                                                          index]
+                                                                      [
+                                                                      'options']
+                                                                  ['B'];
+                                                          Option3?.text =
+                                                              questionslist[
+                                                                          index]
+                                                                      [
+                                                                      'options']
+                                                                  ['C'];
+                                                          Option4?.text =
+                                                              questionslist[
+                                                                          index]
+                                                                      [
+                                                                      'options']
+                                                                  ['D'];
+                                                          SolutionController
+                                                                  ?.text =
+                                                              questionslist[
+                                                                      index]
+                                                                  ['solution'];
+                                                          print("hhhhhhhhh:2");
+                                                          print("hhhhhhhhh:3");
+                                                          setState(() {
+                                                            showupdatebutton =
+                                                                true;
+                                                          });
+                                                          setState(() {
+                                                            enabledList =
+                                                                questionslist[
+                                                                        index][
+                                                                    'answerIndex'];
+                                                            print(questionslist[
+                                                                    index][
+                                                                'answerIndex']);
+                                                          });
+                                                        } catch (e) {
+                                                          print(e.toString());
+                                                          setState(() {
+                                                            showupdatebutton =
+                                                                true;
+                                                          });
+                                                        }
                                                       },
                                                       child: Padding(
                                                         padding:
@@ -1353,7 +1375,10 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                               90, 0, 0, 0),
                                       child: GestureDetector(
                                         onTap: () {
-                                          print("yhbuyjbyhbjhb$questionslist");
+                                          print(enabledList);
+                                          var answerindexlist = enabledList;
+                                          print(
+                                              "yhbuyjbyhbjhb$questionslist $enabledList");
                                           List answersList = [];
                                           for (var i in enabledList) {
                                             if (i == 'A') {
@@ -1369,6 +1394,7 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                               answersList.add(Option4!.text);
                                             }
                                           }
+                                          print("jjj${enabledList}");
                                           questionslist.add({
                                             'question':
                                                 questioncontroller?.text,
@@ -1381,12 +1407,12 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                             'solution':
                                                 SolutionController?.text,
                                             'answer': answersList,
-                                            'answerIndex': enabledList,
+                                            'answerIndex': answerindexlist,
                                           });
+                                          print("iii${enabledList}");
 
                                           setState(() {
-                                            enabledList.clear();
-                                            questionslist;
+                                            // questionslist;
                                             questionNumber?.text = '';
                                             questioncontroller?.text = '';
                                             Option1?.text = '';
@@ -1398,7 +1424,9 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                             AnswerIndexController?.text = '';
                                             showupdatebutton = false;
                                           });
-                                          print(questionslist);
+                                          print("kk${questionslist}");
+
+                                          enabledList = [];
                                         },
                                         child: Container(
                                           width: 150,
@@ -1490,7 +1518,8 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                           // Step 5.
                                           onChanged: (String? newValue) {
                                             setState(() {
-                                              tempmodulelist.clear();
+                                              tempmodulelist = ['Module Name'];
+                                              tempmodulename = 'Module Name';
                                               tempmodulelist.addAll(globals
                                                   .coursemoduelmap[newValue]);
                                               tempcoursename = newValue!;
@@ -1728,7 +1757,7 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                           var id;
                                           try {
                                             print(
-                                                "sdfoisjiofjisojdfoisjoidfjsiojfdiosjiodfjsoijdfosjd");
+                                                "sdfoisjiofjisojdfoisjoidfjsiojfdiosjiodfjsoijdfosjd${tempcoursename} ${tempmodulename}");
                                             try {
                                               FirebaseFirestore.instance
                                                   .collection("courses")
@@ -1747,18 +1776,18 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
 
                                                 id = value.docs.first
                                                     .data()['docid'];
-                                                print(
-                                                    "eeeeeeeeee: ${id} ${tempcoursename} ${tempmodulename}");
-
-                                                for (var i in coursedata) {
-                                                  var quizdata;
-                                                  if (i['modulename'] ==
-                                                      tempmodulename
-                                                          .toString()) {
-                                                    leng = i['videos'].length;
-                                                    print(leng);
-
-                                                    quizdata = {
+                                                if (tempcoursename ==
+                                                    'Course Name') {
+                                                  showToast(
+                                                      "Select Course Name!",
+                                                      context: context);
+                                                } else {
+                                                  // to insert quiz in course
+                                                  if (tempmodulename ==
+                                                      'Module Name') {
+                                                    var quizdata = {
+                                                      "quizlevel":
+                                                          "courselevel",
                                                       "module": tempmodulename,
                                                       "negativemarking":
                                                           NegativeMarkingController
@@ -1776,103 +1805,92 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                           ?.text,
                                                       "courseName":
                                                           tempcoursename,
-                                                      "sr": leng,
                                                       "type": "quiz"
                                                     };
-                                                    print(
-                                                        "jiofjwioewjowj ${i['videos']}");
+                                                    FirebaseFirestore.instance
+                                                        .collection("courses")
+                                                        .doc(id)
+                                                        .update({
+                                                      "coursequiz":
+                                                          FieldValue.arrayUnion(
+                                                              [quizdata])
+                                                    }).whenComplete(() {
+                                                      showToast(
+                                                          "successfully uploaded",
+                                                          context: context);
+                                                      print(
+                                                          "iiioopp ${curriculum1}");
+                                                    });
+                                                  } else {
+                                                    // to insert quiz in module
+                                                    for (var i in coursedata) {
+                                                      var quizdata;
 
-                                                    i['videos'].add(quizdata);
-                                                    print("jiofjwioewjowj");
-                                                    curriculum1[
-                                                            '${tempcoursename}'] =
-                                                        coursedata;
-                                                    print("jiofjwioewjowj");
-                                                    if (tempmodulename ==
-                                                        "Module Name") {
-                                                      FirebaseFirestore.instance
-                                                          .collection("courses")
-                                                          .doc(id)
-                                                          .update({
-                                                        "coursequiz": FieldValue
-                                                            .arrayUnion(
-                                                                [quizdata])
-                                                      }).whenComplete(() {
-                                                        showToast(
-                                                            "successfully uploaded",
-                                                            context: context);
-                                                        print(
-                                                            "iiioopp ${curriculum1}");
-                                                      });
-                                                    } else {
-                                                      if (tempcoursename ==
-                                                          "Course Name") {
-                                                        showToast(
-                                                            "select the course name!",
-                                                            context: context);
-                                                      } else {
-                                                        FirebaseFirestore
-                                                            .instance
-                                                            .collection(
-                                                                "courses")
-                                                            .doc(id)
-                                                            .update({
-                                                          "curriculum1":
-                                                              curriculum1
-                                                        }).whenComplete(() {
-                                                          showToast(
-                                                              "successfully uploaded",
-                                                              context: context);
+                                                      if (i['modulename'] ==
+                                                          tempmodulename
+                                                              .toString()) {
+                                                        print("1");
+                                                        leng =
+                                                            i['videos'].length;
+                                                        print("2");
+                                                        quizdata = {
+                                                          "quizlevel":
+                                                              "modulelevel",
+                                                          "module":
+                                                              tempmodulename,
+                                                          "negativemarking":
+                                                              NegativeMarkingController
+                                                                  ?.text,
+                                                          "questionbucket":
+                                                              questionslist,
+                                                          "quiztiming":
+                                                              timecontroller
+                                                                  ?.text,
+                                                          "type": enabledList
+                                                                      .length ==
+                                                                  1
+                                                              ? "One Correct Option"
+                                                              : "Multiple Correct Options",
+                                                          "name":
+                                                              quiznameController
+                                                                  ?.text,
+                                                          "courseName":
+                                                              tempcoursename,
+                                                          "sr": leng,
+                                                          "type": "quiz"
+                                                        };
+                                                        print("3");
+
+                                                        i['videos']
+                                                            .add(quizdata);
+                                                        print("4");
+                                                        curriculum1[
+                                                                '${tempcoursename}'] =
+                                                            coursedata;
+                                                        try {
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  "courses")
+                                                              .doc(id)
+                                                              .update({
+                                                            "curriculum1":
+                                                                curriculum1
+                                                          }).whenComplete(() {
+                                                            showToast(
+                                                                "successfully uploaded",
+                                                                context:
+                                                                    context);
+                                                            print(
+                                                                "iiioopp ${curriculum1}");
+                                                          });
+                                                        } catch (e) {
                                                           print(
-                                                              "iiioopp ${curriculum1}");
-                                                        });
+                                                              "shubham tiwari : ${e.toString()}");
+                                                        }
                                                       }
                                                     }
-
-                                                    print("jiofjwioewjowj");
-                                                  } else {
-                                                    if (tempmodulename ==
-                                                        "Module Name") {
-                                                      quizdata = {
-                                                        "module":
-                                                            tempmodulename,
-                                                        "negativemarking":
-                                                            NegativeMarkingController
-                                                                ?.text,
-                                                        "questionbucket":
-                                                            questionslist,
-                                                        "quiztiming":
-                                                            timecontroller
-                                                                ?.text,
-                                                        "type": enabledList
-                                                                    .length ==
-                                                                1
-                                                            ? "One Correct Option"
-                                                            : "Multiple Correct Options",
-                                                        "name":
-                                                            quiznameController
-                                                                ?.text,
-                                                        "courseName":
-                                                            tempcoursename,
-                                                        "type": "quiz"
-                                                      };
-                                                      FirebaseFirestore.instance
-                                                          .collection("courses")
-                                                          .doc(id)
-                                                          .update({
-                                                        "coursequiz": FieldValue
-                                                            .arrayUnion(
-                                                                [quizdata])
-                                                      }).whenComplete(() {
-                                                        showToast(
-                                                            "successfully uploaded",
-                                                            context: context);
-                                                        print(
-                                                            "iiioopp ${curriculum1}");
-                                                      });
-                                                    }
                                                   }
-                                                  break;
                                                 }
                                               }).catchError((err) {
                                                 showToast(
