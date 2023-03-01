@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/MyAccount/myaccount.dart';
+import 'package:cloudyml_app2/screens/quiz/quizsolution.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'quiz_model.dart';
@@ -77,7 +78,7 @@ class _QuizPageState extends State<QuizPage> {
       // upload quiz data
       var correctint = 0;
       print("lll002: $quizdata");
-      
+
       for (var i in quizdata) {
         if (i['answeredValue'] == i['answerIndex'][0]) {
           correctint += 1;
@@ -112,11 +113,18 @@ class _QuizPageState extends State<QuizPage> {
       print("lll6");
       print("isfojsoiefj${total} ${unanswered} ${wronganswered} ${correctint}");
       print("lll7");
-      Navigator.pushReplacement(
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(
+      //       builder: (context) => CongratulationsWidget(
+      //           total, quizdata, unanswered, wronganswered, correctint)),
+      // );
+      Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => CongratulationsWidget(
-                total, quizdata, unanswered, wronganswered, correctint)),
+          builder: (context) => QuizSolutionCopyWidget(
+              quizdata, total, unanswered, wronganswered, correctint),
+        ),
       );
       print("lll8");
     } catch (e) {
