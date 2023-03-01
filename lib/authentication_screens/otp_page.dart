@@ -70,12 +70,21 @@ class _OtpPageState extends State<OtpPage> {
       return int.parse(a.FcSerialNumber).compareTo(int.parse(b.FcSerialNumber));}
     );
   }
+  final defaultPinTheme = PinTheme(
+  width: 56,
+  height: 56,
+  decoration: BoxDecoration(
+    color: Color.fromARGB(255, 226, 226, 226),
+  ),
+);
 
   Widget darkRoundedPinPut() {
     return Container(
       child:
       Pinput(
         onChanged: (value) => text = value,
+        defaultPinTheme: defaultPinTheme.copyDecorationWith(
+  borderRadius: BorderRadius.circular(8),),
         length: 6,
       ),
     );
