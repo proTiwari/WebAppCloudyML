@@ -3064,12 +3064,13 @@ class _VideoScreenState extends State<VideoScreen> {
                       ),
                       sectionIndex ==
                               listOfSectionData[widget.courseName].length-1
-                          ? Padding(
+                          ? coursequiz.length != 0 ? Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(5, 0, 5, 0),
                                   child: Column(
                                     children: [
                                       Container(
+                                        color: Color.fromARGB(255, 209, 225, 210),
                                         child: ExpansionTile(
                                           title: Text(
                                             'Quizes',
@@ -3117,7 +3118,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                     ],
                                   ),
                                 )
-                          : SizedBox()
+                          :SizedBox(): SizedBox()
                     ],
                   );
                 }),
