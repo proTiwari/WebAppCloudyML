@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/services/local_notificationservice.dart';
@@ -170,7 +171,7 @@ class _splashState extends State<splash> {
     } catch (e) {
       print("error while getting coursename: ${e.toString()}");
     }
-    print("coursemodulemap : $coursemodule");
+    print("coursemodulemap keka : ${json.encode(coursemodule)}");
     globals.moduleList = moduelnamelist;
     globals.courseList = coursenamelist;
     globals.coursemoduelmap = coursemodule;

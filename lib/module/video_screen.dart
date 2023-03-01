@@ -3070,7 +3070,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                   child: Column(
                                     children: [
                                       Container(
-                                        color: Color.fromARGB(255, 209, 225, 210),
+                                        color: Colors.white,
                                         child: ExpansionTile(
                                           title: Text(
                                             'Quizes',
