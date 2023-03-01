@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/services/local_notificationservice.dart';
@@ -23,7 +24,7 @@ class splash extends StatefulWidget {
 
 class _splashState extends State<splash> {
   static final FlutterLocalNotificationsPlugin
-  _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+      _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final myBox = Hive.box('myBox');
   @override
   void initState() {
@@ -32,16 +33,16 @@ class _splashState extends State<splash> {
     GRecaptchaV3.hideBadge();
     Timer(Duration(seconds: 2), () => GoRouter.of(context).push('/login')
 
-      //     Navigator.pushReplacement(
-      // context, MaterialPageRoute(builder: (context) => Authenticate()))
+        //     Navigator.pushReplacement(
+        // context, MaterialPageRoute(builder: (context) => Authenticate()))
 
-    );
+        );
 
     //listnerNotifications();
     //gives you the message on which user taps and opens
     //the app from terminated state
     FirebaseMessaging.instance.getInitialMessage().then(
-          (message) {
+      (message) {
         print("FirebaseMessaging.instance.getInitialMessage");
         if (message != null) {
           print("New Notification");
@@ -170,7 +171,14 @@ class _splashState extends State<splash> {
     } catch (e) {
       print("error while getting coursename: ${e.toString()}");
     }
-    print("coursemodulemap : $coursemodule");
+      void prints(var s1) {
+    String s = s1.toString();
+    final pattern = RegExp('.{1,800}');
+    pattern.allMatches(s).forEach((match) => print("${match.group(0)}\n"));
+  }
+    prints("coursemodulemap : ${json.encode(coursemodule)}");
+    print("modulenameijfioew : $moduelnamelist");
+    print("coursenamelist : ${json.encode(coursenamelist)}");
     globals.moduleList = moduelnamelist;
     globals.courseList = coursenamelist;
     globals.coursemoduelmap = coursemodule;
