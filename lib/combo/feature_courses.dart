@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-
+import '../widgets/pay_nowfeature.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Services/database_service.dart';
@@ -99,16 +99,14 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
     });
     print('function ');
   }
-     
 
-       void url_del()
-  {
-    FirebaseFirestore.instance.collection('Notice')..doc("7A85zuoLi4YQpbXlbOAh_redirect").update({
-      'url' : "" }).whenComplete((){
-      print('feature Deleted');});
+  void url_del() {
+    FirebaseFirestore.instance.collection('Notice')
+      ..doc("7A85zuoLi4YQpbXlbOAh_redirect")
+          .update({'url': ""}).whenComplete(() {
+        print('feature Deleted');
+      });
   }
-
-
 
   void lookformoneyref() async {
     try {
@@ -329,14 +327,23 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
       //     ),
       //   ),
       // ),
-      bottomSheet: PayNowBottomSheet(
-        currentPosition: FeatureCourses._currentPosition,
-        coursePrice: '₹${widget.courseP!}/-',
-        map: comboMap,
-        popBottomSheetAt: FeatureCourses._closeBottomSheetAtInCombo,
-        isItComboCourse: true,
-        cID: widget.cID!,
-      ),
+      bottomSheet: comboMap['trialCourse'] != null && comboMap['trialCourse']
+          ? PayNowBottomSheetfeature(
+              currentPosition: FeatureCourses._currentPosition,
+              coursePrice: '₹${widget.courseP!}/-',
+              map: comboMap,
+              popBottomSheetAt: FeatureCourses._closeBottomSheetAtInCombo,
+              isItComboCourse: true,
+              cID: widget.cID!,
+            )
+          : PayNowBottomSheet(
+              currentPosition: FeatureCourses._currentPosition,
+              coursePrice: '₹${widget.courseP!}/-',
+              map: comboMap,
+              popBottomSheetAt: FeatureCourses._closeBottomSheetAtInCombo,
+              isItComboCourse: true,
+              cID: widget.cID!,
+            ),
       body: Stack(
         children: [
           SingleChildScrollView(
