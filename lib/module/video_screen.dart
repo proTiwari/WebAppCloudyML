@@ -3056,63 +3056,66 @@ class _VideoScreenState extends State<VideoScreen> {
                             })),
                       ),
                       
-                      sectionIndex ==
-                              listOfSectionData[widget.courseName].length-1
-                          ? coursequiz.length != 0 ? Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        color: Color.fromARGB(255, 255, 255, 255),
-                                        child: ExpansionTile(
-                                          title: Text(
-                                            'Quizes',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          children: List.generate(
-                                            coursequiz.length,
-                                            (index1) {
-                                              // print("ppppp ${valueMap}");
-                                              return Column(
-                                                children: [
-                                                  // videoPercentageList.length != 0 ?
-                                                  // Text(videoPercentageList[index][courseData.entries.elementAt(index).key][courseData.entries.elementAt(index).value[index1].videoTitle].toString()) : SizedBox(),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                  quizdata = coursequiz[index1];
-                                                  quizbool = true;
-                                                  htmlbool = true;
-                                                });
-                                                    },
-                                                    child: Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: 60,
-                                                          top: 15,
-                                                          bottom: 15),
-                                                      child: Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: Text(
-                                                         coursequiz[index1]['name'],
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                          :SizedBox(): SizedBox()
+                      // sectionIndex ==
+                      //         listOfSectionData[widget.courseName].length-1
+                            
+                      //     ? coursequiz.length != 0 ? Padding(
+                            
+                            
+                      //             padding:
+                      //                 const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                      //             child: Column(
+                      //               children: [
+                      //                 Container(
+                      //                   color: Color.fromARGB(255, 255, 255, 255),
+                      //                   child: ExpansionTile(
+                      //                     title: Text(
+                      //                       'Quizes',
+                      //                       style: TextStyle(
+                      //                           fontWeight: FontWeight.bold),
+                      //                     ),
+                      //                     children: List.generate(
+                      //                       coursequiz.length,
+                      //                       (index1) {
+                      //                         // print("ppppp ${valueMap}");
+                      //                         return Column(
+                      //                           children: [
+                      //                             // videoPercentageList.length != 0 ?
+                      //                             // Text(videoPercentageList[index][courseData.entries.elementAt(index).key][courseData.entries.elementAt(index).value[index1].videoTitle].toString()) : SizedBox(),
+                      //                             GestureDetector(
+                      //                               onTap: () {
+                      //                                 setState(() {
+                      //                             quizdata = coursequiz[index1];
+                      //                             quizbool = true;
+                      //                             htmlbool = true;
+                      //                           });
+                      //                               },
+                      //                               child: Container(
+                      //                                 padding: EdgeInsets.only(
+                      //                                     left: 60,
+                      //                                     top: 15,
+                      //                                     bottom: 15),
+                      //                                 child: Align(
+                      //                                   alignment: Alignment
+                      //                                       .centerLeft,
+                      //                                   child: Text(
+                      //                                    coursequiz[index1]['name'],
+                      //                                     textAlign:
+                      //                                         TextAlign.start,
+                      //                                   ),
+                      //                                 ),
+                      //                               ),
+                      //                             ),
+                      //                           ],
+                      //                         );
+                      //                       },
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           )
+                      //     :SizedBox(): SizedBox()
                     ],
                   );
                 }),
