@@ -95,11 +95,18 @@ class _QuizPageState extends State<QuizPage> {
       }
       print("lll3 ${[quizdata[0]['answeredValue']]}");
       var wronganswered = 0;
+      print("ijofijweio");
       for (var i in quizdata) {
         var answeredvaluelist = [i['answeredValue']];
-        if (answeredvaluelist != i['answerIndex'] &&
-            answeredvaluelist[0] != null) {
-          wronganswered += 1;
+
+        print(answeredvaluelist);
+        if (answeredvaluelist[0] != null) {
+          print("lllpp");
+          print(i['answerIndex']);
+          if (answeredvaluelist[0] != i['answerIndex'][0]) {
+            print("equallleeii");
+            wronganswered += 1;
+          }
         }
       }
       print("lll4");

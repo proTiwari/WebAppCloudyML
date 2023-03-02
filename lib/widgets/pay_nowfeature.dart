@@ -135,8 +135,8 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                             width: 20,
                           ),
                           Container(
-                            height: 60,
-                            // width: 300,
+                            height: screenHeight * .08,
+                            width: screenWidth / 2,
                             color: Color(0xFF7860DC),
                             child: Center(
                               child: Row(
@@ -157,18 +157,20 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                   'id': "25",
                                                 });
                                           },
-                                          child: Container(
-                                            // height: screenHeight * .08,
-                                            // width: screenWidth / 2.5,
-                                            child: Center(
-                                              child: Text(
-                                                'Continue Your Course',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: 'Medium',
-                                                  color: Colors.white,
+                                          child: Center(
+                                            child: Container(
+                                              // height: screenHeight * .08,
+                                              // width: screenWidth / 2,
+                                              child: Center(
+                                                child: Text(
+                                                  'Continue Your Course',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Medium',
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -406,8 +408,8 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                     });
                               },
                               child: Container(
-                                height: 60,
-                                // width: 300,
+                                height: screenHeight * .08,
+                                width: screenWidth / 2,
                                 color: Color(0xFF7860DC),
                                 child: Center(
                                   child: Row(

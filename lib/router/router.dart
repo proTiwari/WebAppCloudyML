@@ -11,7 +11,6 @@ import 'package:cloudyml_app2/payments_history.dart';
 import 'package:cloudyml_app2/router/error_page.dart';
 import 'package:cloudyml_app2/screens/chat_screen.dart';
 import 'package:cloudyml_app2/screens/groups_list.dart';
-import 'package:cloudyml_app2/screens/quiz_page.dart';
 import 'package:cloudyml_app2/screens/splash.dart';
 import 'package:cloudyml_app2/store.dart';
 import 'package:flutter/material.dart';
