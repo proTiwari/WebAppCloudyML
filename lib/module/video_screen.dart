@@ -1089,10 +1089,10 @@ class _VideoScreenState extends State<VideoScreen> {
         .where("name", isEqualTo: widget.courseName)
         .get()
         .then((value) {
-          setState(() {
-            coursequiz = value.docs.first.data()['coursequiz'];
-          });
-      
+      setState(() {
+        coursequiz = value.docs.first.data()['coursequiz'];
+      });
+
       print("coursequiz1: ${coursequiz}");
     });
   }
@@ -2439,34 +2439,24 @@ class _VideoScreenState extends State<VideoScreen> {
                                                         // Expanded(
                                                         //   child:
                                                         Text(
-                                                      listOfSectionData[widget.courseName]
-                                                                              [index]
-                                                                          ["videos"]
+                                                      listOfSectionData[widget.courseName][index]["videos"]
                                                                       [subIndex]
                                                                   ["type"] ==
                                                               "video"
-                                                          ? listOfSectionData[widget.courseName]
-                                                                              [index]
+                                                          ? listOfSectionData[widget.courseName][index]
                                                                           ["videos"]
                                                                       [subIndex]
                                                                   ["name"]
                                                               .toString()
-                                                          : listOfSectionData[widget.courseName]
-                                                                              [index]
-                                                                          ["videos"]
-                                                                      [subIndex]
-                                                                  ["type"] ==
-                                                              "quiz"?"Quiz : " +
-                                                              listOfSectionData[widget.courseName]
-                                                                              [index]
-                                                                          ["videos"]
-                                                                      [subIndex]["name"]
-                                                                  .toString():"Assignment : " +
-                                                              listOfSectionData[widget.courseName]
-                                                                              [index]
-                                                                          ["videos"]
-                                                                      [subIndex]["name"]
-                                                                  .toString(),
+                                                          : listOfSectionData[widget.courseName][index]["videos"][subIndex]["type"] ==
+                                                                  "quiz"
+                                                              ? "Quiz : " +
+                                                                  listOfSectionData[widget.courseName][index]["videos"][subIndex]["name"]
+                                                                      .toString()
+                                                              : "Assignment : " +
+                                                                  listOfSectionData[widget.courseName][index]["videos"][subIndex]
+                                                                          ["name"]
+                                                                      .toString(),
                                                       style: TextStyle(
                                                           color: Colors.black,
                                                           fontSize: 17,
@@ -2732,7 +2722,11 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                                       )),
                                                                                 )
                                                                               : Text(
-                                                                                  listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] == "video" ? listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString() :listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] == "quiz"? "Quiz : " + listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString():"Assignment : " + listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString(),
+                                                                                  listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] == "video"
+                                                                                      ? listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString()
+                                                                                      : listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] == "quiz"
+                                                                                          ? "Quiz : " + listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString()
+                                                                                          : "Assignment : " + listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString(),
                                                                                   style: TextStyle(overflow: TextOverflow.ellipsis, color: _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] == 100 ? Colors.green : Colors.black),
                                                                                 );
                                                                         } else {
@@ -2758,14 +2752,13 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                               "type"] ==
                                                                           "video"
                                                                       ? ''
-                                                                      :listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]
-                                                                              [
-                                                                              "type"] ==
-                                                                          "quiz"? "Quiz : " +
-                                                                          listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"]
-                                                                              .toString():"Assignment : " +
-                                                                          listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"]
-                                                                              .toString(),
+                                                                      : listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] ==
+                                                                              "quiz"
+                                                                          ? "Quiz : " +
+                                                                              listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"]
+                                                                                  .toString()
+                                                                          : "Assignment : " +
+                                                                              listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString(),
                                                                   style: TextStyle(
                                                                       overflow:
                                                                           TextOverflow
@@ -3062,6 +3055,7 @@ class _VideoScreenState extends State<VideoScreen> {
                               );
                             })),
                       ),
+                      
                       sectionIndex ==
                               listOfSectionData[widget.courseName].length-1
                           ? coursequiz.length != 0 ? Padding(
