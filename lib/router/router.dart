@@ -238,6 +238,21 @@ class MyRouter {
             sr: 1,));
         }),
         GoRoute(
+          name: 'newcomboCourse',
+          path: '/newcomboCourse',
+          pageBuilder: (context, state){
+          List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
+          final String id = state.queryParams['id']!;
+          final String courseName = state.queryParams['courseName']!;
+          return MaterialPage(
+              key: state.pageKey,
+              child: NewScreen(
+            courses: course[int.parse(id)].courses,
+            id: id,
+            courseName: courseName,
+          ));
+        }),
+        GoRoute(
             name: 'comboVideoScreen',
             path: '/comboVideoScreen',
             pageBuilder: (context, state) {

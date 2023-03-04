@@ -982,7 +982,7 @@ class _HomeState extends State<Home> {
                                                     final id = index.toString();
                                                     final courseName = course[index].courseName;
 
-                                                    GoRouter.of(context).pushNamed('comboCourse',
+                                                    GoRouter.of(context).pushNamed('newcomboCourse',
                                                         queryParams: {'id': id, 'courseName': courseName});
                                                     // Navigator.push(
                                                     //   context,
@@ -1811,7 +1811,7 @@ class _HomeState extends State<Home> {
                                                                     final id = index.toString();
                                                                     final courseName = featuredCourse[index].courseName;
                                                                     final courseP = featuredCourse[index].coursePrice;
-                                                                    GoRouter.of(context).pushNamed('comboStore', 
+                                                                    GoRouter.of(context).pushNamed('newcomboStore', 
                                                                     queryParams: {
                                                                     'courseName': courseName, 
                                                                     'id': id, 

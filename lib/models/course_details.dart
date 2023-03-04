@@ -20,6 +20,7 @@ class CourseDetails {
   bool? show;
   bool? trialCourse;
   String trialDays;
+  String? duration;
 
   CourseDetails({
     required this.courseName,
@@ -43,5 +44,6 @@ class CourseDetails {
     required this.reviews,
     required this.trialCourse,
     required this.trialDays,
+    this.duration
   });
 }

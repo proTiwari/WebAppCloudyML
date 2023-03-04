@@ -509,7 +509,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       final id = index.toString();
                                       final courseName = course[index].courseName;
 
-                                      GoRouter.of(context).pushNamed('comboCourse', queryParams: {'id': id, 'courseName': courseName});
+                                      GoRouter.of(context).pushNamed('newcomboCourse', queryParams: {'id': id, 'courseName': courseName});
                                       // Navigator.push(
                                       //   context,
                                       //   PageTransition(

@@ -672,7 +672,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                           ? InkWell(
                                               onTap: () {
                                                 GoRouter.of(context).pushNamed(
-                                                    'comboCourse',
+                                                    'newcomboCourse',
                                                     queryParams: {
                                                       'courseName':
                                                           featuredCourse[0]
@@ -720,11 +720,13 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                         backgroundColor: Colors
                                                                 .deepPurpleAccent[
                                                             700],
-                                                        title: Text(
-                                                          'This course is available for ${featuredCourse[0].trialDays} days trial.',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
+                                                        title: Center(
+                                                          child: Text(
+                                                            'Start Your ${featuredCourse[0].trialDays} Days Free Trial',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white),
+                                                          ),
                                                         ),
                                                         content: Container(
                                                           height:
@@ -736,10 +738,33 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                 MainAxisAlignment
                                                                     .center,
                                                             children: [
+                                                               featureCPopup(
+                                                              Icons.video_file,
+                                                              'Get Complete Access to videos and assignments',
+                                                              horizontalScale,
+                                                              verticalScale,
+                                                            ),
+                                                            featureCPopup(
+                                                              Icons.mobile_screen_share,
+                                                              'Watch tutorial videos from any module',
+                                                              horizontalScale,
+                                                              verticalScale,
+                                                            ),
+                                                            featureCPopup(
+                                                              Icons.assistant,
+                                                              'Connect with Teaching Assistant for Doubt Clearance',
+                                                              horizontalScale,
+                                                              verticalScale,
+                                                            ),featureCPopup(
+                                                              Icons.mobile_friendly,
+                                                              'Access videos and chat support over our Mobile App.',
+                                                              horizontalScale,
+                                                              verticalScale,
+                                                            ),
+                                                            SizedBox(height: 17,),
                                                               Container(
                                                                   height:
-                                                                      screenHeight *
-                                                                          .4,
+                                                                      screenHeight /8,
                                                                   width:
                                                                       screenWidth /
                                                                           3.5,
@@ -768,8 +793,9 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                                 1,
                                                                             child:
                                                                                 Container(
-                                                                              child: ClipRRect(
-                                                                                borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                                                                              child: CircleAvatar(
+                                                                                radius: 35,
+                                                                                // borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
                                                                                 child: Image.network(
                                                                                   featuredCourse[0].courseImageUrl,
                                                                                   fit: BoxFit.fill,
@@ -780,7 +806,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                           Expanded(
                                                                             child:
                                                                                 Container(
-                                                                              child: Text(featuredCourse[0].courseName, style: TextStyle(fontWeight: FontWeight.bold)),
+                                                                              child: Text(featuredCourse[0].courseName, style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13)),
                                                                             ),
                                                                           ),
                                                                         ],
@@ -788,7 +814,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                     ],
                                                                   )),
                                                               SizedBox(
-                                                                  height: 25 *
+                                                                  height: 29 *
                                                                       verticalScale),
                                                               Row(
                                                                 mainAxisAlignment:
@@ -796,6 +822,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                         .spaceBetween,
                                                                 children: [
                                                                   Container(
+                                                                    width: screenWidth/7,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       borderRadius:
@@ -808,7 +835,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                               0.5),
                                                                     ),
                                                                     child:
-                                                                        TextButton(
+                                                                        ElevatedButton(
                                                                       onPressed:
                                                                           () {
                                                                         print(
@@ -839,7 +866,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                               0.5),
                                                                     ),
                                                                     child:
-                                                                        TextButton(
+                                                                        ElevatedButton(
                                                                       onPressed:
                                                                           () {
                                                                         var paidcourse;
@@ -865,7 +892,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                             Fluttertoast.showToast(msg: 'Congrats!! Course is now available in enrolled courses for ${featuredCourse[0].trialDays}...');
                                                                             Timer(
                                                                                 Duration(seconds: 1),
-                                                                                () => GoRouter.of(context).pushNamed('comboCourse', queryParams: {
+                                                                                () => GoRouter.of(context).pushNamed('newcomboCourse', queryParams: {
                                                                                       'courseName': featuredCourse[0].courseName,
                                                                                       'id': "25",
                                                                                     }));
