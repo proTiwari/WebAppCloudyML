@@ -1081,20 +1081,33 @@ class _VideoScreenState extends State<VideoScreen> {
     super.initState();
   }
 
-  var coursequiz = [];
+  List coursequiz = [];
 
   getCourseQuiz() async {
-    await FirebaseFirestore.instance
-        .collection("courses")
-        .where("name", isEqualTo: widget.courseName)
-        .get()
-        .then((value) {
-      setState(() {
-        coursequiz = value.docs.first.data()['coursequiz'];
-      });
+    try {
+      await FirebaseFirestore.instance
+          .collection("courses")
+          .where("name", isEqualTo: widget.courseName)
+          .get()
+          .then((value) {
+        setState(() {
+          try {
+            coursequiz = value.docs.first.data()['coursequiz'];
+          } catch (e) {
+            setState(() {
+              coursequiz = [];
+            });
+          }
+        });
 
-      print("coursequiz1: ${coursequiz}");
-    });
+        print("coursequiz1: ${coursequiz}");
+      });
+    } catch (e) {
+      setState(() {
+        coursequiz = [];
+      });
+      print(e.toString());
+    }
   }
 
   bool menuClicked = false;
@@ -1881,6 +1894,7 @@ class _VideoScreenState extends State<VideoScreen> {
             try {
               listOfSectionData[widget.courseName].sort((a, b) {
                 print("---========");
+                print(coursequiz.length);
                 print(a["sr"]);
                 if (a["sr"] > b["sr"]) {
                   return 1;
@@ -3055,67 +3069,69 @@ class _VideoScreenState extends State<VideoScreen> {
                               );
                             })),
                       ),
-                      
-                      // sectionIndex ==
-                      //         listOfSectionData[widget.courseName].length-1
-                            
-                      //     ? coursequiz.length != 0 ? Padding(
-                            
-                            
-                      //             padding:
-                      //                 const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                      //             child: Column(
-                      //               children: [
-                      //                 Container(
-                      //                   color: Color.fromARGB(255, 255, 255, 255),
-                      //                   child: ExpansionTile(
-                      //                     title: Text(
-                      //                       'Quizes',
-                      //                       style: TextStyle(
-                      //                           fontWeight: FontWeight.bold),
-                      //                     ),
-                      //                     children: List.generate(
-                      //                       coursequiz.length,
-                      //                       (index1) {
-                      //                         // print("ppppp ${valueMap}");
-                      //                         return Column(
-                      //                           children: [
-                      //                             // videoPercentageList.length != 0 ?
-                      //                             // Text(videoPercentageList[index][courseData.entries.elementAt(index).key][courseData.entries.elementAt(index).value[index1].videoTitle].toString()) : SizedBox(),
-                      //                             GestureDetector(
-                      //                               onTap: () {
-                      //                                 setState(() {
-                      //                             quizdata = coursequiz[index1];
-                      //                             quizbool = true;
-                      //                             htmlbool = true;
-                      //                           });
-                      //                               },
-                      //                               child: Container(
-                      //                                 padding: EdgeInsets.only(
-                      //                                     left: 60,
-                      //                                     top: 15,
-                      //                                     bottom: 15),
-                      //                                 child: Align(
-                      //                                   alignment: Alignment
-                      //                                       .centerLeft,
-                      //                                   child: Text(
-                      //                                    coursequiz[index1]['name'],
-                      //                                     textAlign:
-                      //                                         TextAlign.start,
-                      //                                   ),
-                      //                                 ),
-                      //                               ),
-                      //                             ),
-                      //                           ],
-                      //                         );
-                      //                       },
-                      //                     ),
-                      //                   ),
-                      //                 ),
-                      //               ],
-                      //             ),
-                      //           )
-                      //     :SizedBox(): SizedBox()
+
+                      sectionIndex ==
+                              listOfSectionData[widget.courseName].length - 1
+                          ? coursequiz.length != 0
+                              ? Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        color:
+                                            Color.fromARGB(255, 255, 255, 255),
+                                        child: ExpansionTile(
+                                          title: Text(
+                                            'Quizes',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          children: List.generate(
+                                            coursequiz.length,
+                                            (index1) {
+                                              // print("ppppp ${valueMap}");
+                                              return Column(
+                                                children: [
+                                                  // videoPercentageList.length != 0 ?
+                                                  // Text(videoPercentageList[index][courseData.entries.elementAt(index).key][courseData.entries.elementAt(index).value[index1].videoTitle].toString()) : SizedBox(),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        quizdata =
+                                                            coursequiz[index1];
+                                                        quizbool = true;
+                                                        htmlbool = true;
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 60,
+                                                          top: 15,
+                                                          bottom: 15),
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Text(
+                                                          coursequiz[index1]
+                                                              ['name'],
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container()
+                          : Container()
                     ],
                   );
                 }),
