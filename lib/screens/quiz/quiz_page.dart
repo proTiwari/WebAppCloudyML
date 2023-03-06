@@ -120,19 +120,25 @@ class _QuizPageState extends State<QuizPage> {
       print("lll6");
       print("isfojsoiefj${total} ${unanswered} ${wronganswered} ${correctint}");
       print("lll7");
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(
-      //       builder: (context) => CongratulationsWidget(
-      //           total, quizdata, unanswered, wronganswered, correctint)),
-      // );
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => QuizSolutionCopyWidget(
-              quizdata, total, unanswered, wronganswered, correctint),
-        ),
+            builder: (context) => CongratulationsWidget(
+                quizdata, total, unanswered, wronganswered, correctint)),
       );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => Certificate(),
+      //   ),
+      // );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => QuizSolutionCopyWidget(
+      //         quizdata, total, unanswered, wronganswered, correctint),
+      //   ),
+      // );
       print("lll8");
     } catch (e) {
       print("llllllllll//: ${e.toString()}");
@@ -771,7 +777,7 @@ class _QuizPageState extends State<QuizPage> {
                                               padding: EdgeInsetsDirectional
                                                   .fromSTEB(20, 10, 0, 0),
                                               child: Text(
-                                                'R Certification Quiz',
+                                                '',
                                                 style: FlutterFlowTheme.of(
                                                         context)
                                                     .bodyText1
@@ -985,7 +991,7 @@ class _QuizPageState extends State<QuizPage> {
                                                                           15,
                                                                           10),
                                                               child: Text(
-                                                                'R',
+                                                                '${widget.quizdata['name']}',
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyText1
@@ -2180,43 +2186,46 @@ class _QuizPageState extends State<QuizPage> {
                                                                     MainAxisAlignment
                                                                         .spaceAround,
                                                                 children: [
-                                                                  Padding(
-                                                                    padding: EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            10,
-                                                                            0,
-                                                                            10,
-                                                                            0),
-                                                                    child:
-                                                                        GestureDetector(
-                                                                      onTap:
-                                                                          () {
-                                                                        saveNext();
-                                                                      },
-                                                                      child:
-                                                                          Container(
-                                                                        width:
-                                                                            100,
-                                                                        height:
-                                                                            40,
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          color:
-                                                                              Color(0xFF0A9E04),
-                                                                        ),
-                                                                        child:
-                                                                            Align(
-                                                                          alignment: AlignmentDirectional(
+                                                                  Expanded(
+                                                                    flex: 1,
+                                                                    child: Padding(
+                                                                      padding: EdgeInsetsDirectional
+                                                                          .fromSTEB(
+                                                                              10,
                                                                               0,
+                                                                              10,
                                                                               0),
+                                                                      child:
+                                                                          GestureDetector(
+                                                                        onTap:
+                                                                            () {
+                                                                          saveNext();
+                                                                        },
+                                                                        child:
+                                                                            Container(
+                                                                          width:
+                                                                              100,
+                                                                          height:
+                                                                              40,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                Color(0xFF0A9E04),
+                                                                          ),
                                                                           child:
-                                                                              Text(
-                                                                            'SAVE & NEXT',
-                                                                            style: FlutterFlowTheme.of(context).bodyText1.override(
-                                                                                  fontFamily: 'Poppins',
-                                                                                  color: FlutterFlowTheme.of(context).primaryBtnText,
-                                                                                  fontSize: 10,
-                                                                                ),
+                                                                              Align(
+                                                                            alignment: AlignmentDirectional(
+                                                                                0,
+                                                                                0),
+                                                                            child:
+                                                                                Text(
+                                                                              'SAVE & NEXT',
+                                                                              style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                    fontFamily: 'Poppins',
+                                                                                    color: FlutterFlowTheme.of(context).primaryBtnText,
+                                                                                    fontSize: 10,
+                                                                                  ),
+                                                                            ),
                                                                           ),
                                                                         ),
                                                                       ),
@@ -2261,35 +2270,34 @@ class _QuizPageState extends State<QuizPage> {
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                  GestureDetector(
-                                                                    onTap: () {
-                                                                      setState(
-                                                                          () {
-                                                                        A = false;
-                                                                        B = false;
-                                                                        C = false;
-                                                                        D = false;
-                                                                        quizdata[questionindex]["Answered"] =
-                                                                            false;
-                                                                        quizdata[questionindex]['notAnswered'] =
-                                                                            true;
-                                                                        quizdata[questionindex]['answeredValue'] =
-                                                                            null;
-                                                                        countParameter(
-                                                                            'save');
-                                                                      });
-                                                                    },
-                                                                    child:
-                                                                        Expanded(
-                                                                      flex: 1,
+                                                                  Expanded(
+                                                                    flex: 1,
+                                                                    child: GestureDetector(
+                                                                      onTap: () {
+                                                                        setState(
+                                                                            () {
+                                                                          A = false;
+                                                                          B = false;
+                                                                          C = false;
+                                                                          D = false;
+                                                                          quizdata[questionindex]["Answered"] =
+                                                                              false;
+                                                                          quizdata[questionindex]['notAnswered'] =
+                                                                              true;
+                                                                          quizdata[questionindex]['answeredValue'] =
+                                                                              null;
+                                                                          countParameter(
+                                                                              'save');
+                                                                        });
+                                                                      },
                                                                       child:
                                                                           Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          padding: EdgeInsetsDirectional.fromSTEB(
                                                                             10,
                                                                             0,
                                                                             10,
                                                                             0),
-                                                                        child:
+                                                                          child:
                                                                             Container(
                                                                           width:
                                                                               100,
@@ -2314,8 +2322,8 @@ class _QuizPageState extends State<QuizPage> {
                                                                                   ),
                                                                             ),
                                                                           ),
+                                                                          ),
                                                                         ),
-                                                                      ),
                                                                     ),
                                                                   ),
                                                                 ],

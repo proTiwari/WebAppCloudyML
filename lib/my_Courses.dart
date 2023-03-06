@@ -1125,19 +1125,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       } else {
                                         ComboCourse.comboId.value =
                                             course[index].courseId;
-                                        Navigator.push(
-                                          context,
-                                          PageTransition(
-                                            duration:
-                                                Duration(milliseconds: 400),
-                                            curve: Curves.bounceInOut,
-                                            type: PageTransitionType
-                                                .rightToLeftWithFade,
-                                            child: ComboCourse(
-                                              courses: course[index].courses,
-                                            ),
-                                          ),
-                                        );
+                                      final id = index.toString();
+                                      final courseName = course[index].courseName;
+
+                                      GoRouter.of(context).pushNamed('newcomboCourse', queryParams: {'id': id, 'courseName': courseName});
                                       }
                                     }
                                     setState(() {

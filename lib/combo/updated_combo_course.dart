@@ -191,7 +191,7 @@ class _NewScreenState extends State<NewScreen> {
                                     : 40,
                                 color: Colors.black)),
                         TextSpan(
-                            text: "Data Science and \n Analytics Combo Course",
+                            text: "${widget.courseName}",
                             style: TextStyle(
                                 fontSize: width < 850
                                     ? width < 430

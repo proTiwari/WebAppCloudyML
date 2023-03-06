@@ -32,8 +32,23 @@
 
   <title>CloudyML</title>
   <link rel="manifest" href="manifest.json">
+  <style>
+    .container {
+      width: 100vw;
+      height: 100vh;
+      display: flex; /* Default Axis is X*/
+      justify-content: center; /* Main Axis */
+      align-items: center; /* Cross Axis */
+    }
+    .indicator{
+      width: 30vw;
+    }
+</style>
 </head>
 <body>
+  <div id="loading_indicator" class="container">
+    <img class="indicator" src="./assets/loading.gif" />
+  </div>
 <script type="text/javascript">
     window.flutterWebRenderer = localStorage.getItem('flutterWebRenderer');
   </script>

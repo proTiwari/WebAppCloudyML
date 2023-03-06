@@ -59,7 +59,7 @@ class MyRouter {
         GoRoute(
             path: '/',
             pageBuilder: (context, state) {
-              return MaterialPage(child: splash());
+              return MaterialPage(child: LoginPage());
             }
         ),
         GoRoute(

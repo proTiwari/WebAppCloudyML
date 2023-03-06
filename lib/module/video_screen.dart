@@ -3072,7 +3072,7 @@ class _VideoScreenState extends State<VideoScreen> {
 
                       sectionIndex ==
                               listOfSectionData[widget.courseName].length - 1
-                          ? coursequiz.length != 0
+                          ? coursequiz.runtimeType != Null
                               ? Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(5, 0, 5, 0),
