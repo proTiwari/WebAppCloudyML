@@ -301,7 +301,7 @@ class _MyAppState extends State<MyApp> {
       child: StyledToast(
         locale: const Locale('en', 'US'),
         textStyle: TextStyle(
-            fontSize: 16.0, color: Colors.white, fontFamily: 'Medium'),
+            fontSize: 25.0, color: Colors.white, fontFamily: 'Medium'),
         backgroundColor: Colors.black,
         borderRadius: BorderRadius.circular(30.0),
         textPadding: EdgeInsets.symmetric(horizontal: 17.0, vertical: 10.0),

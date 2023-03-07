@@ -328,7 +328,8 @@ class _StoreScreenState extends State<StoreScreen> {
                               final id = index.toString();
                               GoRouter.of(context).pushNamed(
                                   'catalogue',
-                                  queryParams: {'id': id});
+                                  queryParams: {'id': id,
+                                    'cID': courseId});
                             }
                           },
                           child: Padding(

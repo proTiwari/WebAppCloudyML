@@ -18,6 +18,7 @@ import 'package:ribbon_widget/ribbon_widget.dart';
 import 'package:http/http.dart' as http;
 import '../Services/code_generator.dart';
 import '../Services/deeplink_service.dart';
+import '../widgets/pay_nowfeature.dart';
 
 class FeatureCourses extends StatefulWidget {
   final String? id;
@@ -200,48 +201,26 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
 
   void trialCourse() async {
 
-    print('this is name  : ${userMap['name']} ${widget.cID} ${FirebaseAuth.instance.currentUser!.uid} ${widget.cName}');
+    print('this is name  : ${userMap['name']} ${widget.cID} ${FirebaseAuth.instance.currentUser!.uid} "abc"');
 
-    try{
-
-      // Map data = {
-      //   "uid": "639Fr79OeBheQclDJiVI1pf9lQd2",
-      //   "cid": "aEGX6kMfHzQrVgP3WCwU",
-      //   "uname": "Dipen",
-      //   "cname": "Data Science & Analytics Placement",
-      // };
-
-
-
-      Map data = {
+    try {
+      var url = Uri.parse(
+          'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/trial');
+      final response = await http.post(url, headers: {
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Methods": "GET, POST",
+      }, body: {
         "uid": FirebaseAuth.instance.currentUser!.uid,
-        "cid": widget.cID,
+        "cid": featuredCourse[0].courseId,
         "uname": userMap['name'],
-        "cname": widget.cName,
-      };
-      //encode Map to JSON
-      var body = json.encode(data);
-
-
-      var url = Uri.parse('https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/trial');
-      final response =
-      await http.post(url,
-          headers: {
-            "Access-Control-Allow-Origin": "*" ,// Required for CORS support to work
-            "Access-Control-Allow-Methods": "GET, POST",
-          },
-          body:body );
-      print('this is body ${body.toString()}');
+        "cname": featuredCourse[0].courseName,
+      });
+      // print('this is body ${body.toString()}');
 
       print(response.statusCode);
-
-    }catch(e){
-
+    } catch (e) {
       print('this is api error ${e.toString()}');
-
     }
-
-
 
     // if (userMap['paidCourseNames'].contains(featuredCourse[int.parse(widget.id!)].courseId)) {
     //   Fluttertoast.showToast(msg: 'This course already exist in your trial course...');
@@ -323,7 +302,17 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
       //     ),
       //   ),
       // ),
-      bottomSheet: PayNowBottomSheet(
+      bottomSheet: comboMap['trialCourse'] != null && comboMap['trialCourse']
+          ? PayNowBottomSheetfeature(
+        currentPosition: FeatureCourses._currentPosition,
+        coursePrice: '₹${widget.courseP!}/-',
+        map: comboMap,
+        popBottomSheetAt: FeatureCourses._closeBottomSheetAtInCombo,
+        isItComboCourse: true,
+        cID: widget.cID!,
+        id: widget.id,
+      )
+          : PayNowBottomSheet(
         currentPosition: FeatureCourses._currentPosition,
         coursePrice: '₹${widget.courseP!}/-',
         map: comboMap,
@@ -396,7 +385,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                 });
                                 final id = index.toString();
                                 GoRouter.of(context).pushNamed('catalogue',
-                                    queryParams: {'id': id});
+                                    queryParams: {'id': id, 'cID': courseId});
                               },
                               child: Container(
                                 width: 354 * horizontalScale,
@@ -481,10 +470,11 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                         //   height: 5,
                                         // ),
                                         Container(
-                                          width: 300 * horizontalScale,
-                                          // height: 24.000001907348633,
+                                          width: 225 * horizontalScale,
+                                          // height: 50 * verticalScale,
                                           child: Text(
                                             courseList[index].courseDescription,
+                                            maxLines: 5,
                                             // overflow: TextOverflow.ellipsis,
                                             textScaleFactor: min(
                                                 horizontalScale, verticalScale),
@@ -492,7 +482,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                 color:
                                                 Color.fromRGBO(0, 0, 0, 1),
                                                 fontFamily: 'Poppins',
-                                                fontSize: 18,
+                                                fontSize: 18 * verticalScale,
                                                 letterSpacing:
                                                 0 /*percentages not used in flutter. defaulting to zero*/,
                                                 fontWeight: FontWeight.normal,
@@ -651,47 +641,126 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                userMap['trialCourseList']
+                                    .contains(featuredCourse[0].courseId) ?
+                            InkWell(
+                              onTap: () {
+                                GoRouter.of(context).pushReplacementNamed('myCourses');
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    // boxShadow: [
+                                    //   BoxShadow(
+                                    //     color: Color.fromARGB(255, 176, 224, 250)
+                                    //         .withOpacity(0.3),
+                                    //     spreadRadius: 2,
+                                    //     blurRadius: 3,
+                                    //     offset: Offset(3,
+                                    //         6), // changes position of shadow
+                                    //   ),
+                                    // ],
+                                    color: Color.fromARGB(255, 119, 191, 249),
+                                    gradient: gradient),
+                                height: screenHeight * .08,
+                                width: screenWidth / 2.5,
+                                child: Center(
+                                  child: Text(
+                                    'Continue Your Course',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20 * verticalScale),
+                                  ),
+                                ),
+                              ),
+                            )
+                                  :
                                 InkWell(
                                   onTap: () {
                                     showDialog(
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            backgroundColor: Colors.deepPurpleAccent[700],
-                                            title: Text('This course is available for ${featuredCourse[0].trialDays} days trial.',
-                                              style: TextStyle(color: Colors.white),),
+                                            backgroundColor: Colors
+                                                .deepPurpleAccent[
+                                            700],
+                                            title: Center(
+                                              child: Text(
+                                                'Start Your ${featuredCourse[0].trialDays} Days Free Trial',
+                                                style: TextStyle(
+                                                    color: Colors
+                                                        .white),
+                                              ),
+                                            ),
                                             content: Container(
-                                              height: screenHeight/3.5,
-                                              width: screenWidth/2.5,
+                                              height:
+                                              screenHeight * .5,
+                                              width:
+                                              screenWidth / 2.5,
                                               child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .center,
                                                 children: [
+                                                  featureCPopup(
+                                                    Icons.video_file,
+                                                    'Get Complete Access to videos and assignments',
+                                                    horizontalScale,
+                                                    verticalScale,
+                                                  ),
+                                                  featureCPopup(
+                                                    Icons.mobile_screen_share,
+                                                    'Watch tutorial videos from any module',
+                                                    horizontalScale,
+                                                    verticalScale,
+                                                  ),
+                                                  featureCPopup(
+                                                    Icons.assistant,
+                                                    'Connect with Teaching Assistant for Doubt Clearance',
+                                                    horizontalScale,
+                                                    verticalScale,
+                                                  ),featureCPopup(
+                                                    Icons.mobile_friendly,
+                                                    'Access videos and chat support over our Mobile App.',
+                                                    horizontalScale,
+                                                    verticalScale,
+                                                  ),
+                                                  SizedBox(height: 17,),
                                                   Container(
-                                                      height: screenHeight/5.2,
-                                                      width: screenWidth/3.5,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.circular(10),
-                                                        border: Border.all(color: Colors.white, width: 0.5),
-                                                        color: Colors.white,
+                                                      height:
+                                                      screenHeight /8,
+                                                      width:
+                                                      screenWidth /
+                                                          3.5,
+                                                      decoration:
+                                                      BoxDecoration(
+                                                        borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                        border: Border.all(
+                                                            color: Colors
+                                                                .white,
+                                                            width:
+                                                            0.5),
+                                                        color: Colors
+                                                            .white,
                                                       ),
                                                       child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
                                                         children: [
                                                           Row(
                                                             children: [
                                                               Expanded(
-                                                                flex: 1,
-                                                                child: Container(
-                                                                  child: ClipRRect(
-                                                                    borderRadius: BorderRadius.only(
-                                                                        topLeft: Radius
-                                                                            .circular(
-                                                                            15),
-                                                                        topRight: Radius
-                                                                            .circular(
-                                                                            15)),
-                                                                    child:
-                                                                    Image.network(
+                                                                flex:
+                                                                1,
+                                                                child:
+                                                                Container(
+                                                                  child: CircleAvatar(
+                                                                    radius: 35,
+                                                                    // borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                                                                    child: Image.network(
                                                                       featuredCourse[0].courseImageUrl,
                                                                       fit: BoxFit.fill,
                                                                     ),
@@ -699,65 +768,97 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                 ),
                                                               ),
                                                               Expanded(
-                                                                child: Container(
-                                                                  child: Text(featuredCourse[0].courseName,
-                                                                      style: TextStyle(fontWeight: FontWeight.bold) ),
+                                                                child:
+                                                                Container(
+                                                                  child: Text(featuredCourse[0].courseName, style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13)),
                                                                 ),
                                                               ),
                                                             ],
                                                           )
                                                         ],
-                                                      )
-                                                  ),
-                                                  SizedBox(height: 30 * verticalScale),
+                                                      )),
+                                                  SizedBox(
+                                                      height: 29 *
+                                                          verticalScale),
                                                   Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                     children: [
                                                       Container(
-                                                        decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(10),
-                                                          border: Border.all(color: Colors.white, width: 0.5),
+                                                        width: screenWidth/7,
+                                                        decoration:
+                                                        BoxDecoration(
+                                                          borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                          border: Border.all(
+                                                              color: Colors
+                                                                  .white,
+                                                              width:
+                                                              0.5),
                                                         ),
-                                                        child: TextButton(
-                                                          onPressed: () {
-                                                            print('idd ${widget.id} ${featuredCourse[0].courseName}');
+                                                        child:
+                                                        ElevatedButton(
+                                                          onPressed:
+                                                              () {
+                                                            // print(
+                                                            //     'idd ${widget.id} ${featuredCourse[0].courseName}');
                                                             // print('this is condition ${userMap['paidCourseNames'].contains(featuredCourse[int.parse(widget.id!)].courseId)}');
-                                                            Navigator.of(context).pop();
+                                                            Navigator.of(context)
+                                                                .pop();
                                                           },
-                                                          child: Text('Close',
+                                                          child:
+                                                          Text(
+                                                            'Close',
                                                             style: TextStyle(
-                                                                color: Colors.white
-                                                            ),
+                                                                color:
+                                                                Colors.white),
                                                           ),
                                                         ),
                                                       ),
                                                       Container(
-                                                        decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(10),
-                                                          border: Border.all(color: Colors.white, width: 0.5),
+                                                        decoration:
+                                                        BoxDecoration(
+                                                          borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                          border: Border.all(
+                                                              color: Colors
+                                                                  .white,
+                                                              width:
+                                                              0.5),
                                                         ),
-                                                        child: TextButton(
-                                                          onPressed: () {
+                                                        child:
+                                                        ElevatedButton(
+                                                          onPressed:
+                                                              () {
+                                                            var paidcourse;
+                                                            print(
+                                                                userMap);
 
                                                             if(userMap['paidCourseNames'].contains(featuredCourse[0].courseId)) {
                                                               Fluttertoast.showToast(msg: 'You have already enrolled in this course.');
-                                                            } else if (userMap['trialCourseList'].contains(featuredCourse[0].courseId)) {
+                                                            } else if (userMap['trialCourseList'] != null && userMap['trialCourseList'].contains(featuredCourse[0].courseId)) {
                                                               Fluttertoast.showToast(msg: 'You have already tried this course... Please purchase the course.');
                                                             } else {
                                                               setState(() {
                                                                 trialCourse();
                                                                 Fluttertoast.showToast(msg: 'Congrats!! Course is now available in enrolled courses for ${featuredCourse[0].trialDays}...');
                                                                 Timer(
-                                                                    Duration(seconds: 1),
+                                                                    Duration(seconds: 2),
                                                                         () => GoRouter.of(context).pushReplacementNamed('myCourses')
                                                                 );
                                                               });
                                                             }
-
                                                           },
-                                                          child: Text('Start your free trial',
-                                                            style: TextStyle(
-                                                                color: Colors.white
+                                                          child:
+                                                          Center(
+                                                            child: Text(
+                                                              'Start your free trial',
+                                                              style: TextStyle(
+                                                                  color:
+                                                                  Colors.white),
                                                             ),
                                                           ),
                                                         ),
@@ -847,13 +948,13 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                         color: Color.fromARGB(255, 119, 191, 249),
                                         gradient: gradient),
                                     height: screenHeight * .08,
-                                    width: screenWidth / 2.5,
+                                    width: screenWidth / 3,
                                     child: Center(
                                       child: Text(
                                         'Buy Now',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                            color: Colors.white, fontSize: 20),
+                                            color: Colors.white, fontSize: 20 * verticalScale),
                                       ),
                                     ),
                                   ),

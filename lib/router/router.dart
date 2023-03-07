@@ -71,7 +71,8 @@ class MyRouter {
             name: 'home',
             path: '/home',
             pageBuilder: (context, state) {
-              return MaterialPage(child: Home());
+              return MaterialPage(
+                  child: LandingScreen());
             }
         ),
         GoRoute(
@@ -146,10 +147,12 @@ class MyRouter {
           pageBuilder: (context, state) {
             List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
             final String id = state.queryParams["id"]!;
+            final String cID = state.queryParams["cID"]!;
             return MaterialPage<void>(
                 key: state.pageKey,
                 child: CatelogueScreen(
                   courses: course[int.parse(id)].courses,
+                  cID: cID,
                   id: id,));
           },
         ),
