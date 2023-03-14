@@ -214,12 +214,37 @@ class _VideoScreenState extends State<VideoScreen> {
         if (i[moduleId.toString()] != null) {
           for (var j in i[moduleId.toString()]) {
             print("0kkkkk");
-            j[videoId.toString()] != null &&
-                    j[videoId.toString()] <
-                        ((currentPosition / totalDuration) * 100).toInt()
-                ? j[videoId.toString()] =
-                    ((currentPosition / totalDuration) * 100).toInt()
-                : null;
+            if(j[videoId.toString()]!=null)
+              {
+                if(j[videoId.toString()]>=100)
+                  {
+                              j[videoId.toString()] = 100;
+                  }
+                else
+                  {
+                   if(((currentPosition / totalDuration) * 100) >99.60)
+                      {
+                        j[videoId.toString()] = 100;
+                      }
+                       else
+                         {
+
+                           if(j[videoId.toString()]<
+                               ((currentPosition / totalDuration) * 100).toInt()
+                           )
+                           {
+                             j[videoId.toString()] =
+                                 ((currentPosition / totalDuration) * 100).toInt();
+                           }
+                         }
+                  }
+              }
+            // j[videoId.toString()] != null &&
+            //         j[videoId.toString()] <
+            //             ((currentPosition / totalDuration) * 100).toInt()
+            //     ? j[videoId.toString()] =
+            //         ((currentPosition / totalDuration) * 100).toInt()
+            //     : null;
           }
         }
       }
@@ -655,13 +680,12 @@ class _VideoScreenState extends State<VideoScreen> {
       if (value.exists) {
         if (value.data()![CourseID] != null) {
           print("List-----$list");
-          for (int i = 0; i < list.length; i++) {
-            for (int j = 0; j < list[i]["videos"].length; j++) {
-              list[i]["videos"][j]["type"] == "video"
-                  ? null
-                  : list[i]["videos"].removeAt(j);
-            }
+       for(int i=0;i<list.length;i++)
+          {
+           await list[i]["videos"].removeWhere((item) => item['type'] != "video");
           }
+
+          print(await list);
           list.sort((a, b) {
             if (a["sr"] > b["sr"]) {
               return 1;
@@ -682,6 +706,19 @@ class _VideoScreenState extends State<VideoScreen> {
                 // counter=1;
               }
             }
+            for(int i=0;i<finalProgressData.length;i++)
+          {
+            for(var items in finalProgressData[i].entries)
+            {
+              int count = 0;
+              for(var k in items.value){
+//         print(k.values.first);
+//         print("**");
+                finalProgressData[i][items.key]![count][k.keys.first]>100?finalProgressData[i][items.key]![count][k.keys.first]=100:null;
+                count++;
+              }
+            }
+          }
             // Map<String,dynamic> moduleNew = {};
             // if(counter==0)
             //   {
@@ -1065,6 +1102,7 @@ class _VideoScreenState extends State<VideoScreen> {
 
   @override
   void initState() {
+    globalquizstatus();
     // html.window.document.onContextMenu.listen((evt) => evt.preventDefault());
     VideoScreen.currentSpeed.value = 1.0;
     // getData();
@@ -1076,9 +1114,22 @@ class _VideoScreenState extends State<VideoScreen> {
     getpathway(widget.courseName);
     Future.delayed(Duration(milliseconds: 500), () {
       getFirstVideo();
+
     });
 
     super.initState();
+  }
+  bool _switchValue = false;
+  globalquizstatus() async {
+    await FirebaseFirestore.instance
+        .collection("Controllers")
+        .doc('variables')
+        .get()
+        .then((value) {
+      setState(() {
+        _switchValue = value.data()!['globalquiz'];
+      });
+    });
   }
 
   List coursequiz = [];
@@ -3070,7 +3121,7 @@ class _VideoScreenState extends State<VideoScreen> {
                             })),
                       ),
 
-                      sectionIndex ==
+                      _switchValue?sectionIndex ==
                               listOfSectionData[widget.courseName].length - 1
                           ? coursequiz.runtimeType != Null
                               ? Padding(
@@ -3131,7 +3182,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                   ),
                                 )
                               : Container()
-                          : Container()
+                          : Container():Container()
                     ],
                   );
                 }),

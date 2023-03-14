@@ -98,6 +98,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
       vid = element.courseDocumentId;
     });
     print('function ');
+    print("featured course is===$featuredCourse");
   }
 
   void url_del() {
@@ -229,7 +230,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
       // var body = json.encode(data);
 
       var url = Uri.parse(
-          'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/trial');
+          'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/trialAccess');
       final response = await http.post(url, headers: {
         "Access-Control-Allow-Origin": "*", // Required for CORS support to work
         "Access-Control-Allow-Methods": "GET, POST",
@@ -271,9 +272,69 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
     // }
   }
 
+  void checkl() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('Users');
+    var doc = await users.doc(FirebaseAuth.instance.currentUser!.uid).get();
+    if (doc.exists) {
+      Map<String, dynamic>? map = doc.data() as Map<String, dynamic>?;
+      if (map!.containsKey('trialCourseList')) {
+        // Replace field by the field you want to check.
+        var valueOfField = map['trialCourseList'];
+        print('i am in main if');
+
+      } else {
+        FirebaseFirestore.instance
+            .collection('Users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          'trialCourseList': "",
+        });
+
+        print('i am in main else');
+      }
+    }
+  }
+
+  void checkp() async{
+   
+
+
+      CollectionReference users = FirebaseFirestore.instance.collection('Users');
+    var doc = await users.doc(FirebaseAuth.instance.currentUser!.uid).get();
+    if (doc.exists) {
+      Map<String, dynamic>? map = doc.data() as Map<String, dynamic>?;
+      if (map!.containsKey('paidCourseNames')) {
+        // Replace field by the field you want to check.
+        var valueOfField = map['paidCourseNames'];
+        print('i am in paid main if');
+
+      } else {
+        FirebaseFirestore.instance
+            .collection('Users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          'paidCourseNames': [""]
+        });
+
+        print('i am in paid main else');
+      }
+    }
+
+  }
+
   @override
   void initState() {
     super.initState();
+
+    // print("i am in trial if");
+
+    //  FirebaseFirestore.instance.collection('Users')
+    //       .doc(FirebaseAuth.instance.currentUser!.uid)
+    //       .update({'trialCourseList':"",});
+
+    checkl();
+    checkp();
+
     getCourseName();
     // print("vid is===${featuredCourse[int.parse(widget.id!)]}");
     dbCheckerForPayInParts();
@@ -407,11 +468,11 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                   courseId = courseList[index].courseDocumentId;
                                 });
                                 final id = index.toString();
-                                GoRouter.of(context)
-                                    .pushNamed('catalogue', queryParams: {
-                                  'id': id,
-                                  'cID': courseId,
-                                });
+                                // GoRouter.of(context)
+                                //     .pushNamed('catalogue', queryParams: {
+                                //   'id': id,
+                                //   'cID': courseId,
+                                // });
                               },
                               child: Container(
                                 width: 354 * horizontalScale,
@@ -483,10 +544,11 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                             courseList[index].courseName,
                                             textScaleFactor: min(
                                                 horizontalScale, verticalScale),
+                                            maxLines: 3,
                                             style: TextStyle(
                                               color: Color.fromRGBO(0, 0, 0, 1),
                                               fontFamily: 'Poppins',
-                                              fontSize: 26,
+                                              fontSize: 26 * verticalScale,
                                               letterSpacing: 0,
                                               fontWeight: FontWeight.bold,
                                               height: 1,
@@ -497,10 +559,12 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                         //   height: 5,
                                         // ),
                                         Container(
-                                          width: 300 * horizontalScale,
-                                          // height: 24.000001907348633,
+                                          width: 182 * horizontalScale,
+                                          // height: 30*verticalScale,
                                           child: Text(
                                             courseList[index].courseDescription,
+                                            maxLines: 5,
+                                            overflow: TextOverflow.ellipsis,
                                             // overflow: TextOverflow.ellipsis,
                                             textScaleFactor: min(
                                                 horizontalScale, verticalScale),
@@ -508,7 +572,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                 color:
                                                     Color.fromRGBO(0, 0, 0, 1),
                                                 fontFamily: 'Poppins',
-                                                fontSize: 18,
+                                                fontSize: 18 * verticalScale,
                                                 letterSpacing:
                                                     0 /*percentages not used in flutter. defaulting to zero*/,
                                                 fontWeight: FontWeight.normal,
@@ -677,7 +741,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                       'courseName':
                                                           featuredCourse[0]
                                                               .courseName,
-                                                      'id': "25",
+                                                      'id': "28",
                                                     });
                                               },
                                               child: Container(
@@ -699,14 +763,15 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                         255, 119, 191, 249),
                                                     gradient: gradient),
                                                 height: screenHeight * .08,
-                                                width: screenWidth / 2.5,
+                                                width: screenWidth / 3,
                                                 child: Center(
                                                   child: Text(
                                                     'Continue Your Course',
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                         color: Colors.white,
-                                                        fontSize: 20),
+                                                        fontSize:
+                                                            20 * verticalScale),
                                                   ),
                                                 ),
                                               ),
@@ -738,33 +803,40 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                 MainAxisAlignment
                                                                     .center,
                                                             children: [
-                                                               featureCPopup(
-                                                              Icons.video_file,
-                                                              'Get Complete Access to videos and assignments',
-                                                              horizontalScale,
-                                                              verticalScale,
-                                                            ),
-                                                            featureCPopup(
-                                                              Icons.mobile_screen_share,
-                                                              'Watch tutorial videos from any module',
-                                                              horizontalScale,
-                                                              verticalScale,
-                                                            ),
-                                                            featureCPopup(
-                                                              Icons.assistant,
-                                                              'Connect with Teaching Assistant for Doubt Clearance',
-                                                              horizontalScale,
-                                                              verticalScale,
-                                                            ),featureCPopup(
-                                                              Icons.mobile_friendly,
-                                                              'Access videos and chat support over our Mobile App.',
-                                                              horizontalScale,
-                                                              verticalScale,
-                                                            ),
-                                                            SizedBox(height: 17,),
+                                                              featureCPopup(
+                                                                Icons
+                                                                    .video_file,
+                                                                'Get Complete Access to videos and assignments',
+                                                                horizontalScale,
+                                                                verticalScale,
+                                                              ),
+                                                              featureCPopup(
+                                                                Icons
+                                                                    .mobile_screen_share,
+                                                                'Watch tutorial videos from any module',
+                                                                horizontalScale,
+                                                                verticalScale,
+                                                              ),
+                                                              featureCPopup(
+                                                                Icons.assistant,
+                                                                'Connect with Teaching Assistant for Doubt Clearance',
+                                                                horizontalScale,
+                                                                verticalScale,
+                                                              ),
+                                                              featureCPopup(
+                                                                Icons
+                                                                    .mobile_friendly,
+                                                                'Access videos and chat support over our Mobile App.',
+                                                                horizontalScale,
+                                                                verticalScale,
+                                                              ),
+                                                              SizedBox(
+                                                                height: 17,
+                                                              ),
                                                               Container(
                                                                   height:
-                                                                      screenHeight /8,
+                                                                      screenHeight /
+                                                                          8,
                                                                   width:
                                                                       screenWidth /
                                                                           3.5,
@@ -806,7 +878,11 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                           Expanded(
                                                                             child:
                                                                                 Container(
-                                                                              child: Text(featuredCourse[0].courseName, style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13)),
+                                                                              child: Text(
+                                                                                featuredCourse[0].courseName,
+                                                                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                                                                overflow: TextOverflow.ellipsis,
+                                                                              ),
                                                                             ),
                                                                           ),
                                                                         ],
@@ -822,7 +898,9 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                         .spaceBetween,
                                                                 children: [
                                                                   Container(
-                                                                    width: screenWidth/7,
+                                                                    width:
+                                                                        screenWidth /
+                                                                            7,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       borderRadius:
@@ -877,8 +955,9 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                             .contains(featuredCourse[0].courseId)) {
                                                                           Fluttertoast.showToast(
                                                                               msg: 'You have already enrolled in this course.');
-                                                                        } else if (userMap['paidCourseNames']
-                                                                            .contains(featuredCourse[0].courseId)) {
+                                                                        } else if (userMap['trialCourseList'] !=
+                                                                                null &&
+                                                                            userMap['trialCourseList'].contains(featuredCourse[0].courseId)) {
                                                                           // print("this is it====${course[index!].toString()}");
                                                                           Fluttertoast.showToast(
                                                                               msg: 'You have already tried this course... Please purchase the course.');
@@ -894,7 +973,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                                                 Duration(seconds: 1),
                                                                                 () => GoRouter.of(context).pushNamed('newcomboCourse', queryParams: {
                                                                                       'courseName': featuredCourse[0].courseName,
-                                                                                      'id': "25",
+                                                                                      'id': "28",
                                                                                     }));
                                                                           });
                                                                         }
@@ -942,7 +1021,8 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                         color: Colors.white,
-                                                        fontSize: 20),
+                                                        fontSize:
+                                                            20 * verticalScale),
                                                   ),
                                                 ),
                                               ),
@@ -994,14 +1074,14 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                                   255, 119, 191, 249),
                                               gradient: gradient),
                                           height: screenHeight * .08,
-                                          width: screenWidth / 2.5,
+                                          width: screenWidth / 3,
                                           child: Center(
                                             child: Text(
                                               'Buy Now',
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                   color: Colors.white,
-                                                  fontSize: 20),
+                                                  fontSize: 20 * verticalScale),
                                             ),
                                           ),
                                         ),
@@ -1051,7 +1131,8 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                                         'Buy Now',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                            color: Colors.white, fontSize: 20),
+                                            color: Colors.white,
+                                            fontSize: 20 * verticalScale),
                                       ),
                                     ),
                                   ),

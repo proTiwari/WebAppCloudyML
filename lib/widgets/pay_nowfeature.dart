@@ -155,7 +155,7 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                   'courseName':
                                                       featuredCourse[0]
                                                           .courseName,
-                                                  'id': "25",
+                                                  'id': "28",
                                                 });
                                           },
                                           child: Center(
@@ -167,7 +167,7 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                   'Continue Your Course',
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
-                                                    fontSize: 18,
+                                                    fontSize: 18* verticalScale,
                                                     fontWeight: FontWeight.bold,
                                                     fontFamily: 'Medium',
                                                     color: Colors.white,
@@ -230,10 +230,10 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                             SizedBox(height: 17,),
                                                               Container(
                                                                   height:
-                                                                      screenHeight /8,
+                                                                      screenHeight /7,
                                                                   width:
                                                                       screenWidth /
-                                                                          3.5,
+                                                                          1.8,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     borderRadius:
@@ -272,7 +272,7 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                           Expanded(
                                                                             child:
                                                                                 Container(
-                                                                              child: Text(featuredCourse[0].courseName, style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13)),
+                                                                              child: Text(featuredCourse[0].courseName, style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15*verticalScale)),
                                                                             ),
                                                                           ),
                                                                         ],
@@ -288,7 +288,8 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                         .spaceBetween,
                                                                 children: [
                                                                   Container(
-                                                                    width: screenWidth/7,
+                                                                    // width: screenWidth/4,
+                                                                    height: screenHeight/20,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       borderRadius:
@@ -314,12 +315,15 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                           Text(
                                                                         'Close',
                                                                         style: TextStyle(
+                                                                          fontSize: 18 * verticalScale,
                                                                             color:
                                                                                 Colors.white),
                                                                       ),
                                                                     ),
                                                                   ),
                                                                   Container(
+                                                                    //  width: screenWidth/3,
+                                                                    height: screenHeight/20,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       borderRadius:
@@ -343,8 +347,7 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                             .contains(featuredCourse[0].courseId)) {
                                                                           Fluttertoast.showToast(
                                                                               msg: 'You have already enrolled in this course.');
-                                                                        } else if (userMap['paidCourseNames']
-                                                                            .contains(featuredCourse[0].courseId)) {
+                                                                        } else if (userMap['trialCourseList'] != null && userMap['trialCourseList'].contains(featuredCourse[0].courseId)) {
                                                                           // print("this is it====${course[index!].toString()}");
                                                                           Fluttertoast.showToast(
                                                                               msg: 'You have already tried this course... Please purchase the course.');
@@ -360,7 +363,7 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                                 Duration(seconds: 1),
                                                                                 () => GoRouter.of(context).pushNamed('newcomboCourse', queryParams: {
                                                                                       'courseName': featuredCourse[0].courseName,
-                                                                                      'id': "25",
+                                                                                      'id': "28",
                                                                                     }));
                                                                           });
                                                                         }
@@ -370,6 +373,7 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                             child: Text(
                                                                         'Start your free trial',
                                                                         style: TextStyle(
+                                                                          fontSize: 17*verticalScale,
                                                                               color:
                                                                                   Colors.white),
                                                                       ),
@@ -392,7 +396,7 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                 'Start your free trial now',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
-                                                     fontSize: 18,
+                                                     fontSize: 18* verticalScale,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'Medium',
                                           color: Colors.white),
@@ -431,24 +435,24 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                       Text(
                                         'Pay Now',
                                         style: TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 18*verticalScale,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'Medium',
                                           color: Colors.white,
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: 15,
-                                      ),
-                                      Text(
-                                        widget.coursePrice,
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Medium',
-                                          color: Colors.white,
-                                        ),
-                                      ),
+                                      // SizedBox(
+                                      //   width: 15,
+                                      // ),
+                                      // Text(
+                                      //   widget.coursePrice,
+                                      //   style: TextStyle(
+                                      //     fontSize: 18* verticalScale,
+                                      //     fontWeight: FontWeight.bold,
+                                      //     fontFamily: 'Medium',
+                                      //     color: Colors.white,
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ),

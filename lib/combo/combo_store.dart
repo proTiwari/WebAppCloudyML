@@ -298,11 +298,12 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                                         //   height: 5,
                                         // ),
                                         Container(
-                                          width: 300 * horizontalScale,
+                                          width: 220 * horizontalScale,
                                           // height: 24.000001907348633,
                                           child: Text(
                                             course[index].courseDescription,
                                             // overflow: TextOverflow.ellipsis,
+                                            maxLines: 4,
                                             textScaleFactor: min(
                                                 horizontalScale, verticalScale),
                                             style: TextStyle(

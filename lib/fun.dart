@@ -984,18 +984,20 @@ Drawer customDrawer(BuildContext context) {
                   GoRouter.of(context).push('/myCourses');
                 },
               ),
-              globals.role == "mentor" ? InkWell(
-                child: ListTile(
-                  title: Text('Admin Quiz Panel'),
-                  leading: Icon(
-                    Icons.quiz,
-                    color: HexColor('691EC8'),
-                  ),
-                ),
-                onTap: () {
-                  GoRouter.of(context).push('/adminquizpanel');
-                },
-              ):Container(),
+              globals.role == "mentor"
+                  ? InkWell(
+                      child: ListTile(
+                        title: Text('Admin Quiz Panel'),
+                        leading: Icon(
+                          Icons.quiz,
+                          color: HexColor('691EC8'),
+                        ),
+                      ),
+                      onTap: () {
+                        GoRouter.of(context).push('/quizpanel');
+                      },
+                    )
+                  : Container(),
 
               //Assignments tab for mentors only
               // ref.data() != null && ref.data()!["role"] == 'mentor'
@@ -1171,7 +1173,7 @@ Widget featureCPopup(
             style: TextStyle(
               overflow: TextOverflow.ellipsis,
               color: Colors.black,
-              fontSize: 18,
+              fontSize: 18* verticalScale,
               fontWeight: FontWeight.bold
             ),
           ),

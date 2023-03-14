@@ -764,7 +764,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     } else {
 
                                       final id = index.toString();
-                                      GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                                      GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id,'cid':courseId});
+                                      
                                     }
                                   },
                                   child: Padding(

@@ -216,12 +216,15 @@ class _splashState extends State<splash> {
     final height = size.height;
     final width = size.width;
     return Scaffold(
-      body: Center(
-        child: SpinKitCircle(
-          color: Colors.deepPurpleAccent,
-          size: 150,
-          duration: Duration(milliseconds: 200),
-        ),
+      body: 
+      Center(
+        child: Image.network("https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Fnewone.gif?alt=media&token=c9254df1-d4a1-4557-842d-032355c3ac66",
+        fit:BoxFit.fill)
+        // SpinKitCircle(
+        //   color: Colors.deepPurpleAccent,
+        //   size: 150,
+        //   duration: Duration(milliseconds: 200),
+        // ),
       ),
       // body: Container(
       //   decoration: BoxDecoration(

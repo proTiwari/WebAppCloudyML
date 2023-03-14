@@ -93,7 +93,6 @@ class _QuizPageState extends State<QuizPage> {
           unanswered += 1;
         }
       }
-      print("lll3 ${[quizdata[0]['answeredValue']]}");
       var wronganswered = 0;
       print("ijofijweio");
       for (var i in quizdata) {
@@ -2043,7 +2042,7 @@ class _QuizPageState extends State<QuizPage> {
                                                                                 () {
                                                                                   if (questionindex != 0) {
                                                                                     questionindex -= 1;
-                                                                                    saveNext();
+                                                                                    save();
                                                                                   }
                                                                                 },
                                                                               );
@@ -2358,7 +2357,7 @@ class _QuizPageState extends State<QuizPage> {
                                                                               () {
                                                                             setState(() {
                                                                               if (questionindex != 0) {
-                                                                                saveNext();
+                                                                                save();
                                                                                 questionindex -= 1;
                                                                               }
                                                                             });

@@ -41,8 +41,13 @@ class _QuizSolutionCopyWidgetState extends State<QuizSolutionCopyWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print("jhjijefij: ${widget.quizdata}");
-    print("answer: ${widget.quizdata[0]['options']}");
+    try {
+      print("jhjijefij: ${widget.quizdata}");
+      print("answer: ${widget.quizdata[0]['options']}");
+    } catch (e) {
+      print(e.toString());
+    }
+
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -152,7 +157,7 @@ class _QuizSolutionCopyWidgetState extends State<QuizSolutionCopyWidget> {
                               child: Align(
                                 alignment: AlignmentDirectional(0.05, 0),
                                 child: Text(
-                                  'Total Obtained ${widget.total}%',
+                                  'Total Obtained ${double.parse(widget.total.toString()).toStringAsFixed(2)}%',
                                   style: FlutterFlowTheme.of(context)
                                       .bodyText1
                                       .override(
@@ -987,8 +992,8 @@ class _QuizSolutionCopyWidgetState extends State<QuizSolutionCopyWidget> {
                 ),
                 GestureDetector(
                   onTap: (() {
-                    Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => HomePage()));
                   }),
                   child: Align(
                     alignment: AlignmentDirectional(0.95, 0.95),

@@ -694,6 +694,7 @@ class _OtpPageState extends State<OtpPage> {
                 else {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (_) => HomePage()));
+                      GoRouter.of(context).push('/home');
 
                       //  GoRouter.of(context).go('/home');
                 }

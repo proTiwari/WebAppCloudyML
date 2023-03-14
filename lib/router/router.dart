@@ -24,6 +24,7 @@ import '../models/course_details.dart';
 import '../my_Courses.dart';
 import '../screens/quiz/admin_quiz.dart';
 import '../screens/quiz/quiz_page.dart';
+import '../screens/quiz/quiz_panel.dart';
 import '../screens/quiz/quizentry.dart';
 import '../screens/review_screen/review_screen.dart';
 import 'login_state_check.dart';
@@ -59,7 +60,7 @@ class MyRouter {
         GoRoute(
             path: '/',
             pageBuilder: (context, state) {
-              return MaterialPage(child: LoginPage());
+              return MaterialPage(child: splash());
             }
         ),
         GoRoute(
@@ -82,6 +83,13 @@ class MyRouter {
               return MaterialPage(child: StoreScreen());
             }
         ),
+        GoRoute(
+          name: 'quizpanel',
+          path: '/quizpanel',
+          pageBuilder: (context, state) {
+            return MaterialPage(key: state.pageKey, child: QuizPanel());
+          },
+        ), //CongratulationsWidget
         GoRoute(
           name: 'reviews',
           path: '/reviews',

@@ -140,15 +140,16 @@ class _NewScreenState extends State<NewScreen> {
     getTheStreamData();
     // getTheDurationOfCourse();
     getAllPaidCourses();
-    getPercentageOfCourse();
   }
 
   @override
   Widget build(BuildContext context) {
     List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
     final width = MediaQuery.of(context).size.width;
+    getPercentageOfCourse();
+
     return Scaffold(
-      // appBar: appBar(context),
+     // appBar: appBar(context),
       // drawer: width<650?
       // Drawer(
       //   width: 40,
@@ -214,12 +215,16 @@ class _NewScreenState extends State<NewScreen> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData && widget.courses != null) {
                             List courseList = [];
-                            for (var i in widget.courses!) {
+                          for (var i in widget.courses!) {
+                              int count = 0;
                               for (var j in course) {
                                 if (i == j.courseId) {
                                   courseList.add(j);
+                                  count=1;
                                 }
                               }
+                              count==0?widget.courses?.remove(i):null;
+                              print("**((($count");
                             }
                             print("listoooo $courseList");
                             return Column(
@@ -323,23 +328,23 @@ class _NewScreenState extends State<NewScreen> {
                                                   // :MainAxisAlignment.start,
                                                   children: [
                                                     // SizedBox(height: width>750?0:10,),
-                                                    Container(
-                                                      // margin: EdgeInsets.only(top: 3),
-                                                      padding:
-                                                          EdgeInsets.all(7),
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.purple,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10)),
-                                                      child: Text(
-                                                        "Module 1",
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 12),
-                                                      ),
-                                                    ),
+                                                    // Container(
+                                                    //   // margin: EdgeInsets.only(top: 3),
+                                                    //   padding:
+                                                    //       EdgeInsets.all(7),
+                                                    //   decoration: BoxDecoration(
+                                                    //       color: Colors.purple,
+                                                    //       borderRadius:
+                                                    //           BorderRadius
+                                                    //               .circular(
+                                                    //                   10)),
+                                                    //   child: Text(
+                                                    //     "Module 1",
+                                                    //     style: TextStyle(
+                                                    //         color: Colors.white,
+                                                    //         fontSize: 12),
+                                                    //   ),
+                                                    // ),
                                                     // SizedBox(height: width>750?0:10,),
                                                     // SizedBox(height: 8,),
                                                     Column(
@@ -403,31 +408,31 @@ class _NewScreenState extends State<NewScreen> {
                                                                 SizedBox(
                                                                   height: 3,
                                                                 ),
-                                                                Text(
-                                                                    "Started on: Jan 01,2023",
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    style: TextStyle(
-                                                                        fontSize: width < 540
-                                                                            ? width < 420
-                                                                                ? 11
-                                                                                : 13
-                                                                            : 14)),
-                                                                SizedBox(
-                                                                  height: 3,
-                                                                ),
-                                                                Text(
-                                                                    "Completed on: Jan 01,2023",
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    style: TextStyle(
-                                                                        fontSize: width < 540
-                                                                            ? width < 420
-                                                                                ? 11
-                                                                                : 13
-                                                                            : 14)),
+                                                                // Text(
+                                                                //     "Started on: Jan 01,2023",
+                                                                //     overflow:
+                                                                //         TextOverflow
+                                                                //             .ellipsis,
+                                                                //     style: TextStyle(
+                                                                //         fontSize: width < 540
+                                                                //             ? width < 420
+                                                                //                 ? 11
+                                                                //                 : 13
+                                                                //             : 14)),
+                                                                // SizedBox(
+                                                                //   height: 3,
+                                                                // ),
+                                                                // Text(
+                                                                //     "Completed on: Jan 01,2023",
+                                                                //     overflow:
+                                                                //         TextOverflow
+                                                                //             .ellipsis,
+                                                                //     style: TextStyle(
+                                                                //         fontSize: width < 540
+                                                                //             ? width < 420
+                                                                //                 ? 11
+                                                                //                 : 13
+                                                                //             : 14)),
                                                                 SizedBox(
                                                                   height: 15,
                                                                 ),
@@ -511,85 +516,48 @@ class _NewScreenState extends State<NewScreen> {
                                                                 // Expanded(
                                                                 //   child:
                                                                 Column(
-                                                                    mainAxisAlignment: width > 700
-                                                                        ? MainAxisAlignment
-                                                                            .center
-                                                                        : MainAxisAlignment
-                                                                            .end,
-                                                                    children: [
-                                                                      SizedBox(
-                                                                        height:
-                                                                            25,
-                                                                      ),
-                                                                      CircularPercentIndicator(
-                                                                        radius: width <
-                                                                                700
-                                                                            ? width < 500
-                                                                                ? 20
-                                                                                : 30
-                                                                            : 70,
-                                                                        lineWidth: width >
-                                                                                700
-                                                                            ? 10.0
-                                                                            : 4.0,
-                                                                        animation:
-                                                                            true,
-                                                                        percent: courseData !=
-                                                                                null
-                                                                            ? courseData[widget.courses![index] + "percentage"] != null
-                                                                                ? courseData[widget.courses![index] + "percentage"] / 100
-                                                                                : 0 / 100
-                                                                            : 0,
-                                                                        center: courseData !=
-                                                                                null
-                                                                            ? courseData[widget.courses![index] + "percentage"] != null
-                                                                                ? Text(
-                                                                                    courseData[widget.courses![index] + "percentage"].toString() + "%",
-                                                                                    style: TextStyle(
-                                                                                        fontSize: width > 700
-                                                                                            ? 20.0
-                                                                                            : width < 500
-                                                                                                ? 8
-                                                                                                : 14,
-                                                                                        fontWeight: FontWeight.w600,
-                                                                                        color: Colors.black),
-                                                                                  )
-                                                                                : Text(
-                                                                                    0.toString() + "%",
-                                                                                    style: TextStyle(
-                                                                                        fontSize: width > 700
-                                                                                            ? 20.0
-                                                                                            : width < 500
-                                                                                                ? 8
-                                                                                                : 14,
-                                                                                        fontWeight: FontWeight.w600,
-                                                                                        color: Colors.black),
-                                                                                  )
-                                                                            : SizedBox(),
-                                                                        backgroundColor:
-                                                                            Colors.black12,
-                                                                        circularStrokeCap:
-                                                                            CircularStrokeCap.round,
-                                                                        progressColor:
-                                                                            Colors.green,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height: width <
-                                                                                500
-                                                                            ? 3
-                                                                            : 5,
-                                                                      ),
-                                                                      courseData !=
-                                                                              null
-                                                                          ? Text(
-                                                                              courseData[widget.courses![index] + "percentage"] != null ? courseData[widget.courses![index] + "percentage"].toString() + "%" : "0%",
-                                                                              style: TextStyle(fontSize: 7, fontWeight: FontWeight.bold),
-                                                                            )
-                                                                          : SizedBox()
-                                                                      // SizedBox(height: 15,),
-                                                                      // Text("10%")
-                                                                    ],
-                                                                  )
+                                                              mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+                                                              children: [
+                                                                SizedBox(height: 25,),
+                                                                CircularPercentIndicator(
+                                                                  radius: width<700?width<500?20:30:70,
+                                                                  lineWidth: width>700?10.0:4.0,
+                                                                  animation: true,
+                                                                  percent:courseData!=null?courseData[widget.courses![index]+"percentage"]!=null?
+                                                                  (courseData[widget.courses![index]+"percentage"])/100>1?
+                                                                  100/100:
+                                                                  courseData[widget.courses![index]+"percentage"]/100:0/100:0,
+                                                                  center: courseData!=null?
+                                                                  courseData[widget.courses![index]+"percentage"]!=null?
+                                                                  Text(
+                                                                    courseData[widget.courses![index]+"percentage"]>100?
+                                                                    "100%":
+                                                                    courseData[widget.courses![index]+"percentage"].toString()+ "%",
+                                                                    style: TextStyle(
+                                                                        fontSize: width>700?20.0:width<500?8:14,
+                                                                        fontWeight: FontWeight.w600,
+                                                                        color: Colors.black),
+                                                                  ):Text(
+                                                                    0.toString() + "%",
+                                                                    style: TextStyle(
+                                                                        fontSize: width>700?20.0:width<500?8:14,
+                                                                        fontWeight: FontWeight.w600,
+                                                                        color: Colors.black),
+                                                                  ):SizedBox(),
+                                                                  backgroundColor: Colors.black12,
+                                                                  circularStrokeCap: CircularStrokeCap.round,
+                                                                  progressColor: Colors.green,
+                                                                ),
+                                                                SizedBox(height: width<500?3:5,),
+                                                                courseData!=null?
+                                                                Text(
+                                                                    courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"]>100?
+                                                                    "100%":courseData[widget.courses![index]+"percentage"].toString()+"%":"0%",
+                                                                  style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),):SizedBox()
+                                                                // SizedBox(height: 15,),
+                                                                // Text("10%")
+                                                              ],
+                                                            )
                                                                 // ,
                                                                 // )
                                                                 : SizedBox(),
@@ -608,84 +576,43 @@ class _NewScreenState extends State<NewScreen> {
                                                     flex: 2,
                                                     // color: Colors.green,
                                                     child: Column(
-                                                      mainAxisAlignment:
-                                                          width > 700
-                                                              ? MainAxisAlignment
-                                                                  .center
-                                                              : MainAxisAlignment
-                                                                  .end,
-                                                      children: [
-                                                        CircularPercentIndicator(
-                                                          radius: width > 700
-                                                              ? 70.0
-                                                              : 40.0,
-                                                          lineWidth: 10.0,
-                                                          animation: true,
-                                                          percent: courseData !=
-                                                                  null
-                                                              ? courseData[widget.courses![
-                                                                              index] +
-                                                                          "percentage"] !=
-                                                                      null
-                                                                  ? courseData[widget
-                                                                              .courses![index] +
-                                                                          "percentage"] /
-                                                                      100
-                                                                  : 0 / 100
-                                                              : 0,
-                                                          center: courseData !=
-                                                                  null
-                                                              ? courseData[widget.courses![
-                                                                              index] +
-                                                                          "percentage"] !=
-                                                                      null
-                                                                  ? Text(
-                                                                      courseData[widget.courses![index] + "percentage"]
-                                                                              .toString() +
-                                                                          "%",
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              20.0,
-                                                                          fontWeight: FontWeight
-                                                                              .w600,
-                                                                          color:
-                                                                              Colors.black),
-                                                                    )
-                                                                  : Text(
-                                                                      0.toString() +
-                                                                          '%',
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              20.0,
-                                                                          fontWeight: FontWeight
-                                                                              .w600,
-                                                                          color:
-                                                                              Colors.black))
-                                                              : SizedBox(),
-                                                          backgroundColor:
-                                                              Colors.black12,
-                                                          circularStrokeCap:
-                                                              CircularStrokeCap
-                                                                  .round,
-                                                          progressColor:
-                                                              Colors.green,
-                                                        ),
-                                                        SizedBox(
-                                                          height: 15,
-                                                        ),
-                                                        courseData != null
-                                                            ? Text(courseData[widget.courses![
-                                                                            index] +
-                                                                        "percentage"] !=
-                                                                    null
-                                                                ? courseData[widget.courses![index] +
-                                                                            "percentage"]
-                                                                        .toString() +
-                                                                    "%"
-                                                                : "0%")
-                                                            : SizedBox()
-                                                      ],
-                                                    ),
+                                                mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+                                                children: [
+                                                  CircularPercentIndicator(
+                                                    radius: width>700?70.0:40.0,
+                                                    lineWidth: 10.0,
+                                                    animation: true,
+                                                    percent: courseData!=null?courseData[widget.courses![index]+"percentage"]!=null?
+                                                    (courseData[widget.courses![index]+"percentage"])/100>1?
+                                                        100/100:
+                                                    courseData[widget.courses![index]+"percentage"]/100:0/100:0,
+                                                    center: courseData!=null?
+                                                    courseData[widget.courses![index]+"percentage"]!=null?Text(
+                                                      courseData[widget.courses![index]+"percentage"]>100?
+                                                          "100%":
+                                                      courseData[widget.courses![index]+"percentage"].toString()+ "%",
+                                                      style: TextStyle(
+                                                          fontSize: 20.0,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: Colors.black),
+                                                    ):Text(0.toString()+'%',style: TextStyle(
+                                                        fontSize: 20.0,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: Colors.black)):Text("0%",style: TextStyle(
+                                                        fontSize: 20.0,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: Colors.black)),
+                                                    backgroundColor: Colors.black12,
+                                                    circularStrokeCap: CircularStrokeCap.round,
+                                                    progressColor: Colors.green,
+                                                  ),
+                                                  SizedBox(height: 15,),
+                                                  courseData!=null?Text(
+                                                      courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"]>100?
+                                                      "100%":courseData[widget.courses![index]+"percentage"].toString()+"%":"0%"
+                                                  ):Text("0%")
+                                                ],
+                                              ),
                                                   )
                                                 : SizedBox()
                                             // Column(
