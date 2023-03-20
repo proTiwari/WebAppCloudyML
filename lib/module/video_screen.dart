@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:auto_orientation/auto_orientation.dart';
 import 'package:cloudyml_app2/homepage.dart';
 import 'package:cloudyml_app2/models/video_details.dart';
+import 'package:cloudyml_app2/module/submit_resume.dart';
 import 'package:cloudyml_app2/offline/db.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/models/offline_model.dart';
@@ -12,7 +13,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/widgets/assignment_bottomsheet.dart';
 import 'package:cloudyml_app2/widgets/settings_bottomsheet.dart';
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
@@ -82,6 +85,7 @@ class _VideoScreenState extends State<VideoScreen> {
 
   var _delayToInvokeonControlUpdate = 0;
   var _progress = 0.0;
+  bool submitResume = false;
   List<VideoDetails> _listOfVideoDetails = [];
 
   ValueNotifier<int> _currentVideoIndex = ValueNotifier(0);
@@ -730,6 +734,36 @@ class _VideoScreenState extends State<VideoScreen> {
             //   }
             // counter==0?print("RRRTTT    ${list[i]["videos"]}  $moduleNew"):null;
           }
+          Map<String, int> tempMap = {};
+
+  var uniqueList = [];
+
+          var removeDuplicateList = [];
+          for(int h=0;h<progressData.length;h++)
+            {
+             await progressData[h].forEach((key,val)async{
+               print("9jdeiuwbw$val");
+                await val.forEach((map)async{
+                  print("Malppppp");
+                    await map.forEach((key, value) {
+                      print("PLOPOPO");
+                    if (!tempMap.containsKey(key)) {
+                      tempMap.putIfAbsent(key, () => value);
+                      print(map);
+                      uniqueList.add(map);
+                      print("Map------$map");
+                    }
+                    print("Map--------");
+                  });
+                });
+                print("plplplplplplp");
+                print(uniqueList);
+                removeDuplicateList.add({key:uniqueList});
+                uniqueList = [];
+                tempMap = {};
+              });
+            }
+          finalProgressData = removeDuplicateList;
 
           print("UUUUUUUUU $finalProgressData");
 
@@ -1040,6 +1074,8 @@ class _VideoScreenState extends State<VideoScreen> {
 
   String? role;
   String? userEmail;
+   String? studentId;
+ String? studentName;
   getUserRole() async {
     await FirebaseFirestore.instance
         .collection("Users")
@@ -1049,6 +1085,8 @@ class _VideoScreenState extends State<VideoScreen> {
       setState(() {
         role = value.exists ? value.data()!["role"] : null;
         userEmail = value.exists ? value.data()!['email'] : null;
+          studentId = value.exists ? value.data()!['id'] : null;
+        studentName = value.exists ? value.data()!['name'] : null;
       });
     });
   }
@@ -1237,7 +1275,13 @@ class _VideoScreenState extends State<VideoScreen> {
                                   solutionUrl: solutionUrl,
                                   assignmentName: assignmentName,
                                 )
-                              : Column(
+                              :submitResume
+                                  ? SubmitResume(
+                                      studentId: studentId ?? '',
+                                      studentEmail: userEmail ?? '',
+                                      studentName: studentName ?? '',
+                                    )
+                                  : Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     FutureBuilder(
@@ -1558,6 +1602,560 @@ class _VideoScreenState extends State<VideoScreen> {
       }
     }));
   }
+
+   String? assignmentFileName;
+  Uint8List? uploadedAssignmentFile;
+
+  String? pdfFileName;
+  Uint8List? uploadedpdfFile;
+
+  String? datasetFileName;
+  Uint8List? uploadedDatasetFile;
+  TextEditingController addAssignmentNameController = TextEditingController();
+  bool addAssignmentLoading = false;
+
+  TextEditingController assignmentLinkController = TextEditingController();
+  TextEditingController pdfLinkController = TextEditingController();
+  TextEditingController datasetLinkController = TextEditingController();
+
+  Widget addAssigmentPopUp({required dynamic listOfSectionData}) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    return Center(
+      child: Container(
+        padding:
+            EdgeInsets.symmetric(horizontal: width / 50, vertical: height / 50),
+        width: width / 2,
+        decoration: BoxDecoration(
+          color: Color(0xffF2E9FE),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 3,
+              blurRadius: 5,
+              offset: Offset(0, 3),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DefaultTextStyle(
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+              child: Text(
+                'Add Assignment',
+                textAlign: TextAlign.left,
+              ),
+            ),
+            SizedBox(
+              height: height / 40,
+            ),
+            Material(
+              child: TextFormField(
+                controller: addAssignmentNameController,
+                decoration: InputDecoration(
+                  fillColor: Color(0xffF2E9FE),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.deepPurpleAccent),
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  hintText: 'Enter Assignment Name',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: height / 50,
+            ),
+            addAssignmentBox(
+                uploadedFile: uploadedAssignmentFile,
+                fileName: assignmentFileName,
+                onChooseFile: () async {
+                  if (assignmentLinkController.text.isEmpty) {
+                    await getAssignmentFile(
+                        listOfSectionData: listOfSectionData);
+                  } else {
+                    Fluttertoast.showToast(
+                        msg:
+                            'Remove Assignment link if you want to attach file');
+                  }
+                },
+                name: 'Assignment',
+                controller: assignmentLinkController,
+                onDelete: () {
+                  setState(() {
+                    uploadedAssignmentFile = null;
+                    assignmentFileName = '';
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return addAssigmentPopUp(
+                            listOfSectionData: listOfSectionData);
+                      },
+                    );
+                  });
+                }),
+            SizedBox(
+              height: height / 50,
+            ),
+            addAssignmentBox(
+                uploadedFile: uploadedpdfFile,
+                fileName: pdfFileName,
+                onChooseFile: () async {
+                  if (pdfLinkController.text.isEmpty) {
+                    await getPdfFile(listOfSectionData: listOfSectionData);
+                  } else {
+                    Fluttertoast.showToast(
+                        msg: 'Remove Pdf link if you want to attach file');
+                  }
+                },
+                name: 'Pdf',
+                controller: pdfLinkController,
+                onDelete: () {
+                  setState(() {
+                    uploadedpdfFile = null;
+                    pdfFileName = '';
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return addAssigmentPopUp(
+                            listOfSectionData: listOfSectionData);
+                      },
+                    );
+                  });
+                }),
+            SizedBox(
+              height: height / 50,
+            ),
+            addAssignmentBox(
+                uploadedFile: uploadedDatasetFile,
+                fileName: datasetFileName,
+                onChooseFile: () async {
+                  if (datasetLinkController.text.isEmpty) {
+                    await getDatasetFile(listOfSectionData: listOfSectionData);
+                  } else {
+                    Fluttertoast.showToast(
+                        msg: 'Remove Dataset link if you want to attach file');
+                  }
+                },
+                name: 'Dataset',
+                controller: datasetLinkController,
+                onDelete: () {
+                  setState(() {
+                    uploadedDatasetFile = null;
+                    datasetFileName = '';
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return addAssigmentPopUp(
+                            listOfSectionData: listOfSectionData);
+                      },
+                    );
+                  });
+                }),
+            SizedBox(
+              height: height / 50,
+            ),
+            Center(
+              child: StatefulBuilder(builder: (context, state) {
+                return addAssignmentLoading
+                    ? CircularProgressIndicator(
+                        color: Colors.black, strokeWidth: 2)
+                    : ElevatedButton(
+                        onPressed: () async {
+                          state;
+                          addAssignmentLoading = true;
+                          addAssignment(listOfSectionData: listOfSectionData)
+                              .whenComplete(() {
+                            addAssignmentLoading = false;
+                            state;
+                          });
+                        },
+                        child: Text("Add Assignment"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurpleAccent,
+                        ),
+                      );
+              }),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future getAssignmentFile({required dynamic listOfSectionData}) async {
+    FilePickerResult? result;
+
+    try {
+      result = await FilePicker.platform.pickFiles(type: FileType.any);
+    } catch (e) {
+      print(e.toString());
+    }
+
+    if (result != null && result.files.isNotEmpty) {
+      try {
+        Uint8List? uploadFile = result.files.single.bytes;
+
+        String pickedFileName = result.files.first.name;
+
+        setState(() {
+          uploadedAssignmentFile = uploadFile;
+          assignmentFileName = pickedFileName;
+        });
+
+        if (uploadedAssignmentFile != null) {
+          Fluttertoast.showToast(msg: 'Assignment file is attached');
+          Navigator.pop(context);
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return addAssigmentPopUp(listOfSectionData: listOfSectionData);
+            },
+          );
+          print('Asssignment File : ${assignmentFileName.toString()}');
+        }
+      } catch (e) {
+        Fluttertoast.showToast(msg: e.toString());
+        print(e.toString());
+      }
+    }
+  }
+
+  Future getPdfFile({required dynamic listOfSectionData}) async {
+    FilePickerResult? result;
+
+    try {
+      result = await FilePicker.platform.pickFiles(type: FileType.any);
+    } catch (e) {
+      print(e.toString());
+    }
+
+    if (result != null && result.files.isNotEmpty) {
+      try {
+        Uint8List? uploadFile = result.files.single.bytes;
+
+        String pickedFileName = result.files.first.name;
+
+        setState(() {
+          uploadedpdfFile = uploadFile;
+          pdfFileName = pickedFileName;
+        });
+
+        if (uploadedpdfFile != null) {
+          Fluttertoast.showToast(msg: 'Pdf file is attached');
+          Navigator.pop(context);
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return addAssigmentPopUp(listOfSectionData: listOfSectionData);
+            },
+          );
+          print('Pdf File : ${pdfFileName.toString()}');
+        }
+      } catch (e) {
+        Fluttertoast.showToast(msg: e.toString());
+        print(e.toString());
+      }
+    }
+  }
+
+  Future getDatasetFile({required dynamic listOfSectionData}) async {
+    FilePickerResult? result;
+
+    try {
+      result = await FilePicker.platform.pickFiles(type: FileType.any);
+    } catch (e) {
+      print(e.toString());
+    }
+
+    if (result != null && result.files.isNotEmpty) {
+      try {
+        Uint8List? uploadFile = result.files.single.bytes;
+
+        String pickedFileName = result.files.first.name;
+
+        setState(() {
+          uploadedDatasetFile = uploadFile;
+          datasetFileName = pickedFileName;
+        });
+
+        if (uploadedDatasetFile != null) {
+          Fluttertoast.showToast(msg: 'Dataset file is attached');
+          Navigator.pop(context);
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return addAssigmentPopUp(listOfSectionData: listOfSectionData);
+            },
+          );
+          print('Dataset File : ${datasetFileName.toString()}');
+        }
+      } catch (e) {
+        Fluttertoast.showToast(msg: e.toString());
+        print(e.toString());
+      }
+    }
+  }
+
+  Future addAssignment({required dynamic listOfSectionData}) async {
+    if (uploadedAssignmentFile == null &&
+        uploadedDatasetFile == null &&
+        uploadedpdfFile == null &&
+        assignmentLinkController.text.isEmpty &&
+        pdfLinkController.text.isEmpty &&
+        datasetLinkController.text.isEmpty) {
+      setState(() {
+        Fluttertoast.showToast(
+            msg: 'Please Select Assignment Or Pdf Or Dataset');
+      });
+    } else if (addAssignmentNameController.text.isEmpty) {
+      setState(() {
+        Fluttertoast.showToast(msg: 'Please Enter Assignment Name');
+      });
+    } else {
+      try {
+        String assignmentUrlLink = '';
+        String pdfUrlLink = '';
+        String datasetUrlLink = '';
+        print('Course Name : ${widget.courseName!}');
+        print('Course Id : ${widget.cID!}');
+
+        if (uploadedAssignmentFile != null) {
+          var assignmentStorageRef = FirebaseStorage.instance
+              .ref()
+              .child('courses')
+              .child(widget.courseName!)
+              .child('assignment')
+              .child(assignmentFileName!);
+
+          final UploadTask assignmentUploadTask =
+              assignmentStorageRef.putData(uploadedAssignmentFile!);
+
+          final TaskSnapshot downloadUrl = await assignmentUploadTask;
+          final String fileURL = (await downloadUrl.ref.getDownloadURL());
+          assignmentUrlLink = fileURL;
+          print('Assignment link :  $fileURL');
+        }
+
+        if (uploadedpdfFile != null) {
+          var pdfStorageRef = FirebaseStorage.instance
+              .ref()
+              .child('courses')
+              .child(widget.courseName!)
+              .child('solution')
+              .child(pdfFileName!);
+
+          final UploadTask pdfUploadTask =
+              pdfStorageRef.putData(uploadedpdfFile!);
+
+          final TaskSnapshot downloadUrl = await pdfUploadTask;
+          final String fileURL = (await downloadUrl.ref.getDownloadURL());
+          pdfUrlLink = fileURL;
+          print('Pdf link :  $fileURL');
+        }
+
+        if (uploadedDatasetFile != null) {
+          var dataSetStorageRef = FirebaseStorage.instance
+              .ref()
+              .child('courses')
+              .child(widget.courseName!)
+              .child('dataset')
+              .child(datasetFileName!);
+
+          final UploadTask dataSetUploadTask =
+              dataSetStorageRef.putData(uploadedDatasetFile!);
+
+          final TaskSnapshot downloadUrl = await dataSetUploadTask;
+          final String fileURL = (await downloadUrl.ref.getDownloadURL());
+          datasetUrlLink = fileURL;
+          print('Dataset link :  $fileURL');
+        }
+
+        final firestoreInstance = FirebaseFirestore.instance;
+
+        final courseRef = firestoreInstance.collection('courses');
+
+        try {
+          listOfSectionData[widget.courseName][editIndex]['videos'].add({
+            if (uploadedDatasetFile != null)
+              'dataset': [
+                {'name': 'Dataset', 'url': datasetUrlLink}
+              ]  else if(datasetLinkController.text.isNotEmpty)
+              'dataset': [
+                {'name': 'Dataset', 'url': datasetLinkController.text}
+              ],
+            'name': addAssignmentNameController.text,
+            if (uploadedAssignmentFile != null) 'url': assignmentUrlLink else if (assignmentLinkController.text.isNotEmpty) 'url': assignmentLinkController.text,
+            if (uploadedpdfFile != null) 'pdf': pdfUrlLink else if (pdfLinkController.text.isNotEmpty) 'pdf': pdfLinkController.text,
+            'type': 'assignment',
+            'sr': listOfSectionData[widget.courseName][editIndex]['videos']
+                .length,
+          });
+
+          await courseRef.doc(widget.cID).update({
+            'curriculum1': {
+              widget.courseName: listOfSectionData[widget.courseName]
+            }
+          }).whenComplete(() {
+            setState(() {
+              assignmentFileName = null;
+              uploadedAssignmentFile = null;
+
+              pdfFileName = null;
+              uploadedpdfFile = null;
+
+              datasetFileName = null;
+              uploadedDatasetFile = null;
+              addAssignmentNameController.text = '';
+              assignmentLinkController.clear();
+              pdfLinkController.clear();
+              datasetLinkController.clear();
+              Navigator.pop(context);
+              Fluttertoast.showToast(msg: 'Assignment Added!!');
+              
+            });
+          });
+        } catch (e) {
+          Navigator.pop(context);
+          Fluttertoast.showToast(msg: 'Try Again');
+
+          print('Errrorrr is :: $e');
+        }
+      } catch (e) {
+        Navigator.pop(context);
+        Fluttertoast.showToast(msg: 'Try Again');
+      }
+    }
+  }
+
+  Widget addAssignmentBox(
+      {required Uint8List? uploadedFile,
+      required String? fileName,
+      required VoidCallback onChooseFile,
+      required String name,
+      required TextEditingController controller,
+      required VoidCallback onDelete}) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.deepPurpleAccent, width: 2)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: onChooseFile,
+                  icon: Icon(Icons.upload_file),
+                  label: Text("Choose $name",
+                      style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.deepPurpleAccent,
+                    onPrimary: Colors.white,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              DefaultTextStyle(
+                style: TextStyle(fontSize: 12, color: Colors.black),
+                child: Text(
+                  "OR",
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Material(
+                  child: TextFormField(
+                    controller: controller,
+                    onTap: uploadedFile != null
+                        ? () {
+                            Fluttertoast.showToast(
+                                msg: 'Please Remove Attached File');
+                          }
+                        : null,
+                    readOnly: uploadedFile != null ? true : false,
+                    decoration: InputDecoration(
+                      fillColor: Color(0xffF2E9FE),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.deepPurpleAccent),
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      hintText: '$name Link',
+                      hintStyle: TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          uploadedFile != null
+              ? DefaultTextStyle(
+                  style: TextStyle(fontSize: 18, color: Colors.black26),
+                  child: Row(
+                    children: [
+                      Text(
+                        fileName!,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      GestureDetector(
+                        onTap: onDelete,
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.red),
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 12,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              : DefaultTextStyle(
+                  style: TextStyle(fontSize: 18, color: Colors.black26),
+                  child: Text(
+                    "No file chosen",
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
+
 
   Widget _buildControls(
     BuildContext context,
@@ -1945,7 +2543,7 @@ class _VideoScreenState extends State<VideoScreen> {
             try {
               listOfSectionData[widget.courseName].sort((a, b) {
                 print("---========");
-                print(coursequiz.length);
+                // print(coursequiz.length);
                 print(a["sr"]);
                 if (a["sr"] > b["sr"]) {
                   return 1;
@@ -2273,6 +2871,21 @@ class _VideoScreenState extends State<VideoScreen> {
                                             });
                                             print('sectionIndex is $editIndex');
                                           }
+                                          if (item == 2) {
+                                            setState(() {
+                                              editIndex = sectionIndex;
+                                            });
+
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return addAssigmentPopUp(
+                                                    listOfSectionData:
+                                                        listOfSectionData);
+                                              },
+                                            );
+                                          }
+
                                         },
                                         itemBuilder: (context) => [
                                               PopupMenuItem<int>(
@@ -2283,6 +2896,9 @@ class _VideoScreenState extends State<VideoScreen> {
                                                   value: 1,
                                                   child:
                                                       Text('Edit module name')),
+                                                       PopupMenuItem<int>(
+                                                  value: 2,
+                                                  child: Text('Add Assignment'))
                                             ])
                                     : SizedBox(),
                               ],
@@ -2579,6 +3195,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                       'vdo = $videoPercentageList');
                                                   htmlbool = false;
                                                   showAssignment = false;
+                                                  submitResume=false;
                                                   setState(() {
                                                     currentPosition = 0;
                                                     videoTitle = listOfSectionData[
@@ -2625,6 +3242,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                     "quiz") {
                                                   print(
                                                       "ll;;;;;;;;;;;;;;;;;;;");
+                                                      submitResume=false;
                                                   setState(() {
                                                     quizdata = listOfSectionData[
                                                                 widget
@@ -2634,8 +3252,22 @@ class _VideoScreenState extends State<VideoScreen> {
                                                     htmlbool = true;
                                                     quizbool = true;
                                                   });
+                                                } else if (listOfSectionData[widget
+                                                                    .courseName]
+                                                                [sectionIndex]
+                                                            ["videos"][
+                                                        subsectionIndex]["type"] ==
+                                                    "resume") {
+                                                  setState(() {
+                                                    quizbool = false;
+                                                    !submitResume
+                                                        ? submitResume = true
+                                                        : null;
+                                                  });
                                                 } else {
+                                                  submitResume=false;
                                                   showAssignment = true;
+                                                  
                                                   setState(() {
                                                     assignmentUrl = listOfSectionData[
                                                                         widget
@@ -2725,7 +3357,13 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                     Colors.black
                                                                 // :null,
                                                                 )
-                                                            : Icon(
+                                                            :listOfSectionData[widget.courseName]
+                                                                            [sectionIndex]["videos"][subsectionIndex][
+                                                                        "type"] ==
+                                                                    "resume"
+                                                                ? Icon(Icons
+                                                                    .reviews)
+                                                                : Icon(
                                                                 Icons
                                                                     .assessment,
                                                                 color: Colors
@@ -2791,7 +3429,8 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                                       ? listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString()
                                                                                       : listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] == "quiz"
                                                                                           ? "Quiz : " + listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString()
-                                                                                          : "Assignment : " + listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString(),
+                                                                                          :listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] == "resume"
+                                                                                              ? '': "Assignment : " + listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString(),
                                                                                   style: TextStyle(overflow: TextOverflow.ellipsis, color: _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] == 100 ? Colors.green : Colors.black),
                                                                                 );
                                                                         } else {
@@ -2822,8 +3461,10 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                           ? "Quiz : " +
                                                                               listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"]
                                                                                   .toString()
-                                                                          : "Assignment : " +
+                                                                          : listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["type"] == "resume"
+                                                                                              ? listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString():"Assignment : " +
                                                                               listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["name"].toString(),
+                                                                            
                                                                   style: TextStyle(
                                                                       overflow:
                                                                           TextOverflow

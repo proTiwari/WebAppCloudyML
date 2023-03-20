@@ -4,6 +4,7 @@ import 'package:cloudyml_app2/combo/combo_store.dart';
 import 'package:cloudyml_app2/combo/feature_courses.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/home.dart';
+import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
 import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
@@ -50,6 +51,8 @@ class _OtpPageState extends State<OtpPage> {
 
   late String diurl;
   late String payurl;
+    late String feaurl;
+
 
   void _onKeyboardTap(String value) {
     setState(() {
@@ -102,6 +105,12 @@ class _OtpPageState extends State<OtpPage> {
     return value.data()!.values.first;} );
 
     print("url is=====$payurl");
+
+    feaurl=await FirebaseFirestore.instance.collection("Notice")
+        .doc("XdYtk2DJBIkRGx0ASthZ_newfeaturecourse").get().then((value) {print(value.data()!.values.first);
+    return value.data()!.values.first;} );
+
+    print("url is=====$feaurl");
 
   }
 
@@ -684,19 +693,41 @@ class _OtpPageState extends State<OtpPage> {
                 else if(payurl=='/comboPaymentPortal')
                 {
                   final cID = "aEGX6kMfHzQrVgP3WCwU";
+                 
+
                   GoRouter.of(context).go(
-                    '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
+                    '/comboPaymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
                     // queryParams: {
                     //   'cID': cID,
                     //   }
                   );
-                }
-                else {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (_) => HomePage()));
-                      GoRouter.of(context).push('/home');
+           
 
-                      //  GoRouter.of(context).go('/home');
+                }
+
+                else if(feaurl=='/NewFeature'){
+                   final id = "0";
+                  final cID = "aEGX6kMfHzQrVgP3WCwU";
+                  final courseName ="Data Science & Analytics Placement Assurance Program";
+                  final courseP = "9999";
+                  GoRouter.of(context).goNamed(
+                      'NewFeature',
+                      queryParams: {
+                        'cID': cID,
+                        'courseName': courseName,
+                        'id': id,
+                        'coursePrice': courseP});
+                  
+                }
+
+
+
+                else {
+                 
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => LandingScreen()));
+                  GoRouter.of(context).pushNamed('home');    
+                  
                 }
 
                   //

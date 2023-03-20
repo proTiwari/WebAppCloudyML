@@ -309,105 +309,106 @@ class _CatelogueScreenState extends State<CatelogueScreen>
                               Container(
                                 key: _positionKey,
                               ),
-                              Ribbon(
-                                nearLength: 1,
-                                farLength: .5,
-                                title: ' ',
-                                titleStyle: TextStyle(
-                                    color: Colors.black,
-                                    // Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                                color: Color.fromARGB(255, 11, 139, 244),
-                                location: RibbonLocation.topStart,
-                                child: Container(
-                                  //  key:key,
-                                  // width: width * .9,
-                                  // height: height * .5,
-                                  color: Color.fromARGB(255, 24, 4, 104),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(40.0),
-                                    child: Column(
-                                      //  key:Gkey,
-                                      children: [
-                                        SizedBox(
-                                          height: height * .03,
-                                        ),
-                                        Text(
-                                          'Complete Course Fee',
-                                          style: TextStyle(
-                                              fontFamily: 'Bold',
-                                              fontSize: 21,
-                                              color: Colors.white),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          '( Everything with Lifetime Access )',
-                                          style: TextStyle(
-                                              fontFamily: 'Bold',
-                                              fontSize: 11,
-                                              color: Colors.white),
-                                        ),
-                                        SizedBox(
-                                          height: 30,
-                                        ),
-                                        Text(
-                                          '₹${course[index].coursePrice}/-',
-                                          style: TextStyle(
-                                              fontFamily: 'Medium',
-                                              fontSize: 30,
-                                              color: Colors.white),
-                                        ),
-                                        SizedBox(height: 35),
-                                        InkWell(
-                                          onTap: () {
+                              // Ribbon(
+                              //   nearLength: 1,
+                              //   farLength: .5,
+                              //   title: ' ',
+                              //   titleStyle: TextStyle(
+                              //       color: Colors.black,
+                              //       // Colors.white,
+                              //       fontSize: 18,
+                              //       fontWeight: FontWeight.bold),
+                              //   color: Color.fromARGB(255, 11, 139, 244),
+                              //   location: RibbonLocation.topStart,
+                              //   child: Container(
+                              //     //  key:key,
+                              //     // width: width * .9,
+                              //     // height: height * .5,
+                              //     color: Color.fromARGB(255, 24, 4, 104),
+                              //     child: Padding(
+                              //       padding: const EdgeInsets.all(40.0),
+                              //       child: Column(
+                              //         //  key:Gkey,
+                              //         children: [
+                              //           SizedBox(
+                              //             height: height * .03,
+                              //           ),
+                              //           Text(
+                              //             'Complete Course Fee',
+                              //             style: TextStyle(
+                              //                 fontFamily: 'Bold',
+                              //                 fontSize: 21,
+                              //                 color: Colors.white),
+                              //           ),
+                              //           SizedBox(
+                              //             height: 5,
+                              //           ),
+                              //           Text(
+                              //             '( Everything with Lifetime Access )',
+                              //             style: TextStyle(
+                              //                 fontFamily: 'Bold',
+                              //                 fontSize: 11,
+                              //                 color: Colors.white),
+                              //           ),
+                              //           SizedBox(
+                              //             height: 30,
+                              //           ),
+                              //           Text(
+                              //             '₹${course[index].coursePrice}/-',
+                              //             style: TextStyle(
+                              //                 fontFamily: 'Medium',
+                              //                 fontSize: 30,
+                              //                 color: Colors.white),
+                              //           ),
+                              //           SizedBox(height: 35),
+                              //           InkWell(
+                              //             onTap: () {
 
 
-                                            GoRouter.of(context).pushNamed('paymentPortal',
-                                                queryParams: {
-                                                  'cID': courseId});
+                              //               GoRouter.of(context).pushNamed('paymentPortal',
+                              //                   queryParams: {
+                              //                     'cID': courseId});
 
-                                            // Navigator.push(
-                                            //   context,
-                                            //   MaterialPageRoute(
-                                            //     builder: (context) => PaymentScreen(
-                                            //       map: courseMap,
-                                            //       isItComboCourse: false,
-                                            //     ),
-                                            //   ),
-                                            // );
+                              //               // Navigator.push(
+                              //               //   context,
+                              //               //   MaterialPageRoute(
+                              //               //     builder: (context) => PaymentScreen(
+                              //               //       map: courseMap,
+                              //               //       isItComboCourse: false,
+                              //               //     ),
+                              //               //   ),
+                              //               // );
 
-                                            // Navigator.pushNamed(
-                                            //     context, '/paymentscreen'
-                                            // );
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius.circular(30),
-                                                color: Color.fromARGB(
-                                                    255, 119, 191, 249),
-                                                gradient: gradient),
-                                            height: height * .08,
-                                            width: width * .6,
-                                            child: Center(
-                                              child: Text(
-                                                'Buy Now',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 20),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              //               // Navigator.pushNamed(
+                              //               //     context, '/paymentscreen'
+                              //               // );
+                              //             },
+                              //             child: Container(
+                              //               decoration: BoxDecoration(
+                              //                   borderRadius:
+                              //                   BorderRadius.circular(30),
+                              //                   color: Color.fromARGB(
+                              //                       255, 119, 191, 249),
+                              //                   gradient: gradient),
+                              //               height: height * .08,
+                              //               width: width * .6,
+                              //               child: Center(
+                              //                 child: Text(
+                              //                   'Buy Now',
+                              //                   textAlign: TextAlign.center,
+                              //                   style: TextStyle(
+                              //                       color: Colors.white,
+                              //                       fontSize: 20),
+                              //                 ),
+                              //               ),
+                              //             ),
+                              //           ),
+                              //         ],
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                              SizedBox(height: 20,)
                             ],
                           ),
                         ),

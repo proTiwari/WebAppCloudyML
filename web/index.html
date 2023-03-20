@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -24,42 +25,45 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="cloudyml_app2">
-  <meta name="google-signin-client_id" content="67056708090-i6v2mg4uk8fsqnh5ugdum09mbdpmngt2.apps.googleusercontent.com">
+  <meta name="google-signin-client_id"
+    content="67056708090-i6v2mg4uk8fsqnh5ugdum09mbdpmngt2.apps.googleusercontent.com">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png" />
 
   <title>CloudyML</title>
   <link rel="manifest" href="manifest.json">
   <style>
-    .container {
-      width: 100vw;
-      height: 100vh;
-      display: flex; /* Default Axis is X*/
-      justify-content: center; /* Main Axis */
-      align-items: center; /* Cross Axis */
-    }
-    .indicator{
-      width: 50vw;
-    }
-</style>
-<!-- <script src="https://unpkg.com/canvaskit-wasm@0.33.0/bin/canvaskit.js"></script>
-<link rel="preload" href="https://unpkg.com/canvaskit-wasm@0.33.0/bin/canvaskit.wasm" as="fetch" crossOrigin="anonymous"> -->
+          .container {
+        width: 100vw;
+        height: 100vh;
+        display: flex; /* Default Axis is X*/
+        justify-content: center; /* Main Axis */
+        align-items: center; /* Cross Axis */
+      }
+      .indicator{
+        width: 50vw;
+      }
+  </style>
+  <script src="https://unpkg.com/canvaskit-wasm@0.33.0/bin/canvaskit.js"></script>
+  <link rel="preload" href="https://unpkg.com/canvaskit-wasm@0.33.0/bin/canvaskit.wasm" as="fetch"
+    crossOrigin="anonymous">
 </head>
+
 <body>
   <div id="loading_indicator" class="container">
     <img class="indicator" src="./assets/loading.gif" />
   </div>
-<script type="text/javascript">
+
+  <script type="text/javascript">
     window.flutterWebRenderer = localStorage.getItem('flutterWebRenderer');
   </script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-messaging.js"></script>
-<!-- <script src="js/payment.js"></script> -->
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"
-        type="application/javascript"></script>
+  <!-- <script src="https://checkout.razorpay.com/v1/checkout.js"></script> -->
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-messaging.js"></script>
+  <!-- <script src="js/payment.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest" type="application/javascript"></script>
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
@@ -129,4 +133,5 @@
     }
   </script>
 </body>
+
 </html>

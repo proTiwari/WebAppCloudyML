@@ -147,6 +147,17 @@ Future<void> main() async {
     print('pushed');
 
   }
+    else if(Uri.base.path == '/NewFeature'){
+
+    final url=Uri.base.path;
+    FirebaseFirestore.instance.collection("Notice")
+        .doc("XdYtk2DJBIkRGx0ASthZ_newfeaturecourse").set({
+      'url' : url });
+// navigatorKey.currentState?.pushNamed('/login');
+
+    print('pushed');
+
+  }
 
  
 

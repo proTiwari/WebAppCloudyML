@@ -3,8 +3,11 @@ import 'package:cloudyml_app2/MyAccount/myaccount.dart';
 import 'package:cloudyml_app2/combo/combo_course.dart';
 import 'package:cloudyml_app2/combo/combo_store.dart';
 import 'package:cloudyml_app2/combo/updated_combo_course.dart';
+import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/homepage.dart';
 import 'package:cloudyml_app2/homescreen/homescreen.dart';
+import 'package:cloudyml_app2/module/review%20resume/review_resume.dart';
+import 'package:cloudyml_app2/module/review%20resume/review_resume_detailed.dart';
 import 'package:cloudyml_app2/module/video_screen.dart';
 import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:cloudyml_app2/payments_history.dart';
@@ -20,6 +23,7 @@ import 'package:provider/provider.dart';
 import '../authentication_screens/phone_auth.dart';
 import '../catalogue_screen.dart';
 import '../combo/feature_courses.dart';
+import '../combo/trialfeatutr.dart';
 import '../models/course_details.dart';
 import '../my_Courses.dart';
 import '../screens/quiz/admin_quiz.dart';
@@ -41,7 +45,7 @@ class MyRouter {
       redirect: (context, GoRouterState state) {
 
         final loggedIn = loginState.loggedIn;
-        final goingToLogin = state.location == ('/login');
+        final goingToLogin = state.location == ('/');
 
         // final dc = state.location == ('/comboPaymentPortal?cID=aEGX6kMfHzQrVgP3WCwU');
 
@@ -60,20 +64,20 @@ class MyRouter {
         GoRoute(
             path: '/',
             pageBuilder: (context, state) {
-              return MaterialPage(child: splash());
+              return MaterialPage(child: LoginPage());
             }
         ),
-        GoRoute(
-          path: '/login',
-          pageBuilder: (context, state) {
-            return MaterialPage(child:  LoginPage());
-          },
-        ),
+        // GoRoute(
+        //   path: '/login',
+        //   pageBuilder: (context, state) {
+        //     return MaterialPage(child:  LoginPage());
+        //   },
+        // ),
         GoRoute(
             name: 'home',
             path: '/home',
             pageBuilder: (context, state) {
-              return MaterialPage(child: Home());
+              return MaterialPage(child: LandingScreen());
             }
         ),
         GoRoute(
@@ -182,24 +186,43 @@ class MyRouter {
               ));
           }
         ),
+        // GoRoute(
+        //     name: 'featuredCourses',
+        //     path: '/featuredCourses',
+        //     pageBuilder: (context, state) {
+        //       final String cID = state.queryParams['cID']!;
+        //       final String id = state.queryParams['id']!;
+        //       final String courseName = state.queryParams['courseName']!;
+        //       final String coursePrice = state.queryParams['coursePrice']!;
+        //       return MaterialPage(
+        //           key: state.pageKey,
+        //           child: FeatureCourses(
+        //             cID: cID,
+        //             id: id,
+        //             cName: courseName,
+        //             courseP: coursePrice,
+        //           ));
+        //     }
+        // ),
         GoRoute(
-            name: 'featuredCourses',
-            path: '/featuredCourses',
-            pageBuilder: (context, state) {
+            name: 'NewFeature',
+            path: '/NewFeature',
+            pageBuilder: (context, state){
+              List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
               final String cID = state.queryParams['cID']!;
               final String id = state.queryParams['id']!;
               final String courseName = state.queryParams['courseName']!;
               final String coursePrice = state.queryParams['coursePrice']!;
               return MaterialPage(
                   key: state.pageKey,
-                  child: FeatureCourses(
-                    cID: cID,
+                  child: NewFeature(
+                    courses: course[int.parse(id)].courses,
                     id: id,
-                    cName: courseName,
+                    cID: cID,
                     courseP: coursePrice,
+                    courseName: courseName,
                   ));
-            }
-        ),
+            }),
         GoRoute(
             name: 'NewScreen',
             path: '/NewScreen',
@@ -213,6 +236,29 @@ class MyRouter {
                     courses: course[int.parse(id)].courses,
                     id: id,
                     courseName: courseName,
+                  ));
+            }),
+            GoRoute(
+            name: 'reviewResume',
+            path: '/reviewResume',
+            pageBuilder: (context, state){
+              return MaterialPage(
+                  child: ReviewResumeScreen());
+            }),
+        GoRoute(
+            name: 'reviewResumeDetailed',
+            path: '/reviewResumeDetailed',
+            pageBuilder: (context, state){
+               String? id = state.queryParams['studentId'];
+               String? name = state.queryParams['studentName'];
+               String? email = state.queryParams['studentEmail'];
+               String? link = state.queryParams['resumeLink'];
+              return MaterialPage(
+                  child: ReviewDetailScreen(
+                    studentId: id!,
+                    studentName: name!,
+                    studentEmail: email!,
+                    resumeLink: link!,
                   ));
             }),
         GoRoute(
@@ -285,7 +331,8 @@ class MyRouter {
                 child: PaymentScreen(
                     cID: cID,
                     isItComboCourse: true,
-                    map: {},),);
+                    // map: {},
+                    ),);
         }),
         GoRoute(
             name: 'paymentPortal',

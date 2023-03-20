@@ -31,7 +31,7 @@ class _splashState extends State<splash> {
     // TODO:implement initState
     super.initState();
     GRecaptchaV3.hideBadge();
-    Timer(Duration(seconds: 2), () => GoRouter.of(context).push('/login')
+    Timer(Duration(seconds: 0), () => GoRouter.of(context).push('/login')
 
         //     Navigator.pushReplacement(
         // context, MaterialPageRoute(builder: (context) => Authenticate()))

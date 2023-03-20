@@ -984,6 +984,21 @@ Drawer customDrawer(BuildContext context) {
                   GoRouter.of(context).push('/myCourses');
                 },
               ),
+               globals.role == 'mentor' ?
+              InkWell(
+                child: ListTile(
+                  title: Text('Review Resume'),
+                  leading: Icon(
+                    Icons.reviews,
+                    color: HexColor('691EC8'),
+                  ),
+                ),
+                onTap: () {
+
+                  GoRouter.of(context).push('/reviewResume');
+
+                },
+              ) : SizedBox(),
               globals.role == "mentor"
                   ? InkWell(
                       child: ListTile(
@@ -1122,31 +1137,14 @@ Drawer customDrawer(BuildContext context) {
 // }
 Widget featureCPopup(
     IconData icon, String T1, double horizontalScale, double verticalScale) {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 10),
-    child: Container(
-      width: 364 * horizontalScale,
-      height: 38 * verticalScale,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8),
-          topRight: Radius.circular(8),
-          bottomLeft: Radius.circular(8),
-          bottomRight: Radius.circular(8),
-        ),
-        boxShadow: [
-          BoxShadow(
-              color: Color.fromRGBO(31, 31, 31, 0.25),
-              offset: Offset(0, 0),
-              blurRadius: 5)
-        ],
-        color: Color.fromRGBO(255, 255, 255, 1),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 38 * min(horizontalScale, verticalScale),
-            height: 38 * min(horizontalScale, verticalScale),
+  return LayoutBuilder(
+    builder: (BuildContext context, BoxConstraints constraints) {
+      if (constraints.maxWidth >= 650) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Container(
+            width: 250 * horizontalScale,
+            height: 38 * verticalScale,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(8),
@@ -1154,34 +1152,126 @@ Widget featureCPopup(
                 bottomLeft: Radius.circular(8),
                 bottomRight: Radius.circular(8),
               ),
-              color: Color.fromRGBO(54, 141, 255, 1),
+              boxShadow: [
+                BoxShadow(
+                    color: Color.fromRGBO(31, 31, 31, 0.25),
+                    offset: Offset(0, 0),
+                    blurRadius: 5)
+              ],
+              color: Color.fromRGBO(255, 255, 255, 1),
             ),
-            child: Center(
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 28 * min(horizontalScale, verticalScale),
+            child: Row(
+              children: [
+                Container(
+                  width: 38 * min(horizontalScale, verticalScale),
+                  height: 38 * min(horizontalScale, verticalScale),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      topRight: Radius.circular(8),
+                      bottomLeft: Radius.circular(8),
+                      bottomRight: Radius.circular(8),
+                    ),
+                    color: Color.fromRGBO(54, 141, 255, 1),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      icon,
+                      color: Colors.white,
+                      size: 28 * min(horizontalScale, verticalScale),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  // width: 250 * horizontalScale,
+                  child: Text(
+                    '$T1',
+                    textScaleFactor: min(horizontalScale, verticalScale),
+                    style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: Colors.black,
+                        fontSize: 18 * verticalScale,
+                        fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      } else {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Container(
+            width: 364 * horizontalScale,
+            height: 40 * verticalScale,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+                bottomLeft: Radius.circular(8),
+                bottomRight: Radius.circular(8),
               ),
+              boxShadow: [
+                BoxShadow(
+                    color: Color.fromRGBO(31, 31, 31, 0.25),
+                    offset: Offset(0, 0),
+                    blurRadius: 5)
+              ],
+              color: Color.fromRGBO(255, 255, 255, 1),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 38 * min(horizontalScale, verticalScale),
+                  height: 38 * min(horizontalScale, verticalScale),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      topRight: Radius.circular(8),
+                      bottomLeft: Radius.circular(8),
+                      bottomRight: Radius.circular(8),
+                    ),
+                    color: Color.fromRGBO(54, 141, 255, 1),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      icon,
+                      color: Colors.white,
+                      size: 28 * min(horizontalScale, verticalScale),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  // width: 215 * horizontalScale,
+                  // color: Colors.red,
+                  child: Text(
+                    '$T1',
+                    maxLines: 2,
+                    textScaleFactor: min(horizontalScale, verticalScale),
+                    style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: Colors.black,
+                        fontSize: 14 * verticalScale,
+                        fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          SizedBox(
-            width: 10,
-          ),
-          Text(
-            '$T1',
-            textScaleFactor: min(horizontalScale, verticalScale),
-            style: TextStyle(
-              overflow: TextOverflow.ellipsis,
-              color: Colors.black,
-              fontSize: 18* verticalScale,
-              fontWeight: FontWeight.bold
-            ),
-          ),
-        ],
-      ),
-    ),
+        );
+      }
+
+    }
   );
-  
+
 }
 Drawer dr(BuildContext context) {
 

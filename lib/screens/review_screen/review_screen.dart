@@ -203,7 +203,7 @@ class _Review1State extends State<ReviewsScreen> {
                                                                       .none),
                                                               scrollable: true,
                                                               content:
-                                                              Container(height:240,width:320,
+                                                              Container(height:500,width:500,
                                                                 child: ClipRRect(borderRadius:BorderRadius.circular(20) ,
                                                                   child: CachedNetworkImage(
                                                                     errorWidget:
@@ -340,7 +340,7 @@ class _Review1State extends State<ReviewsScreen> {
                                                                       .none),
                                                               scrollable: true,
                                                               content:
-                                                              Container(height:240,width:320,
+                                                              Container(height:500,width:500,
                                                                 child: ClipRRect(borderRadius:BorderRadius.circular(20) ,
                                                                   child: CachedNetworkImage(
                                                                     errorWidget:
@@ -474,7 +474,7 @@ class _Review1State extends State<ReviewsScreen> {
                                                                       .none),
                                                               scrollable: true,
                                                               content:
-                                                              Container(height:240,width:320,
+                                                              Container(height:500,width:500,
                                                                 child: ClipRRect(borderRadius: BorderRadius.circular(20),
                                                                   child: CachedNetworkImage(
                                                                     errorWidget:

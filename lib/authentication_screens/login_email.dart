@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/authentication_screens/otp_page.dart';
 import 'package:cloudyml_app2/authentication_screens/signin_password.dart';
 import 'package:cloudyml_app2/home.dart';
+import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -633,7 +634,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                               }
                                                               else {
                                                                 Navigator.of(context)
-                                                                    .push(MaterialPageRoute(builder: (_) => HomePage()));
+                                                                    .push(MaterialPageRoute(builder: (_) => LandingScreen()));
                                                               }
                                                           // Navigator.of(
                                                           //         context)
@@ -936,7 +937,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                     }
                                                     else {
                                                       Navigator.of(context)
-                                                          .push(MaterialPageRoute(builder: (_) => HomePage()));
+                                                          .push(MaterialPageRoute(builder: (_) => LandingScreen()));
                                                     }
                                                     saveLoginState(context);
                                                     // }
@@ -1517,7 +1518,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                   }
                                                   else {
                                                     Navigator.of(context)
-                                                        .push(MaterialPageRoute(builder: (_) => HomePage()));
+                                                        .push(MaterialPageRoute(builder: (_) => LandingScreen()));
                                                   }
                                                   // Navigator.of(context)
                                                   //     .pushReplacement(
@@ -1808,7 +1809,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                             }
                                             else {
                                               Navigator.of(context)
-                                                  .push(MaterialPageRoute(builder: (_) => HomePage()));
+                                                  .push(MaterialPageRoute(builder: (_) => LandingScreen()));
                                             }
                                             // GoRouter.of(context).pushReplacementNamed('home');
                                             saveLoginState(context);

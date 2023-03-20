@@ -213,7 +213,9 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                                   courseId = course[index].courseDocumentId;
                                 });
                                 final id = index.toString();
-                                GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                              GoRouter.of(context).pushNamed(
+                                  'catalogue',
+                                  queryParams: {'id': id,'cID': courseId,});
                               },
                               child: Container(
                                 width: 354 * horizontalScale,
