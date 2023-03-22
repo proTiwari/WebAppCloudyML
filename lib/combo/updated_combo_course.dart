@@ -14,11 +14,16 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
+import '../widgets/pay_nowfeature.dart';
+import 'non_trial_course_paynowbtsheet.dart';
+
 class NewScreen extends StatefulWidget {
   final List<dynamic>? courses;
   final String? id;
   final String? courseName;
-  const NewScreen({Key? key, this.courses, this.id, this.courseName})
+  final String? cID;
+  final String? courseP;
+  const NewScreen({Key? key, this.cID, this.courses, this.id, this.courseName, this.courseP})
       : super(key: key);
 
   @override
@@ -26,6 +31,23 @@ class NewScreen extends StatefulWidget {
 }
 
 class _NewScreenState extends State<NewScreen> {
+  List<CourseDetails> featuredCourse = [];
+
+  setFeaturedCourse(List<CourseDetails> course) {
+    featuredCourse.clear();
+
+    course.forEach((element) {
+      print(' $element ');
+      if (element.courseDocumentId == widget.cID) {
+        featuredCourse.add(element);
+        // featuredCourse.add(element.courses);
+
+        print('element ${featuredCourse[0].courseId} ');
+      }
+    });
+    print('function ');
+  }
+
   List<String> listNameOfButton = [
     "Home",
     "My Courses",
@@ -46,18 +68,18 @@ class _NewScreenState extends State<NewScreen> {
 
   var coursePercent = {};
   var courseData = null;
-  getPercentageOfCourse() async {
-    var data = await FirebaseFirestore.instance
-        .collection("courseprogress")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
-    setState(() {
-      courseData = data.data();
-    });
-    print("GETDATA $courseData");
-    print(widget.courses);
-    print(courseData![widget.courses![2] + "percentage"]);
-  }
+  // getPercentageOfCourse() async {
+  //   var data = await FirebaseFirestore.instance
+  //       .collection("courseprogress")
+  //       .doc(FirebaseAuth.instance.currentUser!.uid)
+  //       .get();
+  //   setState(() {
+  //     courseData = data.data();
+  //   });
+  //   print("GETDATA $courseData");
+  //   print(widget.courses);
+  //   print(courseData![widget.courses![2] + "percentage"]);
+  // }
 
   Map<String, dynamic> numberOfCourseHours = {};
   late VideoPlayerController _controller;
@@ -79,6 +101,7 @@ class _NewScreenState extends State<NewScreen> {
     return Duration(hours: hours, minutes: minutes, microseconds: micros);
   }
   /*------- total duration of course -------*/
+
   // getTheDurationOfCourse()
   // async{
   //   // VideoPlayerController playerController = await VideoPlayerController.network("https://media.publit.io/file/kaggleCourse/8-reviewing-a-notebook.mp4"
@@ -133,21 +156,60 @@ class _NewScreenState extends State<NewScreen> {
       counterSink.add(value.docs);
     });
   }
+  Map<String, dynamic> comboMap = {};
+
+  void getCourseName() async {
+    print('this idd ${widget.cID}');
+    await FirebaseFirestore.instance
+        .collection('courses')
+        .doc(widget.cID)
+        .get()
+        .then((value) {
+      comboMap = value.data()!;
+      setState(() {
+        comboMap = value.data()!;
+        print('this is $comboMap');
+        print('cid is ${comboMap['trialCourse']} ${int.parse(widget.id!)}');
+
+      });
+    });
+  }
 
   @override
   void initState() {
-    super.initState();
-    getTheStreamData();
+
+    // getTheStreamData();
+    getCourseName();
     // getTheDurationOfCourse();
     getAllPaidCourses();
-    getPercentageOfCourse();
+    // getPercentageOfCourse();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
+    setFeaturedCourse(course);
     final width = MediaQuery.of(context).size.width;
+
     return Scaffold(
+      bottomSheet:
+      comboMap['trialCourse']! != null && comboMap['trialCourse']!
+          ?
+      PayNowBottomSheetfeature(
+        coursePrice: '₹${widget.courseP!}/-',
+        map: comboMap,
+        isItComboCourse: true,
+        cID: widget.cID!,
+        id: widget.id,
+      )
+          : NonTrialCourseBottomSheet(
+        coursePrice: '₹${widget.courseP!}/-',
+        map: comboMap,
+        isItComboCourse: true,
+        cID: widget.cID!,
+      ),
+
       // appBar: appBar(context),
       // drawer: width<650?
       // Drawer(
@@ -163,9 +225,8 @@ class _NewScreenState extends State<NewScreen> {
           return Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage("assets/BG.png"),
-                    fit: BoxFit.fill
-                ),
+                    image: NetworkImage("https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FbackGroundImage.jpg?alt=media&token=c7282af8-222d-4761-89b0-35fa206f0ac1"),
+                    fit: BoxFit.fill),
                 color: HexColor("#fef0ff"),
               ),
               width: constraints.maxWidth,
@@ -186,8 +247,8 @@ class _NewScreenState extends State<NewScreen> {
                                 fontWeight: FontWeight.w200,
                                 fontSize: width < 850
                                     ? width < 430
-                                    ? 25
-                                    : 30
+                                        ? 25
+                                        : 30
                                     : 40,
                                 color: Colors.black)),
                         TextSpan(
@@ -195,8 +256,8 @@ class _NewScreenState extends State<NewScreen> {
                             style: TextStyle(
                                 fontSize: width < 850
                                     ? width < 430
-                                    ? 25
-                                    : 30
+                                        ? 25
+                                        : 30
                                     : 40,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black))
@@ -206,2742 +267,2783 @@ class _NewScreenState extends State<NewScreen> {
                     SizedBox(
                       height: 10,
                     ),
-                    StreamBuilder(
-                        stream: counterStream,
-                        // FirebaseFirestore.instance
-                        //     .collection('courses')
-                        //     .snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData && widget.courses != null) {
+                    Container(
+                      width: constraints.maxWidth,
+                      height: MediaQuery.of(context).size.height,
+                      child: ListView.builder(
+                          itemCount: course.length,
+                          itemBuilder: (BuildContext context, index) {
                             List courseList = [];
-                            for (var i in widget.courses!) {
+                            for (var i in featuredCourse[0].courses) {
                               for (var j in course) {
                                 if (i == j.courseId) {
                                   courseList.add(j);
                                 }
                               }
                             }
-                            print("listoooo $courseList");
-                            return Column(
-                              children: List.generate(
-                                courseList.length,
-                                    (index) {
-                                  print("snapdatassss");
-                                  print(
-                                      "the data is==${snapshot.data.toString()}");
-                                  // print("Courses list ${courseList}");
-                                  if (courseList.length > index) {
-                                    print(
-                                        "Duration ${courseList[index].duration}");
-                                    return Container(
-                                      padding: EdgeInsets.all(8),
-                                      margin: EdgeInsets.only(bottom: 15),
-                                      width: width < 1700
-                                          ? width < 1300
-                                          ? width < 850
-                                          ? constraints.maxWidth - 20
-                                          : constraints.maxWidth - 200
-                                          : constraints.maxWidth - 400
-                                          : constraints.maxWidth - 700,
-                                      height: width > 700
-                                          ? 230
-                                          : width < 300
-                                          ? 190
-                                          : 210,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(20),
-                                          color: Colors.white),
-                                      child: InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            courseId = courseList[index]
-                                                .courseDocumentId;
-                                          });
-                                          GoRouter.of(context).pushNamed(
-                                              'comboVideoScreen',
-                                              queryParams: {
-                                                'courseName': courseList[index]
-                                                    .courseName,
-                                                'cID': courseList[index]
-                                                    .courseDocumentId,
-                                              });
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                                flex: width < 600 ? 4 : 3,
-                                                child: Padding(
-                                                  padding: EdgeInsets.all(5),
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        25),
-                                                    child: Container(
-                                                      // width: 130,
-                                                      // height: 95,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                          BorderRadius.only(
-                                                            topLeft:
-                                                            Radius.circular(15),
-                                                            topRight:
-                                                            Radius.circular(15),
-                                                            bottomLeft:
-                                                            Radius.circular(15),
-                                                            bottomRight:
-                                                            Radius.circular(15),
-                                                          )),
-                                                      child: CachedNetworkImage(
-                                                        imageUrl:
-                                                        courseList[index]
-                                                            .courseImageUrl,
-                                                        placeholder: (context,
-                                                            url) =>
-                                                            Center(
-                                                                child:
-                                                                CircularProgressIndicator()),
-                                                        errorWidget: (context,
-                                                            url, error) =>
-                                                            Icon(Icons.error),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )),
+                            if (course[index].courseName == "null") {
+                              return Container();
+                            }
+                            if (courseList.length != 0) {
+                              print('listtto ${courseList.length}');
+                              print('listtto $courseList');
 
-                                            Expanded(
-                                                flex: width < 600 ? 6 : 4,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  padding: EdgeInsets.all(8),
+                                  margin: EdgeInsets.only(bottom: 15),
+                                  width: width < 1700
+                                      ? width < 1300
+                                      ? width < 850
+                                      ? constraints.maxWidth - 20
+                                      : constraints.maxWidth - 200
+                                      : constraints.maxWidth - 400
+                                      : constraints.maxWidth - 700,
+                                  height: width > 700
+                                      ? 230
+                                      : width < 300
+                                      ? 190
+                                      : 210,
+                                  decoration: BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.circular(20),
+                                      color: Colors.white),
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        courseId = courseList[index].courseDocumentId;
+                                      });
+                                      final id = index.toString();
+                                      GoRouter.of(context).pushNamed('catalogue',
+                                          queryParams: {'id': id, 'cID': courseId});
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                            flex: width < 600 ? 4 : 3,
+                                            child: Padding(
+                                              padding: EdgeInsets.all(5),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    25),
+                                                child: Container(
+                                                  // width: 130,
+                                                  // height: 95,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius.only(
+                                                        topLeft:
+                                                        Radius.circular(15),
+                                                        topRight:
+                                                        Radius.circular(15),
+                                                        bottomLeft:
+                                                        Radius.circular(15),
+                                                        bottomRight:
+                                                        Radius.circular(15),
+                                                      )),
+                                                  child: CachedNetworkImage(
+                                                    imageUrl:
+                                                    courseList[index]
+                                                        .courseImageUrl,
+                                                    placeholder: (context,
+                                                        url) =>
+                                                        Center(
+                                                            child:
+                                                            CircularProgressIndicator()),
+                                                    errorWidget: (context,
+                                                        url, error) =>
+                                                        Icon(Icons.error),
+                                                  ),
+                                                ),
+                                              ),
+                                            )),
+
+                                        Expanded(
+                                            flex: width < 600 ? 6 : 4,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                              // width>700?
+                                              MainAxisAlignment
+                                                  .spaceAround,
+                                              // :MainAxisAlignment.start,
+                                              children: [
+                                                // SizedBox(height: width>750?0:10,),
+                                                Container(
+                                                  // margin: EdgeInsets.only(top: 3),
+                                                  padding:
+                                                  EdgeInsets.all(7),
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.purple,
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10)),
+                                                  child: Text(
+                                                    "Module 1",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12),
+                                                  ),
+                                                ),
+                                                // SizedBox(height: width>750?0:10,),
+                                                // SizedBox(height: 8,),
+                                                Column(
                                                   mainAxisAlignment:
-                                                  // width>700?
                                                   MainAxisAlignment
-                                                      .spaceAround,
-                                                  // :MainAxisAlignment.start,
+                                                      .start,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment
+                                                      .start,
                                                   children: [
-                                                    // SizedBox(height: width>750?0:10,),
-                                                    Container(
-                                                      // margin: EdgeInsets.only(top: 3),
-                                                      padding:
-                                                      EdgeInsets.all(7),
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.purple,
-                                                          borderRadius:
-                                                          BorderRadius
-                                                              .circular(
-                                                              10)),
-                                                      child: Text(
-                                                        "Module 1",
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 12),
-                                                      ),
+                                                    Text(
+                                                      courseList[index]
+                                                          .courseName,
+                                                      style: TextStyle(
+                                                          height: 1,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold,
+                                                          fontSize: width >
+                                                              700
+                                                              ? 25
+                                                              : width < 540
+                                                              ? 15
+                                                              : 16),
+                                                      overflow: TextOverflow
+                                                          .ellipsis,
+                                                      maxLines: 1,
+                                                    ),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Text(
+                                                      courseList[index].courseDescription,
+                                                      style: TextStyle(
+                                                                            fontSize: width < 540
+                                                                                ? width < 420
+                                                                                ? 11
+                                                                                : 13
+                                                                                : 14),
+                                                      overflow: TextOverflow
+                                                          .ellipsis,
+                                                      maxLines: 3,
                                                     ),
                                                     // SizedBox(height: width>750?0:10,),
-                                                    // SizedBox(height: 8,),
-                                                    Column(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .start,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                      children: [
-                                                        Text(
-                                                          courseList[index]
-                                                              .courseName,
-                                                          style: TextStyle(
-                                                              height: 1,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold,
-                                                              fontSize: width >
-                                                                  700
-                                                                  ? 25
-                                                                  : width < 540
-                                                                  ? 15
-                                                                  : 16),
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
-                                                        ),
-                                                        SizedBox(
-                                                          height: 15,
-                                                        ),
-                                                        // SizedBox(height: width>750?0:10,),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                          children: [
-                                                            Expanded(
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                                  children: [
-                                                                    Text(
-                                                                        "Estimates learning time: ${courseList[index].duration == null ? "0" : courseList[index].duration}",
-                                                                        overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                        style: TextStyle(
-                                                                            fontSize: width < 540
-                                                                                ? width < 420
-                                                                                ? 11
-                                                                                : 13
-                                                                                : 14)),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    Text(
-                                                                        "Started on: Jan 01,2023",
-                                                                        overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                        style: TextStyle(
-                                                                            fontSize: width < 540
-                                                                                ? width < 420
-                                                                                ? 11
-                                                                                : 13
-                                                                                : 14)),
-                                                                    SizedBox(
-                                                                      height: 3,
-                                                                    ),
-                                                                    Text(
-                                                                        "Completed on: Jan 01,2023",
-                                                                        overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                        style: TextStyle(
-                                                                            fontSize: width < 540
-                                                                                ? width < 420
-                                                                                ? 11
-                                                                                : 13
-                                                                                : 14)),
-                                                                    SizedBox(
-                                                                      height: 15,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: width <
-                                                                          400
-                                                                          ? 160
-                                                                          : 190,
-                                                                      child:
-                                                                      MaterialButton(
-                                                                        height: width >
-                                                                            700
-                                                                            ? 50
-                                                                            : 40,
-                                                                        shape:
-                                                                        RoundedRectangleBorder(
-                                                                          borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              20),
-                                                                        ),
-                                                                        padding:
-                                                                        EdgeInsets
-                                                                            .all(8),
-                                                                        minWidth:
-                                                                        width > 700
-                                                                            ? 100
-                                                                            : 60,
-                                                                        onPressed:
-                                                                            () {
-                                                                          setState(
-                                                                                  () {
-                                                                                courseId =
-                                                                                    courseList[index].courseDocumentId;
-                                                                              });
-                                                                          GoRouter.of(context).pushNamed(
-                                                                              'comboVideoScreen',
-                                                                              queryParams: {
-                                                                                'courseName':
-                                                                                courseList[index].courseName,
-                                                                                'cID':
-                                                                                courseList[index].courseDocumentId,
-                                                                              });
-                                                                        },
-                                                                        child: Row(
-                                                                          children: [
-                                                                            SizedBox(
-                                                                              width:
-                                                                              5,
-                                                                            ),
-                                                                            Expanded(
-                                                                                flex:
-                                                                                1,
-                                                                                child:
-                                                                                Icon(
-                                                                                  Icons.play_arrow,
-                                                                                  color: Colors.white,
-                                                                                  size: width < 200 ? 2 : null,
-                                                                                )),
-                                                                            Expanded(
-                                                                                flex:
-                                                                                3,
-                                                                                child:
-                                                                                Text(
-                                                                                  "Resume learning",
-                                                                                  style: TextStyle(color: Colors.white, fontSize: width < 500 ? 10 : null),
-                                                                                  overflow: TextOverflow.ellipsis,
-                                                                                ))
-                                                                          ],
-                                                                        ),
-                                                                        color: Colors
-                                                                            .purple,
-                                                                      ),
-                                                                    )
-                                                                  ],
-                                                                )),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            width < 700
-                                                                ?
-                                                            // Expanded(
-                                                            //   child:
-                                                            Column(
-                                                              mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-                                                              children: [
-                                                                SizedBox(height: 25,),
-                                                                CircularPercentIndicator(
-                                                                  radius: width<700?width<500?20:30:70,
-                                                                  lineWidth: width>700?10.0:4.0,
-                                                                  animation: true,
-                                                                  percent:courseData!=null?courseData[widget.courses![index]+"percentage"]!=null?
-                                                                  (courseData[widget.courses![index]+"percentage"])/100>1?
-                                                                  100/100:
-                                                                  courseData[widget.courses![index]+"percentage"]/100:0/100:0,
-                                                                  center: courseData!=null?
-                                                                  courseData[widget.courses![index]+"percentage"]!=null?
-                                                                  Text(
-                                                                    courseData[widget.courses![index]+"percentage"]>100?
-                                                                    "100%":
-                                                                    courseData[widget.courses![index]+"percentage"].toString()+ "%",
-                                                                    style: TextStyle(
-                                                                        fontSize: width>700?20.0:width<500?8:14,
-                                                                        fontWeight: FontWeight.w600,
-                                                                        color: Colors.black),
-                                                                  ):Text(
-                                                                    0.toString() + "%",
-                                                                    style: TextStyle(
-                                                                        fontSize: width>700?20.0:width<500?8:14,
-                                                                        fontWeight: FontWeight.w600,
-                                                                        color: Colors.black),
-                                                                  ):SizedBox(),
-                                                                  backgroundColor: Colors.black12,
-                                                                  circularStrokeCap: CircularStrokeCap.round,
-                                                                  progressColor: Colors.green,
-                                                                ),
-                                                                SizedBox(height: width<500?3:5,),
-                                                                courseData!=null?
-                                                                Text(
-                                                                  courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"]>100?
-                                                                  "100%":courseData[widget.courses![index]+"percentage"].toString()+"%":"0%",
-                                                                  style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),):SizedBox()
-                                                                // SizedBox(height: 15,),
-                                                                // Text("10%")
-                                                              ],
-                                                            )
-                                                            // ,
-                                                            // )
-                                                                : SizedBox(),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    )
+                                                    // Row(
+                                                    //   mainAxisAlignment:
+                                                    //   MainAxisAlignment
+                                                    //       .spaceBetween,
+                                                    //   crossAxisAlignment:
+                                                    //   CrossAxisAlignment
+                                                    //       .start,
+                                                    //   children: [
+                                                    //     Expanded(
+                                                    //         child: Column(
+                                                    //           crossAxisAlignment:
+                                                    //           CrossAxisAlignment
+                                                    //               .start,
+                                                    //           mainAxisAlignment:
+                                                    //           MainAxisAlignment
+                                                    //               .start,
+                                                    //           children: [
+                                                    //             Text(
+                                                    //                 "Estimates learning time: ",
+                                                    //                     // "${courseList[index].duration == null ? "0" : courseList[index].duration}",
+                                                    //                 overflow:
+                                                    //                 TextOverflow
+                                                    //                     .ellipsis,
+                                                    //                 style: TextStyle(
+                                                    //                     fontSize: width < 540
+                                                    //                         ? width < 420
+                                                    //                         ? 11
+                                                    //                         : 13
+                                                    //                         : 14)
+                                                    //                         ),
+                                                    //             SizedBox(
+                                                    //               height: 3,
+                                                    //             ),
+                                                    //             Text(
+                                                    //                 "Started on: Jan 01,2023",
+                                                    //                 overflow:
+                                                    //                 TextOverflow
+                                                    //                     .ellipsis,
+                                                    //                 style: TextStyle(
+                                                    //                     fontSize: width < 540
+                                                    //                         ? width < 420
+                                                    //                         ? 11
+                                                    //                         : 13
+                                                    //                         : 14)),
+                                                    //             SizedBox(
+                                                    //               height: 3,
+                                                    //             ),
+                                                    //             Text(
+                                                    //                 "Completed on: Jan 01,2023",
+                                                    //                 overflow:
+                                                    //                 TextOverflow
+                                                    //                     .ellipsis,
+                                                    //                 style: TextStyle(
+                                                    //                     fontSize: width < 540
+                                                    //                         ? width < 420
+                                                    //                         ? 11
+                                                    //                         : 13
+                                                    //                         : 14)),
+                                                    //             SizedBox(
+                                                    //               height: 15,
+                                                    //             ),
+                                                    //             // SizedBox(
+                                                    //             //   width: width <
+                                                    //             //       400
+                                                    //             //       ? 160
+                                                    //             //       : 190,
+                                                    //             //   child:
+                                                    //             //   MaterialButton(
+                                                    //             //     height: width >
+                                                    //             //         700
+                                                    //             //         ? 50
+                                                    //             //         : 40,
+                                                    //             //     shape:
+                                                    //             //     RoundedRectangleBorder(
+                                                    //             //       borderRadius:
+                                                    //             //       BorderRadius.circular(
+                                                    //             //           20),
+                                                    //             //     ),
+                                                    //             //     padding:
+                                                    //             //     EdgeInsets
+                                                    //             //         .all(8),
+                                                    //             //     minWidth:
+                                                    //             //     width > 700
+                                                    //             //         ? 100
+                                                    //             //         : 60,
+                                                    //             //     onPressed:
+                                                    //             //         () {
+                                                    //             //
+                                                    //             //     },
+                                                    //             //     child: Row(
+                                                    //             //       children: [
+                                                    //             //         SizedBox(
+                                                    //             //           width:
+                                                    //             //           5,
+                                                    //             //         ),
+                                                    //             //         Expanded(
+                                                    //             //             flex:
+                                                    //             //             1,
+                                                    //             //             child:
+                                                    //             //             Icon(
+                                                    //             //               Icons.play_arrow,
+                                                    //             //               color: Colors.white,
+                                                    //             //               size: width < 200 ? 2 : null,
+                                                    //             //             )),
+                                                    //             //         Expanded(
+                                                    //             //             flex:
+                                                    //             //             3,
+                                                    //             //             child:
+                                                    //             //             Text(
+                                                    //             //               "Resume learning",
+                                                    //             //               style: TextStyle(color: Colors.white, fontSize: width < 500 ? 10 : null),
+                                                    //             //               overflow: TextOverflow.ellipsis,
+                                                    //             //             ))
+                                                    //             //       ],
+                                                    //             //     ),
+                                                    //             //     color: Colors
+                                                    //             //         .purple,
+                                                    //             //   ),
+                                                    //             // )
+                                                    //           ],
+                                                    //         )),
+                                                    //     SizedBox(
+                                                    //       width: 5,
+                                                    //     ),
+                                                    //     width < 700
+                                                    //         ?
+                                                    //     // Expanded(
+                                                    //     //   child:
+                                                    //     Column(
+                                                    //       mainAxisAlignment: width > 700
+                                                    //           ? MainAxisAlignment
+                                                    //           .center
+                                                    //           : MainAxisAlignment
+                                                    //           .end,
+                                                    //       children: [
+                                                    //         SizedBox(
+                                                    //           height:
+                                                    //           25,
+                                                    //         ),
+                                                    //
+                                                    //         // CircularPercentIndicator(
+                                                    //         //   radius: width <
+                                                    //         //       700
+                                                    //         //       ? width < 500
+                                                    //         //       ? 20
+                                                    //         //       : 30
+                                                    //         //       : 70,
+                                                    //         //   lineWidth: width >
+                                                    //         //       700
+                                                    //         //       ? 10.0
+                                                    //         //       : 4.0,
+                                                    //         //   animation:
+                                                    //         //   true,
+                                                    //         //   percent: courseData !=
+                                                    //         //       null
+                                                    //         //       ? courseData[widget.courses![index] + "percentage"] != null
+                                                    //         //       ? (courseData[widget.courses![index] + "percentage"]) / 100 > 1
+                                                    //         //       ? 100 / 100
+                                                    //         //       : courseData[widget.courses![index] + "percentage"] / 100
+                                                    //         //       : 0 / 100
+                                                    //         //       : 0,
+                                                    //         //   center: courseData !=
+                                                    //         //       null
+                                                    //         //       ? courseData[widget.courses![index] + "percentage"] != null
+                                                    //         //       ? Text(
+                                                    //         //     courseData[widget.courses![index] + "percentage"] > 100 ? "100%" : courseData[widget.courses![index] + "percentage"].toString() + "%",
+                                                    //         //     style: TextStyle(
+                                                    //         //         fontSize: width > 700
+                                                    //         //             ? 20.0
+                                                    //         //             : width < 500
+                                                    //         //             ? 8
+                                                    //         //             : 14,
+                                                    //         //         fontWeight: FontWeight.w600,
+                                                    //         //         color: Colors.black),
+                                                    //         //   )
+                                                    //         //       : Text(
+                                                    //         //     0.toString() + "%",
+                                                    //         //     style: TextStyle(
+                                                    //         //         fontSize: width > 700
+                                                    //         //             ? 20.0
+                                                    //         //             : width < 500
+                                                    //         //             ? 8
+                                                    //         //             : 14,
+                                                    //         //         fontWeight: FontWeight.w600,
+                                                    //         //         color: Colors.black),
+                                                    //         //   )
+                                                    //         //       : SizedBox(),
+                                                    //         //   backgroundColor:
+                                                    //         //   Colors.black12,
+                                                    //         //   circularStrokeCap:
+                                                    //         //   CircularStrokeCap.round,
+                                                    //         //   progressColor:
+                                                    //         //   Colors.green,
+                                                    //         // ),
+                                                    //
+                                                    //
+                                                    //         SizedBox(
+                                                    //           height: width <
+                                                    //               500
+                                                    //               ? 3
+                                                    //               : 5,
+                                                    //         ),
+                                                    //
+                                                    //         // courseData !=
+                                                    //         //     null
+                                                    //         //     ? Text(
+                                                    //         //   courseData[widget.courses![index] + "percentage"] != null
+                                                    //         //       ? courseData[widget.courses![index] + "percentage"] > 100
+                                                    //         //       ? "100%"
+                                                    //         //       : courseData[widget.courses![index] + "percentage"].toString() + "%"
+                                                    //         //       : "0%",
+                                                    //         //   style: TextStyle(fontSize: 7, fontWeight: FontWeight.bold),
+                                                    //         // )
+                                                    //         //     : SizedBox(),
+                                                    //
+                                                    //
+                                                    //         // SizedBox(height: 15,),
+                                                    //         // Text("10%")
+                                                    //       ],
+                                                    //     )
+                                                    //     // ,
+                                                    //     // )
+                                                    //         : SizedBox(),
+                                                    //     SizedBox(
+                                                    //       width: 5,
+                                                    //     )
+                                                    //   ],
+                                                    // ),
                                                   ],
-                                                )),
-                                            // SizedBox(width: 10,),
-                                            width > 700
-                                                ? Expanded(
-                                              flex: 2,
-                                              // color: Colors.green,
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                width > 700
-                                                    ? MainAxisAlignment
-                                                    .center
-                                                    : MainAxisAlignment
-                                                    .end,
-                                                children: [
-                                                  CircularPercentIndicator(
-                                                    radius: width > 700
-                                                        ? 70.0
-                                                        : 40.0,
-                                                    lineWidth: 10.0,
-                                                    animation: true,
-                                                    percent: courseData !=
-                                                        null
-                                                        ? courseData[widget.courses![
-                                                    index] +
-                                                        "percentage"] !=
-                                                        null
-                                                        ? courseData[widget
-                                                        .courses![index] +
-                                                        "percentage"] /
-                                                        100
-                                                        : 0 / 100
-                                                        : 0,
-                                                    center: courseData !=
-                                                        null
-                                                        ? courseData[widget.courses![
-                                                    index] +
-                                                        "percentage"] !=
-                                                        null
-                                                        ? Text(
-                                                      courseData[widget.courses![index] + "percentage"]
-                                                          .toString() +
-                                                          "%",
-                                                      style: TextStyle(
-                                                          fontSize:
-                                                          20.0,
-                                                          fontWeight: FontWeight
-                                                              .w600,
-                                                          color:
-                                                          Colors.black),
-                                                    )
-                                                        : Text(
-                                                        0.toString() +
-                                                            '%',
-                                                        style: TextStyle(
-                                                            fontSize:
-                                                            20.0,
-                                                            fontWeight: FontWeight
-                                                                .w600,
-                                                            color:
-                                                            Colors.black))
-                                                        : SizedBox(),
-                                                    backgroundColor:
-                                                    Colors.black12,
-                                                    circularStrokeCap:
-                                                    CircularStrokeCap
-                                                        .round,
-                                                    progressColor:
-                                                    Colors.green,
-                                                  ),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  courseData != null
-                                                      ? Text(courseData[widget.courses![
-                                                  index] +
-                                                      "percentage"] !=
-                                                      null
-                                                      ? courseData[widget.courses![index] +
-                                                      "percentage"]
-                                                      .toString() +
-                                                      "%"
-                                                      : "0%")
-                                                      : SizedBox()
-                                                ],
-                                              ),
-                                            )
-                                                : SizedBox()
-                                            // Column(
-                                            //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-                                            //   children: [
-                                            //     CircularPercentIndicator(
-                                            //       radius: width>700?70.0:30.0,
-                                            //       lineWidth: width>700?10.0:5.0,
-                                            //       animation: true,
-                                            //       percent: 10/100,
-                                            //       center: Text(
-                                            //         10.toString() + "%",
-                                            //         style: TextStyle(
-                                            //             fontSize: width>700?20.0:14,
-                                            //             fontWeight: FontWeight.w600,
-                                            //             color: Colors.black),
-                                            //       ),
-                                            //       backgroundColor: Colors.black12,
-                                            //       circularStrokeCap: CircularStrokeCap.round,
-                                            //       progressColor: Colors.green,
-                                            //     ),
-                                            //     SizedBox(height: 15,),
-                                            //     Text("10%")
-                                            //   ],
-                                            // ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return Container();
-                                  }
-                                },
-                              ),
-                            );
-                          } else {
-                            return Container();
-                          }
-                        })
+                                                )
+                                              ],
+                                            )),
+                                        // SizedBox(width: 10,),
+
+
+                                        // width > 700
+                                        //     ? Expanded(
+                                        //   flex: 2,
+                                        //   // color: Colors.green,
+                                        //   child: Column(
+                                        //     mainAxisAlignment:
+                                        //     width > 700
+                                        //         ? MainAxisAlignment
+                                        //         .center
+                                        //         : MainAxisAlignment
+                                        //         .end,
+                                        //     children: [
+                                        //       CircularPercentIndicator(
+                                        //         radius: width > 700
+                                        //             ? 70.0
+                                        //             : 40.0,
+                                        //         lineWidth: 10.0,
+                                        //         animation: true,
+                                        //         percent: courseData !=
+                                        //             null
+                                        //             ? courseData[widget.courses![
+                                        //         index] +
+                                        //             "percentage"] !=
+                                        //             null
+                                        //             ? courseData[widget
+                                        //             .courses![index] +
+                                        //             "percentage"] /
+                                        //             100
+                                        //             : 0 / 100
+                                        //             : 0,
+                                        //         center: courseData !=
+                                        //             null
+                                        //             ? courseData[widget.courses![
+                                        //         index] +
+                                        //             "percentage"] !=
+                                        //             null
+                                        //             ? Text(
+                                        //           courseData[widget.courses![index] + "percentage"]
+                                        //               .toString() +
+                                        //               "%",
+                                        //           style: TextStyle(
+                                        //               fontSize:
+                                        //               20.0,
+                                        //               fontWeight: FontWeight
+                                        //                   .w600,
+                                        //               color:
+                                        //               Colors.black),
+                                        //         )
+                                        //             : Text(
+                                        //             0.toString() +
+                                        //                 '%',
+                                        //             style: TextStyle(
+                                        //                 fontSize:
+                                        //                 20.0,
+                                        //                 fontWeight: FontWeight
+                                        //                     .w600,
+                                        //                 color:
+                                        //                 Colors.black))
+                                        //             : SizedBox(),
+                                        //         backgroundColor:
+                                        //         Colors.black12,
+                                        //         circularStrokeCap:
+                                        //         CircularStrokeCap
+                                        //             .round,
+                                        //         progressColor:
+                                        //         Colors.green,
+                                        //       ),
+                                        //       SizedBox(
+                                        //         height: 15,
+                                        //       ),
+                                        //       courseData != null
+                                        //           ? Text(courseData[widget.courses![
+                                        //       index] +
+                                        //           "percentage"] !=
+                                        //           null
+                                        //           ? courseData[widget.courses![index] +
+                                        //           "percentage"]
+                                        //           .toString() +
+                                        //           "%"
+                                        //           : "0%")
+                                        //           : SizedBox(),
+                                        //     ],
+                                        //   ),
+                                        // )
+                                        //     : SizedBox()
+
+
+
+                                        // Column(
+                                        //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+                                        //   children: [
+                                        //     CircularPercentIndicator(
+                                        //       radius: width>700?70.0:30.0,
+                                        //       lineWidth: width>700?10.0:5.0,
+                                        //       animation: true,
+                                        //       percent: 10/100,
+                                        //       center: Text(
+                                        //         10.toString() + "%",
+                                        //         style: TextStyle(
+                                        //             fontSize: width>700?20.0:14,
+                                        //             fontWeight: FontWeight.w600,
+                                        //             color: Colors.black),
+                                        //       ),
+                                        //       backgroundColor: Colors.black12,
+                                        //       circularStrokeCap: CircularStrokeCap.round,
+                                        //       progressColor: Colors.green,
+                                        //     ),
+                                        //     SizedBox(height: 15,),
+                                        //     Text("10%")
+                                        //   ],
+                                        // ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          }),
+                    ),
+
                   ],
                 ),
               )
-            // Stack(
-            //   children: [
-            //     Column(
-            //       crossAxisAlignment: CrossAxisAlignment.stretch,
-            //       children: [
-            //         customMenuBar(context),
-            //         Container(
-            //           height: constraints.maxHeight-50,
-            //           child: SingleChildScrollView(
-            //             child: Column(
-            //               mainAxisAlignment: MainAxisAlignment.center,
-            //               crossAxisAlignment: CrossAxisAlignment.stretch,
-            //               children: [
-            //                 SizedBox(height: 10,),
-            //                 RichText(text: TextSpan(
-            //                     children: [
-            //                       TextSpan(text: "welcome to ",style: TextStyle(fontWeight: FontWeight.w200,fontSize: width<850?width<430?25:30:40,color: Colors.black)),
-            //                       TextSpan(text: "Data Science and \n Analytics Combo Course",style: TextStyle(fontSize: width<850?width<430?25:30:40,fontWeight: FontWeight.bold,color: Colors.black))
-            //                     ]
-            //                 ),textAlign: TextAlign.center,),
-            //                 SizedBox(height: 10,),
-            //                 StreamBuilder(
-            //                     stream:counterStream,
-            //                     // FirebaseFirestore.instance
-            //                     //     .collection('courses')
-            //                     //     .snapshots(),
-            //                     builder: (context,snapshot){
-            //                       if(snapshot.hasData && widget.courses!=null)
-            //                       {
-            //                         List courseList = [];
-            //                         for (var i in widget.courses!) {
-            //                           for (var j in course) {
-            //                             if (i == j.courseId) {
-            //                               courseList.add(j);
-            //                             }
-            //                           }
-            //                         }
-            //                         print("listoooo $courseList");
-            //                         return Column(
-            //                           children: List.generate(courseList.length, (index) {
-            //                             print("snapdatassss");
-            //                             print(snapshot.data);
-            //                             // print("Courses list ${courseList}");
-            //                             if (courseList.length > index)  {
-            //                               print("Duration ${courseList[index].duration}");
-            //                               return
-            //                                 Container(
-            //                                   padding: EdgeInsets.all(8),
-            //                                   margin: EdgeInsets.only(bottom: 15),
-            //                                   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
-            //                                   height: width>700?230:width<300?190:210,
-            //                                   decoration: BoxDecoration(
-            //                                       borderRadius: BorderRadius.circular(20),
-            //                                       color: Colors.white
-            //                                   ),
-            //                                   child: InkWell(
-            //                                     onTap: ()
-            //                                     {
-            //                                       setState(() {
-            //                                         courseId = courseList[index].courseDocumentId;
-            //                                       });
-            //                                       GoRouter.of(context).pushNamed('comboVideoScreen',
-            //                                           queryParams: {
-            //                                             'courseName': courseList[index].courseName,
-            //                                             'cID': courseList[index].courseDocumentId,
-            //                                           });
-            //                                     },
-            //                                     child: Row(
-            //                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //                                       children: [
-            //                                         Expanded(flex:width<600?4:3,child:
-            //                                         Padding(
-            //                                           padding: EdgeInsets.all(5),
-            //                                           child: ClipRRect(
-            //                                             borderRadius:
-            //                                             BorderRadius.circular(25),
-            //                                             child: Container(
-            //                                               // width: 130,
-            //                                               // height: 95,
-            //                                               decoration: BoxDecoration(
-            //                                                   borderRadius:
-            //                                                   BorderRadius.only(
-            //                                                     topLeft: Radius.circular(15),
-            //                                                     topRight: Radius.circular(15),
-            //                                                     bottomLeft: Radius.circular(15),
-            //                                                     bottomRight:
-            //                                                     Radius.circular(15),
-            //                                                   )),
-            //                                               child: CachedNetworkImage(
-            //                                                 imageUrl:courseList[index].courseImageUrl,
-            //                                                 placeholder: (context, url) =>
-            //                                                     Center(child: CircularProgressIndicator()),
-            //                                                 errorWidget:
-            //                                                     (context, url, error) =>
-            //                                                     Icon(Icons.error),
-            //                                               ),
-            //                                             ),
-            //                                           ),
-            //                                         )),
-            //
-            //                                         Expanded(flex: width<600?6:4,
-            //                                             child:  Column(
-            //                                               crossAxisAlignment: CrossAxisAlignment.start,
-            //                                               mainAxisAlignment:
-            //                                               // width>700?
-            //                                               MainAxisAlignment.spaceAround,
-            //                                               // :MainAxisAlignment.start,
-            //                                               children: [
-            //
-            //                                                 // SizedBox(height: width>750?0:10,),
-            //                                                 Container(
-            //                                                   // margin: EdgeInsets.only(top: 3),
-            //                                                   padding: EdgeInsets.all(7),
-            //                                                   decoration: BoxDecoration(
-            //                                                       color: Colors.purple,
-            //                                                       borderRadius: BorderRadius.circular(10)
-            //                                                   ),
-            //                                                   child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
-            //                                                 ),
-            //                                                 // SizedBox(height: width>750?0:10,),
-            //                                                 // SizedBox(height: 8,),
-            //                                                 Column(
-            //                                                   mainAxisAlignment: MainAxisAlignment.start,
-            //                                                   crossAxisAlignment: CrossAxisAlignment.start,
-            //                                                   children: [
-            //                                                     Text(
-            //                                                       courseList[index].courseName,style:
-            //                                                     TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
-            //                                                       overflow: TextOverflow.ellipsis,maxLines: 1,),
-            //                                                     SizedBox(height: 15,),
-            //                                                     // SizedBox(height: width>750?0:10,),
-            //                                                     Row(
-            //                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //                                                       crossAxisAlignment: CrossAxisAlignment.start,
-            //                                                       children: [
-            //                                                         Expanded(child: Column(
-            //                                                           crossAxisAlignment: CrossAxisAlignment.start,
-            //                                                           mainAxisAlignment: MainAxisAlignment.start,
-            //                                                           children: [
-            //                                                             Text("Estimates learning time: ${courseList[index].duration==null?"0":courseList[index].duration} Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //                                                             SizedBox(height: 3,),
-            //                                                             Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //                                                             SizedBox(height: 3,),
-            //                                                             Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //                                                             SizedBox(height: 15,),
-            //                                                             SizedBox(
-            //                                                               width: width<400?160:190,
-            //                                                               child:
-            //                                                               MaterialButton(
-            //                                                                 height: width>700?50:40,
-            //                                                                 shape: RoundedRectangleBorder(
-            //                                                                   borderRadius: BorderRadius.circular(20),
-            //                                                                 ),
-            //                                                                 padding: EdgeInsets.all(8),
-            //                                                                 minWidth: width>700?100:60,
-            //                                                                 onPressed: (){},
-            //                                                                 child: Row(
-            //                                                                   children: [
-            //                                                                     SizedBox(width: 5,),
-            //                                                                     Expanded(
-            //                                                                         flex:1,
-            //                                                                         child:
-            //                                                                         Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
-            //                                                                     Expanded(
-            //                                                                         flex:3,
-            //                                                                         child:
-            //                                                                         Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
-            //                                                                   ],
-            //                                                                 ),color: Colors.purple,),
-            //                                                             )
-            //
-            //                                                           ],
-            //                                                         )),
-            //                                                         SizedBox(width: 5,),
-            //                                                         width<700?
-            //                                                         // Expanded(
-            //                                                         //   child:
-            //                                                         Column(
-            //                                                           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //                                                           children: [
-            //                                                             SizedBox(height: 25,),
-            //                                                             CircularPercentIndicator(
-            //                                                               radius: width<700?width<500?20:30:70,
-            //                                                               lineWidth: width>700?10.0:4.0,
-            //                                                               animation: true,
-            //                                                               percent: courseData!=null?courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"]/100:0/100:0,
-            //                                                               center: courseData!=null?
-            //                                                               courseData[widget.courses![index]+"percentage"]!=null?Text(
-            //                                                                 courseData[widget.courses![index]+"percentage"].toString()+ "%",
-            //                                                                 style: TextStyle(
-            //                                                                     fontSize: width>700?20.0:width<500?8:14,
-            //                                                                     fontWeight: FontWeight.w600,
-            //                                                                     color: Colors.black),
-            //                                                               ):Text(
-            //                                                                 0.toString() + "%",
-            //                                                                 style: TextStyle(
-            //                                                                     fontSize: width>700?20.0:width<500?8:14,
-            //                                                                     fontWeight: FontWeight.w600,
-            //                                                                     color: Colors.black),
-            //                                                               ):SizedBox(),
-            //                                                               backgroundColor: Colors.black12,
-            //                                                               circularStrokeCap: CircularStrokeCap.round,
-            //                                                               progressColor: Colors.green,
-            //                                                             ),
-            //                                                             SizedBox(height: width<500?3:5,),
-            //                                                             courseData!=null?
-            //                                                             Text(
-            //                                                               courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"].toString()+"%":"0%",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),):SizedBox()
-            //                                                             // SizedBox(height: 15,),
-            //                                                             // Text("10%")
-            //                                                           ],
-            //                                                         )
-            //                                                         // ,
-            //                                                         // )
-            //                                                             :SizedBox(),
-            //                                                         SizedBox(width: 5,)
-            //                                                       ],
-            //                                                     ),
-            //                                                   ],
-            //                                                 )
-            //                                               ],
-            //                                             )),
-            //                                         // SizedBox(width: 10,),
-            //                                         width>700?Expanded(flex:2,
-            //                                           // color: Colors.green,
-            //                                           child: Column(
-            //                                             mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //                                             children: [
-            //                                               CircularPercentIndicator(
-            //                                                 radius: width>700?70.0:40.0,
-            //                                                 lineWidth: 10.0,
-            //                                                 animation: true,
-            //                                                 percent: courseData!=null?courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"]/100:0/100:0,
-            //                                                 center: courseData!=null?
-            //                                                 courseData[widget.courses![index]+"percentage"]!=null?Text(
-            //                                                   courseData[widget.courses![index]+"percentage"].toString() + "%",
-            //                                                   style: TextStyle(
-            //                                                       fontSize: 20.0,
-            //                                                       fontWeight: FontWeight.w600,
-            //                                                       color: Colors.black),
-            //                                                 ):Text(0.toString()+'%',style: TextStyle(
-            //                                                     fontSize: 20.0,
-            //                                                     fontWeight: FontWeight.w600,
-            //                                                     color: Colors.black)):SizedBox(),
-            //                                                 backgroundColor: Colors.black12,
-            //                                                 circularStrokeCap: CircularStrokeCap.round,
-            //                                                 progressColor: Colors.green,
-            //                                               ),
-            //                                               SizedBox(height: 15,),
-            //                                               courseData!=null?Text(
-            //                                                   courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"].toString()+"%":"0%"):SizedBox()
-            //                                             ],
-            //                                           ),):
-            //                                         SizedBox()
-            //                                         // Column(
-            //                                         //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //                                         //   children: [
-            //                                         //     CircularPercentIndicator(
-            //                                         //       radius: width>700?70.0:30.0,
-            //                                         //       lineWidth: width>700?10.0:5.0,
-            //                                         //       animation: true,
-            //                                         //       percent: 10/100,
-            //                                         //       center: Text(
-            //                                         //         10.toString() + "%",
-            //                                         //         style: TextStyle(
-            //                                         //             fontSize: width>700?20.0:14,
-            //                                         //             fontWeight: FontWeight.w600,
-            //                                         //             color: Colors.black),
-            //                                         //       ),
-            //                                         //       backgroundColor: Colors.black12,
-            //                                         //       circularStrokeCap: CircularStrokeCap.round,
-            //                                         //       progressColor: Colors.green,
-            //                                         //     ),
-            //                                         //     SizedBox(height: 15,),
-            //                                         //     Text("10%")
-            //                                         //   ],
-            //                                         // ),
-            //                                       ],
-            //                                     ),
-            //                                   ),
-            //                                 );
-            //                             } else {
-            //                               return Container();
-            //                             }
-            //                           },),
-            //                         );
-            //                       }
-            //                       else{
-            //                         return Container();
-            //                       }
-            //
-            //                     })
-            //               ],
-            //             ),
-            //           ),
-            //         )
-            //         // SingleChildScrollView(
-            //         //   child: Column(
-            //         //     mainAxisAlignment: MainAxisAlignment.center,
-            //         //     crossAxisAlignment: CrossAxisAlignment.stretch,
-            //         //     children: [
-            //         //       SizedBox(height: 10,),
-            //         //       RichText(text: TextSpan(
-            //         //           children: [
-            //         //             TextSpan(text: "welcome to ",style: TextStyle(fontWeight: FontWeight.w200,fontSize: width<850?width<430?25:30:40,color: Colors.black)),
-            //         //             TextSpan(text: "Data Science and \n Analytics Combo Course",style: TextStyle(fontSize: width<850?width<430?25:30:40,fontWeight: FontWeight.bold,color: Colors.black))
-            //         //           ]
-            //         //       ),textAlign: TextAlign.center,),
-            //         //       SizedBox(height: 10,),
-            //         //       StreamBuilder(
-            //         //           stream:counterStream,
-            //         //           // FirebaseFirestore.instance
-            //         //           //     .collection('courses')
-            //         //           //     .snapshots(),
-            //         //           builder: (context,snapshot){
-            //         //             if(snapshot.hasData && widget.courses!=null)
-            //         //             {
-            //         //               List courseList = [];
-            //         //               for (var i in widget.courses!) {
-            //         //                 for (var j in course) {
-            //         //                   if (i == j.courseId) {
-            //         //                     courseList.add(j);
-            //         //                   }
-            //         //                 }
-            //         //               }
-            //         //               print("listoooo $courseList");
-            //         //               return Column(
-            //         //                 children: List.generate(courseList.length, (index) {
-            //         //                   print("snapdatassss");
-            //         //                   print(snapshot.data);
-            //         //                   // print("Courses list ${courseList}");
-            //         //                   if (courseList.length > index)  {
-            //         //                     print("Duration ${courseList[index].duration}");
-            //         //                     return
-            //         //                       Container(
-            //         //                         padding: EdgeInsets.all(8),
-            //         //                         margin: EdgeInsets.only(bottom: 15),
-            //         //                         width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
-            //         //                         height: width>700?230:width<300?190:210,
-            //         //                         decoration: BoxDecoration(
-            //         //                             borderRadius: BorderRadius.circular(20),
-            //         //                             color: Colors.white
-            //         //                         ),
-            //         //                         child: InkWell(
-            //         //                           onTap: ()
-            //         //                           {
-            //         //                             setState(() {
-            //         //                               courseId = courseList[index].courseDocumentId;
-            //         //                             });
-            //         //                             GoRouter.of(context).pushNamed('comboVideoScreen',
-            //         //                                 queryParams: {
-            //         //                                   'courseName': courseList[index].courseName,
-            //         //                                   'cID': courseList[index].courseDocumentId,
-            //         //                                 });
-            //         //                           },
-            //         //                           child: Row(
-            //         //                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //         //                             children: [
-            //         //                               Expanded(flex:width<600?4:3,child:
-            //         //                               Padding(
-            //         //                                 padding: EdgeInsets.all(5),
-            //         //                                 child: ClipRRect(
-            //         //                                   borderRadius:
-            //         //                                   BorderRadius.circular(25),
-            //         //                                   child: Container(
-            //         //                                     // width: 130,
-            //         //                                     // height: 95,
-            //         //                                     decoration: BoxDecoration(
-            //         //                                         borderRadius:
-            //         //                                         BorderRadius.only(
-            //         //                                           topLeft: Radius.circular(15),
-            //         //                                           topRight: Radius.circular(15),
-            //         //                                           bottomLeft: Radius.circular(15),
-            //         //                                           bottomRight:
-            //         //                                           Radius.circular(15),
-            //         //                                         )),
-            //         //                                     child: CachedNetworkImage(
-            //         //                                       imageUrl:courseList[index].courseImageUrl,
-            //         //                                       placeholder: (context, url) =>
-            //         //                                           Center(child: CircularProgressIndicator()),
-            //         //                                       errorWidget:
-            //         //                                           (context, url, error) =>
-            //         //                                           Icon(Icons.error),
-            //         //                                     ),
-            //         //                                   ),
-            //         //                                 ),
-            //         //                               )),
-            //         //
-            //         //                               Expanded(flex: width<600?6:4,
-            //         //                                   child:  Column(
-            //         //                                     crossAxisAlignment: CrossAxisAlignment.start,
-            //         //                                     mainAxisAlignment:
-            //         //                                     // width>700?
-            //         //                                     MainAxisAlignment.spaceAround,
-            //         //                                     // :MainAxisAlignment.start,
-            //         //                                     children: [
-            //         //
-            //         //                                       // SizedBox(height: width>750?0:10,),
-            //         //                                       Container(
-            //         //                                         // margin: EdgeInsets.only(top: 3),
-            //         //                                         padding: EdgeInsets.all(7),
-            //         //                                         decoration: BoxDecoration(
-            //         //                                             color: Colors.purple,
-            //         //                                             borderRadius: BorderRadius.circular(10)
-            //         //                                         ),
-            //         //                                         child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
-            //         //                                       ),
-            //         //                                       // SizedBox(height: width>750?0:10,),
-            //         //                                       // SizedBox(height: 8,),
-            //         //                                       Column(
-            //         //                                         mainAxisAlignment: MainAxisAlignment.start,
-            //         //                                         crossAxisAlignment: CrossAxisAlignment.start,
-            //         //                                         children: [
-            //         //                                           Text(
-            //         //                                             courseList[index].courseName,style:
-            //         //                                           TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
-            //         //                                             overflow: TextOverflow.ellipsis,maxLines: 1,),
-            //         //                                           SizedBox(height: 15,),
-            //         //                                           // SizedBox(height: width>750?0:10,),
-            //         //                                           Row(
-            //         //                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //         //                                             crossAxisAlignment: CrossAxisAlignment.start,
-            //         //                                             children: [
-            //         //                                               Expanded(child: Column(
-            //         //                                                 crossAxisAlignment: CrossAxisAlignment.start,
-            //         //                                                 mainAxisAlignment: MainAxisAlignment.start,
-            //         //                                                 children: [
-            //         //                                                   Text("Estimates learning time: ${courseList[index].duration==null?"0":courseList[index].duration} Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //         //                                                   SizedBox(height: 3,),
-            //         //                                                   Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //         //                                                   SizedBox(height: 3,),
-            //         //                                                   Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //         //                                                   SizedBox(height: 15,),
-            //         //                                                   SizedBox(
-            //         //                                                     width: width<400?160:190,
-            //         //                                                     child:
-            //         //                                                     MaterialButton(
-            //         //                                                       height: width>700?50:40,
-            //         //                                                       shape: RoundedRectangleBorder(
-            //         //                                                         borderRadius: BorderRadius.circular(20),
-            //         //                                                       ),
-            //         //                                                       padding: EdgeInsets.all(8),
-            //         //                                                       minWidth: width>700?100:60,
-            //         //                                                       onPressed: (){},
-            //         //                                                       child: Row(
-            //         //                                                         children: [
-            //         //                                                           SizedBox(width: 5,),
-            //         //                                                           Expanded(
-            //         //                                                               flex:1,
-            //         //                                                               child:
-            //         //                                                               Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
-            //         //                                                           Expanded(
-            //         //                                                               flex:3,
-            //         //                                                               child:
-            //         //                                                               Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
-            //         //                                                         ],
-            //         //                                                       ),color: Colors.purple,),
-            //         //                                                   )
-            //         //
-            //         //                                                 ],
-            //         //                                               )),
-            //         //                                               SizedBox(width: 5,),
-            //         //                                               width<700?
-            //         //                                               // Expanded(
-            //         //                                               //   child:
-            //         //                                               Column(
-            //         //                                                 mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //         //                                                 children: [
-            //         //                                                   SizedBox(height: 25,),
-            //         //                                                   CircularPercentIndicator(
-            //         //                                                     radius: width<700?width<500?20:30:70,
-            //         //                                                     lineWidth: width>700?10.0:4.0,
-            //         //                                                     animation: true,
-            //         //                                                     percent: courseData!=null?courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"]/100:0/100:0,
-            //         //                                                     center: courseData!=null?
-            //         //                                                     courseData[widget.courses![index]+"percentage"]!=null?Text(
-            //         //                                                       courseData[widget.courses![index]+"percentage"].toString()+ "%",
-            //         //                                                       style: TextStyle(
-            //         //                                                           fontSize: width>700?20.0:width<500?8:14,
-            //         //                                                           fontWeight: FontWeight.w600,
-            //         //                                                           color: Colors.black),
-            //         //                                                     ):Text(
-            //         //                                                       0.toString() + "%",
-            //         //                                                       style: TextStyle(
-            //         //                                                           fontSize: width>700?20.0:width<500?8:14,
-            //         //                                                           fontWeight: FontWeight.w600,
-            //         //                                                           color: Colors.black),
-            //         //                                                     ):SizedBox(),
-            //         //                                                     backgroundColor: Colors.black12,
-            //         //                                                     circularStrokeCap: CircularStrokeCap.round,
-            //         //                                                     progressColor: Colors.green,
-            //         //                                                   ),
-            //         //                                                   SizedBox(height: width<500?3:5,),
-            //         //                                                   courseData!=null?
-            //         //                                                   Text(
-            //         //                                                     courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"].toString()+"%":"0%",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),):SizedBox()
-            //         //                                                   // SizedBox(height: 15,),
-            //         //                                                   // Text("10%")
-            //         //                                                 ],
-            //         //                                               )
-            //         //                                               // ,
-            //         //                                               // )
-            //         //                                                   :SizedBox(),
-            //         //                                               SizedBox(width: 5,)
-            //         //                                             ],
-            //         //                                           ),
-            //         //                                         ],
-            //         //                                       )
-            //         //                                     ],
-            //         //                                   )),
-            //         //                               // SizedBox(width: 10,),
-            //         //                               width>700?Expanded(flex:2,
-            //         //                                 // color: Colors.green,
-            //         //                                 child: Column(
-            //         //                                   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //         //                                   children: [
-            //         //                                     CircularPercentIndicator(
-            //         //                                       radius: width>700?70.0:40.0,
-            //         //                                       lineWidth: 10.0,
-            //         //                                       animation: true,
-            //         //                                       percent: courseData!=null?courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"]/100:0/100:0,
-            //         //                                       center: courseData!=null?
-            //         //                                       courseData[widget.courses![index]+"percentage"]!=null?Text(
-            //         //                                         courseData[widget.courses![index]+"percentage"].toString() + "%",
-            //         //                                         style: TextStyle(
-            //         //                                             fontSize: 20.0,
-            //         //                                             fontWeight: FontWeight.w600,
-            //         //                                             color: Colors.black),
-            //         //                                       ):Text(0.toString()+'%',style: TextStyle(
-            //         //                                           fontSize: 20.0,
-            //         //                                           fontWeight: FontWeight.w600,
-            //         //                                           color: Colors.black)):SizedBox(),
-            //         //                                       backgroundColor: Colors.black12,
-            //         //                                       circularStrokeCap: CircularStrokeCap.round,
-            //         //                                       progressColor: Colors.green,
-            //         //                                     ),
-            //         //                                     SizedBox(height: 15,),
-            //         //                                     courseData!=null?Text(
-            //         //                                         courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"].toString()+"%":"0%"):SizedBox()
-            //         //                                   ],
-            //         //                                 ),):
-            //         //                               SizedBox()
-            //         //                               // Column(
-            //         //                               //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //         //                               //   children: [
-            //         //                               //     CircularPercentIndicator(
-            //         //                               //       radius: width>700?70.0:30.0,
-            //         //                               //       lineWidth: width>700?10.0:5.0,
-            //         //                               //       animation: true,
-            //         //                               //       percent: 10/100,
-            //         //                               //       center: Text(
-            //         //                               //         10.toString() + "%",
-            //         //                               //         style: TextStyle(
-            //         //                               //             fontSize: width>700?20.0:14,
-            //         //                               //             fontWeight: FontWeight.w600,
-            //         //                               //             color: Colors.black),
-            //         //                               //       ),
-            //         //                               //       backgroundColor: Colors.black12,
-            //         //                               //       circularStrokeCap: CircularStrokeCap.round,
-            //         //                               //       progressColor: Colors.green,
-            //         //                               //     ),
-            //         //                               //     SizedBox(height: 15,),
-            //         //                               //     Text("10%")
-            //         //                               //   ],
-            //         //                               // ),
-            //         //                             ],
-            //         //                           ),
-            //         //                         ),
-            //         //                       );
-            //         //                   } else {
-            //         //                     return Container();
-            //         //                   }
-            //         //                 },),
-            //         //               );
-            //         //             }
-            //         //             else{
-            //         //               return Container();
-            //         //             }
-            //         //
-            //         //           })
-            //         //     ],
-            //         //   ),
-            //         // )
-            //       ],
-            //     ),
-            //
-            //   ],
-            // )
-            ///
-            // SingleChildScrollView(
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.center,
-            //     children: [
-            //       SizedBox(height: 10,),
-            //       RichText(text: TextSpan(
-            //           children: [
-            //             TextSpan(text: "welcome to ",style: TextStyle(fontWeight: FontWeight.w200,fontSize: width<850?width<430?25:30:55,color: Colors.black)),
-            //             TextSpan(text: "Data Science and \n Analytics Combo Course",style: TextStyle(fontSize: width<850?width<430?25:30:60,fontWeight: FontWeight.bold,color: Colors.black))
-            //           ]
-            //       ),textAlign: TextAlign.center,),
-            //       SizedBox(height: 10,),
-            //       StreamBuilder(
-            //         stream: FirebaseFirestore.instance
-            //             .collection('courses')
-            //             .snapshots(),
-            //           builder: (context,snapshot){
-            //           if(snapshot.hasData)
-            //             {
-            //               return Column(
-            //                 children: List.generate(widget.courses!.length, (index) => Container(
-            //                   padding: EdgeInsets.all(8),
-            //                   margin: EdgeInsets.only(bottom: 10),
-            //                   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
-            //                   height: width>700?240:195,
-            //                   decoration: BoxDecoration(
-            //                       borderRadius: BorderRadius.circular(20),
-            //                       color: Colors.white
-            //                   ),
-            //                   child: Row(
-            //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //                     children: [
-            //                       Expanded(flex:width<600?4:3,child: Padding(
-            //                         padding: EdgeInsets.all(5),
-            //                         child: Image.asset("assets/logo.png"),
-            //                       )),
-            //
-            //                       Expanded(flex: width<600?6:4,
-            //                           child:  Column(
-            //                             crossAxisAlignment: CrossAxisAlignment.start,
-            //                             mainAxisAlignment:
-            //                             // width>700?
-            //                             MainAxisAlignment.spaceAround,
-            //                             // :MainAxisAlignment.start,
-            //                             children: [
-            //
-            //                               // SizedBox(height: width>750?0:10,),
-            //                               Container(
-            //                                 // margin: EdgeInsets.only(top: 3),
-            //                                 padding: EdgeInsets.all(7),
-            //                                 decoration: BoxDecoration(
-            //                                     color: Colors.purple,
-            //                                     borderRadius: BorderRadius.circular(10)
-            //                                 ),
-            //                                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
-            //                               ),
-            //                               // SizedBox(height: width>750?0:10,),
-            //                               // SizedBox(height: 8,),
-            //                               Column(
-            //                                 mainAxisAlignment: MainAxisAlignment.start,
-            //                                 crossAxisAlignment: CrossAxisAlignment.start,
-            //                                 children: [
-            //                                   Text("Python for Data Science",style:
-            //                                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
-            //                                     overflow: TextOverflow.ellipsis,maxLines: 2,),
-            //                                   SizedBox(height: 15,),
-            //                                   // SizedBox(height: width>750?0:10,),
-            //                                   Row(
-            //                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //                                     crossAxisAlignment: CrossAxisAlignment.start,
-            //                                     children: [
-            //                                       Expanded(child: Column(
-            //                                         crossAxisAlignment: CrossAxisAlignment.start,
-            //                                         mainAxisAlignment: MainAxisAlignment.start,
-            //                                         children: [
-            //                                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //                                           SizedBox(height: 3,),
-            //                                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //                                           SizedBox(height: 3,),
-            //                                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //                                           SizedBox(height: 15,),
-            //                                           SizedBox(
-            //                                             width: width<400?160:190,
-            //                                             child:
-            //                                             MaterialButton(
-            //                                               height: width>700?50:40,
-            //                                               shape: RoundedRectangleBorder(
-            //                                                 borderRadius: BorderRadius.circular(20),
-            //                                               ),
-            //                                               padding: EdgeInsets.all(8),
-            //                                               minWidth: width>700?100:60,
-            //                                               onPressed: (){},
-            //                                               child: Row(
-            //                                                 children: [
-            //                                                   SizedBox(width: 5,),
-            //                                                   Expanded(
-            //                                                       flex:1,
-            //                                                       child:
-            //                                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
-            //                                                   Expanded(
-            //                                                       flex:3,
-            //                                                       child:
-            //                                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
-            //                                                 ],
-            //                                               ),color: Colors.purple,),
-            //                                           )
-            //
-            //                                         ],
-            //                                       )),
-            //                                       SizedBox(width: 5,),
-            //                                       width<700?
-            //                                       // Expanded(
-            //                                       //   child:
-            //                                       Column(
-            //                                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //                                         children: [
-            //                                           SizedBox(height: 25,),
-            //                                           CircularPercentIndicator(
-            //                                             radius: width<700?width<500?20:30:70,
-            //                                             lineWidth: width>700?10.0:4.0,
-            //                                             animation: true,
-            //                                             percent: 10/100,
-            //                                             center: Text(
-            //                                               10.toString() + "%",
-            //                                               style: TextStyle(
-            //                                                   fontSize: width>700?20.0:width<500?8:14,
-            //                                                   fontWeight: FontWeight.w600,
-            //                                                   color: Colors.black),
-            //                                             ),
-            //                                             backgroundColor: Colors.black12,
-            //                                             circularStrokeCap: CircularStrokeCap.round,
-            //                                             progressColor: Colors.green,
-            //                                           ),
-            //                                           SizedBox(height: width<500?3:5,),
-            //                                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
-            //                                           // SizedBox(height: 15,),
-            //                                           // Text("10%")
-            //                                         ],
-            //                                       )
-            //                                       // ,
-            //                                       // )
-            //                                           :SizedBox(),
-            //                                       SizedBox(width: 5,)
-            //                                     ],
-            //                                   ),
-            //                                 ],
-            //                               )
-            //                             ],
-            //                           )),
-            //                       // SizedBox(width: 10,),
-            //                       width>700?Expanded(flex:2,
-            //                         // color: Colors.green,
-            //                         child: Column(
-            //                           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //                           children: [
-            //                             CircularPercentIndicator(
-            //                               radius: width>700?70.0:40.0,
-            //                               lineWidth: 10.0,
-            //                               animation: true,
-            //                               percent: 10/100,
-            //                               center: Text(
-            //                                 10.toString() + "%",
-            //                                 style: TextStyle(
-            //                                     fontSize: 20.0,
-            //                                     fontWeight: FontWeight.w600,
-            //                                     color: Colors.black),
-            //                               ),
-            //                               backgroundColor: Colors.black12,
-            //                               circularStrokeCap: CircularStrokeCap.round,
-            //                               progressColor: Colors.green,
-            //                             ),
-            //                             SizedBox(height: 15,),
-            //                             Text("10%")
-            //                           ],
-            //                         ),):
-            //                       SizedBox()
-            //                       // Column(
-            //                       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //                       //   children: [
-            //                       //     CircularPercentIndicator(
-            //                       //       radius: width>700?70.0:30.0,
-            //                       //       lineWidth: width>700?10.0:5.0,
-            //                       //       animation: true,
-            //                       //       percent: 10/100,
-            //                       //       center: Text(
-            //                       //         10.toString() + "%",
-            //                       //         style: TextStyle(
-            //                       //             fontSize: width>700?20.0:14,
-            //                       //             fontWeight: FontWeight.w600,
-            //                       //             color: Colors.black),
-            //                       //       ),
-            //                       //       backgroundColor: Colors.black12,
-            //                       //       circularStrokeCap: CircularStrokeCap.round,
-            //                       //       progressColor: Colors.green,
-            //                       //     ),
-            //                       //     SizedBox(height: 15,),
-            //                       //     Text("10%")
-            //                       //   ],
-            //                       // ),
-            //                     ],
-            //                   ),
-            //                 ),),
-            //               );
-            //             }
-            //           else{
-            //             return Container();
-            //           }
-            //
-            //       }),
-            //       // Container(
-            //       //   padding: EdgeInsets.all(8),
-            //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
-            //       //   height: width>700?240:195,
-            //       //   decoration: BoxDecoration(
-            //       //       borderRadius: BorderRadius.circular(20),
-            //       //       color: Colors.white
-            //       //   ),
-            //       //   child: Row(
-            //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //     children: [
-            //       //       Expanded(flex:width<600?4:3,child: Padding(
-            //       //         padding: EdgeInsets.all(5),
-            //       //         child: Image.asset("assets/logo.png"),
-            //       //       )),
-            //       //
-            //       //       Expanded(flex: width<600?6:4,
-            //       //           child:  Column(
-            //       //             crossAxisAlignment: CrossAxisAlignment.start,
-            //       //             mainAxisAlignment:
-            //       //             // width>700?
-            //       //             MainAxisAlignment.spaceAround,
-            //       //             // :MainAxisAlignment.start,
-            //       //             children: [
-            //       //
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               Container(
-            //       //                 // margin: EdgeInsets.only(top: 3),
-            //       //                 padding: EdgeInsets.all(7),
-            //       //                 decoration: BoxDecoration(
-            //       //                     color: Colors.purple,
-            //       //                     borderRadius: BorderRadius.circular(10)
-            //       //                 ),
-            //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
-            //       //               ),
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               // SizedBox(height: 8,),
-            //       //               Column(
-            //       //                 mainAxisAlignment: MainAxisAlignment.start,
-            //       //                 crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                 children: [
-            //       //                   Text("Python for Data Science",style:
-            //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
-            //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
-            //       //                   SizedBox(height: 15,),
-            //       //                   // SizedBox(height: width>750?0:10,),
-            //       //                   Row(
-            //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //                     crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                     children: [
-            //       //                       Expanded(child: Column(
-            //       //                         crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                         mainAxisAlignment: MainAxisAlignment.start,
-            //       //                         children: [
-            //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 15,),
-            //       //                           SizedBox(
-            //       //                             width: width<400?160:190,
-            //       //                             child:
-            //       //                             MaterialButton(
-            //       //                               height: width>700?50:40,
-            //       //                               shape: RoundedRectangleBorder(
-            //       //                                 borderRadius: BorderRadius.circular(20),
-            //       //                               ),
-            //       //                               padding: EdgeInsets.all(8),
-            //       //                               minWidth: width>700?100:60,
-            //       //                               onPressed: (){},
-            //       //                               child: Row(
-            //       //                                 children: [
-            //       //                                   SizedBox(width: 5,),
-            //       //                                   Expanded(
-            //       //                                       flex:1,
-            //       //                                       child:
-            //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
-            //       //                                   Expanded(
-            //       //                                       flex:3,
-            //       //                                       child:
-            //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
-            //       //                                 ],
-            //       //                               ),color: Colors.purple,),
-            //       //                           )
-            //       //
-            //       //                         ],
-            //       //                       )),
-            //       //                       SizedBox(width: 5,),
-            //       //                       width<700?
-            //       //                       // Expanded(
-            //       //                       //   child:
-            //       //                       Column(
-            //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //                         children: [
-            //       //                           SizedBox(height: 25,),
-            //       //                           CircularPercentIndicator(
-            //       //                             radius: width<700?width<500?20:30:70,
-            //       //                             lineWidth: width>700?10.0:4.0,
-            //       //                             animation: true,
-            //       //                             percent: 10/100,
-            //       //                             center: Text(
-            //       //                               10.toString() + "%",
-            //       //                               style: TextStyle(
-            //       //                                   fontSize: width>700?20.0:width<500?8:14,
-            //       //                                   fontWeight: FontWeight.w600,
-            //       //                                   color: Colors.black),
-            //       //                             ),
-            //       //                             backgroundColor: Colors.black12,
-            //       //                             circularStrokeCap: CircularStrokeCap.round,
-            //       //                             progressColor: Colors.green,
-            //       //                           ),
-            //       //                           SizedBox(height: width<500?3:5,),
-            //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
-            //       //                           // SizedBox(height: 15,),
-            //       //                           // Text("10%")
-            //       //                         ],
-            //       //                       )
-            //       //                       // ,
-            //       //                       // )
-            //       //                           :SizedBox(),
-            //       //                       SizedBox(width: 5,)
-            //       //                     ],
-            //       //                   ),
-            //       //                 ],
-            //       //               )
-            //       //             ],
-            //       //           )),
-            //       //       // SizedBox(width: 10,),
-            //       //       width>700?Expanded(flex:2,
-            //       //         // color: Colors.green,
-            //       //         child: Column(
-            //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //           children: [
-            //       //             CircularPercentIndicator(
-            //       //               radius: width>700?70.0:40.0,
-            //       //               lineWidth: 10.0,
-            //       //               animation: true,
-            //       //               percent: 10/100,
-            //       //               center: Text(
-            //       //                 10.toString() + "%",
-            //       //                 style: TextStyle(
-            //       //                     fontSize: 20.0,
-            //       //                     fontWeight: FontWeight.w600,
-            //       //                     color: Colors.black),
-            //       //               ),
-            //       //               backgroundColor: Colors.black12,
-            //       //               circularStrokeCap: CircularStrokeCap.round,
-            //       //               progressColor: Colors.green,
-            //       //             ),
-            //       //             SizedBox(height: 15,),
-            //       //             Text("10%")
-            //       //           ],
-            //       //         ),):
-            //       //       SizedBox()
-            //       //       // Column(
-            //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //       //   children: [
-            //       //       //     CircularPercentIndicator(
-            //       //       //       radius: width>700?70.0:30.0,
-            //       //       //       lineWidth: width>700?10.0:5.0,
-            //       //       //       animation: true,
-            //       //       //       percent: 10/100,
-            //       //       //       center: Text(
-            //       //       //         10.toString() + "%",
-            //       //       //         style: TextStyle(
-            //       //       //             fontSize: width>700?20.0:14,
-            //       //       //             fontWeight: FontWeight.w600,
-            //       //       //             color: Colors.black),
-            //       //       //       ),
-            //       //       //       backgroundColor: Colors.black12,
-            //       //       //       circularStrokeCap: CircularStrokeCap.round,
-            //       //       //       progressColor: Colors.green,
-            //       //       //     ),
-            //       //       //     SizedBox(height: 15,),
-            //       //       //     Text("10%")
-            //       //       //   ],
-            //       //       // ),
-            //       //     ],
-            //       //   ),
-            //       // ),
-            //       // Container(
-            //       //   padding: EdgeInsets.all(8),
-            //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
-            //       //   height: width>700?240:195,
-            //       //   decoration: BoxDecoration(
-            //       //       borderRadius: BorderRadius.circular(20),
-            //       //       color: Colors.white
-            //       //   ),
-            //       //   child: Row(
-            //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //     children: [
-            //       //       Expanded(flex:width<600?4:3,child: Padding(
-            //       //         padding: EdgeInsets.all(5),
-            //       //         child: Image.asset("assets/logo.png"),
-            //       //       )),
-            //       //
-            //       //       Expanded(flex: width<600?6:4,
-            //       //           child:  Column(
-            //       //             crossAxisAlignment: CrossAxisAlignment.start,
-            //       //             mainAxisAlignment:
-            //       //             // width>700?
-            //       //             MainAxisAlignment.spaceAround,
-            //       //             // :MainAxisAlignment.start,
-            //       //             children: [
-            //       //
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               Container(
-            //       //                 // margin: EdgeInsets.only(top: 3),
-            //       //                 padding: EdgeInsets.all(7),
-            //       //                 decoration: BoxDecoration(
-            //       //                     color: Colors.purple,
-            //       //                     borderRadius: BorderRadius.circular(10)
-            //       //                 ),
-            //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
-            //       //               ),
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               // SizedBox(height: 8,),
-            //       //               Column(
-            //       //                 mainAxisAlignment: MainAxisAlignment.start,
-            //       //                 crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                 children: [
-            //       //                   Text("Python for Data Science",style:
-            //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
-            //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
-            //       //                   SizedBox(height: 15,),
-            //       //                   // SizedBox(height: width>750?0:10,),
-            //       //                   Row(
-            //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //                     crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                     children: [
-            //       //                       Expanded(child: Column(
-            //       //                         crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                         mainAxisAlignment: MainAxisAlignment.start,
-            //       //                         children: [
-            //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 15,),
-            //       //                           SizedBox(
-            //       //                             width: width<400?160:190,
-            //       //                             child:
-            //       //                             MaterialButton(
-            //       //                               height: width>700?50:40,
-            //       //                               shape: RoundedRectangleBorder(
-            //       //                                 borderRadius: BorderRadius.circular(20),
-            //       //                               ),
-            //       //                               padding: EdgeInsets.all(8),
-            //       //                               minWidth: width>700?100:60,
-            //       //                               onPressed: (){},
-            //       //                               child: Row(
-            //       //                                 children: [
-            //       //                                   SizedBox(width: 5,),
-            //       //                                   Expanded(
-            //       //                                       flex:1,
-            //       //                                       child:
-            //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
-            //       //                                   Expanded(
-            //       //                                       flex:3,
-            //       //                                       child:
-            //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
-            //       //                                 ],
-            //       //                               ),color: Colors.purple,),
-            //       //                           )
-            //       //
-            //       //                         ],
-            //       //                       )),
-            //       //                       SizedBox(width: 5,),
-            //       //                       width<700?
-            //       //                       // Expanded(
-            //       //                       //   child:
-            //       //                       Column(
-            //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //                         children: [
-            //       //                           SizedBox(height: 25,),
-            //       //                           CircularPercentIndicator(
-            //       //                             radius: width<700?width<500?20:30:70,
-            //       //                             lineWidth: width>700?10.0:4.0,
-            //       //                             animation: true,
-            //       //                             percent: 10/100,
-            //       //                             center: Text(
-            //       //                               10.toString() + "%",
-            //       //                               style: TextStyle(
-            //       //                                   fontSize: width>700?20.0:width<500?8:14,
-            //       //                                   fontWeight: FontWeight.w600,
-            //       //                                   color: Colors.black),
-            //       //                             ),
-            //       //                             backgroundColor: Colors.black12,
-            //       //                             circularStrokeCap: CircularStrokeCap.round,
-            //       //                             progressColor: Colors.green,
-            //       //                           ),
-            //       //                           SizedBox(height: width<500?3:5,),
-            //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
-            //       //                           // SizedBox(height: 15,),
-            //       //                           // Text("10%")
-            //       //                         ],
-            //       //                       )
-            //       //                       // ,
-            //       //                       // )
-            //       //                           :SizedBox(),
-            //       //                       SizedBox(width: 5,)
-            //       //                     ],
-            //       //                   ),
-            //       //                 ],
-            //       //               )
-            //       //             ],
-            //       //           )),
-            //       //       // SizedBox(width: 10,),
-            //       //       width>700?Expanded(flex:2,
-            //       //         // color: Colors.green,
-            //       //         child: Column(
-            //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //           children: [
-            //       //             CircularPercentIndicator(
-            //       //               radius: width>700?70.0:40.0,
-            //       //               lineWidth: 10.0,
-            //       //               animation: true,
-            //       //               percent: 10/100,
-            //       //               center: Text(
-            //       //                 10.toString() + "%",
-            //       //                 style: TextStyle(
-            //       //                     fontSize: 20.0,
-            //       //                     fontWeight: FontWeight.w600,
-            //       //                     color: Colors.black),
-            //       //               ),
-            //       //               backgroundColor: Colors.black12,
-            //       //               circularStrokeCap: CircularStrokeCap.round,
-            //       //               progressColor: Colors.green,
-            //       //             ),
-            //       //             SizedBox(height: 15,),
-            //       //             Text("10%")
-            //       //           ],
-            //       //         ),):
-            //       //       SizedBox()
-            //       //       // Column(
-            //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //       //   children: [
-            //       //       //     CircularPercentIndicator(
-            //       //       //       radius: width>700?70.0:30.0,
-            //       //       //       lineWidth: width>700?10.0:5.0,
-            //       //       //       animation: true,
-            //       //       //       percent: 10/100,
-            //       //       //       center: Text(
-            //       //       //         10.toString() + "%",
-            //       //       //         style: TextStyle(
-            //       //       //             fontSize: width>700?20.0:14,
-            //       //       //             fontWeight: FontWeight.w600,
-            //       //       //             color: Colors.black),
-            //       //       //       ),
-            //       //       //       backgroundColor: Colors.black12,
-            //       //       //       circularStrokeCap: CircularStrokeCap.round,
-            //       //       //       progressColor: Colors.green,
-            //       //       //     ),
-            //       //       //     SizedBox(height: 15,),
-            //       //       //     Text("10%")
-            //       //       //   ],
-            //       //       // ),
-            //       //     ],
-            //       //   ),
-            //       // ),
-            //       // Container(
-            //       //   padding: EdgeInsets.all(8),
-            //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
-            //       //   height: width>700?240:195,
-            //       //   decoration: BoxDecoration(
-            //       //       borderRadius: BorderRadius.circular(20),
-            //       //       color: Colors.white
-            //       //   ),
-            //       //   child: Row(
-            //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //     children: [
-            //       //       Expanded(flex:width<600?4:3,child: Padding(
-            //       //         padding: EdgeInsets.all(5),
-            //       //         child: Image.asset("assets/logo.png"),
-            //       //       )),
-            //       //
-            //       //       Expanded(flex: width<600?6:4,
-            //       //           child:  Column(
-            //       //             crossAxisAlignment: CrossAxisAlignment.start,
-            //       //             mainAxisAlignment:
-            //       //             // width>700?
-            //       //             MainAxisAlignment.spaceAround,
-            //       //             // :MainAxisAlignment.start,
-            //       //             children: [
-            //       //
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               Container(
-            //       //                 // margin: EdgeInsets.only(top: 3),
-            //       //                 padding: EdgeInsets.all(7),
-            //       //                 decoration: BoxDecoration(
-            //       //                     color: Colors.purple,
-            //       //                     borderRadius: BorderRadius.circular(10)
-            //       //                 ),
-            //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
-            //       //               ),
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               // SizedBox(height: 8,),
-            //       //               Column(
-            //       //                 mainAxisAlignment: MainAxisAlignment.start,
-            //       //                 crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                 children: [
-            //       //                   Text("Python for Data Science",style:
-            //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
-            //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
-            //       //                   SizedBox(height: 15,),
-            //       //                   // SizedBox(height: width>750?0:10,),
-            //       //                   Row(
-            //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //                     crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                     children: [
-            //       //                       Expanded(child: Column(
-            //       //                         crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                         mainAxisAlignment: MainAxisAlignment.start,
-            //       //                         children: [
-            //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 15,),
-            //       //                           SizedBox(
-            //       //                             width: width<400?160:190,
-            //       //                             child:
-            //       //                             MaterialButton(
-            //       //                               height: width>700?50:40,
-            //       //                               shape: RoundedRectangleBorder(
-            //       //                                 borderRadius: BorderRadius.circular(20),
-            //       //                               ),
-            //       //                               padding: EdgeInsets.all(8),
-            //       //                               minWidth: width>700?100:60,
-            //       //                               onPressed: (){},
-            //       //                               child: Row(
-            //       //                                 children: [
-            //       //                                   SizedBox(width: 5,),
-            //       //                                   Expanded(
-            //       //                                       flex:1,
-            //       //                                       child:
-            //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
-            //       //                                   Expanded(
-            //       //                                       flex:3,
-            //       //                                       child:
-            //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
-            //       //                                 ],
-            //       //                               ),color: Colors.purple,),
-            //       //                           )
-            //       //
-            //       //                         ],
-            //       //                       )),
-            //       //                       SizedBox(width: 5,),
-            //       //                       width<700?
-            //       //                       // Expanded(
-            //       //                       //   child:
-            //       //                       Column(
-            //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //                         children: [
-            //       //                           SizedBox(height: 25,),
-            //       //                           CircularPercentIndicator(
-            //       //                             radius: width<700?width<500?20:30:70,
-            //       //                             lineWidth: width>700?10.0:4.0,
-            //       //                             animation: true,
-            //       //                             percent: 10/100,
-            //       //                             center: Text(
-            //       //                               10.toString() + "%",
-            //       //                               style: TextStyle(
-            //       //                                   fontSize: width>700?20.0:width<500?8:14,
-            //       //                                   fontWeight: FontWeight.w600,
-            //       //                                   color: Colors.black),
-            //       //                             ),
-            //       //                             backgroundColor: Colors.black12,
-            //       //                             circularStrokeCap: CircularStrokeCap.round,
-            //       //                             progressColor: Colors.green,
-            //       //                           ),
-            //       //                           SizedBox(height: width<500?3:5,),
-            //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
-            //       //                           // SizedBox(height: 15,),
-            //       //                           // Text("10%")
-            //       //                         ],
-            //       //                       )
-            //       //                       // ,
-            //       //                       // )
-            //       //                           :SizedBox(),
-            //       //                       SizedBox(width: 5,)
-            //       //                     ],
-            //       //                   ),
-            //       //                 ],
-            //       //               )
-            //       //             ],
-            //       //           )),
-            //       //       // SizedBox(width: 10,),
-            //       //       width>700?Expanded(flex:2,
-            //       //         // color: Colors.green,
-            //       //         child: Column(
-            //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //           children: [
-            //       //             CircularPercentIndicator(
-            //       //               radius: width>700?70.0:40.0,
-            //       //               lineWidth: 10.0,
-            //       //               animation: true,
-            //       //               percent: 10/100,
-            //       //               center: Text(
-            //       //                 10.toString() + "%",
-            //       //                 style: TextStyle(
-            //       //                     fontSize: 20.0,
-            //       //                     fontWeight: FontWeight.w600,
-            //       //                     color: Colors.black),
-            //       //               ),
-            //       //               backgroundColor: Colors.black12,
-            //       //               circularStrokeCap: CircularStrokeCap.round,
-            //       //               progressColor: Colors.green,
-            //       //             ),
-            //       //             SizedBox(height: 15,),
-            //       //             Text("10%")
-            //       //           ],
-            //       //         ),):
-            //       //       SizedBox()
-            //       //       // Column(
-            //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //       //   children: [
-            //       //       //     CircularPercentIndicator(
-            //       //       //       radius: width>700?70.0:30.0,
-            //       //       //       lineWidth: width>700?10.0:5.0,
-            //       //       //       animation: true,
-            //       //       //       percent: 10/100,
-            //       //       //       center: Text(
-            //       //       //         10.toString() + "%",
-            //       //       //         style: TextStyle(
-            //       //       //             fontSize: width>700?20.0:14,
-            //       //       //             fontWeight: FontWeight.w600,
-            //       //       //             color: Colors.black),
-            //       //       //       ),
-            //       //       //       backgroundColor: Colors.black12,
-            //       //       //       circularStrokeCap: CircularStrokeCap.round,
-            //       //       //       progressColor: Colors.green,
-            //       //       //     ),
-            //       //       //     SizedBox(height: 15,),
-            //       //       //     Text("10%")
-            //       //       //   ],
-            //       //       // ),
-            //       //     ],
-            //       //   ),
-            //       // ),
-            //       // Container(
-            //       //   padding: EdgeInsets.all(8),
-            //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
-            //       //   height: width>700?240:195,
-            //       //   decoration: BoxDecoration(
-            //       //       borderRadius: BorderRadius.circular(20),
-            //       //       color: Colors.white
-            //       //   ),
-            //       //   child: Row(
-            //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //     children: [
-            //       //       Expanded(flex:width<600?4:3,child: Padding(
-            //       //         padding: EdgeInsets.all(5),
-            //       //         child: Image.asset("assets/logo.png"),
-            //       //       )),
-            //       //
-            //       //       Expanded(flex: width<600?6:4,
-            //       //           child:  Column(
-            //       //             crossAxisAlignment: CrossAxisAlignment.start,
-            //       //             mainAxisAlignment:
-            //       //             // width>700?
-            //       //             MainAxisAlignment.spaceAround,
-            //       //             // :MainAxisAlignment.start,
-            //       //             children: [
-            //       //
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               Container(
-            //       //                 // margin: EdgeInsets.only(top: 3),
-            //       //                 padding: EdgeInsets.all(7),
-            //       //                 decoration: BoxDecoration(
-            //       //                     color: Colors.purple,
-            //       //                     borderRadius: BorderRadius.circular(10)
-            //       //                 ),
-            //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
-            //       //               ),
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               // SizedBox(height: 8,),
-            //       //               Column(
-            //       //                 mainAxisAlignment: MainAxisAlignment.start,
-            //       //                 crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                 children: [
-            //       //                   Text("Python for Data Science",style:
-            //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
-            //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
-            //       //                   SizedBox(height: 15,),
-            //       //                   // SizedBox(height: width>750?0:10,),
-            //       //                   Row(
-            //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //                     crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                     children: [
-            //       //                       Expanded(child: Column(
-            //       //                         crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                         mainAxisAlignment: MainAxisAlignment.start,
-            //       //                         children: [
-            //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 15,),
-            //       //                           SizedBox(
-            //       //                             width: width<400?160:190,
-            //       //                             child:
-            //       //                             MaterialButton(
-            //       //                               height: width>700?50:40,
-            //       //                               shape: RoundedRectangleBorder(
-            //       //                                 borderRadius: BorderRadius.circular(20),
-            //       //                               ),
-            //       //                               padding: EdgeInsets.all(8),
-            //       //                               minWidth: width>700?100:60,
-            //       //                               onPressed: (){},
-            //       //                               child: Row(
-            //       //                                 children: [
-            //       //                                   SizedBox(width: 5,),
-            //       //                                   Expanded(
-            //       //                                       flex:1,
-            //       //                                       child:
-            //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
-            //       //                                   Expanded(
-            //       //                                       flex:3,
-            //       //                                       child:
-            //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
-            //       //                                 ],
-            //       //                               ),color: Colors.purple,),
-            //       //                           )
-            //       //
-            //       //                         ],
-            //       //                       )),
-            //       //                       SizedBox(width: 5,),
-            //       //                       width<700?
-            //       //                       // Expanded(
-            //       //                       //   child:
-            //       //                       Column(
-            //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //                         children: [
-            //       //                           SizedBox(height: 25,),
-            //       //                           CircularPercentIndicator(
-            //       //                             radius: width<700?width<500?20:30:70,
-            //       //                             lineWidth: width>700?10.0:4.0,
-            //       //                             animation: true,
-            //       //                             percent: 10/100,
-            //       //                             center: Text(
-            //       //                               10.toString() + "%",
-            //       //                               style: TextStyle(
-            //       //                                   fontSize: width>700?20.0:width<500?8:14,
-            //       //                                   fontWeight: FontWeight.w600,
-            //       //                                   color: Colors.black),
-            //       //                             ),
-            //       //                             backgroundColor: Colors.black12,
-            //       //                             circularStrokeCap: CircularStrokeCap.round,
-            //       //                             progressColor: Colors.green,
-            //       //                           ),
-            //       //                           SizedBox(height: width<500?3:5,),
-            //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
-            //       //                           // SizedBox(height: 15,),
-            //       //                           // Text("10%")
-            //       //                         ],
-            //       //                       )
-            //       //                       // ,
-            //       //                       // )
-            //       //                           :SizedBox(),
-            //       //                       SizedBox(width: 5,)
-            //       //                     ],
-            //       //                   ),
-            //       //                 ],
-            //       //               )
-            //       //             ],
-            //       //           )),
-            //       //       // SizedBox(width: 10,),
-            //       //       width>700?Expanded(flex:2,
-            //       //         // color: Colors.green,
-            //       //         child: Column(
-            //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //           children: [
-            //       //             CircularPercentIndicator(
-            //       //               radius: width>700?70.0:40.0,
-            //       //               lineWidth: 10.0,
-            //       //               animation: true,
-            //       //               percent: 10/100,
-            //       //               center: Text(
-            //       //                 10.toString() + "%",
-            //       //                 style: TextStyle(
-            //       //                     fontSize: 20.0,
-            //       //                     fontWeight: FontWeight.w600,
-            //       //                     color: Colors.black),
-            //       //               ),
-            //       //               backgroundColor: Colors.black12,
-            //       //               circularStrokeCap: CircularStrokeCap.round,
-            //       //               progressColor: Colors.green,
-            //       //             ),
-            //       //             SizedBox(height: 15,),
-            //       //             Text("10%")
-            //       //           ],
-            //       //         ),):
-            //       //       SizedBox()
-            //       //       // Column(
-            //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //       //   children: [
-            //       //       //     CircularPercentIndicator(
-            //       //       //       radius: width>700?70.0:30.0,
-            //       //       //       lineWidth: width>700?10.0:5.0,
-            //       //       //       animation: true,
-            //       //       //       percent: 10/100,
-            //       //       //       center: Text(
-            //       //       //         10.toString() + "%",
-            //       //       //         style: TextStyle(
-            //       //       //             fontSize: width>700?20.0:14,
-            //       //       //             fontWeight: FontWeight.w600,
-            //       //       //             color: Colors.black),
-            //       //       //       ),
-            //       //       //       backgroundColor: Colors.black12,
-            //       //       //       circularStrokeCap: CircularStrokeCap.round,
-            //       //       //       progressColor: Colors.green,
-            //       //       //     ),
-            //       //       //     SizedBox(height: 15,),
-            //       //       //     Text("10%")
-            //       //       //   ],
-            //       //       // ),
-            //       //     ],
-            //       //   ),
-            //       // ),
-            //       // Container(
-            //       //   padding: EdgeInsets.all(8),
-            //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
-            //       //   height: width>700?240:195,
-            //       //   decoration: BoxDecoration(
-            //       //       borderRadius: BorderRadius.circular(20),
-            //       //       color: Colors.white
-            //       //   ),
-            //       //   child: Row(
-            //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //     children: [
-            //       //       Expanded(flex:width<600?4:3,child: Padding(
-            //       //         padding: EdgeInsets.all(5),
-            //       //         child: Image.asset("assets/logo.png"),
-            //       //       )),
-            //       //
-            //       //       Expanded(flex: width<600?6:4,
-            //       //           child:  Column(
-            //       //             crossAxisAlignment: CrossAxisAlignment.start,
-            //       //             mainAxisAlignment:
-            //       //             // width>700?
-            //       //             MainAxisAlignment.spaceAround,
-            //       //             // :MainAxisAlignment.start,
-            //       //             children: [
-            //       //
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               Container(
-            //       //                 // margin: EdgeInsets.only(top: 3),
-            //       //                 padding: EdgeInsets.all(7),
-            //       //                 decoration: BoxDecoration(
-            //       //                     color: Colors.purple,
-            //       //                     borderRadius: BorderRadius.circular(10)
-            //       //                 ),
-            //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
-            //       //               ),
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               // SizedBox(height: 8,),
-            //       //               Column(
-            //       //                 mainAxisAlignment: MainAxisAlignment.start,
-            //       //                 crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                 children: [
-            //       //                   Text("Python for Data Science",style:
-            //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
-            //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
-            //       //                   SizedBox(height: 15,),
-            //       //                   // SizedBox(height: width>750?0:10,),
-            //       //                   Row(
-            //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //                     crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                     children: [
-            //       //                       Expanded(child: Column(
-            //       //                         crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                         mainAxisAlignment: MainAxisAlignment.start,
-            //       //                         children: [
-            //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 15,),
-            //       //                           SizedBox(
-            //       //                             width: width<400?160:190,
-            //       //                             child:
-            //       //                             MaterialButton(
-            //       //                               height: width>700?50:40,
-            //       //                               shape: RoundedRectangleBorder(
-            //       //                                 borderRadius: BorderRadius.circular(20),
-            //       //                               ),
-            //       //                               padding: EdgeInsets.all(8),
-            //       //                               minWidth: width>700?100:60,
-            //       //                               onPressed: (){},
-            //       //                               child: Row(
-            //       //                                 children: [
-            //       //                                   SizedBox(width: 5,),
-            //       //                                   Expanded(
-            //       //                                       flex:1,
-            //       //                                       child:
-            //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
-            //       //                                   Expanded(
-            //       //                                       flex:3,
-            //       //                                       child:
-            //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
-            //       //                                 ],
-            //       //                               ),color: Colors.purple,),
-            //       //                           )
-            //       //
-            //       //                         ],
-            //       //                       )),
-            //       //                       SizedBox(width: 5,),
-            //       //                       width<700?
-            //       //                       // Expanded(
-            //       //                       //   child:
-            //       //                       Column(
-            //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //                         children: [
-            //       //                           SizedBox(height: 25,),
-            //       //                           CircularPercentIndicator(
-            //       //                             radius: width<700?width<500?20:30:70,
-            //       //                             lineWidth: width>700?10.0:4.0,
-            //       //                             animation: true,
-            //       //                             percent: 10/100,
-            //       //                             center: Text(
-            //       //                               10.toString() + "%",
-            //       //                               style: TextStyle(
-            //       //                                   fontSize: width>700?20.0:width<500?8:14,
-            //       //                                   fontWeight: FontWeight.w600,
-            //       //                                   color: Colors.black),
-            //       //                             ),
-            //       //                             backgroundColor: Colors.black12,
-            //       //                             circularStrokeCap: CircularStrokeCap.round,
-            //       //                             progressColor: Colors.green,
-            //       //                           ),
-            //       //                           SizedBox(height: width<500?3:5,),
-            //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
-            //       //                           // SizedBox(height: 15,),
-            //       //                           // Text("10%")
-            //       //                         ],
-            //       //                       )
-            //       //                       // ,
-            //       //                       // )
-            //       //                           :SizedBox(),
-            //       //                       SizedBox(width: 5,)
-            //       //                     ],
-            //       //                   ),
-            //       //                 ],
-            //       //               )
-            //       //             ],
-            //       //           )),
-            //       //       // SizedBox(width: 10,),
-            //       //       width>700?Expanded(flex:2,
-            //       //         // color: Colors.green,
-            //       //         child: Column(
-            //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //           children: [
-            //       //             CircularPercentIndicator(
-            //       //               radius: width>700?70.0:40.0,
-            //       //               lineWidth: 10.0,
-            //       //               animation: true,
-            //       //               percent: 10/100,
-            //       //               center: Text(
-            //       //                 10.toString() + "%",
-            //       //                 style: TextStyle(
-            //       //                     fontSize: 20.0,
-            //       //                     fontWeight: FontWeight.w600,
-            //       //                     color: Colors.black),
-            //       //               ),
-            //       //               backgroundColor: Colors.black12,
-            //       //               circularStrokeCap: CircularStrokeCap.round,
-            //       //               progressColor: Colors.green,
-            //       //             ),
-            //       //             SizedBox(height: 15,),
-            //       //             Text("10%")
-            //       //           ],
-            //       //         ),):
-            //       //       SizedBox()
-            //       //       // Column(
-            //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //       //   children: [
-            //       //       //     CircularPercentIndicator(
-            //       //       //       radius: width>700?70.0:30.0,
-            //       //       //       lineWidth: width>700?10.0:5.0,
-            //       //       //       animation: true,
-            //       //       //       percent: 10/100,
-            //       //       //       center: Text(
-            //       //       //         10.toString() + "%",
-            //       //       //         style: TextStyle(
-            //       //       //             fontSize: width>700?20.0:14,
-            //       //       //             fontWeight: FontWeight.w600,
-            //       //       //             color: Colors.black),
-            //       //       //       ),
-            //       //       //       backgroundColor: Colors.black12,
-            //       //       //       circularStrokeCap: CircularStrokeCap.round,
-            //       //       //       progressColor: Colors.green,
-            //       //       //     ),
-            //       //       //     SizedBox(height: 15,),
-            //       //       //     Text("10%")
-            //       //       //   ],
-            //       //       // ),
-            //       //     ],
-            //       //   ),
-            //       // ),
-            //       // Container(
-            //       //   padding: EdgeInsets.all(8),
-            //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
-            //       //   height: width>700?240:195,
-            //       //   decoration: BoxDecoration(
-            //       //       borderRadius: BorderRadius.circular(20),
-            //       //       color: Colors.white
-            //       //   ),
-            //       //   child: Row(
-            //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //     children: [
-            //       //       Expanded(flex:width<600?4:3,child: Padding(
-            //       //         padding: EdgeInsets.all(5),
-            //       //         child: Image.asset("assets/logo.png"),
-            //       //       )),
-            //       //
-            //       //       Expanded(flex: width<600?6:4,
-            //       //           child:  Column(
-            //       //             crossAxisAlignment: CrossAxisAlignment.start,
-            //       //             mainAxisAlignment:
-            //       //             // width>700?
-            //       //             MainAxisAlignment.spaceAround,
-            //       //             // :MainAxisAlignment.start,
-            //       //             children: [
-            //       //
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               Container(
-            //       //                 // margin: EdgeInsets.only(top: 3),
-            //       //                 padding: EdgeInsets.all(7),
-            //       //                 decoration: BoxDecoration(
-            //       //                     color: Colors.purple,
-            //       //                     borderRadius: BorderRadius.circular(10)
-            //       //                 ),
-            //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
-            //       //               ),
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               // SizedBox(height: 8,),
-            //       //               Column(
-            //       //                 mainAxisAlignment: MainAxisAlignment.start,
-            //       //                 crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                 children: [
-            //       //                   Text("Python for Data Science",style:
-            //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
-            //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
-            //       //                   SizedBox(height: 15,),
-            //       //                   // SizedBox(height: width>750?0:10,),
-            //       //                   Row(
-            //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //                     crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                     children: [
-            //       //                       Expanded(child: Column(
-            //       //                         crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                         mainAxisAlignment: MainAxisAlignment.start,
-            //       //                         children: [
-            //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 15,),
-            //       //                           SizedBox(
-            //       //                             width: width<400?160:190,
-            //       //                             child:
-            //       //                             MaterialButton(
-            //       //                               height: width>700?50:40,
-            //       //                               shape: RoundedRectangleBorder(
-            //       //                                 borderRadius: BorderRadius.circular(20),
-            //       //                               ),
-            //       //                               padding: EdgeInsets.all(8),
-            //       //                               minWidth: width>700?100:60,
-            //       //                               onPressed: (){},
-            //       //                               child: Row(
-            //       //                                 children: [
-            //       //                                   SizedBox(width: 5,),
-            //       //                                   Expanded(
-            //       //                                       flex:1,
-            //       //                                       child:
-            //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
-            //       //                                   Expanded(
-            //       //                                       flex:3,
-            //       //                                       child:
-            //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
-            //       //                                 ],
-            //       //                               ),color: Colors.purple,),
-            //       //                           )
-            //       //
-            //       //                         ],
-            //       //                       )),
-            //       //                       SizedBox(width: 5,),
-            //       //                       width<700?
-            //       //                       // Expanded(
-            //       //                       //   child:
-            //       //                       Column(
-            //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //                         children: [
-            //       //                           SizedBox(height: 25,),
-            //       //                           CircularPercentIndicator(
-            //       //                             radius: width<700?width<500?20:30:70,
-            //       //                             lineWidth: width>700?10.0:4.0,
-            //       //                             animation: true,
-            //       //                             percent: 10/100,
-            //       //                             center: Text(
-            //       //                               10.toString() + "%",
-            //       //                               style: TextStyle(
-            //       //                                   fontSize: width>700?20.0:width<500?8:14,
-            //       //                                   fontWeight: FontWeight.w600,
-            //       //                                   color: Colors.black),
-            //       //                             ),
-            //       //                             backgroundColor: Colors.black12,
-            //       //                             circularStrokeCap: CircularStrokeCap.round,
-            //       //                             progressColor: Colors.green,
-            //       //                           ),
-            //       //                           SizedBox(height: width<500?3:5,),
-            //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
-            //       //                           // SizedBox(height: 15,),
-            //       //                           // Text("10%")
-            //       //                         ],
-            //       //                       )
-            //       //                       // ,
-            //       //                       // )
-            //       //                           :SizedBox(),
-            //       //                       SizedBox(width: 5,)
-            //       //                     ],
-            //       //                   ),
-            //       //                 ],
-            //       //               )
-            //       //             ],
-            //       //           )),
-            //       //       // SizedBox(width: 10,),
-            //       //       width>700?Expanded(flex:2,
-            //       //         // color: Colors.green,
-            //       //         child: Column(
-            //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //           children: [
-            //       //             CircularPercentIndicator(
-            //       //               radius: width>700?70.0:40.0,
-            //       //               lineWidth: 10.0,
-            //       //               animation: true,
-            //       //               percent: 10/100,
-            //       //               center: Text(
-            //       //                 10.toString() + "%",
-            //       //                 style: TextStyle(
-            //       //                     fontSize: 20.0,
-            //       //                     fontWeight: FontWeight.w600,
-            //       //                     color: Colors.black),
-            //       //               ),
-            //       //               backgroundColor: Colors.black12,
-            //       //               circularStrokeCap: CircularStrokeCap.round,
-            //       //               progressColor: Colors.green,
-            //       //             ),
-            //       //             SizedBox(height: 15,),
-            //       //             Text("10%")
-            //       //           ],
-            //       //         ),):
-            //       //       SizedBox()
-            //       //       // Column(
-            //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //       //   children: [
-            //       //       //     CircularPercentIndicator(
-            //       //       //       radius: width>700?70.0:30.0,
-            //       //       //       lineWidth: width>700?10.0:5.0,
-            //       //       //       animation: true,
-            //       //       //       percent: 10/100,
-            //       //       //       center: Text(
-            //       //       //         10.toString() + "%",
-            //       //       //         style: TextStyle(
-            //       //       //             fontSize: width>700?20.0:14,
-            //       //       //             fontWeight: FontWeight.w600,
-            //       //       //             color: Colors.black),
-            //       //       //       ),
-            //       //       //       backgroundColor: Colors.black12,
-            //       //       //       circularStrokeCap: CircularStrokeCap.round,
-            //       //       //       progressColor: Colors.green,
-            //       //       //     ),
-            //       //       //     SizedBox(height: 15,),
-            //       //       //     Text("10%")
-            //       //       //   ],
-            //       //       // ),
-            //       //     ],
-            //       //   ),
-            //       // ),
-            //       // Container(
-            //       //   padding: EdgeInsets.all(8),
-            //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
-            //       //   height: width>700?240:195,
-            //       //   decoration: BoxDecoration(
-            //       //       borderRadius: BorderRadius.circular(20),
-            //       //       color: Colors.white
-            //       //   ),
-            //       //   child: Row(
-            //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //     children: [
-            //       //       Expanded(flex:width<600?4:3,child: Padding(
-            //       //         padding: EdgeInsets.all(5),
-            //       //         child: Image.asset("assets/logo.png"),
-            //       //       )),
-            //       //
-            //       //       Expanded(flex: width<600?6:4,
-            //       //           child:  Column(
-            //       //             crossAxisAlignment: CrossAxisAlignment.start,
-            //       //             mainAxisAlignment:
-            //       //             // width>700?
-            //       //             MainAxisAlignment.spaceAround,
-            //       //             // :MainAxisAlignment.start,
-            //       //             children: [
-            //       //
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               Container(
-            //       //                 // margin: EdgeInsets.only(top: 3),
-            //       //                 padding: EdgeInsets.all(7),
-            //       //                 decoration: BoxDecoration(
-            //       //                     color: Colors.purple,
-            //       //                     borderRadius: BorderRadius.circular(10)
-            //       //                 ),
-            //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
-            //       //               ),
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               // SizedBox(height: 8,),
-            //       //               Column(
-            //       //                 mainAxisAlignment: MainAxisAlignment.start,
-            //       //                 crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                 children: [
-            //       //                   Text("Python for Data Science",style:
-            //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
-            //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
-            //       //                   SizedBox(height: 15,),
-            //       //                   // SizedBox(height: width>750?0:10,),
-            //       //                   Row(
-            //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //                     crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                     children: [
-            //       //                       Expanded(child: Column(
-            //       //                         crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                         mainAxisAlignment: MainAxisAlignment.start,
-            //       //                         children: [
-            //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 15,),
-            //       //                           SizedBox(
-            //       //                             width: width<400?160:190,
-            //       //                             child:
-            //       //                             MaterialButton(
-            //       //                               height: width>700?50:40,
-            //       //                               shape: RoundedRectangleBorder(
-            //       //                                 borderRadius: BorderRadius.circular(20),
-            //       //                               ),
-            //       //                               padding: EdgeInsets.all(8),
-            //       //                               minWidth: width>700?100:60,
-            //       //                               onPressed: (){},
-            //       //                               child: Row(
-            //       //                                 children: [
-            //       //                                   SizedBox(width: 5,),
-            //       //                                   Expanded(
-            //       //                                       flex:1,
-            //       //                                       child:
-            //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
-            //       //                                   Expanded(
-            //       //                                       flex:3,
-            //       //                                       child:
-            //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
-            //       //                                 ],
-            //       //                               ),color: Colors.purple,),
-            //       //                           )
-            //       //
-            //       //                         ],
-            //       //                       )),
-            //       //                       SizedBox(width: 5,),
-            //       //                       width<700?
-            //       //                       // Expanded(
-            //       //                       //   child:
-            //       //                       Column(
-            //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //                         children: [
-            //       //                           SizedBox(height: 25,),
-            //       //                           CircularPercentIndicator(
-            //       //                             radius: width<700?width<500?20:30:70,
-            //       //                             lineWidth: width>700?10.0:4.0,
-            //       //                             animation: true,
-            //       //                             percent: 10/100,
-            //       //                             center: Text(
-            //       //                               10.toString() + "%",
-            //       //                               style: TextStyle(
-            //       //                                   fontSize: width>700?20.0:width<500?8:14,
-            //       //                                   fontWeight: FontWeight.w600,
-            //       //                                   color: Colors.black),
-            //       //                             ),
-            //       //                             backgroundColor: Colors.black12,
-            //       //                             circularStrokeCap: CircularStrokeCap.round,
-            //       //                             progressColor: Colors.green,
-            //       //                           ),
-            //       //                           SizedBox(height: width<500?3:5,),
-            //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
-            //       //                           // SizedBox(height: 15,),
-            //       //                           // Text("10%")
-            //       //                         ],
-            //       //                       )
-            //       //                       // ,
-            //       //                       // )
-            //       //                           :SizedBox(),
-            //       //                       SizedBox(width: 5,)
-            //       //                     ],
-            //       //                   ),
-            //       //                 ],
-            //       //               )
-            //       //             ],
-            //       //           )),
-            //       //       // SizedBox(width: 10,),
-            //       //       width>700?Expanded(flex:2,
-            //       //         // color: Colors.green,
-            //       //         child: Column(
-            //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //           children: [
-            //       //             CircularPercentIndicator(
-            //       //               radius: width>700?70.0:40.0,
-            //       //               lineWidth: 10.0,
-            //       //               animation: true,
-            //       //               percent: 10/100,
-            //       //               center: Text(
-            //       //                 10.toString() + "%",
-            //       //                 style: TextStyle(
-            //       //                     fontSize: 20.0,
-            //       //                     fontWeight: FontWeight.w600,
-            //       //                     color: Colors.black),
-            //       //               ),
-            //       //               backgroundColor: Colors.black12,
-            //       //               circularStrokeCap: CircularStrokeCap.round,
-            //       //               progressColor: Colors.green,
-            //       //             ),
-            //       //             SizedBox(height: 15,),
-            //       //             Text("10%")
-            //       //           ],
-            //       //         ),):
-            //       //       SizedBox()
-            //       //       // Column(
-            //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //       //   children: [
-            //       //       //     CircularPercentIndicator(
-            //       //       //       radius: width>700?70.0:30.0,
-            //       //       //       lineWidth: width>700?10.0:5.0,
-            //       //       //       animation: true,
-            //       //       //       percent: 10/100,
-            //       //       //       center: Text(
-            //       //       //         10.toString() + "%",
-            //       //       //         style: TextStyle(
-            //       //       //             fontSize: width>700?20.0:14,
-            //       //       //             fontWeight: FontWeight.w600,
-            //       //       //             color: Colors.black),
-            //       //       //       ),
-            //       //       //       backgroundColor: Colors.black12,
-            //       //       //       circularStrokeCap: CircularStrokeCap.round,
-            //       //       //       progressColor: Colors.green,
-            //       //       //     ),
-            //       //       //     SizedBox(height: 15,),
-            //       //       //     Text("10%")
-            //       //       //   ],
-            //       //       // ),
-            //       //     ],
-            //       //   ),
-            //       // ),
-            //       // Container(
-            //       //   padding: EdgeInsets.all(8),
-            //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
-            //       //   height: width>700?240:195,
-            //       //   decoration: BoxDecoration(
-            //       //       borderRadius: BorderRadius.circular(20),
-            //       //       color: Colors.white
-            //       //   ),
-            //       //   child: Row(
-            //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //     children: [
-            //       //       Expanded(flex:width<600?4:3,child: Padding(
-            //       //         padding: EdgeInsets.all(5),
-            //       //         child: Image.asset("assets/logo.png"),
-            //       //       )),
-            //       //
-            //       //       Expanded(flex: width<600?6:4,
-            //       //           child:  Column(
-            //       //             crossAxisAlignment: CrossAxisAlignment.start,
-            //       //             mainAxisAlignment:
-            //       //             // width>700?
-            //       //             MainAxisAlignment.spaceAround,
-            //       //             // :MainAxisAlignment.start,
-            //       //             children: [
-            //       //
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               Container(
-            //       //                 // margin: EdgeInsets.only(top: 3),
-            //       //                 padding: EdgeInsets.all(7),
-            //       //                 decoration: BoxDecoration(
-            //       //                     color: Colors.purple,
-            //       //                     borderRadius: BorderRadius.circular(10)
-            //       //                 ),
-            //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
-            //       //               ),
-            //       //               // SizedBox(height: width>750?0:10,),
-            //       //               // SizedBox(height: 8,),
-            //       //               Column(
-            //       //                 mainAxisAlignment: MainAxisAlignment.start,
-            //       //                 crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                 children: [
-            //       //                   Text("Python for Data Science",style:
-            //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
-            //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
-            //       //                   SizedBox(height: 15,),
-            //       //                   // SizedBox(height: width>750?0:10,),
-            //       //                   Row(
-            //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       //                     crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                     children: [
-            //       //                       Expanded(child: Column(
-            //       //                         crossAxisAlignment: CrossAxisAlignment.start,
-            //       //                         mainAxisAlignment: MainAxisAlignment.start,
-            //       //                         children: [
-            //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 3,),
-            //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
-            //       //                           SizedBox(height: 15,),
-            //       //                           SizedBox(
-            //       //                             width: width<400?160:190,
-            //       //                             child:
-            //       //                             MaterialButton(
-            //       //                               height: width>700?50:40,
-            //       //                               shape: RoundedRectangleBorder(
-            //       //                                 borderRadius: BorderRadius.circular(20),
-            //       //                               ),
-            //       //                               padding: EdgeInsets.all(8),
-            //       //                               minWidth: width>700?100:60,
-            //       //                               onPressed: (){},
-            //       //                               child: Row(
-            //       //                                 children: [
-            //       //                                   SizedBox(width: 5,),
-            //       //                                   Expanded(
-            //       //                                       flex:1,
-            //       //                                       child:
-            //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
-            //       //                                   Expanded(
-            //       //                                       flex:3,
-            //       //                                       child:
-            //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
-            //       //                                 ],
-            //       //                               ),color: Colors.purple,),
-            //       //                           )
-            //       //
-            //       //                         ],
-            //       //                       )),
-            //       //                       SizedBox(width: 5,),
-            //       //                       width<700?
-            //       //                       // Expanded(
-            //       //                       //   child:
-            //       //                       Column(
-            //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //                         children: [
-            //       //                           SizedBox(height: 25,),
-            //       //                           CircularPercentIndicator(
-            //       //                             radius: width<700?width<500?20:30:70,
-            //       //                             lineWidth: width>700?10.0:4.0,
-            //       //                             animation: true,
-            //       //                             percent: 10/100,
-            //       //                             center: Text(
-            //       //                               10.toString() + "%",
-            //       //                               style: TextStyle(
-            //       //                                   fontSize: width>700?20.0:width<500?8:14,
-            //       //                                   fontWeight: FontWeight.w600,
-            //       //                                   color: Colors.black),
-            //       //                             ),
-            //       //                             backgroundColor: Colors.black12,
-            //       //                             circularStrokeCap: CircularStrokeCap.round,
-            //       //                             progressColor: Colors.green,
-            //       //                           ),
-            //       //                           SizedBox(height: width<500?3:5,),
-            //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
-            //       //                           // SizedBox(height: 15,),
-            //       //                           // Text("10%")
-            //       //                         ],
-            //       //                       )
-            //       //                       // ,
-            //       //                       // )
-            //       //                           :SizedBox(),
-            //       //                       SizedBox(width: 5,)
-            //       //                     ],
-            //       //                   ),
-            //       //                 ],
-            //       //               )
-            //       //             ],
-            //       //           )),
-            //       //       // SizedBox(width: 10,),
-            //       //       width>700?Expanded(flex:2,
-            //       //         // color: Colors.green,
-            //       //         child: Column(
-            //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //           children: [
-            //       //             CircularPercentIndicator(
-            //       //               radius: width>700?70.0:40.0,
-            //       //               lineWidth: 10.0,
-            //       //               animation: true,
-            //       //               percent: 10/100,
-            //       //               center: Text(
-            //       //                 10.toString() + "%",
-            //       //                 style: TextStyle(
-            //       //                     fontSize: 20.0,
-            //       //                     fontWeight: FontWeight.w600,
-            //       //                     color: Colors.black),
-            //       //               ),
-            //       //               backgroundColor: Colors.black12,
-            //       //               circularStrokeCap: CircularStrokeCap.round,
-            //       //               progressColor: Colors.green,
-            //       //             ),
-            //       //             SizedBox(height: 15,),
-            //       //             Text("10%")
-            //       //           ],
-            //       //         ),):
-            //       //       SizedBox()
-            //       //       // Column(
-            //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-            //       //       //   children: [
-            //       //       //     CircularPercentIndicator(
-            //       //       //       radius: width>700?70.0:30.0,
-            //       //       //       lineWidth: width>700?10.0:5.0,
-            //       //       //       animation: true,
-            //       //       //       percent: 10/100,
-            //       //       //       center: Text(
-            //       //       //         10.toString() + "%",
-            //       //       //         style: TextStyle(
-            //       //       //             fontSize: width>700?20.0:14,
-            //       //       //             fontWeight: FontWeight.w600,
-            //       //       //             color: Colors.black),
-            //       //       //       ),
-            //       //       //       backgroundColor: Colors.black12,
-            //       //       //       circularStrokeCap: CircularStrokeCap.round,
-            //       //       //       progressColor: Colors.green,
-            //       //       //     ),
-            //       //       //     SizedBox(height: 15,),
-            //       //       //     Text("10%")
-            //       //       //   ],
-            //       //       // ),
-            //       //     ],
-            //       //   ),
-            //       // ),
-            //
-            //     ],
-            //   ),
-            // ),
-          );
+              // Stack(
+              //   children: [
+              //     Column(
+              //       crossAxisAlignment: CrossAxisAlignment.stretch,
+              //       children: [
+              //         customMenuBar(context),
+              //         Container(
+              //           height: constraints.maxHeight-50,
+              //           child: SingleChildScrollView(
+              //             child: Column(
+              //               mainAxisAlignment: MainAxisAlignment.center,
+              //               crossAxisAlignment: CrossAxisAlignment.stretch,
+              //               children: [
+              //                 SizedBox(height: 10,),
+              //                 RichText(text: TextSpan(
+              //                     children: [
+              //                       TextSpan(text: "welcome to ",style: TextStyle(fontWeight: FontWeight.w200,fontSize: width<850?width<430?25:30:40,color: Colors.black)),
+              //                       TextSpan(text: "Data Science and \n Analytics Combo Course",style: TextStyle(fontSize: width<850?width<430?25:30:40,fontWeight: FontWeight.bold,color: Colors.black))
+              //                     ]
+              //                 ),textAlign: TextAlign.center,),
+              //                 SizedBox(height: 10,),
+              //                 StreamBuilder(
+              //                     stream:counterStream,
+              //                     // FirebaseFirestore.instance
+              //                     //     .collection('courses')
+              //                     //     .snapshots(),
+              //                     builder: (context,snapshot){
+              //                       if(snapshot.hasData && widget.courses!=null)
+              //                       {
+              //                         List courseList = [];
+              //                         for (var i in widget.courses!) {
+              //                           for (var j in course) {
+              //                             if (i == j.courseId) {
+              //                               courseList.add(j);
+              //                             }
+              //                           }
+              //                         }
+              //                         print("listoooo $courseList");
+              //                         return Column(
+              //                           children: List.generate(courseList.length, (index) {
+              //                             print("snapdatassss");
+              //                             print(snapshot.data);
+              //                             // print("Courses list ${courseList}");
+              //                             if (courseList.length > index)  {
+              //                               print("Duration ${courseList[index].duration}");
+              //                               return
+              //                                 Container(
+              //                                   padding: EdgeInsets.all(8),
+              //                                   margin: EdgeInsets.only(bottom: 15),
+              //                                   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
+              //                                   height: width>700?230:width<300?190:210,
+              //                                   decoration: BoxDecoration(
+              //                                       borderRadius: BorderRadius.circular(20),
+              //                                       color: Colors.white
+              //                                   ),
+              //                                   child: InkWell(
+              //                                     onTap: ()
+              //                                     {
+              //                                       setState(() {
+              //                                         courseId = courseList[index].courseDocumentId;
+              //                                       });
+              //                                       GoRouter.of(context).pushNamed('comboVideoScreen',
+              //                                           queryParams: {
+              //                                             'courseName': courseList[index].courseName,
+              //                                             'cID': courseList[index].courseDocumentId,
+              //                                           });
+              //                                     },
+              //                                     child: Row(
+              //                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //                                       children: [
+              //                                         Expanded(flex:width<600?4:3,child:
+              //                                         Padding(
+              //                                           padding: EdgeInsets.all(5),
+              //                                           child: ClipRRect(
+              //                                             borderRadius:
+              //                                             BorderRadius.circular(25),
+              //                                             child: Container(
+              //                                               // width: 130,
+              //                                               // height: 95,
+              //                                               decoration: BoxDecoration(
+              //                                                   borderRadius:
+              //                                                   BorderRadius.only(
+              //                                                     topLeft: Radius.circular(15),
+              //                                                     topRight: Radius.circular(15),
+              //                                                     bottomLeft: Radius.circular(15),
+              //                                                     bottomRight:
+              //                                                     Radius.circular(15),
+              //                                                   )),
+              //                                               child: CachedNetworkImage(
+              //                                                 imageUrl:courseList[index].courseImageUrl,
+              //                                                 placeholder: (context, url) =>
+              //                                                     Center(child: CircularProgressIndicator()),
+              //                                                 errorWidget:
+              //                                                     (context, url, error) =>
+              //                                                     Icon(Icons.error),
+              //                                               ),
+              //                                             ),
+              //                                           ),
+              //                                         )),
+              //
+              //                                         Expanded(flex: width<600?6:4,
+              //                                             child:  Column(
+              //                                               crossAxisAlignment: CrossAxisAlignment.start,
+              //                                               mainAxisAlignment:
+              //                                               // width>700?
+              //                                               MainAxisAlignment.spaceAround,
+              //                                               // :MainAxisAlignment.start,
+              //                                               children: [
+              //
+              //                                                 // SizedBox(height: width>750?0:10,),
+              //                                                 Container(
+              //                                                   // margin: EdgeInsets.only(top: 3),
+              //                                                   padding: EdgeInsets.all(7),
+              //                                                   decoration: BoxDecoration(
+              //                                                       color: Colors.purple,
+              //                                                       borderRadius: BorderRadius.circular(10)
+              //                                                   ),
+              //                                                   child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
+              //                                                 ),
+              //                                                 // SizedBox(height: width>750?0:10,),
+              //                                                 // SizedBox(height: 8,),
+              //                                                 Column(
+              //                                                   mainAxisAlignment: MainAxisAlignment.start,
+              //                                                   crossAxisAlignment: CrossAxisAlignment.start,
+              //                                                   children: [
+              //                                                     Text(
+              //                                                       courseList[index].courseName,style:
+              //                                                     TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
+              //                                                       overflow: TextOverflow.ellipsis,maxLines: 1,),
+              //                                                     SizedBox(height: 15,),
+              //                                                     // SizedBox(height: width>750?0:10,),
+              //                                                     Row(
+              //                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //                                                       crossAxisAlignment: CrossAxisAlignment.start,
+              //                                                       children: [
+              //                                                         Expanded(child: Column(
+              //                                                           crossAxisAlignment: CrossAxisAlignment.start,
+              //                                                           mainAxisAlignment: MainAxisAlignment.start,
+              //                                                           children: [
+              //                                                             Text("Estimates learning time: ${courseList[index].duration==null?"0":courseList[index].duration} Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //                                                             SizedBox(height: 3,),
+              //                                                             Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //                                                             SizedBox(height: 3,),
+              //                                                             Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //                                                             SizedBox(height: 15,),
+              //                                                             SizedBox(
+              //                                                               width: width<400?160:190,
+              //                                                               child:
+              //                                                               MaterialButton(
+              //                                                                 height: width>700?50:40,
+              //                                                                 shape: RoundedRectangleBorder(
+              //                                                                   borderRadius: BorderRadius.circular(20),
+              //                                                                 ),
+              //                                                                 padding: EdgeInsets.all(8),
+              //                                                                 minWidth: width>700?100:60,
+              //                                                                 onPressed: (){},
+              //                                                                 child: Row(
+              //                                                                   children: [
+              //                                                                     SizedBox(width: 5,),
+              //                                                                     Expanded(
+              //                                                                         flex:1,
+              //                                                                         child:
+              //                                                                         Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
+              //                                                                     Expanded(
+              //                                                                         flex:3,
+              //                                                                         child:
+              //                                                                         Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
+              //                                                                   ],
+              //                                                                 ),color: Colors.purple,),
+              //                                                             )
+              //
+              //                                                           ],
+              //                                                         )),
+              //                                                         SizedBox(width: 5,),
+              //                                                         width<700?
+              //                                                         // Expanded(
+              //                                                         //   child:
+              //                                                         Column(
+              //                                                           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //                                                           children: [
+              //                                                             SizedBox(height: 25,),
+              //                                                             CircularPercentIndicator(
+              //                                                               radius: width<700?width<500?20:30:70,
+              //                                                               lineWidth: width>700?10.0:4.0,
+              //                                                               animation: true,
+              //                                                               percent: courseData!=null?courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"]/100:0/100:0,
+              //                                                               center: courseData!=null?
+              //                                                               courseData[widget.courses![index]+"percentage"]!=null?Text(
+              //                                                                 courseData[widget.courses![index]+"percentage"].toString()+ "%",
+              //                                                                 style: TextStyle(
+              //                                                                     fontSize: width>700?20.0:width<500?8:14,
+              //                                                                     fontWeight: FontWeight.w600,
+              //                                                                     color: Colors.black),
+              //                                                               ):Text(
+              //                                                                 0.toString() + "%",
+              //                                                                 style: TextStyle(
+              //                                                                     fontSize: width>700?20.0:width<500?8:14,
+              //                                                                     fontWeight: FontWeight.w600,
+              //                                                                     color: Colors.black),
+              //                                                               ):SizedBox(),
+              //                                                               backgroundColor: Colors.black12,
+              //                                                               circularStrokeCap: CircularStrokeCap.round,
+              //                                                               progressColor: Colors.green,
+              //                                                             ),
+              //                                                             SizedBox(height: width<500?3:5,),
+              //                                                             courseData!=null?
+              //                                                             Text(
+              //                                                               courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"].toString()+"%":"0%",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),):SizedBox()
+              //                                                             // SizedBox(height: 15,),
+              //                                                             // Text("10%")
+              //                                                           ],
+              //                                                         )
+              //                                                         // ,
+              //                                                         // )
+              //                                                             :SizedBox(),
+              //                                                         SizedBox(width: 5,)
+              //                                                       ],
+              //                                                     ),
+              //                                                   ],
+              //                                                 )
+              //                                               ],
+              //                                             )),
+              //                                         // SizedBox(width: 10,),
+              //                                         width>700?Expanded(flex:2,
+              //                                           // color: Colors.green,
+              //                                           child: Column(
+              //                                             mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //                                             children: [
+              //                                               CircularPercentIndicator(
+              //                                                 radius: width>700?70.0:40.0,
+              //                                                 lineWidth: 10.0,
+              //                                                 animation: true,
+              //                                                 percent: courseData!=null?courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"]/100:0/100:0,
+              //                                                 center: courseData!=null?
+              //                                                 courseData[widget.courses![index]+"percentage"]!=null?Text(
+              //                                                   courseData[widget.courses![index]+"percentage"].toString() + "%",
+              //                                                   style: TextStyle(
+              //                                                       fontSize: 20.0,
+              //                                                       fontWeight: FontWeight.w600,
+              //                                                       color: Colors.black),
+              //                                                 ):Text(0.toString()+'%',style: TextStyle(
+              //                                                     fontSize: 20.0,
+              //                                                     fontWeight: FontWeight.w600,
+              //                                                     color: Colors.black)):SizedBox(),
+              //                                                 backgroundColor: Colors.black12,
+              //                                                 circularStrokeCap: CircularStrokeCap.round,
+              //                                                 progressColor: Colors.green,
+              //                                               ),
+              //                                               SizedBox(height: 15,),
+              //                                               courseData!=null?Text(
+              //                                                   courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"].toString()+"%":"0%"):SizedBox()
+              //                                             ],
+              //                                           ),):
+              //                                         SizedBox()
+              //                                         // Column(
+              //                                         //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //                                         //   children: [
+              //                                         //     CircularPercentIndicator(
+              //                                         //       radius: width>700?70.0:30.0,
+              //                                         //       lineWidth: width>700?10.0:5.0,
+              //                                         //       animation: true,
+              //                                         //       percent: 10/100,
+              //                                         //       center: Text(
+              //                                         //         10.toString() + "%",
+              //                                         //         style: TextStyle(
+              //                                         //             fontSize: width>700?20.0:14,
+              //                                         //             fontWeight: FontWeight.w600,
+              //                                         //             color: Colors.black),
+              //                                         //       ),
+              //                                         //       backgroundColor: Colors.black12,
+              //                                         //       circularStrokeCap: CircularStrokeCap.round,
+              //                                         //       progressColor: Colors.green,
+              //                                         //     ),
+              //                                         //     SizedBox(height: 15,),
+              //                                         //     Text("10%")
+              //                                         //   ],
+              //                                         // ),
+              //                                       ],
+              //                                     ),
+              //                                   ),
+              //                                 );
+              //                             } else {
+              //                               return Container();
+              //                             }
+              //                           },),
+              //                         );
+              //                       }
+              //                       else{
+              //                         return Container();
+              //                       }
+              //
+              //                     })
+              //               ],
+              //             ),
+              //           ),
+              //         )
+              //         // SingleChildScrollView(
+              //         //   child: Column(
+              //         //     mainAxisAlignment: MainAxisAlignment.center,
+              //         //     crossAxisAlignment: CrossAxisAlignment.stretch,
+              //         //     children: [
+              //         //       SizedBox(height: 10,),
+              //         //       RichText(text: TextSpan(
+              //         //           children: [
+              //         //             TextSpan(text: "welcome to ",style: TextStyle(fontWeight: FontWeight.w200,fontSize: width<850?width<430?25:30:40,color: Colors.black)),
+              //         //             TextSpan(text: "Data Science and \n Analytics Combo Course",style: TextStyle(fontSize: width<850?width<430?25:30:40,fontWeight: FontWeight.bold,color: Colors.black))
+              //         //           ]
+              //         //       ),textAlign: TextAlign.center,),
+              //         //       SizedBox(height: 10,),
+              //         //       StreamBuilder(
+              //         //           stream:counterStream,
+              //         //           // FirebaseFirestore.instance
+              //         //           //     .collection('courses')
+              //         //           //     .snapshots(),
+              //         //           builder: (context,snapshot){
+              //         //             if(snapshot.hasData && widget.courses!=null)
+              //         //             {
+              //         //               List courseList = [];
+              //         //               for (var i in widget.courses!) {
+              //         //                 for (var j in course) {
+              //         //                   if (i == j.courseId) {
+              //         //                     courseList.add(j);
+              //         //                   }
+              //         //                 }
+              //         //               }
+              //         //               print("listoooo $courseList");
+              //         //               return Column(
+              //         //                 children: List.generate(courseList.length, (index) {
+              //         //                   print("snapdatassss");
+              //         //                   print(snapshot.data);
+              //         //                   // print("Courses list ${courseList}");
+              //         //                   if (courseList.length > index)  {
+              //         //                     print("Duration ${courseList[index].duration}");
+              //         //                     return
+              //         //                       Container(
+              //         //                         padding: EdgeInsets.all(8),
+              //         //                         margin: EdgeInsets.only(bottom: 15),
+              //         //                         width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
+              //         //                         height: width>700?230:width<300?190:210,
+              //         //                         decoration: BoxDecoration(
+              //         //                             borderRadius: BorderRadius.circular(20),
+              //         //                             color: Colors.white
+              //         //                         ),
+              //         //                         child: InkWell(
+              //         //                           onTap: ()
+              //         //                           {
+              //         //                             setState(() {
+              //         //                               courseId = courseList[index].courseDocumentId;
+              //         //                             });
+              //         //                             GoRouter.of(context).pushNamed('comboVideoScreen',
+              //         //                                 queryParams: {
+              //         //                                   'courseName': courseList[index].courseName,
+              //         //                                   'cID': courseList[index].courseDocumentId,
+              //         //                                 });
+              //         //                           },
+              //         //                           child: Row(
+              //         //                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         //                             children: [
+              //         //                               Expanded(flex:width<600?4:3,child:
+              //         //                               Padding(
+              //         //                                 padding: EdgeInsets.all(5),
+              //         //                                 child: ClipRRect(
+              //         //                                   borderRadius:
+              //         //                                   BorderRadius.circular(25),
+              //         //                                   child: Container(
+              //         //                                     // width: 130,
+              //         //                                     // height: 95,
+              //         //                                     decoration: BoxDecoration(
+              //         //                                         borderRadius:
+              //         //                                         BorderRadius.only(
+              //         //                                           topLeft: Radius.circular(15),
+              //         //                                           topRight: Radius.circular(15),
+              //         //                                           bottomLeft: Radius.circular(15),
+              //         //                                           bottomRight:
+              //         //                                           Radius.circular(15),
+              //         //                                         )),
+              //         //                                     child: CachedNetworkImage(
+              //         //                                       imageUrl:courseList[index].courseImageUrl,
+              //         //                                       placeholder: (context, url) =>
+              //         //                                           Center(child: CircularProgressIndicator()),
+              //         //                                       errorWidget:
+              //         //                                           (context, url, error) =>
+              //         //                                           Icon(Icons.error),
+              //         //                                     ),
+              //         //                                   ),
+              //         //                                 ),
+              //         //                               )),
+              //         //
+              //         //                               Expanded(flex: width<600?6:4,
+              //         //                                   child:  Column(
+              //         //                                     crossAxisAlignment: CrossAxisAlignment.start,
+              //         //                                     mainAxisAlignment:
+              //         //                                     // width>700?
+              //         //                                     MainAxisAlignment.spaceAround,
+              //         //                                     // :MainAxisAlignment.start,
+              //         //                                     children: [
+              //         //
+              //         //                                       // SizedBox(height: width>750?0:10,),
+              //         //                                       Container(
+              //         //                                         // margin: EdgeInsets.only(top: 3),
+              //         //                                         padding: EdgeInsets.all(7),
+              //         //                                         decoration: BoxDecoration(
+              //         //                                             color: Colors.purple,
+              //         //                                             borderRadius: BorderRadius.circular(10)
+              //         //                                         ),
+              //         //                                         child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
+              //         //                                       ),
+              //         //                                       // SizedBox(height: width>750?0:10,),
+              //         //                                       // SizedBox(height: 8,),
+              //         //                                       Column(
+              //         //                                         mainAxisAlignment: MainAxisAlignment.start,
+              //         //                                         crossAxisAlignment: CrossAxisAlignment.start,
+              //         //                                         children: [
+              //         //                                           Text(
+              //         //                                             courseList[index].courseName,style:
+              //         //                                           TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
+              //         //                                             overflow: TextOverflow.ellipsis,maxLines: 1,),
+              //         //                                           SizedBox(height: 15,),
+              //         //                                           // SizedBox(height: width>750?0:10,),
+              //         //                                           Row(
+              //         //                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         //                                             crossAxisAlignment: CrossAxisAlignment.start,
+              //         //                                             children: [
+              //         //                                               Expanded(child: Column(
+              //         //                                                 crossAxisAlignment: CrossAxisAlignment.start,
+              //         //                                                 mainAxisAlignment: MainAxisAlignment.start,
+              //         //                                                 children: [
+              //         //                                                   Text("Estimates learning time: ${courseList[index].duration==null?"0":courseList[index].duration} Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //         //                                                   SizedBox(height: 3,),
+              //         //                                                   Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //         //                                                   SizedBox(height: 3,),
+              //         //                                                   Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //         //                                                   SizedBox(height: 15,),
+              //         //                                                   SizedBox(
+              //         //                                                     width: width<400?160:190,
+              //         //                                                     child:
+              //         //                                                     MaterialButton(
+              //         //                                                       height: width>700?50:40,
+              //         //                                                       shape: RoundedRectangleBorder(
+              //         //                                                         borderRadius: BorderRadius.circular(20),
+              //         //                                                       ),
+              //         //                                                       padding: EdgeInsets.all(8),
+              //         //                                                       minWidth: width>700?100:60,
+              //         //                                                       onPressed: (){},
+              //         //                                                       child: Row(
+              //         //                                                         children: [
+              //         //                                                           SizedBox(width: 5,),
+              //         //                                                           Expanded(
+              //         //                                                               flex:1,
+              //         //                                                               child:
+              //         //                                                               Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
+              //         //                                                           Expanded(
+              //         //                                                               flex:3,
+              //         //                                                               child:
+              //         //                                                               Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
+              //         //                                                         ],
+              //         //                                                       ),color: Colors.purple,),
+              //         //                                                   )
+              //         //
+              //         //                                                 ],
+              //         //                                               )),
+              //         //                                               SizedBox(width: 5,),
+              //         //                                               width<700?
+              //         //                                               // Expanded(
+              //         //                                               //   child:
+              //         //                                               Column(
+              //         //                                                 mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //         //                                                 children: [
+              //         //                                                   SizedBox(height: 25,),
+              //         //                                                   CircularPercentIndicator(
+              //         //                                                     radius: width<700?width<500?20:30:70,
+              //         //                                                     lineWidth: width>700?10.0:4.0,
+              //         //                                                     animation: true,
+              //         //                                                     percent: courseData!=null?courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"]/100:0/100:0,
+              //         //                                                     center: courseData!=null?
+              //         //                                                     courseData[widget.courses![index]+"percentage"]!=null?Text(
+              //         //                                                       courseData[widget.courses![index]+"percentage"].toString()+ "%",
+              //         //                                                       style: TextStyle(
+              //         //                                                           fontSize: width>700?20.0:width<500?8:14,
+              //         //                                                           fontWeight: FontWeight.w600,
+              //         //                                                           color: Colors.black),
+              //         //                                                     ):Text(
+              //         //                                                       0.toString() + "%",
+              //         //                                                       style: TextStyle(
+              //         //                                                           fontSize: width>700?20.0:width<500?8:14,
+              //         //                                                           fontWeight: FontWeight.w600,
+              //         //                                                           color: Colors.black),
+              //         //                                                     ):SizedBox(),
+              //         //                                                     backgroundColor: Colors.black12,
+              //         //                                                     circularStrokeCap: CircularStrokeCap.round,
+              //         //                                                     progressColor: Colors.green,
+              //         //                                                   ),
+              //         //                                                   SizedBox(height: width<500?3:5,),
+              //         //                                                   courseData!=null?
+              //         //                                                   Text(
+              //         //                                                     courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"].toString()+"%":"0%",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),):SizedBox()
+              //         //                                                   // SizedBox(height: 15,),
+              //         //                                                   // Text("10%")
+              //         //                                                 ],
+              //         //                                               )
+              //         //                                               // ,
+              //         //                                               // )
+              //         //                                                   :SizedBox(),
+              //         //                                               SizedBox(width: 5,)
+              //         //                                             ],
+              //         //                                           ),
+              //         //                                         ],
+              //         //                                       )
+              //         //                                     ],
+              //         //                                   )),
+              //         //                               // SizedBox(width: 10,),
+              //         //                               width>700?Expanded(flex:2,
+              //         //                                 // color: Colors.green,
+              //         //                                 child: Column(
+              //         //                                   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //         //                                   children: [
+              //         //                                     CircularPercentIndicator(
+              //         //                                       radius: width>700?70.0:40.0,
+              //         //                                       lineWidth: 10.0,
+              //         //                                       animation: true,
+              //         //                                       percent: courseData!=null?courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"]/100:0/100:0,
+              //         //                                       center: courseData!=null?
+              //         //                                       courseData[widget.courses![index]+"percentage"]!=null?Text(
+              //         //                                         courseData[widget.courses![index]+"percentage"].toString() + "%",
+              //         //                                         style: TextStyle(
+              //         //                                             fontSize: 20.0,
+              //         //                                             fontWeight: FontWeight.w600,
+              //         //                                             color: Colors.black),
+              //         //                                       ):Text(0.toString()+'%',style: TextStyle(
+              //         //                                           fontSize: 20.0,
+              //         //                                           fontWeight: FontWeight.w600,
+              //         //                                           color: Colors.black)):SizedBox(),
+              //         //                                       backgroundColor: Colors.black12,
+              //         //                                       circularStrokeCap: CircularStrokeCap.round,
+              //         //                                       progressColor: Colors.green,
+              //         //                                     ),
+              //         //                                     SizedBox(height: 15,),
+              //         //                                     courseData!=null?Text(
+              //         //                                         courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"].toString()+"%":"0%"):SizedBox()
+              //         //                                   ],
+              //         //                                 ),):
+              //         //                               SizedBox()
+              //         //                               // Column(
+              //         //                               //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //         //                               //   children: [
+              //         //                               //     CircularPercentIndicator(
+              //         //                               //       radius: width>700?70.0:30.0,
+              //         //                               //       lineWidth: width>700?10.0:5.0,
+              //         //                               //       animation: true,
+              //         //                               //       percent: 10/100,
+              //         //                               //       center: Text(
+              //         //                               //         10.toString() + "%",
+              //         //                               //         style: TextStyle(
+              //         //                               //             fontSize: width>700?20.0:14,
+              //         //                               //             fontWeight: FontWeight.w600,
+              //         //                               //             color: Colors.black),
+              //         //                               //       ),
+              //         //                               //       backgroundColor: Colors.black12,
+              //         //                               //       circularStrokeCap: CircularStrokeCap.round,
+              //         //                               //       progressColor: Colors.green,
+              //         //                               //     ),
+              //         //                               //     SizedBox(height: 15,),
+              //         //                               //     Text("10%")
+              //         //                               //   ],
+              //         //                               // ),
+              //         //                             ],
+              //         //                           ),
+              //         //                         ),
+              //         //                       );
+              //         //                   } else {
+              //         //                     return Container();
+              //         //                   }
+              //         //                 },),
+              //         //               );
+              //         //             }
+              //         //             else{
+              //         //               return Container();
+              //         //             }
+              //         //
+              //         //           })
+              //         //     ],
+              //         //   ),
+              //         // )
+              //       ],
+              //     ),
+              //
+              //   ],
+              // )
+              ///
+              // SingleChildScrollView(
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.center,
+              //     children: [
+              //       SizedBox(height: 10,),
+              //       RichText(text: TextSpan(
+              //           children: [
+              //             TextSpan(text: "welcome to ",style: TextStyle(fontWeight: FontWeight.w200,fontSize: width<850?width<430?25:30:55,color: Colors.black)),
+              //             TextSpan(text: "Data Science and \n Analytics Combo Course",style: TextStyle(fontSize: width<850?width<430?25:30:60,fontWeight: FontWeight.bold,color: Colors.black))
+              //           ]
+              //       ),textAlign: TextAlign.center,),
+              //       SizedBox(height: 10,),
+              //       StreamBuilder(
+              //         stream: FirebaseFirestore.instance
+              //             .collection('courses')
+              //             .snapshots(),
+              //           builder: (context,snapshot){
+              //           if(snapshot.hasData)
+              //             {
+              //               return Column(
+              //                 children: List.generate(widget.courses!.length, (index) => Container(
+              //                   padding: EdgeInsets.all(8),
+              //                   margin: EdgeInsets.only(bottom: 10),
+              //                   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
+              //                   height: width>700?240:195,
+              //                   decoration: BoxDecoration(
+              //                       borderRadius: BorderRadius.circular(20),
+              //                       color: Colors.white
+              //                   ),
+              //                   child: Row(
+              //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //                     children: [
+              //                       Expanded(flex:width<600?4:3,child: Padding(
+              //                         padding: EdgeInsets.all(5),
+              //                         child: Image.asset("assets/logo.png"),
+              //                       )),
+              //
+              //                       Expanded(flex: width<600?6:4,
+              //                           child:  Column(
+              //                             crossAxisAlignment: CrossAxisAlignment.start,
+              //                             mainAxisAlignment:
+              //                             // width>700?
+              //                             MainAxisAlignment.spaceAround,
+              //                             // :MainAxisAlignment.start,
+              //                             children: [
+              //
+              //                               // SizedBox(height: width>750?0:10,),
+              //                               Container(
+              //                                 // margin: EdgeInsets.only(top: 3),
+              //                                 padding: EdgeInsets.all(7),
+              //                                 decoration: BoxDecoration(
+              //                                     color: Colors.purple,
+              //                                     borderRadius: BorderRadius.circular(10)
+              //                                 ),
+              //                                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
+              //                               ),
+              //                               // SizedBox(height: width>750?0:10,),
+              //                               // SizedBox(height: 8,),
+              //                               Column(
+              //                                 mainAxisAlignment: MainAxisAlignment.start,
+              //                                 crossAxisAlignment: CrossAxisAlignment.start,
+              //                                 children: [
+              //                                   Text("Python for Data Science",style:
+              //                                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
+              //                                     overflow: TextOverflow.ellipsis,maxLines: 2,),
+              //                                   SizedBox(height: 15,),
+              //                                   // SizedBox(height: width>750?0:10,),
+              //                                   Row(
+              //                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //                                     crossAxisAlignment: CrossAxisAlignment.start,
+              //                                     children: [
+              //                                       Expanded(child: Column(
+              //                                         crossAxisAlignment: CrossAxisAlignment.start,
+              //                                         mainAxisAlignment: MainAxisAlignment.start,
+              //                                         children: [
+              //                                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //                                           SizedBox(height: 3,),
+              //                                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //                                           SizedBox(height: 3,),
+              //                                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //                                           SizedBox(height: 15,),
+              //                                           SizedBox(
+              //                                             width: width<400?160:190,
+              //                                             child:
+              //                                             MaterialButton(
+              //                                               height: width>700?50:40,
+              //                                               shape: RoundedRectangleBorder(
+              //                                                 borderRadius: BorderRadius.circular(20),
+              //                                               ),
+              //                                               padding: EdgeInsets.all(8),
+              //                                               minWidth: width>700?100:60,
+              //                                               onPressed: (){},
+              //                                               child: Row(
+              //                                                 children: [
+              //                                                   SizedBox(width: 5,),
+              //                                                   Expanded(
+              //                                                       flex:1,
+              //                                                       child:
+              //                                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
+              //                                                   Expanded(
+              //                                                       flex:3,
+              //                                                       child:
+              //                                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
+              //                                                 ],
+              //                                               ),color: Colors.purple,),
+              //                                           )
+              //
+              //                                         ],
+              //                                       )),
+              //                                       SizedBox(width: 5,),
+              //                                       width<700?
+              //                                       // Expanded(
+              //                                       //   child:
+              //                                       Column(
+              //                                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //                                         children: [
+              //                                           SizedBox(height: 25,),
+              //                                           CircularPercentIndicator(
+              //                                             radius: width<700?width<500?20:30:70,
+              //                                             lineWidth: width>700?10.0:4.0,
+              //                                             animation: true,
+              //                                             percent: 10/100,
+              //                                             center: Text(
+              //                                               10.toString() + "%",
+              //                                               style: TextStyle(
+              //                                                   fontSize: width>700?20.0:width<500?8:14,
+              //                                                   fontWeight: FontWeight.w600,
+              //                                                   color: Colors.black),
+              //                                             ),
+              //                                             backgroundColor: Colors.black12,
+              //                                             circularStrokeCap: CircularStrokeCap.round,
+              //                                             progressColor: Colors.green,
+              //                                           ),
+              //                                           SizedBox(height: width<500?3:5,),
+              //                                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
+              //                                           // SizedBox(height: 15,),
+              //                                           // Text("10%")
+              //                                         ],
+              //                                       )
+              //                                       // ,
+              //                                       // )
+              //                                           :SizedBox(),
+              //                                       SizedBox(width: 5,)
+              //                                     ],
+              //                                   ),
+              //                                 ],
+              //                               )
+              //                             ],
+              //                           )),
+              //                       // SizedBox(width: 10,),
+              //                       width>700?Expanded(flex:2,
+              //                         // color: Colors.green,
+              //                         child: Column(
+              //                           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //                           children: [
+              //                             CircularPercentIndicator(
+              //                               radius: width>700?70.0:40.0,
+              //                               lineWidth: 10.0,
+              //                               animation: true,
+              //                               percent: 10/100,
+              //                               center: Text(
+              //                                 10.toString() + "%",
+              //                                 style: TextStyle(
+              //                                     fontSize: 20.0,
+              //                                     fontWeight: FontWeight.w600,
+              //                                     color: Colors.black),
+              //                               ),
+              //                               backgroundColor: Colors.black12,
+              //                               circularStrokeCap: CircularStrokeCap.round,
+              //                               progressColor: Colors.green,
+              //                             ),
+              //                             SizedBox(height: 15,),
+              //                             Text("10%")
+              //                           ],
+              //                         ),):
+              //                       SizedBox()
+              //                       // Column(
+              //                       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //                       //   children: [
+              //                       //     CircularPercentIndicator(
+              //                       //       radius: width>700?70.0:30.0,
+              //                       //       lineWidth: width>700?10.0:5.0,
+              //                       //       animation: true,
+              //                       //       percent: 10/100,
+              //                       //       center: Text(
+              //                       //         10.toString() + "%",
+              //                       //         style: TextStyle(
+              //                       //             fontSize: width>700?20.0:14,
+              //                       //             fontWeight: FontWeight.w600,
+              //                       //             color: Colors.black),
+              //                       //       ),
+              //                       //       backgroundColor: Colors.black12,
+              //                       //       circularStrokeCap: CircularStrokeCap.round,
+              //                       //       progressColor: Colors.green,
+              //                       //     ),
+              //                       //     SizedBox(height: 15,),
+              //                       //     Text("10%")
+              //                       //   ],
+              //                       // ),
+              //                     ],
+              //                   ),
+              //                 ),),
+              //               );
+              //             }
+              //           else{
+              //             return Container();
+              //           }
+              //
+              //       }),
+              //       // Container(
+              //       //   padding: EdgeInsets.all(8),
+              //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
+              //       //   height: width>700?240:195,
+              //       //   decoration: BoxDecoration(
+              //       //       borderRadius: BorderRadius.circular(20),
+              //       //       color: Colors.white
+              //       //   ),
+              //       //   child: Row(
+              //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //     children: [
+              //       //       Expanded(flex:width<600?4:3,child: Padding(
+              //       //         padding: EdgeInsets.all(5),
+              //       //         child: Image.asset("assets/logo.png"),
+              //       //       )),
+              //       //
+              //       //       Expanded(flex: width<600?6:4,
+              //       //           child:  Column(
+              //       //             crossAxisAlignment: CrossAxisAlignment.start,
+              //       //             mainAxisAlignment:
+              //       //             // width>700?
+              //       //             MainAxisAlignment.spaceAround,
+              //       //             // :MainAxisAlignment.start,
+              //       //             children: [
+              //       //
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               Container(
+              //       //                 // margin: EdgeInsets.only(top: 3),
+              //       //                 padding: EdgeInsets.all(7),
+              //       //                 decoration: BoxDecoration(
+              //       //                     color: Colors.purple,
+              //       //                     borderRadius: BorderRadius.circular(10)
+              //       //                 ),
+              //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
+              //       //               ),
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               // SizedBox(height: 8,),
+              //       //               Column(
+              //       //                 mainAxisAlignment: MainAxisAlignment.start,
+              //       //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                 children: [
+              //       //                   Text("Python for Data Science",style:
+              //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
+              //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
+              //       //                   SizedBox(height: 15,),
+              //       //                   // SizedBox(height: width>750?0:10,),
+              //       //                   Row(
+              //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //                     crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                     children: [
+              //       //                       Expanded(child: Column(
+              //       //                         crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                         mainAxisAlignment: MainAxisAlignment.start,
+              //       //                         children: [
+              //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 15,),
+              //       //                           SizedBox(
+              //       //                             width: width<400?160:190,
+              //       //                             child:
+              //       //                             MaterialButton(
+              //       //                               height: width>700?50:40,
+              //       //                               shape: RoundedRectangleBorder(
+              //       //                                 borderRadius: BorderRadius.circular(20),
+              //       //                               ),
+              //       //                               padding: EdgeInsets.all(8),
+              //       //                               minWidth: width>700?100:60,
+              //       //                               onPressed: (){},
+              //       //                               child: Row(
+              //       //                                 children: [
+              //       //                                   SizedBox(width: 5,),
+              //       //                                   Expanded(
+              //       //                                       flex:1,
+              //       //                                       child:
+              //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
+              //       //                                   Expanded(
+              //       //                                       flex:3,
+              //       //                                       child:
+              //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
+              //       //                                 ],
+              //       //                               ),color: Colors.purple,),
+              //       //                           )
+              //       //
+              //       //                         ],
+              //       //                       )),
+              //       //                       SizedBox(width: 5,),
+              //       //                       width<700?
+              //       //                       // Expanded(
+              //       //                       //   child:
+              //       //                       Column(
+              //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //                         children: [
+              //       //                           SizedBox(height: 25,),
+              //       //                           CircularPercentIndicator(
+              //       //                             radius: width<700?width<500?20:30:70,
+              //       //                             lineWidth: width>700?10.0:4.0,
+              //       //                             animation: true,
+              //       //                             percent: 10/100,
+              //       //                             center: Text(
+              //       //                               10.toString() + "%",
+              //       //                               style: TextStyle(
+              //       //                                   fontSize: width>700?20.0:width<500?8:14,
+              //       //                                   fontWeight: FontWeight.w600,
+              //       //                                   color: Colors.black),
+              //       //                             ),
+              //       //                             backgroundColor: Colors.black12,
+              //       //                             circularStrokeCap: CircularStrokeCap.round,
+              //       //                             progressColor: Colors.green,
+              //       //                           ),
+              //       //                           SizedBox(height: width<500?3:5,),
+              //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
+              //       //                           // SizedBox(height: 15,),
+              //       //                           // Text("10%")
+              //       //                         ],
+              //       //                       )
+              //       //                       // ,
+              //       //                       // )
+              //       //                           :SizedBox(),
+              //       //                       SizedBox(width: 5,)
+              //       //                     ],
+              //       //                   ),
+              //       //                 ],
+              //       //               )
+              //       //             ],
+              //       //           )),
+              //       //       // SizedBox(width: 10,),
+              //       //       width>700?Expanded(flex:2,
+              //       //         // color: Colors.green,
+              //       //         child: Column(
+              //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //           children: [
+              //       //             CircularPercentIndicator(
+              //       //               radius: width>700?70.0:40.0,
+              //       //               lineWidth: 10.0,
+              //       //               animation: true,
+              //       //               percent: 10/100,
+              //       //               center: Text(
+              //       //                 10.toString() + "%",
+              //       //                 style: TextStyle(
+              //       //                     fontSize: 20.0,
+              //       //                     fontWeight: FontWeight.w600,
+              //       //                     color: Colors.black),
+              //       //               ),
+              //       //               backgroundColor: Colors.black12,
+              //       //               circularStrokeCap: CircularStrokeCap.round,
+              //       //               progressColor: Colors.green,
+              //       //             ),
+              //       //             SizedBox(height: 15,),
+              //       //             Text("10%")
+              //       //           ],
+              //       //         ),):
+              //       //       SizedBox()
+              //       //       // Column(
+              //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //       //   children: [
+              //       //       //     CircularPercentIndicator(
+              //       //       //       radius: width>700?70.0:30.0,
+              //       //       //       lineWidth: width>700?10.0:5.0,
+              //       //       //       animation: true,
+              //       //       //       percent: 10/100,
+              //       //       //       center: Text(
+              //       //       //         10.toString() + "%",
+              //       //       //         style: TextStyle(
+              //       //       //             fontSize: width>700?20.0:14,
+              //       //       //             fontWeight: FontWeight.w600,
+              //       //       //             color: Colors.black),
+              //       //       //       ),
+              //       //       //       backgroundColor: Colors.black12,
+              //       //       //       circularStrokeCap: CircularStrokeCap.round,
+              //       //       //       progressColor: Colors.green,
+              //       //       //     ),
+              //       //       //     SizedBox(height: 15,),
+              //       //       //     Text("10%")
+              //       //       //   ],
+              //       //       // ),
+              //       //     ],
+              //       //   ),
+              //       // ),
+              //       // Container(
+              //       //   padding: EdgeInsets.all(8),
+              //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
+              //       //   height: width>700?240:195,
+              //       //   decoration: BoxDecoration(
+              //       //       borderRadius: BorderRadius.circular(20),
+              //       //       color: Colors.white
+              //       //   ),
+              //       //   child: Row(
+              //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //     children: [
+              //       //       Expanded(flex:width<600?4:3,child: Padding(
+              //       //         padding: EdgeInsets.all(5),
+              //       //         child: Image.asset("assets/logo.png"),
+              //       //       )),
+              //       //
+              //       //       Expanded(flex: width<600?6:4,
+              //       //           child:  Column(
+              //       //             crossAxisAlignment: CrossAxisAlignment.start,
+              //       //             mainAxisAlignment:
+              //       //             // width>700?
+              //       //             MainAxisAlignment.spaceAround,
+              //       //             // :MainAxisAlignment.start,
+              //       //             children: [
+              //       //
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               Container(
+              //       //                 // margin: EdgeInsets.only(top: 3),
+              //       //                 padding: EdgeInsets.all(7),
+              //       //                 decoration: BoxDecoration(
+              //       //                     color: Colors.purple,
+              //       //                     borderRadius: BorderRadius.circular(10)
+              //       //                 ),
+              //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
+              //       //               ),
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               // SizedBox(height: 8,),
+              //       //               Column(
+              //       //                 mainAxisAlignment: MainAxisAlignment.start,
+              //       //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                 children: [
+              //       //                   Text("Python for Data Science",style:
+              //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
+              //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
+              //       //                   SizedBox(height: 15,),
+              //       //                   // SizedBox(height: width>750?0:10,),
+              //       //                   Row(
+              //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //                     crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                     children: [
+              //       //                       Expanded(child: Column(
+              //       //                         crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                         mainAxisAlignment: MainAxisAlignment.start,
+              //       //                         children: [
+              //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 15,),
+              //       //                           SizedBox(
+              //       //                             width: width<400?160:190,
+              //       //                             child:
+              //       //                             MaterialButton(
+              //       //                               height: width>700?50:40,
+              //       //                               shape: RoundedRectangleBorder(
+              //       //                                 borderRadius: BorderRadius.circular(20),
+              //       //                               ),
+              //       //                               padding: EdgeInsets.all(8),
+              //       //                               minWidth: width>700?100:60,
+              //       //                               onPressed: (){},
+              //       //                               child: Row(
+              //       //                                 children: [
+              //       //                                   SizedBox(width: 5,),
+              //       //                                   Expanded(
+              //       //                                       flex:1,
+              //       //                                       child:
+              //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
+              //       //                                   Expanded(
+              //       //                                       flex:3,
+              //       //                                       child:
+              //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
+              //       //                                 ],
+              //       //                               ),color: Colors.purple,),
+              //       //                           )
+              //       //
+              //       //                         ],
+              //       //                       )),
+              //       //                       SizedBox(width: 5,),
+              //       //                       width<700?
+              //       //                       // Expanded(
+              //       //                       //   child:
+              //       //                       Column(
+              //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //                         children: [
+              //       //                           SizedBox(height: 25,),
+              //       //                           CircularPercentIndicator(
+              //       //                             radius: width<700?width<500?20:30:70,
+              //       //                             lineWidth: width>700?10.0:4.0,
+              //       //                             animation: true,
+              //       //                             percent: 10/100,
+              //       //                             center: Text(
+              //       //                               10.toString() + "%",
+              //       //                               style: TextStyle(
+              //       //                                   fontSize: width>700?20.0:width<500?8:14,
+              //       //                                   fontWeight: FontWeight.w600,
+              //       //                                   color: Colors.black),
+              //       //                             ),
+              //       //                             backgroundColor: Colors.black12,
+              //       //                             circularStrokeCap: CircularStrokeCap.round,
+              //       //                             progressColor: Colors.green,
+              //       //                           ),
+              //       //                           SizedBox(height: width<500?3:5,),
+              //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
+              //       //                           // SizedBox(height: 15,),
+              //       //                           // Text("10%")
+              //       //                         ],
+              //       //                       )
+              //       //                       // ,
+              //       //                       // )
+              //       //                           :SizedBox(),
+              //       //                       SizedBox(width: 5,)
+              //       //                     ],
+              //       //                   ),
+              //       //                 ],
+              //       //               )
+              //       //             ],
+              //       //           )),
+              //       //       // SizedBox(width: 10,),
+              //       //       width>700?Expanded(flex:2,
+              //       //         // color: Colors.green,
+              //       //         child: Column(
+              //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //           children: [
+              //       //             CircularPercentIndicator(
+              //       //               radius: width>700?70.0:40.0,
+              //       //               lineWidth: 10.0,
+              //       //               animation: true,
+              //       //               percent: 10/100,
+              //       //               center: Text(
+              //       //                 10.toString() + "%",
+              //       //                 style: TextStyle(
+              //       //                     fontSize: 20.0,
+              //       //                     fontWeight: FontWeight.w600,
+              //       //                     color: Colors.black),
+              //       //               ),
+              //       //               backgroundColor: Colors.black12,
+              //       //               circularStrokeCap: CircularStrokeCap.round,
+              //       //               progressColor: Colors.green,
+              //       //             ),
+              //       //             SizedBox(height: 15,),
+              //       //             Text("10%")
+              //       //           ],
+              //       //         ),):
+              //       //       SizedBox()
+              //       //       // Column(
+              //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //       //   children: [
+              //       //       //     CircularPercentIndicator(
+              //       //       //       radius: width>700?70.0:30.0,
+              //       //       //       lineWidth: width>700?10.0:5.0,
+              //       //       //       animation: true,
+              //       //       //       percent: 10/100,
+              //       //       //       center: Text(
+              //       //       //         10.toString() + "%",
+              //       //       //         style: TextStyle(
+              //       //       //             fontSize: width>700?20.0:14,
+              //       //       //             fontWeight: FontWeight.w600,
+              //       //       //             color: Colors.black),
+              //       //       //       ),
+              //       //       //       backgroundColor: Colors.black12,
+              //       //       //       circularStrokeCap: CircularStrokeCap.round,
+              //       //       //       progressColor: Colors.green,
+              //       //       //     ),
+              //       //       //     SizedBox(height: 15,),
+              //       //       //     Text("10%")
+              //       //       //   ],
+              //       //       // ),
+              //       //     ],
+              //       //   ),
+              //       // ),
+              //       // Container(
+              //       //   padding: EdgeInsets.all(8),
+              //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
+              //       //   height: width>700?240:195,
+              //       //   decoration: BoxDecoration(
+              //       //       borderRadius: BorderRadius.circular(20),
+              //       //       color: Colors.white
+              //       //   ),
+              //       //   child: Row(
+              //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //     children: [
+              //       //       Expanded(flex:width<600?4:3,child: Padding(
+              //       //         padding: EdgeInsets.all(5),
+              //       //         child: Image.asset("assets/logo.png"),
+              //       //       )),
+              //       //
+              //       //       Expanded(flex: width<600?6:4,
+              //       //           child:  Column(
+              //       //             crossAxisAlignment: CrossAxisAlignment.start,
+              //       //             mainAxisAlignment:
+              //       //             // width>700?
+              //       //             MainAxisAlignment.spaceAround,
+              //       //             // :MainAxisAlignment.start,
+              //       //             children: [
+              //       //
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               Container(
+              //       //                 // margin: EdgeInsets.only(top: 3),
+              //       //                 padding: EdgeInsets.all(7),
+              //       //                 decoration: BoxDecoration(
+              //       //                     color: Colors.purple,
+              //       //                     borderRadius: BorderRadius.circular(10)
+              //       //                 ),
+              //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
+              //       //               ),
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               // SizedBox(height: 8,),
+              //       //               Column(
+              //       //                 mainAxisAlignment: MainAxisAlignment.start,
+              //       //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                 children: [
+              //       //                   Text("Python for Data Science",style:
+              //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
+              //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
+              //       //                   SizedBox(height: 15,),
+              //       //                   // SizedBox(height: width>750?0:10,),
+              //       //                   Row(
+              //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //                     crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                     children: [
+              //       //                       Expanded(child: Column(
+              //       //                         crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                         mainAxisAlignment: MainAxisAlignment.start,
+              //       //                         children: [
+              //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 15,),
+              //       //                           SizedBox(
+              //       //                             width: width<400?160:190,
+              //       //                             child:
+              //       //                             MaterialButton(
+              //       //                               height: width>700?50:40,
+              //       //                               shape: RoundedRectangleBorder(
+              //       //                                 borderRadius: BorderRadius.circular(20),
+              //       //                               ),
+              //       //                               padding: EdgeInsets.all(8),
+              //       //                               minWidth: width>700?100:60,
+              //       //                               onPressed: (){},
+              //       //                               child: Row(
+              //       //                                 children: [
+              //       //                                   SizedBox(width: 5,),
+              //       //                                   Expanded(
+              //       //                                       flex:1,
+              //       //                                       child:
+              //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
+              //       //                                   Expanded(
+              //       //                                       flex:3,
+              //       //                                       child:
+              //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
+              //       //                                 ],
+              //       //                               ),color: Colors.purple,),
+              //       //                           )
+              //       //
+              //       //                         ],
+              //       //                       )),
+              //       //                       SizedBox(width: 5,),
+              //       //                       width<700?
+              //       //                       // Expanded(
+              //       //                       //   child:
+              //       //                       Column(
+              //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //                         children: [
+              //       //                           SizedBox(height: 25,),
+              //       //                           CircularPercentIndicator(
+              //       //                             radius: width<700?width<500?20:30:70,
+              //       //                             lineWidth: width>700?10.0:4.0,
+              //       //                             animation: true,
+              //       //                             percent: 10/100,
+              //       //                             center: Text(
+              //       //                               10.toString() + "%",
+              //       //                               style: TextStyle(
+              //       //                                   fontSize: width>700?20.0:width<500?8:14,
+              //       //                                   fontWeight: FontWeight.w600,
+              //       //                                   color: Colors.black),
+              //       //                             ),
+              //       //                             backgroundColor: Colors.black12,
+              //       //                             circularStrokeCap: CircularStrokeCap.round,
+              //       //                             progressColor: Colors.green,
+              //       //                           ),
+              //       //                           SizedBox(height: width<500?3:5,),
+              //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
+              //       //                           // SizedBox(height: 15,),
+              //       //                           // Text("10%")
+              //       //                         ],
+              //       //                       )
+              //       //                       // ,
+              //       //                       // )
+              //       //                           :SizedBox(),
+              //       //                       SizedBox(width: 5,)
+              //       //                     ],
+              //       //                   ),
+              //       //                 ],
+              //       //               )
+              //       //             ],
+              //       //           )),
+              //       //       // SizedBox(width: 10,),
+              //       //       width>700?Expanded(flex:2,
+              //       //         // color: Colors.green,
+              //       //         child: Column(
+              //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //           children: [
+              //       //             CircularPercentIndicator(
+              //       //               radius: width>700?70.0:40.0,
+              //       //               lineWidth: 10.0,
+              //       //               animation: true,
+              //       //               percent: 10/100,
+              //       //               center: Text(
+              //       //                 10.toString() + "%",
+              //       //                 style: TextStyle(
+              //       //                     fontSize: 20.0,
+              //       //                     fontWeight: FontWeight.w600,
+              //       //                     color: Colors.black),
+              //       //               ),
+              //       //               backgroundColor: Colors.black12,
+              //       //               circularStrokeCap: CircularStrokeCap.round,
+              //       //               progressColor: Colors.green,
+              //       //             ),
+              //       //             SizedBox(height: 15,),
+              //       //             Text("10%")
+              //       //           ],
+              //       //         ),):
+              //       //       SizedBox()
+              //       //       // Column(
+              //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //       //   children: [
+              //       //       //     CircularPercentIndicator(
+              //       //       //       radius: width>700?70.0:30.0,
+              //       //       //       lineWidth: width>700?10.0:5.0,
+              //       //       //       animation: true,
+              //       //       //       percent: 10/100,
+              //       //       //       center: Text(
+              //       //       //         10.toString() + "%",
+              //       //       //         style: TextStyle(
+              //       //       //             fontSize: width>700?20.0:14,
+              //       //       //             fontWeight: FontWeight.w600,
+              //       //       //             color: Colors.black),
+              //       //       //       ),
+              //       //       //       backgroundColor: Colors.black12,
+              //       //       //       circularStrokeCap: CircularStrokeCap.round,
+              //       //       //       progressColor: Colors.green,
+              //       //       //     ),
+              //       //       //     SizedBox(height: 15,),
+              //       //       //     Text("10%")
+              //       //       //   ],
+              //       //       // ),
+              //       //     ],
+              //       //   ),
+              //       // ),
+              //       // Container(
+              //       //   padding: EdgeInsets.all(8),
+              //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
+              //       //   height: width>700?240:195,
+              //       //   decoration: BoxDecoration(
+              //       //       borderRadius: BorderRadius.circular(20),
+              //       //       color: Colors.white
+              //       //   ),
+              //       //   child: Row(
+              //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //     children: [
+              //       //       Expanded(flex:width<600?4:3,child: Padding(
+              //       //         padding: EdgeInsets.all(5),
+              //       //         child: Image.asset("assets/logo.png"),
+              //       //       )),
+              //       //
+              //       //       Expanded(flex: width<600?6:4,
+              //       //           child:  Column(
+              //       //             crossAxisAlignment: CrossAxisAlignment.start,
+              //       //             mainAxisAlignment:
+              //       //             // width>700?
+              //       //             MainAxisAlignment.spaceAround,
+              //       //             // :MainAxisAlignment.start,
+              //       //             children: [
+              //       //
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               Container(
+              //       //                 // margin: EdgeInsets.only(top: 3),
+              //       //                 padding: EdgeInsets.all(7),
+              //       //                 decoration: BoxDecoration(
+              //       //                     color: Colors.purple,
+              //       //                     borderRadius: BorderRadius.circular(10)
+              //       //                 ),
+              //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
+              //       //               ),
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               // SizedBox(height: 8,),
+              //       //               Column(
+              //       //                 mainAxisAlignment: MainAxisAlignment.start,
+              //       //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                 children: [
+              //       //                   Text("Python for Data Science",style:
+              //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
+              //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
+              //       //                   SizedBox(height: 15,),
+              //       //                   // SizedBox(height: width>750?0:10,),
+              //       //                   Row(
+              //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //                     crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                     children: [
+              //       //                       Expanded(child: Column(
+              //       //                         crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                         mainAxisAlignment: MainAxisAlignment.start,
+              //       //                         children: [
+              //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 15,),
+              //       //                           SizedBox(
+              //       //                             width: width<400?160:190,
+              //       //                             child:
+              //       //                             MaterialButton(
+              //       //                               height: width>700?50:40,
+              //       //                               shape: RoundedRectangleBorder(
+              //       //                                 borderRadius: BorderRadius.circular(20),
+              //       //                               ),
+              //       //                               padding: EdgeInsets.all(8),
+              //       //                               minWidth: width>700?100:60,
+              //       //                               onPressed: (){},
+              //       //                               child: Row(
+              //       //                                 children: [
+              //       //                                   SizedBox(width: 5,),
+              //       //                                   Expanded(
+              //       //                                       flex:1,
+              //       //                                       child:
+              //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
+              //       //                                   Expanded(
+              //       //                                       flex:3,
+              //       //                                       child:
+              //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
+              //       //                                 ],
+              //       //                               ),color: Colors.purple,),
+              //       //                           )
+              //       //
+              //       //                         ],
+              //       //                       )),
+              //       //                       SizedBox(width: 5,),
+              //       //                       width<700?
+              //       //                       // Expanded(
+              //       //                       //   child:
+              //       //                       Column(
+              //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //                         children: [
+              //       //                           SizedBox(height: 25,),
+              //       //                           CircularPercentIndicator(
+              //       //                             radius: width<700?width<500?20:30:70,
+              //       //                             lineWidth: width>700?10.0:4.0,
+              //       //                             animation: true,
+              //       //                             percent: 10/100,
+              //       //                             center: Text(
+              //       //                               10.toString() + "%",
+              //       //                               style: TextStyle(
+              //       //                                   fontSize: width>700?20.0:width<500?8:14,
+              //       //                                   fontWeight: FontWeight.w600,
+              //       //                                   color: Colors.black),
+              //       //                             ),
+              //       //                             backgroundColor: Colors.black12,
+              //       //                             circularStrokeCap: CircularStrokeCap.round,
+              //       //                             progressColor: Colors.green,
+              //       //                           ),
+              //       //                           SizedBox(height: width<500?3:5,),
+              //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
+              //       //                           // SizedBox(height: 15,),
+              //       //                           // Text("10%")
+              //       //                         ],
+              //       //                       )
+              //       //                       // ,
+              //       //                       // )
+              //       //                           :SizedBox(),
+              //       //                       SizedBox(width: 5,)
+              //       //                     ],
+              //       //                   ),
+              //       //                 ],
+              //       //               )
+              //       //             ],
+              //       //           )),
+              //       //       // SizedBox(width: 10,),
+              //       //       width>700?Expanded(flex:2,
+              //       //         // color: Colors.green,
+              //       //         child: Column(
+              //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //           children: [
+              //       //             CircularPercentIndicator(
+              //       //               radius: width>700?70.0:40.0,
+              //       //               lineWidth: 10.0,
+              //       //               animation: true,
+              //       //               percent: 10/100,
+              //       //               center: Text(
+              //       //                 10.toString() + "%",
+              //       //                 style: TextStyle(
+              //       //                     fontSize: 20.0,
+              //       //                     fontWeight: FontWeight.w600,
+              //       //                     color: Colors.black),
+              //       //               ),
+              //       //               backgroundColor: Colors.black12,
+              //       //               circularStrokeCap: CircularStrokeCap.round,
+              //       //               progressColor: Colors.green,
+              //       //             ),
+              //       //             SizedBox(height: 15,),
+              //       //             Text("10%")
+              //       //           ],
+              //       //         ),):
+              //       //       SizedBox()
+              //       //       // Column(
+              //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //       //   children: [
+              //       //       //     CircularPercentIndicator(
+              //       //       //       radius: width>700?70.0:30.0,
+              //       //       //       lineWidth: width>700?10.0:5.0,
+              //       //       //       animation: true,
+              //       //       //       percent: 10/100,
+              //       //       //       center: Text(
+              //       //       //         10.toString() + "%",
+              //       //       //         style: TextStyle(
+              //       //       //             fontSize: width>700?20.0:14,
+              //       //       //             fontWeight: FontWeight.w600,
+              //       //       //             color: Colors.black),
+              //       //       //       ),
+              //       //       //       backgroundColor: Colors.black12,
+              //       //       //       circularStrokeCap: CircularStrokeCap.round,
+              //       //       //       progressColor: Colors.green,
+              //       //       //     ),
+              //       //       //     SizedBox(height: 15,),
+              //       //       //     Text("10%")
+              //       //       //   ],
+              //       //       // ),
+              //       //     ],
+              //       //   ),
+              //       // ),
+              //       // Container(
+              //       //   padding: EdgeInsets.all(8),
+              //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
+              //       //   height: width>700?240:195,
+              //       //   decoration: BoxDecoration(
+              //       //       borderRadius: BorderRadius.circular(20),
+              //       //       color: Colors.white
+              //       //   ),
+              //       //   child: Row(
+              //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //     children: [
+              //       //       Expanded(flex:width<600?4:3,child: Padding(
+              //       //         padding: EdgeInsets.all(5),
+              //       //         child: Image.asset("assets/logo.png"),
+              //       //       )),
+              //       //
+              //       //       Expanded(flex: width<600?6:4,
+              //       //           child:  Column(
+              //       //             crossAxisAlignment: CrossAxisAlignment.start,
+              //       //             mainAxisAlignment:
+              //       //             // width>700?
+              //       //             MainAxisAlignment.spaceAround,
+              //       //             // :MainAxisAlignment.start,
+              //       //             children: [
+              //       //
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               Container(
+              //       //                 // margin: EdgeInsets.only(top: 3),
+              //       //                 padding: EdgeInsets.all(7),
+              //       //                 decoration: BoxDecoration(
+              //       //                     color: Colors.purple,
+              //       //                     borderRadius: BorderRadius.circular(10)
+              //       //                 ),
+              //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
+              //       //               ),
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               // SizedBox(height: 8,),
+              //       //               Column(
+              //       //                 mainAxisAlignment: MainAxisAlignment.start,
+              //       //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                 children: [
+              //       //                   Text("Python for Data Science",style:
+              //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
+              //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
+              //       //                   SizedBox(height: 15,),
+              //       //                   // SizedBox(height: width>750?0:10,),
+              //       //                   Row(
+              //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //                     crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                     children: [
+              //       //                       Expanded(child: Column(
+              //       //                         crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                         mainAxisAlignment: MainAxisAlignment.start,
+              //       //                         children: [
+              //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 15,),
+              //       //                           SizedBox(
+              //       //                             width: width<400?160:190,
+              //       //                             child:
+              //       //                             MaterialButton(
+              //       //                               height: width>700?50:40,
+              //       //                               shape: RoundedRectangleBorder(
+              //       //                                 borderRadius: BorderRadius.circular(20),
+              //       //                               ),
+              //       //                               padding: EdgeInsets.all(8),
+              //       //                               minWidth: width>700?100:60,
+              //       //                               onPressed: (){},
+              //       //                               child: Row(
+              //       //                                 children: [
+              //       //                                   SizedBox(width: 5,),
+              //       //                                   Expanded(
+              //       //                                       flex:1,
+              //       //                                       child:
+              //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
+              //       //                                   Expanded(
+              //       //                                       flex:3,
+              //       //                                       child:
+              //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
+              //       //                                 ],
+              //       //                               ),color: Colors.purple,),
+              //       //                           )
+              //       //
+              //       //                         ],
+              //       //                       )),
+              //       //                       SizedBox(width: 5,),
+              //       //                       width<700?
+              //       //                       // Expanded(
+              //       //                       //   child:
+              //       //                       Column(
+              //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //                         children: [
+              //       //                           SizedBox(height: 25,),
+              //       //                           CircularPercentIndicator(
+              //       //                             radius: width<700?width<500?20:30:70,
+              //       //                             lineWidth: width>700?10.0:4.0,
+              //       //                             animation: true,
+              //       //                             percent: 10/100,
+              //       //                             center: Text(
+              //       //                               10.toString() + "%",
+              //       //                               style: TextStyle(
+              //       //                                   fontSize: width>700?20.0:width<500?8:14,
+              //       //                                   fontWeight: FontWeight.w600,
+              //       //                                   color: Colors.black),
+              //       //                             ),
+              //       //                             backgroundColor: Colors.black12,
+              //       //                             circularStrokeCap: CircularStrokeCap.round,
+              //       //                             progressColor: Colors.green,
+              //       //                           ),
+              //       //                           SizedBox(height: width<500?3:5,),
+              //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
+              //       //                           // SizedBox(height: 15,),
+              //       //                           // Text("10%")
+              //       //                         ],
+              //       //                       )
+              //       //                       // ,
+              //       //                       // )
+              //       //                           :SizedBox(),
+              //       //                       SizedBox(width: 5,)
+              //       //                     ],
+              //       //                   ),
+              //       //                 ],
+              //       //               )
+              //       //             ],
+              //       //           )),
+              //       //       // SizedBox(width: 10,),
+              //       //       width>700?Expanded(flex:2,
+              //       //         // color: Colors.green,
+              //       //         child: Column(
+              //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //           children: [
+              //       //             CircularPercentIndicator(
+              //       //               radius: width>700?70.0:40.0,
+              //       //               lineWidth: 10.0,
+              //       //               animation: true,
+              //       //               percent: 10/100,
+              //       //               center: Text(
+              //       //                 10.toString() + "%",
+              //       //                 style: TextStyle(
+              //       //                     fontSize: 20.0,
+              //       //                     fontWeight: FontWeight.w600,
+              //       //                     color: Colors.black),
+              //       //               ),
+              //       //               backgroundColor: Colors.black12,
+              //       //               circularStrokeCap: CircularStrokeCap.round,
+              //       //               progressColor: Colors.green,
+              //       //             ),
+              //       //             SizedBox(height: 15,),
+              //       //             Text("10%")
+              //       //           ],
+              //       //         ),):
+              //       //       SizedBox()
+              //       //       // Column(
+              //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //       //   children: [
+              //       //       //     CircularPercentIndicator(
+              //       //       //       radius: width>700?70.0:30.0,
+              //       //       //       lineWidth: width>700?10.0:5.0,
+              //       //       //       animation: true,
+              //       //       //       percent: 10/100,
+              //       //       //       center: Text(
+              //       //       //         10.toString() + "%",
+              //       //       //         style: TextStyle(
+              //       //       //             fontSize: width>700?20.0:14,
+              //       //       //             fontWeight: FontWeight.w600,
+              //       //       //             color: Colors.black),
+              //       //       //       ),
+              //       //       //       backgroundColor: Colors.black12,
+              //       //       //       circularStrokeCap: CircularStrokeCap.round,
+              //       //       //       progressColor: Colors.green,
+              //       //       //     ),
+              //       //       //     SizedBox(height: 15,),
+              //       //       //     Text("10%")
+              //       //       //   ],
+              //       //       // ),
+              //       //     ],
+              //       //   ),
+              //       // ),
+              //       // Container(
+              //       //   padding: EdgeInsets.all(8),
+              //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
+              //       //   height: width>700?240:195,
+              //       //   decoration: BoxDecoration(
+              //       //       borderRadius: BorderRadius.circular(20),
+              //       //       color: Colors.white
+              //       //   ),
+              //       //   child: Row(
+              //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //     children: [
+              //       //       Expanded(flex:width<600?4:3,child: Padding(
+              //       //         padding: EdgeInsets.all(5),
+              //       //         child: Image.asset("assets/logo.png"),
+              //       //       )),
+              //       //
+              //       //       Expanded(flex: width<600?6:4,
+              //       //           child:  Column(
+              //       //             crossAxisAlignment: CrossAxisAlignment.start,
+              //       //             mainAxisAlignment:
+              //       //             // width>700?
+              //       //             MainAxisAlignment.spaceAround,
+              //       //             // :MainAxisAlignment.start,
+              //       //             children: [
+              //       //
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               Container(
+              //       //                 // margin: EdgeInsets.only(top: 3),
+              //       //                 padding: EdgeInsets.all(7),
+              //       //                 decoration: BoxDecoration(
+              //       //                     color: Colors.purple,
+              //       //                     borderRadius: BorderRadius.circular(10)
+              //       //                 ),
+              //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
+              //       //               ),
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               // SizedBox(height: 8,),
+              //       //               Column(
+              //       //                 mainAxisAlignment: MainAxisAlignment.start,
+              //       //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                 children: [
+              //       //                   Text("Python for Data Science",style:
+              //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
+              //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
+              //       //                   SizedBox(height: 15,),
+              //       //                   // SizedBox(height: width>750?0:10,),
+              //       //                   Row(
+              //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //                     crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                     children: [
+              //       //                       Expanded(child: Column(
+              //       //                         crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                         mainAxisAlignment: MainAxisAlignment.start,
+              //       //                         children: [
+              //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 15,),
+              //       //                           SizedBox(
+              //       //                             width: width<400?160:190,
+              //       //                             child:
+              //       //                             MaterialButton(
+              //       //                               height: width>700?50:40,
+              //       //                               shape: RoundedRectangleBorder(
+              //       //                                 borderRadius: BorderRadius.circular(20),
+              //       //                               ),
+              //       //                               padding: EdgeInsets.all(8),
+              //       //                               minWidth: width>700?100:60,
+              //       //                               onPressed: (){},
+              //       //                               child: Row(
+              //       //                                 children: [
+              //       //                                   SizedBox(width: 5,),
+              //       //                                   Expanded(
+              //       //                                       flex:1,
+              //       //                                       child:
+              //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
+              //       //                                   Expanded(
+              //       //                                       flex:3,
+              //       //                                       child:
+              //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
+              //       //                                 ],
+              //       //                               ),color: Colors.purple,),
+              //       //                           )
+              //       //
+              //       //                         ],
+              //       //                       )),
+              //       //                       SizedBox(width: 5,),
+              //       //                       width<700?
+              //       //                       // Expanded(
+              //       //                       //   child:
+              //       //                       Column(
+              //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //                         children: [
+              //       //                           SizedBox(height: 25,),
+              //       //                           CircularPercentIndicator(
+              //       //                             radius: width<700?width<500?20:30:70,
+              //       //                             lineWidth: width>700?10.0:4.0,
+              //       //                             animation: true,
+              //       //                             percent: 10/100,
+              //       //                             center: Text(
+              //       //                               10.toString() + "%",
+              //       //                               style: TextStyle(
+              //       //                                   fontSize: width>700?20.0:width<500?8:14,
+              //       //                                   fontWeight: FontWeight.w600,
+              //       //                                   color: Colors.black),
+              //       //                             ),
+              //       //                             backgroundColor: Colors.black12,
+              //       //                             circularStrokeCap: CircularStrokeCap.round,
+              //       //                             progressColor: Colors.green,
+              //       //                           ),
+              //       //                           SizedBox(height: width<500?3:5,),
+              //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
+              //       //                           // SizedBox(height: 15,),
+              //       //                           // Text("10%")
+              //       //                         ],
+              //       //                       )
+              //       //                       // ,
+              //       //                       // )
+              //       //                           :SizedBox(),
+              //       //                       SizedBox(width: 5,)
+              //       //                     ],
+              //       //                   ),
+              //       //                 ],
+              //       //               )
+              //       //             ],
+              //       //           )),
+              //       //       // SizedBox(width: 10,),
+              //       //       width>700?Expanded(flex:2,
+              //       //         // color: Colors.green,
+              //       //         child: Column(
+              //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //           children: [
+              //       //             CircularPercentIndicator(
+              //       //               radius: width>700?70.0:40.0,
+              //       //               lineWidth: 10.0,
+              //       //               animation: true,
+              //       //               percent: 10/100,
+              //       //               center: Text(
+              //       //                 10.toString() + "%",
+              //       //                 style: TextStyle(
+              //       //                     fontSize: 20.0,
+              //       //                     fontWeight: FontWeight.w600,
+              //       //                     color: Colors.black),
+              //       //               ),
+              //       //               backgroundColor: Colors.black12,
+              //       //               circularStrokeCap: CircularStrokeCap.round,
+              //       //               progressColor: Colors.green,
+              //       //             ),
+              //       //             SizedBox(height: 15,),
+              //       //             Text("10%")
+              //       //           ],
+              //       //         ),):
+              //       //       SizedBox()
+              //       //       // Column(
+              //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //       //   children: [
+              //       //       //     CircularPercentIndicator(
+              //       //       //       radius: width>700?70.0:30.0,
+              //       //       //       lineWidth: width>700?10.0:5.0,
+              //       //       //       animation: true,
+              //       //       //       percent: 10/100,
+              //       //       //       center: Text(
+              //       //       //         10.toString() + "%",
+              //       //       //         style: TextStyle(
+              //       //       //             fontSize: width>700?20.0:14,
+              //       //       //             fontWeight: FontWeight.w600,
+              //       //       //             color: Colors.black),
+              //       //       //       ),
+              //       //       //       backgroundColor: Colors.black12,
+              //       //       //       circularStrokeCap: CircularStrokeCap.round,
+              //       //       //       progressColor: Colors.green,
+              //       //       //     ),
+              //       //       //     SizedBox(height: 15,),
+              //       //       //     Text("10%")
+              //       //       //   ],
+              //       //       // ),
+              //       //     ],
+              //       //   ),
+              //       // ),
+              //       // Container(
+              //       //   padding: EdgeInsets.all(8),
+              //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
+              //       //   height: width>700?240:195,
+              //       //   decoration: BoxDecoration(
+              //       //       borderRadius: BorderRadius.circular(20),
+              //       //       color: Colors.white
+              //       //   ),
+              //       //   child: Row(
+              //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //     children: [
+              //       //       Expanded(flex:width<600?4:3,child: Padding(
+              //       //         padding: EdgeInsets.all(5),
+              //       //         child: Image.asset("assets/logo.png"),
+              //       //       )),
+              //       //
+              //       //       Expanded(flex: width<600?6:4,
+              //       //           child:  Column(
+              //       //             crossAxisAlignment: CrossAxisAlignment.start,
+              //       //             mainAxisAlignment:
+              //       //             // width>700?
+              //       //             MainAxisAlignment.spaceAround,
+              //       //             // :MainAxisAlignment.start,
+              //       //             children: [
+              //       //
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               Container(
+              //       //                 // margin: EdgeInsets.only(top: 3),
+              //       //                 padding: EdgeInsets.all(7),
+              //       //                 decoration: BoxDecoration(
+              //       //                     color: Colors.purple,
+              //       //                     borderRadius: BorderRadius.circular(10)
+              //       //                 ),
+              //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
+              //       //               ),
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               // SizedBox(height: 8,),
+              //       //               Column(
+              //       //                 mainAxisAlignment: MainAxisAlignment.start,
+              //       //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                 children: [
+              //       //                   Text("Python for Data Science",style:
+              //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
+              //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
+              //       //                   SizedBox(height: 15,),
+              //       //                   // SizedBox(height: width>750?0:10,),
+              //       //                   Row(
+              //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //                     crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                     children: [
+              //       //                       Expanded(child: Column(
+              //       //                         crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                         mainAxisAlignment: MainAxisAlignment.start,
+              //       //                         children: [
+              //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 15,),
+              //       //                           SizedBox(
+              //       //                             width: width<400?160:190,
+              //       //                             child:
+              //       //                             MaterialButton(
+              //       //                               height: width>700?50:40,
+              //       //                               shape: RoundedRectangleBorder(
+              //       //                                 borderRadius: BorderRadius.circular(20),
+              //       //                               ),
+              //       //                               padding: EdgeInsets.all(8),
+              //       //                               minWidth: width>700?100:60,
+              //       //                               onPressed: (){},
+              //       //                               child: Row(
+              //       //                                 children: [
+              //       //                                   SizedBox(width: 5,),
+              //       //                                   Expanded(
+              //       //                                       flex:1,
+              //       //                                       child:
+              //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
+              //       //                                   Expanded(
+              //       //                                       flex:3,
+              //       //                                       child:
+              //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
+              //       //                                 ],
+              //       //                               ),color: Colors.purple,),
+              //       //                           )
+              //       //
+              //       //                         ],
+              //       //                       )),
+              //       //                       SizedBox(width: 5,),
+              //       //                       width<700?
+              //       //                       // Expanded(
+              //       //                       //   child:
+              //       //                       Column(
+              //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //                         children: [
+              //       //                           SizedBox(height: 25,),
+              //       //                           CircularPercentIndicator(
+              //       //                             radius: width<700?width<500?20:30:70,
+              //       //                             lineWidth: width>700?10.0:4.0,
+              //       //                             animation: true,
+              //       //                             percent: 10/100,
+              //       //                             center: Text(
+              //       //                               10.toString() + "%",
+              //       //                               style: TextStyle(
+              //       //                                   fontSize: width>700?20.0:width<500?8:14,
+              //       //                                   fontWeight: FontWeight.w600,
+              //       //                                   color: Colors.black),
+              //       //                             ),
+              //       //                             backgroundColor: Colors.black12,
+              //       //                             circularStrokeCap: CircularStrokeCap.round,
+              //       //                             progressColor: Colors.green,
+              //       //                           ),
+              //       //                           SizedBox(height: width<500?3:5,),
+              //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
+              //       //                           // SizedBox(height: 15,),
+              //       //                           // Text("10%")
+              //       //                         ],
+              //       //                       )
+              //       //                       // ,
+              //       //                       // )
+              //       //                           :SizedBox(),
+              //       //                       SizedBox(width: 5,)
+              //       //                     ],
+              //       //                   ),
+              //       //                 ],
+              //       //               )
+              //       //             ],
+              //       //           )),
+              //       //       // SizedBox(width: 10,),
+              //       //       width>700?Expanded(flex:2,
+              //       //         // color: Colors.green,
+              //       //         child: Column(
+              //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //           children: [
+              //       //             CircularPercentIndicator(
+              //       //               radius: width>700?70.0:40.0,
+              //       //               lineWidth: 10.0,
+              //       //               animation: true,
+              //       //               percent: 10/100,
+              //       //               center: Text(
+              //       //                 10.toString() + "%",
+              //       //                 style: TextStyle(
+              //       //                     fontSize: 20.0,
+              //       //                     fontWeight: FontWeight.w600,
+              //       //                     color: Colors.black),
+              //       //               ),
+              //       //               backgroundColor: Colors.black12,
+              //       //               circularStrokeCap: CircularStrokeCap.round,
+              //       //               progressColor: Colors.green,
+              //       //             ),
+              //       //             SizedBox(height: 15,),
+              //       //             Text("10%")
+              //       //           ],
+              //       //         ),):
+              //       //       SizedBox()
+              //       //       // Column(
+              //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //       //   children: [
+              //       //       //     CircularPercentIndicator(
+              //       //       //       radius: width>700?70.0:30.0,
+              //       //       //       lineWidth: width>700?10.0:5.0,
+              //       //       //       animation: true,
+              //       //       //       percent: 10/100,
+              //       //       //       center: Text(
+              //       //       //         10.toString() + "%",
+              //       //       //         style: TextStyle(
+              //       //       //             fontSize: width>700?20.0:14,
+              //       //       //             fontWeight: FontWeight.w600,
+              //       //       //             color: Colors.black),
+              //       //       //       ),
+              //       //       //       backgroundColor: Colors.black12,
+              //       //       //       circularStrokeCap: CircularStrokeCap.round,
+              //       //       //       progressColor: Colors.green,
+              //       //       //     ),
+              //       //       //     SizedBox(height: 15,),
+              //       //       //     Text("10%")
+              //       //       //   ],
+              //       //       // ),
+              //       //     ],
+              //       //   ),
+              //       // ),
+              //       // Container(
+              //       //   padding: EdgeInsets.all(8),
+              //       //   width: width<1700?width<1300?width<850?constraints.maxWidth-20:constraints.maxWidth-200:constraints.maxWidth-400:constraints.maxWidth-700,
+              //       //   height: width>700?240:195,
+              //       //   decoration: BoxDecoration(
+              //       //       borderRadius: BorderRadius.circular(20),
+              //       //       color: Colors.white
+              //       //   ),
+              //       //   child: Row(
+              //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //     children: [
+              //       //       Expanded(flex:width<600?4:3,child: Padding(
+              //       //         padding: EdgeInsets.all(5),
+              //       //         child: Image.asset("assets/logo.png"),
+              //       //       )),
+              //       //
+              //       //       Expanded(flex: width<600?6:4,
+              //       //           child:  Column(
+              //       //             crossAxisAlignment: CrossAxisAlignment.start,
+              //       //             mainAxisAlignment:
+              //       //             // width>700?
+              //       //             MainAxisAlignment.spaceAround,
+              //       //             // :MainAxisAlignment.start,
+              //       //             children: [
+              //       //
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               Container(
+              //       //                 // margin: EdgeInsets.only(top: 3),
+              //       //                 padding: EdgeInsets.all(7),
+              //       //                 decoration: BoxDecoration(
+              //       //                     color: Colors.purple,
+              //       //                     borderRadius: BorderRadius.circular(10)
+              //       //                 ),
+              //       //                 child: Text("Module 1",style: TextStyle(color: Colors.white,fontSize: 12),),
+              //       //               ),
+              //       //               // SizedBox(height: width>750?0:10,),
+              //       //               // SizedBox(height: 8,),
+              //       //               Column(
+              //       //                 mainAxisAlignment: MainAxisAlignment.start,
+              //       //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                 children: [
+              //       //                   Text("Python for Data Science",style:
+              //       //                   TextStyle(height: 1,fontWeight: FontWeight.bold,fontSize: width>700?25:width<540?15:16),
+              //       //                     overflow: TextOverflow.ellipsis,maxLines: 2,),
+              //       //                   SizedBox(height: 15,),
+              //       //                   // SizedBox(height: width>750?0:10,),
+              //       //                   Row(
+              //       //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       //                     crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                     children: [
+              //       //                       Expanded(child: Column(
+              //       //                         crossAxisAlignment: CrossAxisAlignment.start,
+              //       //                         mainAxisAlignment: MainAxisAlignment.start,
+              //       //                         children: [
+              //       //                           Text("Estimates learning time: 10 Hr",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Started on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 3,),
+              //       //                           Text("Completed on: Jan 01,2023",overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  width<540?width<420?11:13:14)),
+              //       //                           SizedBox(height: 15,),
+              //       //                           SizedBox(
+              //       //                             width: width<400?160:190,
+              //       //                             child:
+              //       //                             MaterialButton(
+              //       //                               height: width>700?50:40,
+              //       //                               shape: RoundedRectangleBorder(
+              //       //                                 borderRadius: BorderRadius.circular(20),
+              //       //                               ),
+              //       //                               padding: EdgeInsets.all(8),
+              //       //                               minWidth: width>700?100:60,
+              //       //                               onPressed: (){},
+              //       //                               child: Row(
+              //       //                                 children: [
+              //       //                                   SizedBox(width: 5,),
+              //       //                                   Expanded(
+              //       //                                       flex:1,
+              //       //                                       child:
+              //       //                                       Icon(Icons.play_arrow,color: Colors.white,size: width<200?2:null,)),
+              //       //                                   Expanded(
+              //       //                                       flex:3,
+              //       //                                       child:
+              //       //                                       Text("Resume learning",style: TextStyle(color: Colors.white,fontSize: width<500?10:null),overflow: TextOverflow.ellipsis,))
+              //       //                                 ],
+              //       //                               ),color: Colors.purple,),
+              //       //                           )
+              //       //
+              //       //                         ],
+              //       //                       )),
+              //       //                       SizedBox(width: 5,),
+              //       //                       width<700?
+              //       //                       // Expanded(
+              //       //                       //   child:
+              //       //                       Column(
+              //       //                         mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //                         children: [
+              //       //                           SizedBox(height: 25,),
+              //       //                           CircularPercentIndicator(
+              //       //                             radius: width<700?width<500?20:30:70,
+              //       //                             lineWidth: width>700?10.0:4.0,
+              //       //                             animation: true,
+              //       //                             percent: 10/100,
+              //       //                             center: Text(
+              //       //                               10.toString() + "%",
+              //       //                               style: TextStyle(
+              //       //                                   fontSize: width>700?20.0:width<500?8:14,
+              //       //                                   fontWeight: FontWeight.w600,
+              //       //                                   color: Colors.black),
+              //       //                             ),
+              //       //                             backgroundColor: Colors.black12,
+              //       //                             circularStrokeCap: CircularStrokeCap.round,
+              //       //                             progressColor: Colors.green,
+              //       //                           ),
+              //       //                           SizedBox(height: width<500?3:5,),
+              //       //                           Text("progress",style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),)
+              //       //                           // SizedBox(height: 15,),
+              //       //                           // Text("10%")
+              //       //                         ],
+              //       //                       )
+              //       //                       // ,
+              //       //                       // )
+              //       //                           :SizedBox(),
+              //       //                       SizedBox(width: 5,)
+              //       //                     ],
+              //       //                   ),
+              //       //                 ],
+              //       //               )
+              //       //             ],
+              //       //           )),
+              //       //       // SizedBox(width: 10,),
+              //       //       width>700?Expanded(flex:2,
+              //       //         // color: Colors.green,
+              //       //         child: Column(
+              //       //           mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //           children: [
+              //       //             CircularPercentIndicator(
+              //       //               radius: width>700?70.0:40.0,
+              //       //               lineWidth: 10.0,
+              //       //               animation: true,
+              //       //               percent: 10/100,
+              //       //               center: Text(
+              //       //                 10.toString() + "%",
+              //       //                 style: TextStyle(
+              //       //                     fontSize: 20.0,
+              //       //                     fontWeight: FontWeight.w600,
+              //       //                     color: Colors.black),
+              //       //               ),
+              //       //               backgroundColor: Colors.black12,
+              //       //               circularStrokeCap: CircularStrokeCap.round,
+              //       //               progressColor: Colors.green,
+              //       //             ),
+              //       //             SizedBox(height: 15,),
+              //       //             Text("10%")
+              //       //           ],
+              //       //         ),):
+              //       //       SizedBox()
+              //       //       // Column(
+              //       //       //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
+              //       //       //   children: [
+              //       //       //     CircularPercentIndicator(
+              //       //       //       radius: width>700?70.0:30.0,
+              //       //       //       lineWidth: width>700?10.0:5.0,
+              //       //       //       animation: true,
+              //       //       //       percent: 10/100,
+              //       //       //       center: Text(
+              //       //       //         10.toString() + "%",
+              //       //       //         style: TextStyle(
+              //       //       //             fontSize: width>700?20.0:14,
+              //       //       //             fontWeight: FontWeight.w600,
+              //       //       //             color: Colors.black),
+              //       //       //       ),
+              //       //       //       backgroundColor: Colors.black12,
+              //       //       //       circularStrokeCap: CircularStrokeCap.round,
+              //       //       //       progressColor: Colors.green,
+              //       //       //     ),
+              //       //       //     SizedBox(height: 15,),
+              //       //       //     Text("10%")
+              //       //       //   ],
+              //       //       // ),
+              //       //     ],
+              //       //   ),
+              //       // ),
+              //
+              //     ],
+              //   ),
+              // ),
+              );
         },
       ),
     );

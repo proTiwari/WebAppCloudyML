@@ -627,14 +627,12 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   @override
   Widget build(BuildContext context) {
     final userprovider = Provider.of<UserProvider>(context);
-
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
-
-    return isLoading ? Center(child: CircularProgressIndicator()) :
-    Container(
+    return isLoading ? Center(
+        child: CircularProgressIndicator()) : Container(
       width: screenWidth/3.5,
       height: 70 * verticalScale,
       decoration: BoxDecoration(
@@ -717,7 +715,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
             },
             child: Center(
               child: Container(
-                width: screenWidth/3.5,
+                width: screenWidth,
                 height: 70 * verticalScale,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
@@ -739,8 +737,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                         color: Color.fromRGBO(255, 255, 255, 1),
                         fontFamily: 'Poppins',
                         fontSize: 24 * verticalScale,
-                        letterSpacing:
-                        0 /*percentages not used in flutter. defaulting to zero*/,
+                        letterSpacing: 0 /*percentages not used in flutter. defaulting to zero*/,
                         fontWeight: FontWeight.bold,
                         height: 1),
                   ),

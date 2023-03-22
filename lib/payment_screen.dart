@@ -440,7 +440,21 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Price',
+                                    "Actual price",
+                                    style: textStyle,
+                                  ),
+                                  Text(
+                                    courseMap['gst'] != null ? '₹${courseMap['Amount Payable']}/-' : courseMap['Amount Payable'],
+                                    style: textStyle,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 5),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Discounted price',
                                     style: textStyle,
                                   ),
                                   Text(
@@ -463,22 +477,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 5),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Discount",
-                                    style: textStyle,
-                                  ),
-                                  Text(
-                                    NoCouponApplied
-                                        ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${courseMap["Discount"]}
-                                        : discountedPrice,
-                                    style: textStyle,
-                                  ),
-                                ],
-                              ),
+
                               // SizedBox(
                               //   height: 15,
                               // ),
@@ -767,7 +766,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10.0),
+                padding: EdgeInsets.only(left: 10, right: 10.0),
                 child: Container(
                   height: screenHeight/5,
                   width: screenWidth,
@@ -779,14 +778,21 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                         fit: BoxFit.fitWidth,
                         child: Text('Congratulations',
                           textScaleFactor: min(horizontalScale, verticalScale),
-                          style: congoStyle),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 48 * verticalScale,
+                            height: 1,
+                          )),
                       ),
-                      SizedBox(height: 3),
-                      FittedBox(
-                        fit: BoxFit.fitWidth,
+                      SizedBox(height: 25 * verticalScale),
+                      Container(
                         child: Text('🤩You are just one step away🤩',
                           textScaleFactor: min(horizontalScale, verticalScale),
-                          style: congoStyle),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20 * verticalScale,
+                            height: 1,
+                          ),),
                       ),
                     ],
                   ),
@@ -834,8 +840,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     errorWidget: (context, url, error) =>
                                         Icon(Icons.error),
                                     fit: BoxFit.fill,
-                                    height: 110 * verticalScale,
-                                    width: 140 * horizontalScale,
+                                    height: 150 * verticalScale,
+                                    width: 165 * horizontalScale,
                                   ),
                                 ),
                               ),
@@ -880,37 +886,37 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                               // ),
                               // SizedBox(height: 20,),
                               Container(
-                                width: screenWidth/3,
+                                width: screenWidth/2.5,
                                 padding: EdgeInsets.only(left: 5, right: 5),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    FittedBox(
-                                      fit: BoxFit.fitWidth,
+                                    Container(
                                       child: Text(
                                         courseMap['name'],
                                         textScaleFactor: min(horizontalScale, verticalScale),
                                         style: TextStyle(
-                                          fontSize: 36,
+                                          fontSize: 20 * verticalScale,
                                           fontWeight: FontWeight.bold,
                                           height: 1,
                                         ),
                                         maxLines: 2,
                                       ),
                                     ),
-                                    SizedBox(height: 15 * verticalScale,),
-                                    FittedBox(
-                                      fit: BoxFit.fitWidth,
+                                    SizedBox(height: 10 * verticalScale,),
+                                    Container(
                                       child: Text(
                                         courseMap['description'],
                                         textScaleFactor: min(horizontalScale, verticalScale),
                                         style: TextStyle(
-                                            fontSize: 18,
-                                            height: 1
+                                            fontSize: 12 * verticalScale,
+                                            height: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
+                                        maxLines: 4,
                                       ),
                                     ),
-                                    SizedBox(height: 15 * verticalScale,),
+                                    SizedBox(height: 10 * verticalScale,),
                                     FittedBox(
                                       fit: BoxFit.fitWidth,
                                       child: Text(
@@ -918,7 +924,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                         textScaleFactor: min(horizontalScale, verticalScale),
                                         style: TextStyle(
                                             color: Colors.deepPurple.shade600,
-                                            fontSize: 24,
+                                            fontSize: 18 * verticalScale,
                                             height: 1
                                         ),
                                       ),
@@ -932,7 +938,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                           ),
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 15 * verticalScale,),
                       Padding(
                         padding: EdgeInsets.only(right: 10.0, top: 10, bottom: 10, left: 10),
                         child: Container(
@@ -948,7 +954,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                       child: Text('BILL SUMMARY',
                                         textScaleFactor: min(horizontalScale, verticalScale),
                                         style: TextStyle(
-                                          fontSize: 30,
+                                          fontSize: 34 * verticalScale,
                                           fontWeight: FontWeight.bold,
                                           height: 1,
                                         ),),
@@ -971,7 +977,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                             style: TextStyle(
                                                 color: Color.fromARGB(223, 48, 48, 49),
                                                 fontFamily: 'Poppins',
-                                                fontSize: 14,
+                                                fontSize: 16 * verticalScale,
                                                 letterSpacing:
                                                 0 /*percentages not used in flutter. defaulting to zero*/,
                                                 fontWeight: FontWeight.bold,
@@ -983,7 +989,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                             style: TextStyle(
                                                 color: Color.fromARGB(223, 48, 48, 49),
                                                 fontFamily: 'Poppins',
-                                                fontSize: 14,
+                                                fontSize: 16 * verticalScale,
                                                 letterSpacing:
                                                 0 /*percentages not used in flutter. defaulting to zero*/,
                                                 fontWeight: FontWeight.bold,
@@ -996,14 +1002,34 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                               DottedLine(
                                 dashGapLength: 0,
                               ),
-                              SizedBox(height: 15),
+                              SizedBox(height: 5 * verticalScale),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   FittedBox(
                                     fit: BoxFit.fitWidth,
                                     child: Text(
-                                      'Price',
+                                      "Actual Price",
+                                      style: textStyle,
+                                    ),
+                                  ),
+                                  FittedBox(
+                                    fit: BoxFit.fitWidth,
+                                    child: Text(
+                                      courseMap['gst'] != null ? '₹${courseMap['Amount Payable']}/-' : courseMap['Amount Payable'],
+                                      style: textStyle,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 5 * verticalScale),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  FittedBox(
+                                    fit: BoxFit.fitWidth,
+                                    child: Text(
+                                      'Discounted Price',
                                       style: textStyle,
                                     ),
                                   ),
@@ -1016,7 +1042,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 5),
+                              SizedBox(height: 5 * verticalScale),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
@@ -1036,30 +1062,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 5),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  FittedBox(
-                                    fit: BoxFit.fitWidth,
-                                    child: Text(
-                                      "Discount",
-                                      style: textStyle,
-                                    ),
-                                  ),
-                                  FittedBox(
-                                    fit: BoxFit.fitWidth,
-                                    child: Text(
-                                      NoCouponApplied
-                                          ? '₹${double.parse(discountvalue) + newcoursevalue} /-' //${courseMap["Discount"]}
-                                          : discountedPrice,
-                                      style: textStyle,
-                                    ),
-                                  ),
-                                ],
-                              ),
                               SizedBox(
-                                height: 15,
+                                height: 15 * verticalScale,
                               ),
                               // Container(
                               //   height: 30,
@@ -1279,8 +1283,9 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                               DottedLine(
                                 dashGapLength: 0,
                               ),
-                              SizedBox(height: 25),
-                              Center(
+                              SizedBox(height: 25 * verticalScale),
+                              Container(
+                                width: screenWidth,
                                 child: PaymentButton(
                                   coursePriceMoneyRef: int.parse(courseprice),
                                   amountString: (double.parse(NoCouponApplied

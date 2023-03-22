@@ -43,6 +43,10 @@ class _StoreScreenState extends State<StoreScreen> {
   );
 
   @override
+  void initState() {
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
 
     List<CourseDetails> courseList = Provider.of<List<CourseDetails>>(context);
@@ -122,9 +126,10 @@ class _StoreScreenState extends State<StoreScreen> {
     var horizontalScale = screenWidth / mockUpWidth;
 
 
+
     return Scaffold(
       key: _scaffoldKey,
-      drawer: customDrawer(context),
+      // drawer: customDrawer(context),
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           if (constraints.maxWidth >= 515) {
@@ -135,65 +140,66 @@ class _StoreScreenState extends State<StoreScreen> {
                     width: screenWidth,
                     height: 45,
                     color: HexColor("440F87"),
-                    child: Row(
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Scaffold.of(context).openDrawer();
-                            },
-                            icon: Icon(
-                              Icons.menu,
-                              color: Colors.white,
-                            )),
-                        SizedBox(
-                          width: horizontalScale * 15,
-                        ),
-                        Image.asset(
-                          "assets/logo2.png",
-                          width: 30,
-                          height: 30,
-                        ),
-                        Text(
-                          "CloudyML",
-                          style: textStyle,
-                        ),
-                        SizedBox(
-                          width: horizontalScale * 25,
-                        ),
-                        // SizedBox(
-                        //   height: 30,
-                        //   width: screenWidth / 3,
-                        //   child: TextField(
-                        //     style: TextStyle(
-                        //         color: HexColor("A7A7A7"), fontSize: 12),
-                        //     decoration: InputDecoration(
-                        //         contentPadding: EdgeInsets.all(5.0),
-                        //         hintText: "Search Courses",
-                        //         focusedBorder: OutlineInputBorder(
-                        //             borderSide: BorderSide(
-                        //                 color: Colors.white, width: 1)),
-                        //         disabledBorder: OutlineInputBorder(
-                        //             borderSide: BorderSide(
-                        //                 color: Colors.white, width: 1)),
-                        //         hintStyle: TextStyle(
-                        //             color: HexColor("A7A7A7"), fontSize: 12),
-                        //         border: OutlineInputBorder(
-                        //             borderSide: BorderSide(
-                        //                 color: Colors.white, width: 1)),
-                        //         enabledBorder: OutlineInputBorder(
-                        //             borderSide: BorderSide(
-                        //                 color: Colors.white, width: 1)),
-                        //         prefixIcon: IconButton(
-                        //             onPressed: () {},
-                        //             icon: Icon(
-                        //               Icons.search_outlined,
-                        //               size: 14,
-                        //               color: Colors.white,
-                        //             ))),
-                        //   ),
-                        // )
-                      ],
-                    ),
+                    child: customMenuBar(context),
+                    // Row(
+                    //   children: [
+                    //     IconButton(
+                    //         onPressed: () {
+                    //           Scaffold.of(context).openDrawer();
+                    //         },
+                    //         icon: Icon(
+                    //           Icons.menu,
+                    //           color: Colors.white,
+                    //         )),
+                    //     SizedBox(
+                    //       width: horizontalScale * 15,
+                    //     ),
+                    //     Image.asset(
+                    //       "assets/logo2.png",
+                    //       width: 30,
+                    //       height: 30,
+                    //     ),
+                    //     Text(
+                    //       "CloudyML",
+                    //       style: textStyle,
+                    //     ),
+                    //     SizedBox(
+                    //       width: horizontalScale * 25,
+                    //     ),
+                    //     // SizedBox(
+                    //     //   height: 30,
+                    //     //   width: screenWidth / 3,
+                    //     //   child: TextField(
+                    //     //     style: TextStyle(
+                    //     //         color: HexColor("A7A7A7"), fontSize: 12),
+                    //     //     decoration: InputDecoration(
+                    //     //         contentPadding: EdgeInsets.all(5.0),
+                    //     //         hintText: "Search Courses",
+                    //     //         focusedBorder: OutlineInputBorder(
+                    //     //             borderSide: BorderSide(
+                    //     //                 color: Colors.white, width: 1)),
+                    //     //         disabledBorder: OutlineInputBorder(
+                    //     //             borderSide: BorderSide(
+                    //     //                 color: Colors.white, width: 1)),
+                    //     //         hintStyle: TextStyle(
+                    //     //             color: HexColor("A7A7A7"), fontSize: 12),
+                    //     //         border: OutlineInputBorder(
+                    //     //             borderSide: BorderSide(
+                    //     //                 color: Colors.white, width: 1)),
+                    //     //         enabledBorder: OutlineInputBorder(
+                    //     //             borderSide: BorderSide(
+                    //     //                 color: Colors.white, width: 1)),
+                    //     //         prefixIcon: IconButton(
+                    //     //             onPressed: () {},
+                    //     //             icon: Icon(
+                    //     //               Icons.search_outlined,
+                    //     //               size: 14,
+                    //     //               color: Colors.white,
+                    //     //             ))),
+                    //     //   ),
+                    //     // )
+                    //   ],
+                    // ),
                   ),
                   Container(
                     width: screenWidth,

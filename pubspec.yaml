@@ -43,7 +43,7 @@ dependencies:
   go_router:
   intl_phone_number_input:
   firebase_core_platform_interface: 4.5.1
-  percent_indicator:
+  percent_indicator: ^4.2.3
   firebase_core: ^1.24.0
   firebase_storage: ^10.3.11
   cloud_firestore: ^3.5.1
@@ -120,6 +120,7 @@ dependencies:
   timeago: ^3.3.0
   json_path: ^0.4.2
   from_css_color: ^2.0.0
+  sizer:
 
   
 dev_dependencies:

@@ -2136,20 +2136,13 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                           .add({
                                                                         'name':
                                                                         addVideoName.text,
-                                                                        'id': '$id' +
-                                                                            'V' +
-                                                                            '${listOfSectionData[widget.courseName][editIndex].length}' +
+                                                                        'id': '$id' + 'V' + '${listOfSectionData[widget.courseName][editIndex].length}' +
                                                                             '${listOfSectionData[widget.courseName][editIndex]['videos'].length}',
-                                                                        'url': addVideoUrl
-                                                                            .text,
-                                                                        'type':
-                                                                        'video',
-                                                                        'offline':
-                                                                        false,
-                                                                        'demo':
-                                                                        false,
-                                                                        'sr': listOfSectionData[widget.courseName][editIndex]['videos']
-                                                                            .length,
+                                                                        'url': addVideoUrl.text,
+                                                                        'type': 'video',
+                                                                        'offline': false,
+                                                                        'demo': false,
+                                                                        'sr': listOfSectionData[widget.courseName][editIndex]['videos'].length,
                                                                       });
                                                                       try {
                                                                         FirebaseFirestore
@@ -2167,13 +2160,10 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                         }).whenComplete(() =>
                                                                             Fluttertoast.showToast(msg: 'New video added'));
                                                                       } catch (e) {
-                                                                        print(e
-                                                                            .toString());
+                                                                        print(e.toString());
                                                                       }
                                                                     }
-                                                                    print(
-                                                                        'added new video name ${addVideoName.text}');
-
+                                                                    print('added new video name ${addVideoName.text}');
                                                                     setState(
                                                                             () {
                                                                           addVideoId

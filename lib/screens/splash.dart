@@ -170,7 +170,7 @@ class _splashState extends State<splash> {
     } catch (e) {
       print("error while getting coursename: ${e.toString()}");
     }
-    print("coursemodulemap : $coursemodule");
+    // print("coursemodulemap : $coursemodule");
     globals.moduleList = moduelnamelist;
     globals.courseList = coursenamelist;
     globals.coursemoduelmap = coursemodule;

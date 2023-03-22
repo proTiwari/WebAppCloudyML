@@ -21,6 +21,8 @@ import 'package:provider/provider.dart';
 import '../authentication_screens/phone_auth.dart';
 import '../catalogue_screen.dart';
 import '../combo/feature_courses.dart';
+import '../combo/new_combo_course.dart';
+import '../combo/new_feature_course.dart';
 import '../models/course_details.dart';
 import '../my_Courses.dart';
 import '../screens/quiz/admin_quiz.dart';
@@ -55,14 +57,14 @@ class MyRouter {
 
        },
       routes: <RouteBase>[
+        // GoRoute(
+        //     path: '/',
+        //     pageBuilder: (context, state) {
+        //       return MaterialPage(child: splash());
+        //     }
+        // ),
         GoRoute(
-            path: '/',
-            pageBuilder: (context, state) {
-              return MaterialPage(child: splash());
-            }
-        ),
-        GoRoute(
-          path: '/login',
+          path: '/',
           pageBuilder: (context, state) {
             return MaterialPage(child:  LoginPage());
           },
@@ -193,17 +195,37 @@ class MyRouter {
             }
         ),
         GoRoute(
-            name: 'NewScreen',
-            path: '/NewScreen',
-            pageBuilder: (context, state){
+            name: 'NewComboCourse',
+            path: '/NewComboCourse',
+            pageBuilder: (context, state) {
               List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
               final String id = state.queryParams['id']!;
               final String courseName = state.queryParams['courseName']!;
               return MaterialPage(
                   key: state.pageKey,
+                  child: NewComboCourse(
+                    id: id,
+                    courses: course[int.parse(id)].courses,
+                    courseName: courseName,
+                  ));
+            }
+        ),
+        GoRoute(
+            name: 'NewScreen',
+            path: '/NewScreen',
+            pageBuilder: (context, state){
+              List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
+              final String cID = state.queryParams['cID']!;
+              final String id = state.queryParams['id']!;
+              final String courseName = state.queryParams['courseName']!;
+              final String coursePrice = state.queryParams['coursePrice']!;
+              return MaterialPage(
+                  key: state.pageKey,
                   child: NewScreen(
                     courses: course[int.parse(id)].courses,
                     id: id,
+                    cID: cID,
+                    courseP: coursePrice,
                     courseName: courseName,
                   ));
             }),

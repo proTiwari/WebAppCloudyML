@@ -55,8 +55,6 @@ class DatabaseServices {
         );
   }
 
-
-
   Stream<List<VideoDetails>> get videoDetails {
     return _fireStore
         .collection('courses')

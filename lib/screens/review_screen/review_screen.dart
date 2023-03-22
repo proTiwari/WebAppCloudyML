@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudyml_app2/api/firebase_api.dart';
+import 'package:cloudyml_app2/fun.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter/material.dart';
@@ -43,11 +44,17 @@ class _Review1State extends State<ReviewsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
+                width: screenWidth,
+                height: 45,
+                color: HexColor("440F87"),
+                child: customMenuBar(context),
+              ),
+              Container(
                 child: Stack(
                   children: [
                     Container(
                       width: 414 * horizontalScale,
-                      height: 180 * verticalScale,
+                      height: 125 * verticalScale,
                       decoration: BoxDecoration(
                         color: HexColor('7A62DE'),
                       ),
@@ -87,20 +94,20 @@ class _Review1State extends State<ReviewsScreen> {
                     //         ],
                     //       ),
                     //     )),
-                    Positioned(
-                        top: 30 * verticalScale,
-                        left: 10 * horizontalScale,
-                        child: IconButton(
-                          onPressed: () {
-                            GoRouter.of(context).push('/home');
-                            // Navigator.pop(context);
-                          },
-                          icon: Icon(
-                            Icons.arrow_back,
-                            size: 40 * min(horizontalScale, verticalScale),
-                            color: Colors.white,
-                          ),
-                        )),
+                    // Positioned(
+                    //     top: 30 * verticalScale,
+                    //     left: 10 * horizontalScale,
+                    //     child: IconButton(
+                    //       onPressed: () {
+                    //         GoRouter.of(context).push('/home');
+                    //         // Navigator.pop(context);
+                    //       },
+                    //       icon: Icon(
+                    //         Icons.arrow_back,
+                    //         size: 40 * min(horizontalScale, verticalScale),
+                    //         color: Colors.white,
+                    //       ),
+                    //     )),
                   ],
                 ),
               ),

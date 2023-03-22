@@ -99,6 +99,7 @@ Future<void> main() async {
           databaseURL: "https://cloudyml-app-default-rtdb.firebaseio.com",
           authDomain: "cloudyml-app.firebaseapp.com")
   );
+
   if(kIsWeb) {
     await FirebaseAuth.instance.authStateChanges().first;
   }
