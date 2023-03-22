@@ -45,7 +45,7 @@ class MyRouter {
       redirect: (context, GoRouterState state) {
 
         final loggedIn = loginState.loggedIn;
-        final goingToLogin = state.location == ('/');
+        final goingToLogin = state.location == ('/login');
 
         // final dc = state.location == ('/comboPaymentPortal?cID=aEGX6kMfHzQrVgP3WCwU');
 
@@ -64,15 +64,15 @@ class MyRouter {
         GoRoute(
             path: '/',
             pageBuilder: (context, state) {
-              return MaterialPage(child: LoginPage());
+              return MaterialPage(child: splash());
             }
         ),
-        // GoRoute(
-        //   path: '/login',
-        //   pageBuilder: (context, state) {
-        //     return MaterialPage(child:  LoginPage());
-        //   },
-        // ),
+        GoRoute(
+          path: '/login',
+          pageBuilder: (context, state) {
+            return MaterialPage(child:  LoginPage());
+          },
+        ),
         GoRoute(
             name: 'home',
             path: '/home',

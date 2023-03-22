@@ -178,7 +178,7 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                           queryParams: {
                                             'courseName':
                                                 featuredCourse[0].courseName,
-                                            'id': "28",
+                                            'id': "37",
                                           });
                                     },
                                     child: Center(
@@ -401,19 +401,19 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                   Timer(
                                                                       Duration(
                                                                           seconds:
-                                                                              8),
+                                                                              2),
                                                                       () => {
-                                                                        
-                                                                            GoRouter.of(context).pushReplacementNamed('myCourses')
 
-                                                                            //  GoRouter.of(context).pushNamed(
-                                                                            // 'newcomboCourse',
-                                                                            // queryParams: {
-                                                                            //   'courseName':
-                                                                            //       featuredCourse[0]
-                                                                            //           .courseName,
-                                                                            //   'id': "28",
-                                                                            // })
+                                                                            // GoRouter.of(context).pushReplacementNamed('myCourses')
+
+                                                                             GoRouter.of(context).pushNamed(
+                                                                            'newcomboCourse',
+                                                                            queryParams: {
+                                                                              'courseName':
+                                                                                  featuredCourse[0]
+                                                                                      .courseName,
+                                                                              'id': "37",
+                                                                            })
                                                                           });
                                                                 });
                                                               }
@@ -548,16 +548,15 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                         .contains(featuredCourse[0].courseId)
                                 ? InkWell(
                                     onTap: () {
-                                      GoRouter.of(context)
-                                          .pushReplacementNamed('myCourses');
-                                      // GoRouter.of(context).goNamed(
-                                      //     'comboCourse',
-                                      //     queryParams: {
-                                      //       'courseName':
-                                      //       featuredCourse[0]
-                                      //           .courseName,
-                                      //       'id': widget.id,
-                                      //     });
+                                      
+                                      GoRouter.of(context).pushNamed(
+                                                                            'newcomboCourse',
+                                                                            queryParams: {
+                                                                              'courseName':
+                                                                                  featuredCourse[0]
+                                                                                      .courseName,
+                                                                              'id': "37",
+                                                                            });
                                     },
                                     child: Center(
                                       child: Container(
@@ -775,10 +774,14 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                       Duration(
                                                                           seconds:
                                                                               2),
-                                                                      () => GoRouter.of(
-                                                                              context)
-                                                                          .pushReplacementNamed(
-                                                                              'myCourses'));
+                                                                      () => {  GoRouter.of(context).pushNamed(
+                                                                            'newcomboCourse',
+                                                                            queryParams: {
+                                                                              'courseName':
+                                                                                  featuredCourse[0]
+                                                                                      .courseName,
+                                                                              'id': "37",
+                                                                            })});
                                                                 });
                                                               }
                                                             },

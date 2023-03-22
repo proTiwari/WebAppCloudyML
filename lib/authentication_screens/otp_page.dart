@@ -51,67 +51,83 @@ class _OtpPageState extends State<OtpPage> {
 
   late String diurl;
   late String payurl;
-    late String feaurl;
-
+  late String feaurl;
 
   void _onKeyboardTap(String value) {
     setState(() {
       text = text + value;
     });
   }
+
   List<CourseDetails> featuredCourse = [];
 
-  setFeaturedCourse(List<CourseDetails> course){
+  setFeaturedCourse(List<CourseDetails> course) {
     featuredCourse.clear();
     course.forEach((element) {
-      if(element.FcSerialNumber.isNotEmpty && element.FcSerialNumber != null &&
-          element.isItComboCourse == true){
+      if (element.FcSerialNumber.isNotEmpty &&
+          element.FcSerialNumber != null &&
+          element.isItComboCourse == true) {
         featuredCourse.add(element);
       }
     });
     featuredCourse.sort((a, b) {
-      return int.parse(a.FcSerialNumber).compareTo(int.parse(b.FcSerialNumber));}
-    );
+      return int.parse(a.FcSerialNumber).compareTo(int.parse(b.FcSerialNumber));
+    });
   }
+
   final defaultPinTheme = PinTheme(
-  width: 56,
-  height: 56,
-  decoration: BoxDecoration(
-    color: Color.fromARGB(255, 226, 226, 226),
-  ),
-);
+    width: 56,
+    height: 56,
+    decoration: BoxDecoration(
+      color: Color.fromARGB(255, 226, 226, 226),
+    ),
+  );
 
   Widget darkRoundedPinPut() {
     return Container(
-      child:
-      Pinput(
+      child: Pinput(
         onChanged: (value) => text = value,
         defaultPinTheme: defaultPinTheme.copyDecorationWith(
-  borderRadius: BorderRadius.circular(8),),
+          borderRadius: BorderRadius.circular(8),
+        ),
         length: 6,
       ),
     );
   }
 
-  void url() async{
-    diurl= await FirebaseFirestore.instance.collection("Notice")
-        .doc("7A85zuoLi4YQpbXlbOAh_redirect").get().then((value) {print(value.data()!.values.first);
-    return value.data()!.values.first;} );
+  void url() async {
+    diurl = await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("7A85zuoLi4YQpbXlbOAh_redirect")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
 
     print("url is=====$diurl");
 
-    payurl= await FirebaseFirestore.instance.collection("Notice")
-        .doc("NBrEm6KGry8gxOJJkegG_redirect_pay").get().then((value) {print(value.data()!.values.first);
-    return value.data()!.values.first;} );
+    payurl = await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("NBrEm6KGry8gxOJJkegG_redirect_pay")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
 
     print("url is=====$payurl");
 
-    feaurl=await FirebaseFirestore.instance.collection("Notice")
-        .doc("XdYtk2DJBIkRGx0ASthZ_newfeaturecourse").get().then((value) {print(value.data()!.values.first);
-    return value.data()!.values.first;} );
+    feaurl = await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("XdYtk2DJBIkRGx0ASthZ_newfeaturecourse")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
 
     print("url is=====$feaurl");
-
   }
 
   Widget _otpTextField(BuildContext context, bool autoFocus, int position) {
@@ -181,7 +197,6 @@ class _OtpPageState extends State<OtpPage> {
       );
     }
   }
-    
 
   @override
   void initState() {
@@ -189,9 +204,7 @@ class _OtpPageState extends State<OtpPage> {
     super.initState();
     url();
     GRecaptchaV3.hideBadge();
-     url();
-   
-    
+    url();
   }
 
   @override
@@ -673,68 +686,36 @@ class _OtpPageState extends State<OtpPage> {
                 // GoRouter.of(context).pushReplacement('/home');
                 String location = GoRouter.of(context).location;
 
-                if (diurl=='/featuredCourses') {
-                  print("i am in otp if");
-
-
+                if (feaurl == '/NewFeature') {
                   final id = "0";
                   final cID = "aEGX6kMfHzQrVgP3WCwU";
-                  final courseName ="Data Science & Analytics Placement Assurance Program";
+                  final courseName =
+                      "Data Science & Analytics Placement Assurance Program";
                   final courseP = "9999";
-                  GoRouter.of(context).goNamed(
-                      'featuredCourses',
-                      queryParams: {
-                        'cID': cID,
-                        'courseName': courseName,
-                        'id': id,
-                        'coursePrice': courseP});
-
-                }
-                else if(payurl=='/comboPaymentPortal')
-                {
+                  GoRouter.of(context).goNamed('NewFeature', queryParams: {
+                    'cID': cID,
+                    'courseName': courseName,
+                    'id': id,
+                    'coursePrice': courseP
+                  });
+                } else if (payurl == '/comboPaymentPortal') {
                   final cID = "aEGX6kMfHzQrVgP3WCwU";
-                 
-
                   GoRouter.of(context).go(
                     '/comboPaymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
                     // queryParams: {
                     //   'cID': cID,
                     //   }
                   );
-           
-
-                }
-
-                else if(feaurl=='/NewFeature'){
-                   final id = "0";
-                  final cID = "aEGX6kMfHzQrVgP3WCwU";
-                  final courseName ="Data Science & Analytics Placement Assurance Program";
-                  final courseP = "9999";
-                  GoRouter.of(context).goNamed(
-                      'NewFeature',
-                      queryParams: {
-                        'cID': cID,
-                        'courseName': courseName,
-                        'id': id,
-                        'coursePrice': courseP});
-                  
-                }
-
-
-
-                else {
-                 
+                } else {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (_) => LandingScreen()));
-                  GoRouter.of(context).pushNamed('home');    
-                  
+                  GoRouter.of(context).pushNamed('home');
                 }
 
-                  //
-                  // Navigator.of(context)
-                  //     .push(MaterialPageRoute(builder: (_) => HomePage()));
-                  //
-
+                //
+                // Navigator.of(context)
+                //     .push(MaterialPageRoute(builder: (_) => HomePage()));
+                //
 
                 // (Route<dynamic> route) => false;
                 saveLoginState(context);
@@ -768,7 +749,6 @@ class _OtpPageState extends State<OtpPage> {
         }
       } else {
         if (globals.linked == 'true') {
-
           GoRouter.of(context).pushReplacement('/home');
 
           (Route<dynamic> route) => false;

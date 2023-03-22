@@ -17,6 +17,7 @@ import 'package:http/http.dart' as http;
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/global_variable.dart' as globals;
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:html' as html;
 
 class PaymentButton extends StatefulWidget {
   final ScrollController scrollController;
@@ -449,7 +450,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     showToast("Payment successful.");
     addCoursetoUser(widget.courseId);
     loadCourses();
-    pushToMyCourses();
+    pushToHome();
 
     updateCouponDetailsToUser(
       couponCodeText: widget.couponCodeText,
@@ -513,24 +514,25 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     });
   }
 
-  void pushToMyCourses() async {
+//   void pushToMyCourses() async {
     
- print('i am after payment1');
+//  print('i am after payment1');
 
-     const url = 'https://www.cloudyml.com/tnkyu/';
-  final uri = Uri.parse(url);
-if (  await canLaunchUrl(uri)){
-   launchUrl(uri);
-       print('i am after payment2');}
+//      const url = 'https://www.cloudyml.com/tnkyu/';
+//   final uri = Uri.parse(url);
+  
+// // if (  await canLaunchUrl(uri)){
+// //    launchUrl(uri);
+// //        print('i am after payment2');}
 
-else 
-  // can't launch url, there is some error
-  {throw "Could not launch $url";}
+// // else 
+// //   // can't launch url, there is some error
+// //   {throw "Could not launch $url";}
 
-  // GoRouter.of(context).pushReplacement('/myCourses');
+//   // GoRouter.of(context).pushReplacement('/myCourses');
 
-  }
-  void pushToHome() {
+//   }
+  void pushToHome() async{
     // Navigator.push(
     //   context,
     //   PageTransition(
@@ -541,18 +543,27 @@ else
     //   ),
     // );
 
+print('i am after payment1');
 
 
-    Navigator.pushAndRemoveUntil(
-        context,
-        PageTransition(
-          duration: Duration(milliseconds: 200),
-          curve: Curves.bounceInOut,
-          type: PageTransitionType.rightToLeftWithFade,
-          child: HomePage(),
-        ),
-            (route) => false);
-    print('pushedtohome');
+
+     const url = 'https://www.cloudyml.com/tnkyu/';
+  final uri = Uri.parse(url);
+html.WindowBase _popup = html.window.open(url,'Thank you');
+if (_popup.closed!) {
+  throw("Popups blocked");
+}
+
+    // Navigator.pushAndRemoveUntil(
+    //     context,
+    //     PageTransition(
+    //       duration: Duration(milliseconds: 200),
+    //       curve: Curves.bounceInOut,
+    //       type: PageTransitionType.rightToLeftWithFade,
+    //       child: HomePage(),
+    //     ),
+    //         (route) => false);
+    // print('pushedtohome');
   }
 
   bool stateOfMinAmtBtn() {
