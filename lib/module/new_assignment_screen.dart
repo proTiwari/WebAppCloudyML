@@ -299,11 +299,15 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                                 // print(
                                                 //     'dataset = ${widget.dataSetUrl} ${widget.dataSetUrl.toString()}');
                                               },
-                                              child: Text(
-                                                'DataSet file. ${widget.dataSetUrl[index]["name"]}',
-                                                style: TextStyle(
-                                                    color: Colors
-                                                        .deepPurpleAccent),
+                                              child: Container(
+                                                width: 640,
+                                                child: Text(
+                                                  '${widget.dataSetUrl[index]["name"]}',
+                                                  maxLines: 10,
+                                                  style: TextStyle(
+                                                      color: Colors
+                                                          .deepPurpleAccent),
+                                                ),
                                               ),
                                             ),
                                           ],

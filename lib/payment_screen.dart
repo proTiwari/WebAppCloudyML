@@ -19,11 +19,12 @@ import 'global_variable.dart' as globals;
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
 class PaymentScreen extends StatefulWidget {
-  final Map<String, dynamic>? map;
+  // final Map<String, dynamic>? map;
   final cID;
   final bool isItComboCourse;
   const PaymentScreen(
-      {Key? key, this.map, required this.cID, required this.isItComboCourse})
+      {Key? key, //this.map, 
+      required this.cID, required this.isItComboCourse})
       : super(key: key);
 
   @override
@@ -165,9 +166,13 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
 
   @override
   void initState() {
+    print(widget.cID, );
+        print(widget.isItComboCourse);
+
+    // print(widget.map);
+
 
     super.initState();
-    url_del();
     getCourseName();
   }
 
@@ -205,6 +210,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
     final screenWidth = MediaQuery.of(context).size.width;
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
+        url_del();
+
     return Scaffold(
       // drawer: customDrawer(context),
       appBar: AppBar(

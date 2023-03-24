@@ -32,6 +32,8 @@ class _Review1State extends State<ReviewsScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final width = size.width;
+    final containerWidth = 300.0;
+    final containerHeight = 300.0;
     double height = MediaQuery.of(context).size.height;
     var verticalScale = height / mockUpHeight;
     var horizontalScale = width / mockUpWidth;
@@ -45,98 +47,55 @@ class _Review1State extends State<ReviewsScreen> {
             children: [
               Container(
                 width: screenWidth,
-                height: 45,
+                height: 60,
                 color: HexColor("440F87"),
                 child: customMenuBar(context),
               ),
+              SizedBox(
+                height: 25 * verticalScale,
+              ),
               Container(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 414 * horizontalScale,
-                      height: 125 * verticalScale,
-                      decoration: BoxDecoration(
-                        color: HexColor('7A62DE'),
-                      ),
-                    ),
-                    Positioned(
-                      top: 40 * verticalScale,
-                      left: 150 * horizontalScale,
-                      child: Container(alignment: Alignment.center,height: 40,width: 260,
-                          decoration: BoxDecoration(
-                              border: Border.fromBorderSide(
-                                  BorderSide(width: 1,color: Colors.deepPurple.shade700)),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(5)
-                              )),
-                          child: Text(
-                            'Our Learners Speaks',textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.deepPurple.shade700,
-                                fontWeight: FontWeight.bold),
-                          )),
-                    ),
-                    // Positioned(
-                    //     top: 65 * verticalScale,
-                    //     left: 196 * horizontalScale,
-                    //     child: Container(
-                    //       child: Row(
-                    //         children: [
-                    //           Text(
-                    //             'Reviews',
-                    //             textScaleFactor:
-                    //             min(horizontalScale, verticalScale),
-                    //             style: TextStyle(
-                    //                 fontSize: 30,
-                    //                 fontWeight: FontWeight.bold,
-                    //                 color: Colors.white),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     )),
-                    // Positioned(
-                    //     top: 30 * verticalScale,
-                    //     left: 10 * horizontalScale,
-                    //     child: IconButton(
-                    //       onPressed: () {
-                    //         GoRouter.of(context).push('/home');
-                    //         // Navigator.pop(context);
-                    //       },
-                    //       icon: Icon(
-                    //         Icons.arrow_back,
-                    //         size: 40 * min(horizontalScale, verticalScale),
-                    //         color: Colors.white,
-                    //       ),
-                    //     )),
-                  ],
+                width: 414 * horizontalScale,
+                height: 125 * verticalScale,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [
+                        HexColor('8346E1'),
+                        HexColor('411487'),
+                      ]
+                  ),
                 ),
+                child: Center(
+                    child: Text('🤞 Our Learner\'s review speaks 🤞',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: HexColor('FFFFFF'),
+                        fontSize: 38 * verticalScale,
+                      ),)),
               ),
-              // SizedBox(
-              //   height: 10,
+              // Padding(
+              //   padding: EdgeInsets.only(
+              //     left: 15,
+              //     top: 10,
+              //   ),
+              //   child: Text(
+              //     'Recent reviews',
+              //     textScaleFactor: min(horizontalScale, verticalScale),
+              //     textAlign: TextAlign.center,
+              //     style: TextStyle(
+              //         color: Color.fromRGBO(0, 0, 0, 1),
+              //         fontFamily: 'Poppins',
+              //         fontSize: 28 * verticalScale,
+              //         fontWeight: FontWeight.bold,
+              //         height: 2),
+              //   ),
               // ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 20,
-                  top: 10,
-                ),
-                child: Text(
-                  'Recent reviews',
-                  textScaleFactor: min(horizontalScale, verticalScale),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Color.fromRGBO(0, 0, 0, 1),
-                      fontFamily: 'Poppins',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      height: 2),
-                ),
+              SizedBox(
+                height: 25,
               ),
-              // SizedBox(
-              //   height: 10,
-              // ),
               Container(
                 // height: screenHeight * 0.81 * verticalScale,
-                height: 230,
+                height: containerHeight,
                 width: screenWidth,
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: FutureBuilder<List<FirebaseFile>>(
@@ -144,7 +103,9 @@ class _Review1State extends State<ReviewsScreen> {
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
-                        return Center(child: CircularProgressIndicator());
+                        return Center(
+                            child: CircularProgressIndicator()
+                        );
                       default:
                         if (snapshot.hasError) {
                           return Center(
@@ -167,7 +128,10 @@ class _Review1State extends State<ReviewsScreen> {
                                     return Container(
                                         decoration: BoxDecoration(
                                             color: HexColor("#FFFFFF"),
-                                            borderRadius: BorderRadius.circular(15),
+                                            // borderRadius: BorderRadius.circular(15),
+                                            border: Border.all(
+                                              color: Colors.black, width: 0.5,
+                                            ),
                                             boxShadow: [
                                               BoxShadow(
                                                   color: Colors.grey,
@@ -181,7 +145,7 @@ class _Review1State extends State<ReviewsScreen> {
                                             right: 5,
                                             top: 5,
                                             bottom: 5),
-                                        width: 210,
+                                        width: containerWidth,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(20),
                                           child: InkWell(
@@ -210,8 +174,11 @@ class _Review1State extends State<ReviewsScreen> {
                                                                       .none),
                                                               scrollable: true,
                                                               content:
-                                                              Container(height:240,width:320,
-                                                                child: ClipRRect(borderRadius:BorderRadius.circular(20) ,
+                                                              Container(
+                                                                height:500,
+                                                                width:500,
+                                                                child: ClipRRect(
+                                                                  borderRadius:BorderRadius.circular(20) ,
                                                                   child: CachedNetworkImage(
                                                                     errorWidget:
                                                                         (context, url,
@@ -238,7 +205,8 @@ class _Review1State extends State<ReviewsScreen> {
                                               fit: BoxFit.fill,
                                             ),
                                           ),
-                                        ));
+                                        )
+                                    );
                                     // buildFile(context, file);
                                   },
                                 ),
@@ -250,29 +218,28 @@ class _Review1State extends State<ReviewsScreen> {
                   },
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 20,
-                  top: 10,
-                ),
-                child: Text(
-                  'Combo course reviews',
-                  textScaleFactor: min(horizontalScale, verticalScale),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Color.fromRGBO(0, 0, 0, 1),
-                      fontFamily: 'Poppins',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      height: 2),
-                ),
-              ),
-              // SizedBox(
-              //   height: 10,
+              // Padding(
+              //   padding: EdgeInsets.only(
+              //     left: 15,
+              //     top: 10,
+              //   ),
+              //   child: Text(
+              //     'Combo course reviews',
+              //     textScaleFactor: min(horizontalScale, verticalScale),
+              //     textAlign: TextAlign.center,
+              //     style: TextStyle(
+              //         color: Color.fromRGBO(0, 0, 0, 1),
+              //         fontFamily: 'Poppins',
+              //         fontSize: 28 * verticalScale,
+              //         fontWeight: FontWeight.bold,
+              //         height: 2),
+              //   ),
               // ),
+              SizedBox(
+                height: 25,
+              ),
               Container(
-
-                height: 230,
+                height: containerHeight,
                 width: screenWidth,
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: FutureBuilder<List<FirebaseFile>>(
@@ -303,7 +270,10 @@ class _Review1State extends State<ReviewsScreen> {
                                     return Container(
                                         decoration: BoxDecoration(
                                             color: HexColor("#FFFFFF"),
-                                            borderRadius: BorderRadius.circular(15),
+                                            border: Border.all(
+                                              color: Colors.black, width: 0.5,
+                                            ),
+                                            // borderRadius: BorderRadius.circular(15),
                                             boxShadow: [
                                               BoxShadow(
                                                   color: Colors.grey,
@@ -317,8 +287,7 @@ class _Review1State extends State<ReviewsScreen> {
                                             right: 5,
                                             top: 5,
                                             bottom: 5),
-                                        height: 180,
-                                        width: 210,
+                                        width: containerWidth,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(20),
                                           child: InkWell(
@@ -347,7 +316,7 @@ class _Review1State extends State<ReviewsScreen> {
                                                                       .none),
                                                               scrollable: true,
                                                               content:
-                                                              Container(height:240,width:320,
+                                                              Container(height:500,width:500,
                                                                 child: ClipRRect(borderRadius:BorderRadius.circular(20) ,
                                                                   child: CachedNetworkImage(
                                                                     errorWidget:
@@ -387,26 +356,26 @@ class _Review1State extends State<ReviewsScreen> {
                   },
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 20,
-                  top: 10,
-                ),
-                child: Text(
-                  'Social media reviews',
-                  textScaleFactor: min(horizontalScale, verticalScale),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Color.fromRGBO(0, 0, 0, 1),
-                      fontFamily: 'Poppins',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      height: 2),
-                ),
-              ),
-              // SizedBox(height: 10),
+              // Padding(
+              //   padding: EdgeInsets.only(
+              //     left: 15,
+              //     top: 10,
+              //   ),
+              //   child: Text(
+              //     'Social media reviews',
+              //     textScaleFactor: min(horizontalScale, verticalScale),
+              //     textAlign: TextAlign.center,
+              //     style: TextStyle(
+              //         color: Color.fromRGBO(0, 0, 0, 1),
+              //         fontFamily: 'Poppins',
+              //         fontSize: 28 * verticalScale,
+              //         fontWeight: FontWeight.bold,
+              //         height: 2),
+              //   ),
+              // ),
+              SizedBox(height: 25),
               Container(
-                height: 230,
+                height: containerHeight,
                 width: screenWidth,
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: FutureBuilder<List<FirebaseFile>>(
@@ -437,7 +406,10 @@ class _Review1State extends State<ReviewsScreen> {
                                     return Container(
                                         decoration: BoxDecoration(
                                             color: HexColor("#FFFFFF"),
-                                            borderRadius: BorderRadius.circular(15),
+                                            border: Border.all(
+                                              color: Colors.black, width: 0.5,
+                                            ),
+                                            // borderRadius: BorderRadius.circular(15),
                                             boxShadow: [
                                               BoxShadow(
                                                   color: Colors.grey,
@@ -451,8 +423,7 @@ class _Review1State extends State<ReviewsScreen> {
                                             right:5,
                                             top: 5,
                                             bottom: 5),
-                                        height: 180,
-                                        width: 210,
+                                        width: containerWidth,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(20),
                                           child: InkWell(
@@ -481,7 +452,7 @@ class _Review1State extends State<ReviewsScreen> {
                                                                       .none),
                                                               scrollable: true,
                                                               content:
-                                                              Container(height:240,width:320,
+                                                              Container(height:500,width:500,
                                                                 child: ClipRRect(borderRadius: BorderRadius.circular(20),
                                                                   child: CachedNetworkImage(
                                                                     errorWidget:
@@ -520,9 +491,11 @@ class _Review1State extends State<ReviewsScreen> {
                     }
                   },
                 ),
-              )
+              ),
+              SizedBox(height: 25 * verticalScale,)
             ],
           ),
-        ));
+        ),
+    );
   }
 }

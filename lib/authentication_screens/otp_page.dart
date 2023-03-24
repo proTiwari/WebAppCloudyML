@@ -51,26 +51,30 @@ class _OtpPageState extends State<OtpPage> {
 
   late String diurl;
   late String payurl;
+  late String feaurl;
 
   void _onKeyboardTap(String value) {
     setState(() {
       text = text + value;
     });
   }
+
   List<CourseDetails> featuredCourse = [];
 
-  setFeaturedCourse(List<CourseDetails> course){
+  setFeaturedCourse(List<CourseDetails> course) {
     featuredCourse.clear();
     course.forEach((element) {
-      if(element.FcSerialNumber.isNotEmpty && element.FcSerialNumber != null &&
-          element.isItComboCourse == true){
+      if (element.FcSerialNumber.isNotEmpty &&
+          element.FcSerialNumber != null &&
+          element.isItComboCourse == true) {
         featuredCourse.add(element);
       }
     });
     featuredCourse.sort((a, b) {
-      return int.parse(a.FcSerialNumber).compareTo(int.parse(b.FcSerialNumber));}
-    );
+      return int.parse(a.FcSerialNumber).compareTo(int.parse(b.FcSerialNumber));
+    });
   }
+
   final defaultPinTheme = PinTheme(
     width: 56,
     height: 56,
@@ -81,30 +85,49 @@ class _OtpPageState extends State<OtpPage> {
 
   Widget darkRoundedPinPut() {
     return Container(
-      child:
-      Pinput(
+      child: Pinput(
         onChanged: (value) => text = value,
         defaultPinTheme: defaultPinTheme.copyDecorationWith(
-          borderRadius: BorderRadius.circular(8),),
+          borderRadius: BorderRadius.circular(8),
+        ),
         length: 6,
       ),
     );
   }
 
-  void url() async{
-    diurl= await FirebaseFirestore.instance.collection("Notice")
-        .doc("7A85zuoLi4YQpbXlbOAh_redirect").get().then((value)
-    {print(value.data()!.values.first);
-    return value.data()!.values.first;} );
+  void url() async {
+    diurl = await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("7A85zuoLi4YQpbXlbOAh_redirect")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
 
     print("url is=====$diurl");
 
-    payurl= await FirebaseFirestore.instance.collection("Notice")
-        .doc("NBrEm6KGry8gxOJJkegG_redirect_pay").get().then((value) {print(value.data()!.values.first);
-    return value.data()!.values.first;} );
+    payurl = await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("NBrEm6KGry8gxOJJkegG_redirect_pay")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
 
     print("url is=====$payurl");
 
+    feaurl = await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("XdYtk2DJBIkRGx0ASthZ_newfeaturecourse")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
+
+    print("url is=====$feaurl");
   }
 
   Widget _otpTextField(BuildContext context, bool autoFocus, int position) {
@@ -160,9 +183,9 @@ class _OtpPageState extends State<OtpPage> {
             borderRadius: const BorderRadius.all(Radius.circular(8))),
         child: Center(
             child: Text(
-              text[position],
-              style: TextStyle(color: Colors.black),
-            )),
+          text[position],
+          style: TextStyle(color: Colors.black),
+        )),
       );
     } catch (e) {
       return Container(
@@ -175,7 +198,6 @@ class _OtpPageState extends State<OtpPage> {
     }
   }
 
-
   @override
   void initState() {
     // TODO: implement initState
@@ -183,8 +205,6 @@ class _OtpPageState extends State<OtpPage> {
     url();
     GRecaptchaV3.hideBadge();
     url();
-
-
   }
 
   @override
@@ -199,20 +219,20 @@ class _OtpPageState extends State<OtpPage> {
         leading: widget.fromemailpage == 'fromemailpage'
             ? Container()
             : IconButton(
-          icon: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-              color: Color.fromARGB(255, 140, 58, 240),
-            ),
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Color.fromRGBO(35, 0, 79, 1),
-              size: 16,
-            ),
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+                icon: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    color: Color.fromARGB(255, 140, 58, 240),
+                  ),
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    color: Color.fromRGBO(35, 0, 79, 1),
+                    size: 16,
+                  ),
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
         elevation: 0,
         backgroundColor: HexColor("7226D1"),
         brightness: Brightness.light,
@@ -343,7 +363,7 @@ class _OtpPageState extends State<OtpPage> {
                                   Expanded(
                                     child: Column(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                          MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
                                         Container(
                                             margin: const EdgeInsets.symmetric(
@@ -354,7 +374,7 @@ class _OtpPageState extends State<OtpPage> {
                                                     color: Colors.black,
                                                     fontSize: 18,
                                                     fontWeight:
-                                                    FontWeight.w500))),
+                                                        FontWeight.w500))),
                                         Padding(
                                           padding: const EdgeInsets.fromLTRB(
                                               18, 80, 18, 0),
@@ -363,9 +383,9 @@ class _OtpPageState extends State<OtpPage> {
                                                 maxWidth: 400),
                                             child: Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
+                                                  MainAxisAlignment.spaceEvenly,
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                                  CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Expanded(
                                                     child: darkRoundedPinPut()),
@@ -389,7 +409,7 @@ class _OtpPageState extends State<OtpPage> {
                                   ),
                                   Padding(
                                     padding:
-                                    const EdgeInsets.fromLTRB(0, 0, 0, 58),
+                                        const EdgeInsets.fromLTRB(0, 0, 0, 58),
                                     child: GestureDetector(
                                       onTap: () async {
                                         await validateOtpAndLogin(
@@ -399,7 +419,7 @@ class _OtpPageState extends State<OtpPage> {
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 20, vertical: 10),
                                         constraints:
-                                        const BoxConstraints(maxWidth: 500),
+                                            const BoxConstraints(maxWidth: 500),
                                         alignment: Alignment.center,
                                         decoration: const BoxDecoration(
                                             borderRadius: BorderRadius.all(
@@ -420,57 +440,57 @@ class _OtpPageState extends State<OtpPage> {
                                             vertical: 8, horizontal: 8),
                                         child: loading
                                             ? Padding(
-                                          padding:
-                                          const EdgeInsets.all(6.0),
-                                          child: Container(
-                                              height: 20,
-                                              width: 20,
-                                              child: Center(
-                                                  child:
-                                                  CircularProgressIndicator(
-                                                      color: Colors
-                                                          .white))),
-                                        )
+                                                padding:
+                                                    const EdgeInsets.all(6.0),
+                                                child: Container(
+                                                    height: 20,
+                                                    width: 20,
+                                                    child: Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                                color: Colors
+                                                                    .white))),
+                                              )
                                             : Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .spaceBetween,
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets
-                                                  .fromLTRB(12, 0, 0, 0),
-                                              child: Text(
-                                                'Confirm',
-                                                style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255,
-                                                        255,
-                                                        255,
-                                                        255),
-                                                    fontWeight:
-                                                    FontWeight.bold),
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                        .fromLTRB(12, 0, 0, 0),
+                                                    child: Text(
+                                                      'Confirm',
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              255,
+                                                              255,
+                                                              255),
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                                  .all(
+                                                              Radius.circular(
+                                                                  20)),
+                                                      color: MyColors
+                                                          .primaryColorLight,
+                                                    ),
+                                                    child: Icon(
+                                                      Icons.arrow_forward_ios,
+                                                      color: Colors.white,
+                                                      size: 16,
+                                                    ),
+                                                  )
+                                                ],
                                               ),
-                                            ),
-                                            Container(
-                                              padding:
-                                              const EdgeInsets.all(8),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                const BorderRadius
-                                                    .all(
-                                                    Radius.circular(
-                                                        20)),
-                                                color: MyColors
-                                                    .primaryColorLight,
-                                              ),
-                                              child: Icon(
-                                                Icons.arrow_forward_ios,
-                                                color: Colors.white,
-                                                size: 16,
-                                              ),
-                                            )
-                                          ],
-                                        ),
                                       ),
                                     ),
                                   ),
@@ -511,12 +531,12 @@ class _OtpPageState extends State<OtpPage> {
                                             fontWeight: FontWeight.w500))),
                                 Container(
                                   constraints:
-                                  const BoxConstraints(maxWidth: 500),
+                                      const BoxConstraints(maxWidth: 500),
                                   child: Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                        MainAxisAlignment.spaceEvenly,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.center,
+                                        CrossAxisAlignment.center,
                                     children: <Widget>[
                                       otpNumberWidget(0),
                                       otpNumberWidget(1),
@@ -542,7 +562,7 @@ class _OtpPageState extends State<OtpPage> {
                               alignment: Alignment.center,
                               decoration: const BoxDecoration(
                                   borderRadius:
-                                  BorderRadius.all(Radius.circular(14)),
+                                      BorderRadius.all(Radius.circular(14)),
                                   gradient: LinearGradient(
                                       begin: Alignment.centerLeft,
                                       end: Alignment.centerRight,
@@ -556,45 +576,45 @@ class _OtpPageState extends State<OtpPage> {
                                   vertical: 8, horizontal: 8),
                               child: loading
                                   ? Padding(
-                                padding: const EdgeInsets.all(6.0),
-                                child: Container(
-                                    height: 20,
-                                    width: 20,
-                                    child: Center(
-                                        child: CircularProgressIndicator(
-                                            color: Colors.white))),
-                              )
+                                      padding: const EdgeInsets.all(6.0),
+                                      child: Container(
+                                          height: 20,
+                                          width: 20,
+                                          child: Center(
+                                              child: CircularProgressIndicator(
+                                                  color: Colors.white))),
+                                    )
                                   : Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        12, 0, 0, 0),
-                                    child: Text(
-                                      'Confirm',
-                                      style: TextStyle(
-                                          color: Color.fromARGB(
-                                              255, 255, 255, 255),
-                                          fontWeight: FontWeight.bold),
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              12, 0, 0, 0),
+                                          child: Text(
+                                            'Confirm',
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 255, 255, 255),
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(20)),
+                                            color: MyColors.primaryColorLight,
+                                          ),
+                                          child: Icon(
+                                            Icons.arrow_forward_ios,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                      const BorderRadius.all(
-                                          Radius.circular(20)),
-                                      color: MyColors.primaryColorLight,
-                                    ),
-                                    child: Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                  )
-                                ],
-                              ),
                             ),
                           ),
                           NumericKeyboard(
@@ -666,45 +686,36 @@ class _OtpPageState extends State<OtpPage> {
                 // GoRouter.of(context).pushReplacement('/home');
                 String location = GoRouter.of(context).location;
 
-                if (diurl=='/featuredCourses') {
-                  print("i am in otp if");
-
-
+                if (feaurl == '/NewFeature') {
                   final id = "0";
                   final cID = "aEGX6kMfHzQrVgP3WCwU";
-                  final courseName ="Data Science & Analytics Placement Assurance Program";
+                  final courseName =
+                      "Data Science & Analytics Placement Assurance Program";
                   final courseP = "9999";
-                  GoRouter.of(context).goNamed(
-                      'featuredCourses',
-                      queryParams: {
-                        'cID': cID,
-                        'courseName': courseName,
-                        'id': id,
-                        'coursePrice': courseP});
-
-                }
-                else if(payurl=='/comboPaymentPortal')
-                {
+                  GoRouter.of(context).goNamed('NewFeature', queryParams: {
+                    'cID': cID,
+                    'courseName': courseName,
+                    'id': id,
+                    'coursePrice': courseP
+                  });
+                } else if (payurl == '/comboPaymentPortal') {
                   final cID = "aEGX6kMfHzQrVgP3WCwU";
                   GoRouter.of(context).go(
-                    '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
+                    '/comboPaymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
                     // queryParams: {
                     //   'cID': cID,
                     //   }
                   );
-                }
-                else {
+                } else {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (_) => LandingScreen()));
-
-                  //  GoRouter.of(context).go('/home');
+                  GoRouter.of(context).pushNamed('home');
                 }
 
                 //
                 // Navigator.of(context)
                 //     .push(MaterialPageRoute(builder: (_) => HomePage()));
                 //
-
 
                 // (Route<dynamic> route) => false;
                 saveLoginState(context);
@@ -738,10 +749,9 @@ class _OtpPageState extends State<OtpPage> {
         }
       } else {
         if (globals.linked == 'true') {
-
           GoRouter.of(context).pushReplacement('/home');
 
-              (Route<dynamic> route) => false;
+          (Route<dynamic> route) => false;
           saveLoginState(context);
         } else {
           Navigator.of(context)

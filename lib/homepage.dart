@@ -719,7 +719,7 @@ class _HomeState extends State<Home> {
                                     onPressed: () {
                                       logOut(context);
                                       saveLoginOutState(context);
-                                      GoRouter.of(context).pushReplacement('/login');
+                                      GoRouter.of(context).go('/login');
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: HexColor("8346E1"),
@@ -982,7 +982,7 @@ class _HomeState extends State<Home> {
                                                     final id = index.toString();
                                                     final courseName = course[index].courseName;
 
-                                                    GoRouter.of(context).pushNamed('comboCourse',
+                                                    GoRouter.of(context).pushNamed('newcomboCourse',
                                                         queryParams: {'id': id, 'courseName': courseName});
                                                     // Navigator.push(
                                                     //   context,
@@ -1811,7 +1811,7 @@ class _HomeState extends State<Home> {
                                                                     final id = index.toString();
                                                                     final courseName = featuredCourse[index].courseName;
                                                                     final courseP = featuredCourse[index].coursePrice;
-                                                                    GoRouter.of(context).pushNamed('comboStore', 
+                                                                    GoRouter.of(context).pushNamed('newcomboStore', 
                                                                     queryParams: {
                                                                     'courseName': courseName, 
                                                                     'id': id, 
@@ -2452,18 +2452,10 @@ class _HomeState extends State<Home> {
                                     } else {
                                       ComboCourse.comboId.value =
                                           course[index].courseId;
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                          duration: Duration(milliseconds: 400),
-                                          curve: Curves.bounceInOut,
-                                          type:
-                                          PageTransitionType.rightToLeftWithFade,
-                                          child: ComboCourse(
-                                            courses: course[index].courses,
-                                          ),
-                                        ),
-                                      );
+                                  final id = index.toString();
+                                      final courseName = course[index].courseName;
+
+                                      GoRouter.of(context).pushNamed('newcomboCourse', queryParams: {'id': id, 'courseName': courseName});
                                     }
                                   }
                                   setState(() {

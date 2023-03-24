@@ -16,6 +16,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/global_variable.dart' as globals;
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:html' as html;
 
 class PaymentButton extends StatefulWidget {
   final ScrollController scrollController;
@@ -448,6 +450,8 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     showToast("Payment successful.");
     addCoursetoUser(widget.courseId);
     loadCourses();
+    pushToHome();
+
     updateCouponDetailsToUser(
       couponCodeText: widget.couponCodeText,
       courseBaughtId: widget.courseId,
@@ -481,7 +485,6 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
       NDate: DateFormat('dd-MM-yyyy | h:mm a').format(DateTime.now()),
       //index:
     );
-    pushToMyCourses();
   }
 
   // void disableMinAmtBtn() {
@@ -511,10 +514,25 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     });
   }
 
-  void pushToMyCourses() {
-    GoRouter.of(context).pushReplacement('/myCourses');
-  }
-  void pushToHome() {
+//   void pushToMyCourses() async {
+    
+//  print('i am after payment1');
+
+//      const url = 'https://www.cloudyml.com/tnkyu/';
+//   final uri = Uri.parse(url);
+  
+// // if (  await canLaunchUrl(uri)){
+// //    launchUrl(uri);
+// //        print('i am after payment2');}
+
+// // else 
+// //   // can't launch url, there is some error
+// //   {throw "Could not launch $url";}
+
+//   // GoRouter.of(context).pushReplacement('/myCourses');
+
+//   }
+  void pushToHome() async{
     // Navigator.push(
     //   context,
     //   PageTransition(
@@ -525,18 +543,27 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     //   ),
     // );
 
+print('i am after payment1');
 
 
-    Navigator.pushAndRemoveUntil(
-        context,
-        PageTransition(
-          duration: Duration(milliseconds: 200),
-          curve: Curves.bounceInOut,
-          type: PageTransitionType.rightToLeftWithFade,
-          child: HomePage(),
-        ),
-            (route) => false);
-    print('pushedtohome');
+
+     const url = 'https://www.cloudyml.com/tnkyu/';
+  final uri = Uri.parse(url);
+html.WindowBase _popup = html.window.open(url,'Thank you');
+if (_popup.closed!) {
+  throw("Popups blocked");
+}
+
+    // Navigator.pushAndRemoveUntil(
+    //     context,
+    //     PageTransition(
+    //       duration: Duration(milliseconds: 200),
+    //       curve: Curves.bounceInOut,
+    //       type: PageTransitionType.rightToLeftWithFade,
+    //       child: HomePage(),
+    //     ),
+    //         (route) => false);
+    // print('pushedtohome');
   }
 
   bool stateOfMinAmtBtn() {
@@ -961,7 +988,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                                             .only(
                                             left: 20),
                                         child: Text(
-                                            'Pay ₹${widget.outStandingAmountString}/-'),
+                                            'Pay ₹${widget.outStandingAmountString}/-',),
                                       ),
                                       InkWell(
                                         onTap: () {

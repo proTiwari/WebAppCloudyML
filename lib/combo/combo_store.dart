@@ -23,7 +23,7 @@ class ComboStore extends StatefulWidget {
   final String? id;
   final String? cName;
   final String? courseP;
-
+  final String? cID;
   final List<dynamic>? courses;
 
   static ValueNotifier<String> coursePrice = ValueNotifier('');
@@ -31,7 +31,7 @@ class ComboStore extends StatefulWidget {
   static ValueNotifier<double> _currentPosition = ValueNotifier<double>(0.0);
   static ValueNotifier<double> _closeBottomSheetAtInCombo =
   ValueNotifier<double>(0.0);
-  ComboStore({Key? key, this.courses, this.id, this.cName, this.courseP}) : super(key: key);
+  ComboStore({Key? key, this.courses, this.id, this.cName, this.courseP, this.cID}) : super(key: key);
 
   @override
   State<ComboStore> createState() => _ComboStoreState();
@@ -213,7 +213,9 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                                   courseId = course[index].courseDocumentId;
                                 });
                                 final id = index.toString();
-                                GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
+                              GoRouter.of(context).pushNamed(
+                                  'catalogue',
+                                  queryParams: {'id': id,'cID': courseId,});
                               },
                               child: Container(
                                 width: 354 * horizontalScale,
@@ -298,11 +300,12 @@ class _ComboStoreState extends State<ComboStore> with CouponCodeMixin {
                                         //   height: 5,
                                         // ),
                                         Container(
-                                          width: 300 * horizontalScale,
+                                          width: 220 * horizontalScale,
                                           // height: 24.000001907348633,
                                           child: Text(
                                             course[index].courseDescription,
                                             // overflow: TextOverflow.ellipsis,
+                                            maxLines: 4,
                                             textScaleFactor: min(
                                                 horizontalScale, verticalScale),
                                             style: TextStyle(

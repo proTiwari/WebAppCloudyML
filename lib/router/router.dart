@@ -3,15 +3,17 @@ import 'package:cloudyml_app2/MyAccount/myaccount.dart';
 import 'package:cloudyml_app2/combo/combo_course.dart';
 import 'package:cloudyml_app2/combo/combo_store.dart';
 import 'package:cloudyml_app2/combo/updated_combo_course.dart';
+import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/homepage.dart';
 import 'package:cloudyml_app2/homescreen/homescreen.dart';
+import 'package:cloudyml_app2/module/review%20resume/review_resume.dart';
+import 'package:cloudyml_app2/module/review%20resume/review_resume_detailed.dart';
 import 'package:cloudyml_app2/module/video_screen.dart';
 import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:cloudyml_app2/payments_history.dart';
 import 'package:cloudyml_app2/router/error_page.dart';
 import 'package:cloudyml_app2/screens/chat_screen.dart';
 import 'package:cloudyml_app2/screens/groups_list.dart';
-import 'package:cloudyml_app2/screens/quiz_page.dart';
 import 'package:cloudyml_app2/screens/splash.dart';
 import 'package:cloudyml_app2/store.dart';
 import 'package:flutter/material.dart';
@@ -21,12 +23,13 @@ import 'package:provider/provider.dart';
 import '../authentication_screens/phone_auth.dart';
 import '../catalogue_screen.dart';
 import '../combo/feature_courses.dart';
-import '../combo/new_combo_course.dart';
-import '../combo/new_feature_course.dart';
+import '../combo/trialfeatutr.dart';
+import '../live_doubt_screen/live_doubt_screen.dart';
 import '../models/course_details.dart';
 import '../my_Courses.dart';
 import '../screens/quiz/admin_quiz.dart';
 import '../screens/quiz/quiz_page.dart';
+import '../screens/quiz/quiz_panel.dart';
 import '../screens/quiz/quizentry.dart';
 import '../screens/review_screen/review_screen.dart';
 import 'login_state_check.dart';
@@ -45,7 +48,9 @@ class MyRouter {
         final loggedIn = loginState.loggedIn;
         final goingToLogin = state.location == ('/login');
 
-        final directToCatalogue = state.location == ('/paymentPortal?cID=');
+        // final dc = state.location == ('/comboPaymentPortal?cID=aEGX6kMfHzQrVgP3WCwU');
+
+        // final pc=state.location==('/featuredCourses?cID=aEGX6kMfHzQrVgP3WCwU&courseName=Data+Science+%26+Analytics+Placement+Assurance+Program&id=0&coursePrice=9999');
 
         if(!loggedIn && !goingToLogin) {
           return ('/');
@@ -57,14 +62,14 @@ class MyRouter {
 
        },
       routes: <RouteBase>[
-        // GoRoute(
-        //     path: '/',
-        //     pageBuilder: (context, state) {
-        //       return MaterialPage(child: splash());
-        //     }
-        // ),
         GoRoute(
-          path: '/',
+            path: '/',
+            pageBuilder: (context, state) {
+              return MaterialPage(child: splash());
+            }
+        ),
+        GoRoute(
+          path: '/login',
           pageBuilder: (context, state) {
             return MaterialPage(child:  LoginPage());
           },
@@ -74,6 +79,7 @@ class MyRouter {
             path: '/home',
             pageBuilder: (context, state) {
               return MaterialPage(
+                  key: state.pageKey,
                   child: LandingScreen());
             }
         ),
@@ -81,14 +87,25 @@ class MyRouter {
             name: 'store',
             path: '/store',
             pageBuilder: (context, state) {
-              return MaterialPage(child: StoreScreen());
+              return MaterialPage(
+                key: state.pageKey,
+                  child: StoreScreen());
             }
         ),
+        GoRoute(
+          name: 'quizpanel',
+          path: '/quizpanel',
+          pageBuilder: (context, state) {
+            return MaterialPage(key: state.pageKey, child: QuizPanel());
+          },
+        ), //CongratulationsWidget
         GoRoute(
           name: 'reviews',
           path: '/reviews',
           pageBuilder: (context, state) {
-            return MaterialPage(child:  ReviewsScreen());
+            return MaterialPage(
+              key: state.pageKey,
+                child:  ReviewsScreen());
           },
         ),
         GoRoute(
@@ -124,14 +141,25 @@ class MyRouter {
           name: 'AdminQuizPanel',
           path: '/adminquizpanel',
           pageBuilder: (context, state) {
-            return MaterialPage(key: state.pageKey, child: AdminQuizPanel());
+            return MaterialPage(
+                key: state.pageKey,
+                child: AdminQuizPanel());
           },
-        ), //CongratulationsWidget
+        ),
         GoRoute(
           name: 'QuizPage',
           path: '/quizpage',
           pageBuilder: (context, state) {
             return MaterialPage(key: state.pageKey, child: QuizPage(""));
+          },
+        ),
+        // CongratulationsWidget
+        GoRoute(
+          name: 'LiveDoubtSession',
+          path: '/LiveDoubtSession',
+          pageBuilder: (context, state) {
+            return MaterialPage(
+                key: state.pageKey, child: LiveDoubtScreen());
           },
         ),
 
@@ -149,13 +177,13 @@ class MyRouter {
           pageBuilder: (context, state) {
             List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
             final String id = state.queryParams["id"]!;
-            final String cID = state.queryParams["cID"]!;
+            final String cID = state.queryParams['cID']!;
             return MaterialPage<void>(
                 key: state.pageKey,
                 child: CatelogueScreen(
                   courses: course[int.parse(id)].courses,
-                  cID: cID,
-                  id: id,));
+                  id: id,
+                  cID:cID));
           },
         ),
         GoRoute(
@@ -176,43 +204,27 @@ class MyRouter {
               ));
           }
         ),
+        // GoRoute(
+        //     name: 'featuredCourses',
+        //     path: '/featuredCourses',
+        //     pageBuilder: (context, state) {
+        //       final String cID = state.queryParams['cID']!;
+        //       final String id = state.queryParams['id']!;
+        //       final String courseName = state.queryParams['courseName']!;
+        //       final String coursePrice = state.queryParams['coursePrice']!;
+        //       return MaterialPage(
+        //           key: state.pageKey,
+        //           child: FeatureCourses(
+        //             cID: cID,
+        //             id: id,
+        //             cName: courseName,
+        //             courseP: coursePrice,
+        //           ));
+        //     }
+        // ),
         GoRoute(
-            name: 'featuredCourses',
-            path: '/featuredCourses',
-            pageBuilder: (context, state) {
-              final String cID = state.queryParams['cID']!;
-              final String id = state.queryParams['id']!;
-              final String courseName = state.queryParams['courseName']!;
-              final String coursePrice = state.queryParams['coursePrice']!;
-              return MaterialPage(
-                  key: state.pageKey,
-                  child: FeatureCourses(
-                    cID: cID,
-                    id: id,
-                    cName: courseName,
-                    courseP: coursePrice,
-                  ));
-            }
-        ),
-        GoRoute(
-            name: 'NewComboCourse',
-            path: '/NewComboCourse',
-            pageBuilder: (context, state) {
-              List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
-              final String id = state.queryParams['id']!;
-              final String courseName = state.queryParams['courseName']!;
-              return MaterialPage(
-                  key: state.pageKey,
-                  child: NewComboCourse(
-                    id: id,
-                    courses: course[int.parse(id)].courses,
-                    courseName: courseName,
-                  ));
-            }
-        ),
-        GoRoute(
-            name: 'NewScreen',
-            path: '/NewScreen',
+            name: 'NewFeature',
+            path: '/NewFeature',
             pageBuilder: (context, state){
               List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
               final String cID = state.queryParams['cID']!;
@@ -221,12 +233,50 @@ class MyRouter {
               final String coursePrice = state.queryParams['coursePrice']!;
               return MaterialPage(
                   key: state.pageKey,
-                  child: NewScreen(
+                  child: NewFeature(
                     courses: course[int.parse(id)].courses,
                     id: id,
                     cID: cID,
                     courseP: coursePrice,
                     courseName: courseName,
+                  ));
+            }),
+        GoRoute(
+            name: 'NewScreen',
+            path: '/NewScreen',
+            pageBuilder: (context, state){
+              List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
+              final String id = state.queryParams['id']!;
+              final String courseName = state.queryParams['courseName']!;
+              return MaterialPage(
+                  key: state.pageKey,
+                  child: NewScreen(
+                    courses: course[int.parse(id)].courses,
+                    id: id,
+                    courseName: courseName,
+                  ));
+            }),
+        GoRoute(
+            name: 'reviewResume',
+            path: '/reviewResume',
+            pageBuilder: (context, state){
+              return MaterialPage(
+                  child: ReviewResumeScreen());
+            }),
+        GoRoute(
+            name: 'reviewResumeDetailed',
+            path: '/reviewResumeDetailed',
+            pageBuilder: (context, state){
+               String? id = state.queryParams['studentId'];
+               String? name = state.queryParams['studentName'];
+               String? email = state.queryParams['studentEmail'];
+               String? link = state.queryParams['resumeLink'];
+              return MaterialPage(
+                  child: ReviewDetailScreen(
+                    studentId: id!,
+                    studentName: name!,
+                    studentEmail: email!,
+                    resumeLink: link!,
                   ));
             }),
         GoRoute(
@@ -260,6 +310,21 @@ class MyRouter {
             sr: 1,));
         }),
         GoRoute(
+          name: 'newcomboCourse',
+          path: '/newcomboCourse',
+          pageBuilder: (context, state){
+          List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
+          final String id = state.queryParams['id']!;
+          final String courseName = state.queryParams['courseName']!;
+          return MaterialPage(
+              key: state.pageKey,
+              child: NewScreen(
+            courses: course[int.parse(id)].courses,
+            id: id,
+            courseName: courseName,
+          ));
+        }),
+        GoRoute(
             name: 'comboVideoScreen',
             path: '/comboVideoScreen',
             pageBuilder: (context, state) {
@@ -284,7 +349,8 @@ class MyRouter {
                 child: PaymentScreen(
                     cID: cID,
                     isItComboCourse: true,
-                    map: {},),);
+                    // map: {},
+                    ),);
         }),
         GoRoute(
             name: 'paymentPortal',

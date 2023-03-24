@@ -119,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return false;
       }
     } catch (e) {
-      print('errror ${e.toString()}');
+      print('dipdipdip ${e.toString()}');
       return false;
     }
   }
@@ -152,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       print(ref.data()!["role"]);
     } catch (e) {
-      print(" ${e}");
+      print("ddddd${e}");
     }
   }
 
@@ -172,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
           try {
             courses = value.data()!['paidCourseNames'];
           } catch (e) {
-            print('eroror ${e.toString()}');
+            print('donggg ${e.toString()}');
           }
         });
       } catch (e) {
@@ -279,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Container(
                     width: screenWidth,
-                    height: 45,
+                    height: 60,
                     color: HexColor("440F87"),
                     child: customMenuBar(context),
                   ),
@@ -520,14 +520,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 course[index].courseName;
 
                                             GoRouter.of(context).pushNamed(
-                                                'comboCourse',
+                                                'newcomboCourse',
                                                 queryParams: {
                                                   'id': id,
                                                   'courseName': courseName
                                                 });
-
-                                            // GoRouter.of(context).pushNamed('NewScreen',
-                                            //     queryParams: {'id': id, 'courseName': courseName});
                                             // Navigator.push(
                                             //   context,
                                             //   PageTransition(
@@ -851,7 +848,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 'catalogue',
                                                 queryParams: {
                                                   'id': id,
-                                                  'cID': courseId
+                                                  'cid': courseId
                                                 });
                                           }
                                         },
@@ -1097,7 +1094,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                         'id':
                                                                             id,
                                                                         'cID':
-                                                                            courseId
+                                                                            courseId,
                                                                       });
                                                                 }
                                                               },
@@ -1306,19 +1303,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                       } else {
                                         ComboCourse.comboId.value =
                                             course[index].courseId;
-                                        Navigator.push(
-                                          context,
-                                          PageTransition(
-                                            duration:
-                                                Duration(milliseconds: 400),
-                                            curve: Curves.bounceInOut,
-                                            type: PageTransitionType
-                                                .rightToLeftWithFade,
-                                            child: ComboCourse(
-                                              courses: course[index].courses,
-                                            ),
-                                          ),
-                                        );
+                                        final id = index.toString();
+                                        final courseName =
+                                            course[index].courseName;
+
+                                        GoRouter.of(context).pushNamed(
+                                            'newcomboCourse',
+                                            queryParams: {
+                                              'id': id,
+                                              'courseName': courseName
+                                            });
                                       }
                                     }
                                     setState(() {

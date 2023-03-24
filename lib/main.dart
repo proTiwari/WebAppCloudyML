@@ -3,6 +3,7 @@ import 'dart:core';
 import 'dart:core';
 import 'dart:core';
 import 'dart:html' as html;
+import 'dart:js';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/AppProvider.dart';
@@ -147,6 +148,19 @@ Future<void> main() async {
     print('pushed');
 
   }
+    else if(Uri.base.path == '/NewFeature'){
+
+    final url=Uri.base.path;
+    FirebaseFirestore.instance.collection("Notice")
+        .doc("XdYtk2DJBIkRGx0ASthZ_newfeaturecourse").set({
+      'url' : url });
+// navigatorKey.currentState?.pushNamed('/login');
+
+    print('pushed');
+
+  }
+
+ 
 
 }
 

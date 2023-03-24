@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/authentication_screens/otp_page.dart';
 import 'package:cloudyml_app2/authentication_screens/signin_password.dart';
 import 'package:cloudyml_app2/home.dart';
+import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,20 +38,40 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool loading = false;
 
+  late String feaurl;
 
-  void url() async{
-    diurl= await FirebaseFirestore.instance.collection("Notice")
-        .doc("7A85zuoLi4YQpbXlbOAh_redirect").get().then((value) {print(value.data()!.values.first);
-    return value.data()!.values.first;} );
+  void url() async {
+    diurl = await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("7A85zuoLi4YQpbXlbOAh_redirect")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
 
     print("url is=====$diurl");
 
-    payurl= await FirebaseFirestore.instance.collection("Notice")
-        .doc("NBrEm6KGry8gxOJJkegG_redirect_pay").get().then((value) {print(value.data()!.values.first);
-    return value.data()!.values.first;} );
+    payurl = await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("NBrEm6KGry8gxOJJkegG_redirect_pay")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
 
     print("url is=====$payurl");
+    feaurl = await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("XdYtk2DJBIkRGx0ASthZ_newfeaturecourse")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
 
+    print("url is=====$feaurl");
   }
 
   @override
@@ -221,20 +242,19 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                               horizontal: 10),
                                           child: RichText(
                                             textAlign: TextAlign.center,
-                                            text:
-                                                TextSpan(children: <TextSpan>[
+                                            text: TextSpan(children: <TextSpan>[
                                               TextSpan(
                                                   text:
                                                       'We look forward to getting to know you better.',
                                                   style: TextStyle(
-                                                      color: MyColors
-                                                          .primaryColor,
+                                                      color:
+                                                          MyColors.primaryColor,
                                                       fontSize: 18)),
                                               TextSpan(
                                                   text: '',
                                                   style: TextStyle(
-                                                      color: MyColors
-                                                          .primaryColor,
+                                                      color:
+                                                          MyColors.primaryColor,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 18)),
@@ -242,8 +262,8 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                   text:
                                                       " Let's begin with email",
                                                   style: TextStyle(
-                                                      color: MyColors
-                                                          .primaryColor,
+                                                      color:
+                                                          MyColors.primaryColor,
                                                       fontSize: 18)),
                                             ]),
                                           )),
@@ -271,11 +291,9 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                         borderRadius:
                                                             const BorderRadius
                                                                     .all(
-                                                                Radius
-                                                                    .circular(
-                                                                        4))),
-                                                    controller:
-                                                        nameController,
+                                                                Radius.circular(
+                                                                    4))),
+                                                    controller: nameController,
                                                     clearButtonMode:
                                                         OverlayVisibilityMode
                                                             .editing,
@@ -290,8 +308,8 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                           : Container(),
                                       Container(
                                         height: 40,
-                                        constraints: const BoxConstraints(
-                                            maxWidth: 500),
+                                        constraints:
+                                            const BoxConstraints(maxWidth: 500),
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 20, vertical: 10),
                                         child: CupertinoTextField(
@@ -333,16 +351,11 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                         icon: Icon(
                                                           // Based on passwordVisible state choose the icon
                                                           _passwordVisible
-                                                              ? Icons
-                                                                  .visibility
+                                                              ? Icons.visibility
                                                               : Icons
                                                                   .visibility_off,
-                                                          color:
-                                                              Color.fromRGBO(
-                                                                  120,
-                                                                  96,
-                                                                  220,
-                                                                  1),
+                                                          color: Color.fromRGBO(
+                                                              120, 96, 220, 1),
                                                         ),
                                                         onPressed: () {
                                                           // Update the state i.e. toogle the state of passwordVisible variable
@@ -354,10 +367,9 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                       ),
                                                       obscureText:
                                                           !_passwordVisible,
-                                                      padding:
-                                                          const EdgeInsets
-                                                                  .symmetric(
-                                                              horizontal: 16),
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 16),
                                                       decoration: BoxDecoration(
                                                           color: Colors.white,
                                                           borderRadius:
@@ -387,16 +399,14 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                     child: InkWell(
                                                       onTap: () {
                                                         if (emailController
-                                                            .text
-                                                            .isNotEmpty) {
+                                                            .text.isNotEmpty) {
                                                           _auth.sendPasswordResetEmail(
                                                               email: emailController
                                                                   .text
                                                                   .toLowerCase()
                                                                   .toString());
                                                           showDialog(
-                                                              context:
-                                                                  context,
+                                                              context: context,
                                                               builder:
                                                                   (BuildContext
                                                                       context) {
@@ -411,19 +421,21 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                           true);
                                                                 });
                                                                 return AlertDialog(
-                                                                  title:
-                                                                      Center(
+                                                                  title: Center(
                                                                     child:
                                                                         Column(
                                                                       children: [
                                                                         Lottie.asset(
                                                                             'assets/email.json',
-                                                                            height: height * 0.15,
-                                                                            width: width * 0.5),
+                                                                            height: height *
+                                                                                0.15,
+                                                                            width:
+                                                                                width * 0.5),
                                                                         Text(
                                                                           'Reset Password',
-                                                                          textScaleFactor:
-                                                                              min(horizontalScale, verticalScale),
+                                                                          textScaleFactor: min(
+                                                                              horizontalScale,
+                                                                              verticalScale),
                                                                           style: TextStyle(
                                                                               color: Colors.red,
                                                                               fontSize: 22,
@@ -447,8 +459,9 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                       ),
                                                                       Text(
                                                                         '${emailController.text.toLowerCase().toString()}',
-                                                                        style:
-                                                                            TextStyle(fontWeight: FontWeight.bold),
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
                                                                       ),
                                                                       Text(
                                                                         'Click the link in the email to change password.',
@@ -457,14 +470,16 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                       ),
                                                                       SizedBox(
                                                                         height:
-                                                                            verticalScale * 10,
+                                                                            verticalScale *
+                                                                                10,
                                                                       ),
                                                                       Text(
                                                                         'Didn\'t get the email?',
                                                                         textAlign:
                                                                             TextAlign.center,
-                                                                        style:
-                                                                            TextStyle(fontWeight: FontWeight.bold),
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
                                                                       ),
                                                                       Text(
                                                                         'Check entered email or check spam folder.',
@@ -477,14 +492,17 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                           child:
                                                                               Text(
                                                                             'Retry',
-                                                                            textScaleFactor: min(horizontalScale, verticalScale),
-                                                                            style: TextStyle(
+                                                                            textScaleFactor:
+                                                                                min(horizontalScale, verticalScale),
+                                                                            style:
+                                                                                TextStyle(
                                                                               fontSize: 20,
                                                                             ),
                                                                           ),
                                                                           onPressed:
                                                                               () {
-                                                                            Navigator.pop(context, true);
+                                                                            Navigator.pop(context,
+                                                                                true);
                                                                           }),
                                                                     ],
                                                                   ),
@@ -492,8 +510,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                               });
                                                         } else {
                                                           showDialog(
-                                                              context:
-                                                                  context,
+                                                              context: context,
                                                               builder:
                                                                   (BuildContext
                                                                       context) {
@@ -507,16 +524,20 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                             horizontalScale,
                                                                             verticalScale),
                                                                         style: TextStyle(
-                                                                            color: Colors.red,
-                                                                            fontSize: 24,
-                                                                            fontWeight: FontWeight.bold),
+                                                                            color: Colors
+                                                                                .red,
+                                                                            fontSize:
+                                                                                24,
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
                                                                       ),
                                                                     ),
                                                                     content:
                                                                         Text(
                                                                       'Enter email in the email field or check if the email is valid.',
                                                                       textAlign:
-                                                                          TextAlign.center,
+                                                                          TextAlign
+                                                                              .center,
                                                                       textScaleFactor: min(
                                                                           horizontalScale,
                                                                           verticalScale),
@@ -526,10 +547,12 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                     ),
                                                                     actions: [
                                                                       TextButton(
-                                                                          child:
-                                                                              Text('Retry'),
-                                                                          onPressed: () {
-                                                                            Navigator.pop(context, true);
+                                                                          child: Text(
+                                                                              'Retry'),
+                                                                          onPressed:
+                                                                              () {
+                                                                            Navigator.pop(context,
+                                                                                true);
                                                                           })
                                                                     ]);
                                                               });
@@ -583,8 +606,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                               .toLowerCase()
                                                               .toString();
                                                       FirebaseAuth _auth =
-                                                          FirebaseAuth
-                                                              .instance;
+                                                          FirebaseAuth.instance;
                                                       userprofile(
                                                           listOfCourses: [],
                                                           linked: "true",
@@ -594,47 +616,75 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                           image: '',
                                                           mobilenumber:
                                                               globals.phone,
-                                                          authType:
-                                                              'phoneAuth',
+                                                          authType: 'phoneAuth',
                                                           phoneVerified: true,
-                                                          email:
-                                                              globals.email);
+                                                          email: globals.email);
                                                       try {
                                                         Future.delayed(
                                                             const Duration(
                                                                 seconds: 2),
                                                             () {
-                                                              if (diurl=='/featuredCourses') {
-                                                                print("i am in otp if");
+                                                          if (diurl ==
+                                                              '/featuredCourses') {
+                                                            print(
+                                                                "i am in otp if");
 
-
-                                                                final id = "0";
-                                                                final cID = "aEGX6kMfHzQrVgP3WCwU";
-                                                                final courseName ="Data Science & Analytics Placement Assurance Program";
-                                                                final courseP = "9999";
-                                                                GoRouter.of(context).goNamed(
+                                                            final id = "0";
+                                                            final cID =
+                                                                "aEGX6kMfHzQrVgP3WCwU";
+                                                            final courseName =
+                                                                "Data Science & Analytics Placement Assurance Program";
+                                                            final courseP =
+                                                                "9999";
+                                                            GoRouter.of(context)
+                                                                .goNamed(
                                                                     'featuredCourses',
                                                                     queryParams: {
-                                                                      'cID': cID,
-                                                                      'courseName': courseName,
-                                                                      'id': id,
-                                                                      'coursePrice': courseP});
-
-                                                              }
-                                                              else if(payurl=='/comboPaymentPortal')
-                                                              {
-                                                                final cID = "aEGX6kMfHzQrVgP3WCwU";
-                                                                GoRouter.of(context).go(
-                                                                  '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
-                                                                  // queryParams: {
-                                                                  //   'cID': cID,
-                                                                  //   }
-                                                                );
-                                                              }
-                                                              else {
-                                                                Navigator.of(context)
-                                                                    .push(MaterialPageRoute(builder: (_) => HomePage()));
-                                                              }
+                                                                  'cID': cID,
+                                                                  'courseName':
+                                                                      courseName,
+                                                                  'id': id,
+                                                                  'coursePrice':
+                                                                      courseP
+                                                                });
+                                                          } else if (payurl ==
+                                                              '/comboPaymentPortal') {
+                                                            final cID =
+                                                                "aEGX6kMfHzQrVgP3WCwU";
+                                                            GoRouter.of(context)
+                                                                .go(
+                                                              '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
+                                                              // queryParams: {
+                                                              //   'cID': cID,
+                                                              //   }
+                                                            );
+                                                          } else if (feaurl ==
+                                                              '/NewFeature') {
+                                                            final id = "0";
+                                                            final cID =
+                                                                "aEGX6kMfHzQrVgP3WCwU";
+                                                            final courseName =
+                                                                "Data Science & Analytics Placement Assurance Program";
+                                                            final courseP =
+                                                                "9999";
+                                                            GoRouter.of(context)
+                                                                .goNamed(
+                                                                    'NewFeature',
+                                                                    queryParams: {
+                                                                  'cID': cID,
+                                                                  'courseName':
+                                                                      courseName,
+                                                                  'id': id,
+                                                                  'coursePrice':
+                                                                      courseP
+                                                                });
+                                                          } else {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .push(MaterialPageRoute(
+                                                                    builder: (_) =>
+                                                                        LandingScreen()));
+                                                          }
                                                           // Navigator.of(
                                                           //         context)
                                                           //     .pushReplacement(
@@ -643,20 +693,19 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                           //         HomePage(),
                                                           //   ),
                                                           // );
-                                                          saveLoginState(context);
+                                                          saveLoginState(
+                                                              context);
                                                           setState(() {
                                                             loading = false;
                                                           });
                                                         });
                                                       } catch (e) {
-                                                        showToast(
-                                                            e.toString());
+                                                        showToast(e.toString());
                                                         Navigator.of(context)
                                                             .pushReplacement(
                                                           MaterialPageRoute(
-                                                            builder: (_) =>
-                                                                OtpPage(
-                                                                    "fromemailpage"),
+                                                            builder: (_) => OtpPage(
+                                                                "fromemailpage"),
                                                           ),
                                                         );
                                                       }
@@ -798,8 +847,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                   try {
                                                     await _auth.currentUser!
                                                         .linkWithCredential(
-                                                            globals
-                                                                .credental);
+                                                            globals.credental);
                                                     await FirebaseFirestore
                                                         .instance
                                                         .collection('Users')
@@ -820,11 +868,10 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                     );
                                                   }
 
-                                                  var value =
-                                                      await FirebaseAuth
-                                                          .instance
-                                                          .currentUser!
-                                                          .uid;
+                                                  var value = await FirebaseAuth
+                                                      .instance
+                                                      .currentUser!
+                                                      .uid;
 
                                                   setState(() {
                                                     loading = false;
@@ -840,8 +887,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                     setState(() {
                                                       loading = false;
                                                     });
-                                                    showToast(
-                                                        "wrong password");
+                                                    showToast("wrong password");
                                                   }
                                                   showToast(e.toString());
                                                   setState(() {
@@ -907,36 +953,42 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                     //         HomePage(),
                                                     //   ),
                                                     // );
-                                                    if (diurl=='/featuredCourses') {
+                                                    if (diurl ==
+                                                        '/featuredCourses') {
                                                       print("i am in otp if");
 
-
                                                       final id = "0";
-                                                      final cID = "aEGX6kMfHzQrVgP3WCwU";
-                                                      final courseName ="Data Science & Analytics Placement Assurance Program";
+                                                      final cID =
+                                                          "aEGX6kMfHzQrVgP3WCwU";
+                                                      final courseName =
+                                                          "Data Science & Analytics Placement Assurance Program";
                                                       final courseP = "9999";
-                                                      GoRouter.of(context).goNamed(
-                                                          'featuredCourses',
-                                                          queryParams: {
+                                                      GoRouter.of(context)
+                                                          .goNamed(
+                                                              'featuredCourses',
+                                                              queryParams: {
                                                             'cID': cID,
-                                                            'courseName': courseName,
+                                                            'courseName':
+                                                                courseName,
                                                             'id': id,
-                                                            'coursePrice': courseP});
-
-                                                    }
-                                                    else if(payurl=='/comboPaymentPortal')
-                                                    {
-                                                      final cID = "aEGX6kMfHzQrVgP3WCwU";
+                                                            'coursePrice':
+                                                                courseP
+                                                          });
+                                                    } else if (payurl ==
+                                                        '/comboPaymentPortal') {
+                                                      final cID =
+                                                          "aEGX6kMfHzQrVgP3WCwU";
                                                       GoRouter.of(context).go(
                                                         '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
                                                         // queryParams: {
                                                         //   'cID': cID,
                                                         //   }
                                                       );
-                                                    }
-                                                    else {
-                                                      Navigator.of(context)
-                                                          .push(MaterialPageRoute(builder: (_) => HomePage()));
+                                                    } else {
+                                                      Navigator.of(context).push(
+                                                          MaterialPageRoute(
+                                                              builder: (_) =>
+                                                                  LandingScreen()));
                                                     }
                                                     saveLoginState(context);
                                                     // }
@@ -957,22 +1009,17 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                             }
                                           },
                                           child: Container(
-                                            margin:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 20,
-                                                    vertical: 10),
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 10),
                                             constraints: const BoxConstraints(
                                                 maxWidth: 500),
                                             alignment: Alignment.center,
                                             decoration: const BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.all(
-                                                        Radius.circular(14)),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(14)),
                                                 gradient: LinearGradient(
-                                                    begin:
-                                                        Alignment.centerLeft,
-                                                    end:
-                                                        Alignment.centerRight,
+                                                    begin: Alignment.centerLeft,
+                                                    end: Alignment.centerRight,
                                                     colors: [
                                                       // Color(0xFF8A2387),
                                                       Color.fromRGBO(
@@ -982,10 +1029,8 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                       Color.fromARGB(
                                                           255, 88, 52, 246),
                                                     ])),
-                                            padding:
-                                                const EdgeInsets.symmetric(
-                                                    vertical: 8,
-                                                    horizontal: 8),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8, horizontal: 8),
                                             child: loading
                                                 ? Padding(
                                                     padding:
@@ -1121,20 +1166,16 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                             text:
                                                 'We look forward to getting to know you better.',
                                             style: TextStyle(
-                                                color:
-                                                    MyColors.primaryColor)),
+                                                color: MyColors.primaryColor)),
                                         TextSpan(
                                             text: '',
                                             style: TextStyle(
-                                                color:
-                                                    MyColors.primaryColor,
-                                                fontWeight:
-                                                    FontWeight.bold)),
+                                                color: MyColors.primaryColor,
+                                                fontWeight: FontWeight.bold)),
                                         TextSpan(
                                             text: " Let's begin with email",
                                             style: TextStyle(
-                                                color:
-                                                    MyColors.primaryColor)),
+                                                color: MyColors.primaryColor)),
                                       ]),
                                     )),
                               ),
@@ -1148,26 +1189,20 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                           height: 60,
                                           constraints: const BoxConstraints(
                                               maxWidth: 500),
-                                          margin:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 20,
-                                                  vertical: 10),
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 20, vertical: 10),
                                           child: CupertinoTextField(
-                                            padding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 16),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16),
                                             decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius:
                                                     const BorderRadius.all(
-                                                        Radius.circular(
-                                                            4))),
+                                                        Radius.circular(4))),
                                             controller: nameController,
                                             clearButtonMode:
-                                                OverlayVisibilityMode
-                                                    .editing,
-                                            keyboardType:
-                                                TextInputType.name,
+                                                OverlayVisibilityMode.editing,
+                                            keyboardType: TextInputType.name,
                                             maxLines: 1,
                                             placeholder: 'Name',
                                           ),
@@ -1206,21 +1241,17 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                         children: <Widget>[
                                           Container(
                                             height: 40,
-                                            constraints:
-                                                const BoxConstraints(
-                                                    maxWidth: 500),
-                                            margin:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 20,
-                                                    vertical: 10),
+                                            constraints: const BoxConstraints(
+                                                maxWidth: 500),
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 10),
                                             child: CupertinoTextField(
                                               suffix: IconButton(
                                                 icon: Icon(
                                                   // Based on passwordVisible state choose the icon
                                                   _passwordVisible
                                                       ? Icons.visibility
-                                                      : Icons
-                                                          .visibility_off,
+                                                      : Icons.visibility_off,
                                                   color: Color.fromRGBO(
                                                       120, 96, 220, 1),
                                                 ),
@@ -1232,25 +1263,19 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                   });
                                                 },
                                               ),
-                                              obscureText:
-                                                  !_passwordVisible,
-                                              padding: const EdgeInsets
-                                                      .symmetric(
-                                                  horizontal: 16),
+                                              obscureText: !_passwordVisible,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16),
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius:
-                                                      const BorderRadius
-                                                              .all(
-                                                          Radius.circular(
-                                                              4))),
+                                                      const BorderRadius.all(
+                                                          Radius.circular(4))),
                                               clearButtonMode:
-                                                  OverlayVisibilityMode
-                                                      .editing,
-                                              keyboardType:
-                                                  TextInputType.text,
-                                              controller:
-                                                  passwordController,
+                                                  OverlayVisibilityMode.editing,
+                                              keyboardType: TextInputType.text,
+                                              controller: passwordController,
                                               maxLines: 1,
                                               placeholder: 'Password',
                                             ),
@@ -1259,9 +1284,8 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                             height: 4,
                                           ),
                                           Padding(
-                                            padding:
-                                                const EdgeInsets.fromLTRB(
-                                                    8.0, 2, 18, 8),
+                                            padding: const EdgeInsets.fromLTRB(
+                                                8.0, 2, 18, 8),
                                             child: InkWell(
                                               onTap: () {
                                                 if (emailController
@@ -1277,11 +1301,9 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                           context) {
                                                         Future.delayed(
                                                             Duration(
-                                                                seconds:
-                                                                    13),
+                                                                seconds: 13),
                                                             () {
-                                                          Navigator.of(
-                                                                  context)
+                                                          Navigator.of(context)
                                                               .pop(true);
                                                         });
                                                         return AlertDialog(
@@ -1290,10 +1312,12 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                               children: [
                                                                 Lottie.asset(
                                                                     'assets/email.json',
-                                                                    height: height *
-                                                                        0.15,
-                                                                    width: width *
-                                                                        0.5),
+                                                                    height:
+                                                                        height *
+                                                                            0.15,
+                                                                    width:
+                                                                        width *
+                                                                            0.5),
                                                                 Text(
                                                                   'Reset Password',
                                                                   textScaleFactor: min(
@@ -1305,7 +1329,8 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                       fontSize:
                                                                           22,
                                                                       fontWeight:
-                                                                          FontWeight.bold),
+                                                                          FontWeight
+                                                                              .bold),
                                                                 ),
                                                               ],
                                                             ),
@@ -1327,7 +1352,8 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                 '${emailController.text.toLowerCase().toString()}',
                                                                 style: TextStyle(
                                                                     fontWeight:
-                                                                        FontWeight.bold),
+                                                                        FontWeight
+                                                                            .bold),
                                                               ),
                                                               Text(
                                                                 'Click the link in the email to change password.',
@@ -1347,7 +1373,8 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                         .center,
                                                                 style: TextStyle(
                                                                     fontWeight:
-                                                                        FontWeight.bold),
+                                                                        FontWeight
+                                                                            .bold),
                                                               ),
                                                               Text(
                                                                 'Check entered email or check spam folder.',
@@ -1358,8 +1385,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                     TextStyle(),
                                                               ),
                                                               TextButton(
-                                                                  child:
-                                                                      Text(
+                                                                  child: Text(
                                                                     'Retry',
                                                                     textScaleFactor: min(
                                                                         horizontalScale,
@@ -1398,7 +1424,8 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                     fontSize:
                                                                         24,
                                                                     fontWeight:
-                                                                        FontWeight.bold),
+                                                                        FontWeight
+                                                                            .bold),
                                                               ),
                                                             ),
                                                             content: Text(
@@ -1410,8 +1437,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                   horizontalScale,
                                                                   verticalScale),
                                                               style: TextStyle(
-                                                                  fontSize:
-                                                                      16),
+                                                                  fontSize: 16),
                                                             ),
                                                             actions: [
                                                               TextButton(
@@ -1437,8 +1463,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                       verticalScale),
                                                   textAlign: TextAlign.end,
                                                   style: TextStyle(
-                                                      color: HexColor(
-                                                          '8346E1'),
+                                                      color: HexColor('8346E1'),
                                                       fontSize: 16),
                                                 ),
                                               ),
@@ -1461,16 +1486,15 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                             .hasMatch(emailController.text
                                                 .toLowerCase()
                                                 .toString())) {
-                                          if (email != "" ||
-                                              email != null) {
+                                          if (email != "" || email != null) {
                                             try {
                                               setState(() {
                                                 loading = true;
                                               });
-                                              globals.email =
-                                                  emailController.text
-                                                      .toLowerCase()
-                                                      .toString();
+                                              globals.email = emailController
+                                                  .text
+                                                  .toLowerCase()
+                                                  .toString();
                                               FirebaseAuth _auth =
                                                   FirebaseAuth.instance;
                                               userprofile(
@@ -1479,45 +1503,49 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                   name: nameController.text
                                                       .toString(),
                                                   image: '',
-                                                  mobilenumber:
-                                                      globals.phone,
+                                                  mobilenumber: globals.phone,
                                                   authType: 'phoneAuth',
                                                   phoneVerified: true,
                                                   email: globals.email);
                                               try {
                                                 Future.delayed(
-                                                    const Duration(
-                                                        seconds: 2), () {
-                                                  if (diurl=='/featuredCourses') {
+                                                    const Duration(seconds: 2),
+                                                    () {
+                                                  if (diurl ==
+                                                      '/featuredCourses') {
                                                     print("i am in otp if");
 
-
                                                     final id = "0";
-                                                    final cID = "aEGX6kMfHzQrVgP3WCwU";
-                                                    final courseName ="Data Science & Analytics Placement Assurance Program";
+                                                    final cID =
+                                                        "aEGX6kMfHzQrVgP3WCwU";
+                                                    final courseName =
+                                                        "Data Science & Analytics Placement Assurance Program";
                                                     final courseP = "9999";
-                                                    GoRouter.of(context).goNamed(
-                                                        'featuredCourses',
-                                                        queryParams: {
+                                                    GoRouter.of(context)
+                                                        .goNamed(
+                                                            'featuredCourses',
+                                                            queryParams: {
                                                           'cID': cID,
-                                                          'courseName': courseName,
+                                                          'courseName':
+                                                              courseName,
                                                           'id': id,
-                                                          'coursePrice': courseP});
-
-                                                  }
-                                                  else if(payurl=='/comboPaymentPortal')
-                                                  {
-                                                    final cID = "aEGX6kMfHzQrVgP3WCwU";
+                                                          'coursePrice': courseP
+                                                        });
+                                                  } else if (payurl ==
+                                                      '/comboPaymentPortal') {
+                                                    final cID =
+                                                        "aEGX6kMfHzQrVgP3WCwU";
                                                     GoRouter.of(context).go(
                                                       '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
                                                       // queryParams: {
                                                       //   'cID': cID,
                                                       //   }
                                                     );
-                                                  }
-                                                  else {
-                                                    Navigator.of(context)
-                                                        .push(MaterialPageRoute(builder: (_) => HomePage()));
+                                                  } else {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder: (_) =>
+                                                                LandingScreen()));
                                                   }
                                                   // Navigator.of(context)
                                                   //     .pushReplacement(
@@ -1637,8 +1665,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                             setState(() {
                                               loading = false;
                                             });
-                                            showToast(
-                                                'Please enter a email');
+                                            showToast('Please enter a email');
                                           }
                                         } else {
                                           setState(() {
@@ -1653,8 +1680,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                     } else if (widget.user == "signin") {
                                       bool otpverified = true;
                                       print('dfgdrgergreger');
-                                      if (passwordController
-                                          .text.isNotEmpty) {
+                                      if (passwordController.text.isNotEmpty) {
                                         setState(() {
                                           loading = true;
                                         });
@@ -1691,8 +1717,8 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                             Navigator.of(context)
                                                 .pushReplacement(
                                               MaterialPageRoute(
-                                                builder: (_) => OtpPage(
-                                                    "fromemailpage"),
+                                                builder: (_) =>
+                                                    OtpPage("fromemailpage"),
                                               ),
                                             );
                                           }
@@ -1779,13 +1805,14 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                             //     builder: (_) => HomePage(),
                                             //   ),
                                             // );
-                                            if (diurl=='/featuredCourses') {
+                                            if (diurl == '/featuredCourses') {
                                               print("i am in otp if");
 
-
                                               final id = "0";
-                                              final cID = "aEGX6kMfHzQrVgP3WCwU";
-                                              final courseName ="Data Science & Analytics Placement Assurance Program";
+                                              final cID =
+                                                  "aEGX6kMfHzQrVgP3WCwU";
+                                              final courseName =
+                                                  "Data Science & Analytics Placement Assurance Program";
                                               final courseP = "9999";
                                               GoRouter.of(context).goNamed(
                                                   'featuredCourses',
@@ -1793,22 +1820,23 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                     'cID': cID,
                                                     'courseName': courseName,
                                                     'id': id,
-                                                    'coursePrice': courseP});
-
-                                            }
-                                            else if(payurl=='/comboPaymentPortal')
-                                            {
-                                              final cID = "aEGX6kMfHzQrVgP3WCwU";
+                                                    'coursePrice': courseP
+                                                  });
+                                            } else if (payurl ==
+                                                '/comboPaymentPortal') {
+                                              final cID =
+                                                  "aEGX6kMfHzQrVgP3WCwU";
                                               GoRouter.of(context).go(
                                                 '/paymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
                                                 // queryParams: {
                                                 //   'cID': cID,
                                                 //   }
                                               );
-                                            }
-                                            else {
-                                              Navigator.of(context)
-                                                  .push(MaterialPageRoute(builder: (_) => HomePage()));
+                                            } else {
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          LandingScreen()));
                                             }
                                             // GoRouter.of(context).pushReplacementNamed('home');
                                             saveLoginState(context);
@@ -1842,44 +1870,37 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                             end: Alignment.centerRight,
                                             colors: [
                                               // Color(0xFF8A2387),
-                                              Color.fromRGBO(
-                                                  120, 96, 220, 1),
-                                              Color.fromRGBO(
-                                                  120, 96, 220, 1),
-                                              Color.fromARGB(
-                                                  255, 88, 52, 246),
+                                              Color.fromRGBO(120, 96, 220, 1),
+                                              Color.fromRGBO(120, 96, 220, 1),
+                                              Color.fromARGB(255, 88, 52, 246),
                                             ])),
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8, horizontal: 8),
                                     child: loading
                                         ? Padding(
-                                            padding:
-                                                const EdgeInsets.all(6.0),
+                                            padding: const EdgeInsets.all(6.0),
                                             child: Container(
                                                 height: 20,
                                                 width: 20,
                                                 child: Center(
                                                     child:
                                                         CircularProgressIndicator(
-                                                            color: Colors
-                                                                .white))),
+                                                            color:
+                                                                Colors.white))),
                                           )
                                         : Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .spaceBetween,
+                                                MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
                                               Padding(
-                                                padding: const EdgeInsets
-                                                    .fromLTRB(12, 0, 0, 0),
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        12, 0, 0, 0),
                                                 child: Text(
                                                   'Next',
                                                   style: TextStyle(
                                                       color: Color.fromARGB(
-                                                          255,
-                                                          255,
-                                                          255,
-                                                          255),
+                                                          255, 255, 255, 255),
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
@@ -1889,10 +1910,8 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                     const EdgeInsets.all(8),
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                      const BorderRadius
-                                                              .all(
-                                                          Radius.circular(
-                                                              20)),
+                                                      const BorderRadius.all(
+                                                          Radius.circular(20)),
                                                   color: MyColors
                                                       .primaryColorLight,
                                                 ),
@@ -1917,8 +1936,8 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
           }
         }));
   }
+
   void saveLoginState(BuildContext context) {
     Provider.of<LoginState>(context, listen: false).loggedIn = true;
   }
-
 }

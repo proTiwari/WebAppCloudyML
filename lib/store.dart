@@ -23,6 +23,7 @@ import 'aboutus.dart';
 import 'authentication/firebase_auth.dart';
 import 'models/user_details.dart';
 import 'my_Courses.dart';
+import 'package:universal_html/html.dart' as html;
 
 class StoreScreen extends StatefulWidget {
   const StoreScreen({Key? key}) : super(key: key);
@@ -32,7 +33,6 @@ class StoreScreen extends StatefulWidget {
 }
 
 class _StoreScreenState extends State<StoreScreen> {
-
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   var textStyle = TextStyle(
@@ -42,13 +42,25 @@ class _StoreScreenState extends State<StoreScreen> {
     fontFamily: "Semibold",
   );
 
-  @override
-  void initState() {
-    super.initState();
+  var path =
+      Uri.base.path;
+  String? currentPath;
+
+  function() {
+      setState(() {
+        path;
+      });
   }
+
+  @override
+  void initState(){
+    print('path is  $path');
+    super.initState();
+    function();
+  }
+
   @override
   Widget build(BuildContext context) {
-
     List<CourseDetails> courseList = Provider.of<List<CourseDetails>>(context);
 
     List<CourseDetails> course = [];
@@ -74,11 +86,9 @@ class _StoreScreenState extends State<StoreScreen> {
             if (element.isItComboCourse) {
               courseToRemove = courseToRemove + element.courses;
             }
-
           }
         }
       } catch (e) {}
-
     }
     try {
       course = courseList;
@@ -118,8 +128,6 @@ class _StoreScreenState extends State<StoreScreen> {
       print("tttttttttttttttttt${e.toString()}");
     }
 
-
-
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     var verticalScale = screenHeight / mockUpHeight;
@@ -128,995 +136,844 @@ class _StoreScreenState extends State<StoreScreen> {
 
 
     return Scaffold(
-      key: _scaffoldKey,
+      // key: _scaffoldKey,
       // drawer: customDrawer(context),
       body: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          if (constraints.maxWidth >= 515) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    width: screenWidth,
-                    height: 45,
-                    color: HexColor("440F87"),
-                    child: customMenuBar(context),
-                    // Row(
-                    //   children: [
-                    //     IconButton(
-                    //         onPressed: () {
-                    //           Scaffold.of(context).openDrawer();
-                    //         },
-                    //         icon: Icon(
-                    //           Icons.menu,
-                    //           color: Colors.white,
-                    //         )),
-                    //     SizedBox(
-                    //       width: horizontalScale * 15,
-                    //     ),
-                    //     Image.asset(
-                    //       "assets/logo2.png",
-                    //       width: 30,
-                    //       height: 30,
-                    //     ),
-                    //     Text(
-                    //       "CloudyML",
-                    //       style: textStyle,
-                    //     ),
-                    //     SizedBox(
-                    //       width: horizontalScale * 25,
-                    //     ),
-                    //     // SizedBox(
-                    //     //   height: 30,
-                    //     //   width: screenWidth / 3,
-                    //     //   child: TextField(
-                    //     //     style: TextStyle(
-                    //     //         color: HexColor("A7A7A7"), fontSize: 12),
-                    //     //     decoration: InputDecoration(
-                    //     //         contentPadding: EdgeInsets.all(5.0),
-                    //     //         hintText: "Search Courses",
-                    //     //         focusedBorder: OutlineInputBorder(
-                    //     //             borderSide: BorderSide(
-                    //     //                 color: Colors.white, width: 1)),
-                    //     //         disabledBorder: OutlineInputBorder(
-                    //     //             borderSide: BorderSide(
-                    //     //                 color: Colors.white, width: 1)),
-                    //     //         hintStyle: TextStyle(
-                    //     //             color: HexColor("A7A7A7"), fontSize: 12),
-                    //     //         border: OutlineInputBorder(
-                    //     //             borderSide: BorderSide(
-                    //     //                 color: Colors.white, width: 1)),
-                    //     //         enabledBorder: OutlineInputBorder(
-                    //     //             borderSide: BorderSide(
-                    //     //                 color: Colors.white, width: 1)),
-                    //     //         prefixIcon: IconButton(
-                    //     //             onPressed: () {},
-                    //     //             icon: Icon(
-                    //     //               Icons.search_outlined,
-                    //     //               size: 14,
-                    //     //               color: Colors.white,
-                    //     //             ))),
-                    //     //   ),
-                    //     // )
-                    //   ],
-                    // ),
-                  ),
-                  Container(
-                    width: screenWidth,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 60.0, top: 20, bottom: 20),
-                          child: Column(
-                            children: [
-                              Container(
-                                width: horizontalScale * 200,
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                      "Explore our hands on",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'SemiBold',
-                                        color: HexColor("000000"),
-                                        fontSize: 26,)
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                width: horizontalScale * 200,
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                      "Learning courses 🔥🔥🔥",
-                                      style: TextStyle(
-                                        color: HexColor("000000"),
-                                        fontFamily: 'SemiBold',
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 26,)
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Container(width: horizontalScale * ,),
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: Container(
-                            padding: EdgeInsets.only(right: 60),
-                            width: horizontalScale * 180,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                    "Our Courses comes with Lifetime access, Live",
-                                    style: TextStyle(
-                                      color: HexColor("000000"),
-                                      fontSize: 14,)
-                                ),
-                                Text(
-                                    "chat support & internship opportunity.",
-                                    style: TextStyle(
-                                      color: HexColor("000000"),
-                                      fontSize: 14,)
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 60.0, right: 60),
-                    child: Divider(thickness: 2,),
-                  ),
+          builder: (BuildContext context, BoxConstraints constraints) {
+        if (constraints.maxWidth >= 515) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  width: screenWidth,
+                  height: 60,
+                  color: HexColor("440F87"),
+                  child: customMenuBar(context),
 
-                  Container(
-                    height: MediaQuery.of(context).size.height,
-                    padding: const EdgeInsets.only(right: 15.0, left: 15.0),
-                    child: GridView.builder(
-                        scrollDirection: Axis.vertical,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: constraints.maxWidth >= 900 ? 4 : 3,
-                          childAspectRatio: constraints.maxWidth >= 900 ? 0.80 : 1.05,
-                          crossAxisSpacing: constraints.maxWidth >= 900 ? 25 : 15,
-                        ),
-                      itemCount: cou.length,
-                      itemBuilder: (context, index) {
-                      if (cou[index].courseName == "null") {
-                        return Container(
-                          child: Text('This is a container'),
-                        );
-                      }
-                      if (cou[index].show == true)
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              courseId = cou[index]
-                                  .courseDocumentId;
-                            });
-                            print(courseId);
-                            if (cou[index].isItComboCourse) {
-
-                              final id = index.toString();
-                              final cID = cou[index].courseDocumentId;
-                              final courseName = cou[index].courseName;
-                              final courseP = cou[index].coursePrice;
-                              // GoRouter.of(context).pushNamed('comboStore',
-                              //     queryParams: {
-                              //       'courseName': courseName,
-                              //       'id': id,
-                              //       'coursePrice': courseP});
-
-                              GoRouter.of(context).pushNamed(
-                                  'featuredCourses',
-                                  queryParams: {
-                                    'cID': cID,
-                                    'courseName': courseName,
-                                    'id': id,
-                                    'coursePrice': courseP});
-
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) =>
-                              //         ComboStore(
-                              //           courses:
-                              //           course[index].courses,
-                              //         ),
-                              //   ),
-                              // );
-
-                            } else {
-                              final id = index.toString();
-                              GoRouter.of(context).pushNamed(
-                                  'catalogue',
-                                  queryParams: {'id': id,
-                                    'cID': courseId});
-                            }
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Container(
-                              width: screenWidth,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                BorderRadius.circular(15),
-                                border: Border.all(
-                                    width: 0.5,
-                                    color: HexColor("440F87")),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: screenWidth,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft:
-                                          Radius.circular(15),
-                                          topRight:
-                                          Radius.circular(15)),
-                                      child: Image.network(
-                                        cou[index].courseImageUrl,
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                    height: constraints.maxWidth >= 900 ? screenHeight / 5.5 : screenHeight / 6,
-                                  ),
-                                  Container(
-                                    height: 30,
-                                    padding: EdgeInsets.only(left: 8, right: 8, top: 4),
-                                    width: screenWidth,
-                                    child: Text(
-                                      cou[index].courseName,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: 'Medium',
-                                        fontSize: 12,
-                                        height: 0.95,
-                                        fontWeight: FontWeight.bold,),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: verticalScale * 110,
-                                    width: screenWidth,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4),
-                                      child: Column(
-                                        children: [
-                                          // Align(
-                                          //   alignment: Alignment.topLeft,
-                                          //   child: Text(
-                                          //     course[index].courseName,
-                                          //     maxLines: 2,
-                                          //     overflow: TextOverflow.ellipsis,
-                                          //     style: TextStyle(
-                                          //       color: Colors.black,
-                                          //       fontFamily: 'Medium',
-                                          //       fontSize: 12,
-                                          //       height: 0.95,
-                                          //       fontWeight: FontWeight.bold,),
-                                          //   ),
-                                          // ),
-                                          SizedBox(
-                                            height: verticalScale * 5,
-                                          ),
-                                          Align(
-                                            alignment:
-                                            Alignment.topLeft,
-                                            child: Text(
-                                              "- ${cou[index].numOfVideos} Videos",
-                                              style: TextStyle(
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold,
-                                                  color: Colors
-                                                      .black,
-                                                  fontSize: 10),
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment:
-                                            Alignment.topLeft,
-                                            child: Text(
-                                              "- Lifetime Access",
-                                              style: TextStyle(
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold,
-                                                  color: Colors
-                                                      .black,
-                                                  fontSize: 10),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: verticalScale * 5,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(right: 5.0),
-                                                child: Container(
-                                                  height: 20,
-                                                  width: 25,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(5.0),
-                                                    color: HexColor('440F87'),
-                                                  ),
-                                                  child: Center(
-                                                    child: Text( cou[index].reviews.isNotEmpty ? cou[index].reviews : '5.0',
-                                                      style: TextStyle(fontSize: 12, color: Colors.white,
-                                                          fontWeight: FontWeight.normal),),
-                                                  ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                const EdgeInsets.only(right: 5.0),
-                                                child: StarRating(
-                                                  length: 5,
-                                                  rating: cou[index].reviews.isNotEmpty ? double.parse(cou[index].reviews) : 5.0,
-                                                  color: HexColor('440F87'),
-                                                  starSize: 20,
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Container(
-                                      height: verticalScale * 30,
-                                      width: screenWidth/8,
-                                      child: ElevatedButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              courseId = cou[index]
-                                                  .courseDocumentId;
-                                            });
-                                            print(courseId);
-                                            if (cou[index].isItComboCourse) {
-
-                                              final id = index.toString();
-                                              final courseName = cou[index].courseName;
-                                              final courseP = cou[index].coursePrice;
-                                              GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
-
-                                              // Navigator.push(
-                                              //   context,
-                                              //   MaterialPageRoute(
-                                              //     builder: (context) =>
-                                              //         ComboStore(
-                                              //           courses:
-                                              //           course[index].courses,
-                                              //         ),
-                                              //   ),
-                                              // );
-
-                                            } else {
-                                              final id = index.toString();
-                                              GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
-                                            }
-                                          },
-                                          style: ElevatedButton
-                                              .styleFrom(
-                                            backgroundColor:
-                                            HexColor(
-                                                "8346E1"),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                    5)),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              "Enroll Now",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  color:
-                                                  Colors.white,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold),
-                                            ),
-                                          )),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ));
-                      return Container();
-                    },)
-                  ),
-                  // Container(
-                  //   padding: const EdgeInsets.only(right: 60.0, left: 60.0),
-                  //   width: MediaQuery.of(context).size.width,
-                  //   height: MediaQuery.of(context).size.height,
-                  //   child: GridView.builder(
-                  //       gridDelegate:
-                  //       SliverGridDelegateWithFixedCrossAxisCount(
-                  //         crossAxisCount: constraints.maxWidth >= 650 ? 3 : 2,
-                  //       ),
-                  //       scrollDirection: Axis.vertical,
-                  //       itemCount: course.length,
-                  //       itemBuilder: (BuildContext context, index) {
-                  //         if (course[index].courseName == "null") {
-                  //           return Container(
-                  //             child: Text('This is a container'),
-                  //           );
-                  //         }
-                  //         if (course[index].show == true)
-                  //           return GestureDetector(
-                  //             onTap: () {
-                  //               setState(() {
-                  //                 courseId = course[index]
-                  //                     .courseDocumentId;
-                  //               });
-                  //               print(courseId);
-                  //               if (course[index].isItComboCourse) {
-                  //
-                  //                 final id = index.toString();
-                  //                 final courseName = course[index].courseName;
-                  //                 final courseP = course[index].coursePrice;
-                  //                 GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
-                  //
-                  //                 // Navigator.push(
-                  //                 //   context,
-                  //                 //   MaterialPageRoute(
-                  //                 //     builder: (context) =>
-                  //                 //         ComboStore(
-                  //                 //           courses:
-                  //                 //           course[index].courses,
-                  //                 //         ),
-                  //                 //   ),
-                  //                 // );
-                  //
-                  //               } else {
-                  //                 final id = index.toString();
-                  //                 GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
-                  //               }
-                  //             },
-                  //             child: Padding(
-                  //               padding: const EdgeInsets.all(10.0),
-                  //               child: Container(
-                  //                 width: screenWidth,
-                  //                 decoration: BoxDecoration(
-                  //                   color: Colors.white,
-                  //                   borderRadius:
-                  //                   BorderRadius.circular(15),
-                  //                   border: Border.all(
-                  //                       width: 0.5,
-                  //                       color: HexColor("440F87")),
-                  //                 ),
-                  //                 child: Column(
-                  //                   crossAxisAlignment:
-                  //                   CrossAxisAlignment.center,
-                  //                   children: [
-                  //                     Container(
-                  //                       width: screenWidth / 3.5,
-                  //                       height: screenHeight / 6,
-                  //                       child: ClipRRect(
-                  //                         borderRadius: BorderRadius.only(
-                  //                             topLeft:
-                  //                             Radius.circular(15),
-                  //                             topRight:
-                  //                             Radius.circular(15)),
-                  //                         child: Image.network(
-                  //                           course[index].courseImageUrl,
-                  //                           fit: BoxFit.fill,
-                  //                         ),
-                  //                       ),
-                  //                     ),
-                  //                     Container(
-                  //                       height: 15,
-                  //                       color: HexColor('EEE1FF'),
-                  //                       child: Row(
-                  //                         children: [
-                  //                           SizedBox(width: 8,),
-                  //                           Image.asset(
-                  //                             'assets/Rating.png',
-                  //                             fit: BoxFit.fill,
-                  //                             height: 10,
-                  //                             width: 50,
-                  //                           ),
-                  //                         ],
-                  //                       ),
-                  //                     ),
-                  //                     Container(
-                  //                       // height: verticalScale * 130,
-                  //                       child: Padding(
-                  //                         padding: const EdgeInsets.all(8),
-                  //                         child: Column(
-                  //                           children: [
-                  //                             Align(
-                  //                               alignment:
-                  //                               Alignment.topLeft,
-                  //                               child: Text(
-                  //                                 course[index]
-                  //                                     .courseName,
-                  //                                 overflow: TextOverflow.ellipsis,
-                  //                                 style: TextStyle(
-                  //                                     color: Colors
-                  //                                         .black,
-                  //                                     fontFamily:
-                  //                                     'Medium',
-                  //                                     fontSize: 12,
-                  //                                     fontWeight:
-                  //                                     FontWeight
-                  //                                         .w500),
-                  //                               ),
-                  //                             ),
-                  //                             SizedBox(
-                  //                               height: verticalScale * 5,
-                  //                             ),
-                  //                             Align(
-                  //                               alignment:
-                  //                               Alignment.topLeft,
-                  //                               child: Text(
-                  //                                 "- ${course[index].courseLanguage} Language",
-                  //                                 style: TextStyle(
-                  //                                     fontWeight:
-                  //                                     FontWeight
-                  //                                         .bold,
-                  //                                     color: Colors
-                  //                                         .black,
-                  //                                     fontSize: 8),
-                  //                               ),
-                  //                             ),
-                  //                             Align(
-                  //                               alignment:
-                  //                               Alignment.topLeft,
-                  //                               child: Text(
-                  //                                 "- ${course[index].numOfVideos} Videos",
-                  //                                 style: TextStyle(
-                  //                                     fontWeight:
-                  //                                     FontWeight
-                  //                                         .bold,
-                  //                                     color: Colors
-                  //                                         .black,
-                  //                                     fontSize: 8),
-                  //                               ),
-                  //                             ),
-                  //                             Align(
-                  //                               alignment:
-                  //                               Alignment.topLeft,
-                  //                               child: Text(
-                  //                                 "- Lifetime Access",
-                  //                                 style: TextStyle(
-                  //                                     fontWeight:
-                  //                                     FontWeight
-                  //                                         .bold,
-                  //                                     color: Colors
-                  //                                         .black,
-                  //                                     fontSize: 8),
-                  //                               ),
-                  //                             ),
-                  //                           ],
-                  //                         ),
-                  //                       ),
-                  //                     ),
-                  //                     Container(
-                  //                       width: horizontalScale * 50,
-                  //                       height: 20,
-                  //                       child: ElevatedButton(
-                  //                           onPressed: () {},
-                  //                           style: ElevatedButton
-                  //                               .styleFrom(
-                  //                             backgroundColor:
-                  //                             HexColor(
-                  //                                 "8346E1"),
-                  //                             shape: RoundedRectangleBorder(
-                  //                                 borderRadius:
-                  //                                 BorderRadius
-                  //                                     .circular(
-                  //                                     5)),
-                  //                           ),
-                  //                           child: Text(
-                  //                             "Enroll Now!",
-                  //                             style: TextStyle(
-                  //                                 fontSize: 10,
-                  //                                 color:
-                  //                                 Colors.white,
-                  //                                 fontWeight:
-                  //                                 FontWeight
-                  //                                     .bold),
-                  //                           )),
-                  //                     ),
-                  //                     Spacer(),
-                  //                   ],
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           );
-                  //         return Container();
-                  //       }),
+                  // Row(
+                  //   children: [
+                  //     IconButton(
+                  //         onPressed: () {
+                  //           Scaffold.of(context).openDrawer();
+                  //         },
+                  //         icon: Icon(
+                  //           Icons.menu,
+                  //           color: Colors.white,
+                  //         )),
+                  //     SizedBox(
+                  //       width: horizontalScale * 15,
+                  //     ),
+                  //     Image.asset(
+                  //       "assets/logo2.png",
+                  //       width: 30,
+                  //       height: 30,
+                  //     ),
+                  //     Text(
+                  //       "CloudyML",
+                  //       style: textStyle,
+                  //     ),
+                  //     SizedBox(
+                  //       width: horizontalScale * 25,
+                  //     ),
+                  //     // SizedBox(
+                  //     //   height: 30,
+                  //     //   width: screenWidth / 3,
+                  //     //   child: TextField(
+                  //     //     style: TextStyle(
+                  //     //         color: HexColor("A7A7A7"), fontSize: 12),
+                  //     //     decoration: InputDecoration(
+                  //     //         contentPadding: EdgeInsets.all(5.0),
+                  //     //         hintText: "Search Courses",
+                  //     //         focusedBorder: OutlineInputBorder(
+                  //     //             borderSide: BorderSide(
+                  //     //                 color: Colors.white, width: 1)),
+                  //     //         disabledBorder: OutlineInputBorder(
+                  //     //             borderSide: BorderSide(
+                  //     //                 color: Colors.white, width: 1)),
+                  //     //         hintStyle: TextStyle(
+                  //     //             color: HexColor("A7A7A7"), fontSize: 12),
+                  //     //         border: OutlineInputBorder(
+                  //     //             borderSide: BorderSide(
+                  //     //                 color: Colors.white, width: 1)),
+                  //     //         enabledBorder: OutlineInputBorder(
+                  //     //             borderSide: BorderSide(
+                  //     //                 color: Colors.white, width: 1)),
+                  //     //         prefixIcon: IconButton(
+                  //     //             onPressed: () {},
+                  //     //             icon: Icon(
+                  //     //               Icons.search_outlined,
+                  //     //               size: 14,
+                  //     //               color: Colors.white,
+                  //     //             ))),
+                  //     //   ),
+                  //     // )
+                  //   ],
                   // ),
-                ],
-              ),
-            );
-          } else {
-            return Container(
-              color: Colors.deepPurple,
-              child: Stack(children: [
-                Positioned(
-                  // left: -50,
-                  // width: 100,
-                  // height: 100,
-                  top: -98.00000762939453,
-                  left: -88.00000762939453,
-                  // child: CircleAvatar(
-                  //   radius: 70,
-                  //   backgroundColor: Color.fromARGB(255, 173, 149, 149),
-                  // ),
-                  child: Container(
-                      width: 161.99998474121094,
-                      height: 161.99998474121094,
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(55, 126, 106, 228),
-                        borderRadius: BorderRadius.all(Radius.elliptical(
-                            161.99998474121094, 161.99998474121094)),
-                      )),
-                ),
-                Positioned(
-                  // right: MediaQuery.of(context).size.width * (-.16),
-                  // bottom: MediaQuery.of(context).size.height * .7,
-                  top: 73.00000762939453,
-                  left: 309,
-
-                  // child: CircleAvatar(
-                  //   radius: 80,
-                  //   backgroundColor: Color.fromARGB(255, 173, 149, 149),
-                  // ),
-                  child: Container(
-                      width: 161.99998474121094,
-                      height: 161.99998474121094,
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(55, 126, 106, 228),
-                        borderRadius: BorderRadius.all(Radius.elliptical(
-                            161.99998474121094, 161.99998474121094)),
-                      )),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  //color: Color.fromARGB(214, 83, 109, 254),
-                  child: Column(
+                  width: screenWidth,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.08,
-                      ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 30),
-                        child: Row(
+                        padding: const EdgeInsets.only(
+                            left: 60.0, top: 20, bottom: 20),
+                        child: Column(
                           children: [
-                            IconButton(
-                              onPressed: () {
-                                print("yyy");
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => HomePage()),
-                                );
-                                // Scaffold.of(context).openDrawer();
-                              },
-                              icon: Icon(
-                                Icons.arrow_back,
-                                size: 40,
-                                color: Colors.white,
+                            Container(
+                              width: horizontalScale * 200,
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Text("Explore our hands on",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'SemiBold',
+                                      color: HexColor("000000"),
+                                      fontSize: 26,
+                                    )),
                               ),
                             ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.17,
+                            Container(
+                              width: horizontalScale * 200,
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Text("Learning courses 🔥🔥🔥",
+                                    style: TextStyle(
+                                      color: HexColor("000000"),
+                                      fontFamily: 'SemiBold',
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 26,
+                                    )),
+                              ),
                             ),
-                            Text(
-                              'Store',
-                              style: TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            )
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.06,
-                      ),
-                      !everycourseispurchased
-                          ? Expanded(
+                      // Container(width: horizontalScale * ,),
+                      Align(
+                        alignment: Alignment.bottomRight,
                         child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
-                          decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(40),
-                                  topRight: Radius.circular(40)),
-                              color: Colors.white),
-                          child: MediaQuery.removePadding(
-                            context: context,
-                            removeTop: true,
-                            child: GridView.builder(
-                                gridDelegate:
-                                SliverGridDelegateWithMaxCrossAxisExtent(
-                                    maxCrossAxisExtent:
-                                    MediaQuery.of(context).size.width * .5,
-                                    childAspectRatio: .85),
-                                itemCount: cou.length,
-                                itemBuilder: (context, index) {
-                                  print(cou);
-                                  print(cou.length);
-                                  print(index);
-                                  return InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        courseId = cou[index].courseDocumentId;
-                                      });
-
-                                      print(courseId);
-                                      if (cou[index].isItComboCourse) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => ComboStore(
-                                              courses: cou[index].courses,
-                                            ),
-                                          ),
-                                        );
-                                      }else if(cou[index].free == true || cou[index].free != null){
-                                        // Navigator.push(context, MaterialPageRoute(builder: (context) => FreeCourseScreen(),));
-                                      }
-
-
-                                      else {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                              const CatelogueScreen()),
-                                        );
-                                      }
-                                    },
-                                    child: Container(
-                                      height: MediaQuery.of(context).size.height / 3,
-                                      margin: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(25),
-                                        color:
-                                        Color.fromARGB(192, 255, 255, 255),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Color.fromRGBO(168, 133, 250,
-                                                0.7099999785423279),
-                                            offset: Offset(2, 2),
-                                            blurRadius: 5,
-                                          )
-                                        ],
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(08.0),
-                                        child: Column(
-                                          //mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                BorderRadius.circular(15),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: cou[index]
-                                                      .courseImageUrl,
-                                                  placeholder: (context,
-                                                      url) =>
-                                                  // CircularProgressIndicator(),
-                                                  Container(
-                                                    child: Image(
-                                                      // height: MediaQuery.of(context).size.height / 3,
-                                                      // fit: BoxFit.cover,
-                                                      image: AssetImage(
-                                                          'assets/new.jpg'),
-                                                    ),
-                                                  ),
-                                                  errorWidget:
-                                                      (context, url, error) =>
-                                                      Icon(Icons.error),
-                                                  fit: BoxFit.cover,
-                                                  height:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                      .15,
-                                                  width:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      .4,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Container(
-                                              height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                                  .07,
-                                              child: Text(
-                                                cou[index].courseName,
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: MediaQuery.of(context).size.width * .030),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                                  .004,
-                                            ),
-                                            Row(
-                                              // mainAxisAlignment:
-                                              //     MainAxisAlignment
-                                              //         .center,
-                                              children: [
-                                                Text(
-                                                  cou[index].courseLanguage,
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          .03),
-                                                ),
-                                                SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      .02,
-                                                ),
-                                                Text(
-                                                  '||',
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          .03),
-                                                ),
-                                                SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      .02,
-                                                ),
-                                                Text(
-                                                  cou[index].numOfVideos,
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          .03),
-                                                ),
-                                                // const SizedBox(
-                                                //   height: 10,
-                                                // ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                                  .015,
-                                            ),
-                                            // Row(
-                                            //   children: [
-                                            //     Container(
-                                            //       width:
-                                            //           MediaQuery.of(context)
-                                            //                   .size
-                                            //                   .width *
-                                            //               0.20,
-                                            //       height:
-                                            //           MediaQuery.of(context)
-                                            //                   .size
-                                            //                   .height *
-                                            //               0.030,
-                                            //       decoration: BoxDecoration(
-                                            //           borderRadius:
-                                            //               BorderRadius
-                                            //                   .circular(10),
-                                            //           color: Colors.green),
-                                            //       child: const Center(
-                                            //         child: Text(
-                                            //           'ENROLL NOW',
-                                            //           style: TextStyle(
-                                            //               fontSize: 10,
-                                            //               color:
-                                            //                   Colors.white),
-                                            //         ),
-                                            //       ),
-                                            //     ),
-                                            //     const SizedBox(
-                                            //       width: 15,
-                                            //     ),
-                                            //     Text(
-                                            //       map['Course Price'],
-                                            //       style: const TextStyle(
-                                            //         fontSize: 13,
-                                            //         color: Colors.indigo,
-                                            //         fontWeight:
-                                            //             FontWeight.bold,
-                                            //       ),
-                                            //     ),
-                                            //   ],
-                                            // ),
-                                            Row(
-                                              children: [
-                                                // SizedBox(
-                                                //     width: MediaQuery.of(
-                                                //         context)
-                                                //         .size
-                                                //         .width *
-                                                //         .23),
-                                                Text(
-                                                  '₹${cou[index].coursePrice}',
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .03,
-                                                    color: Colors.indigo,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }),
-                          ),
-                        ),
-                      )
-                          : Center(
-                        child: Container(
-                          padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                          child: Text(
-                            "You have already purchased all the courses,"
-                                "\nAny newly added course will start showing here, "
-                                "\nHappy Learning",
-                            style: TextStyle(
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
+                          padding: EdgeInsets.only(right: 60),
+                          width: horizontalScale * 180,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                  "Our Courses comes with Lifetime access, Live",
+                                  style: TextStyle(
+                                    color: HexColor("000000"),
+                                    fontSize: 14,
+                                  )),
+                              Text("chat support & internship opportunity.",
+                                  style: TextStyle(
+                                    color: HexColor("000000"),
+                                    fontSize: 14,
+                                  )),
+                            ],
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              ]),
-            );
-          }
+                Padding(
+                  padding: const EdgeInsets.only(left: 60.0, right: 60),
+                  child: Divider(
+                    thickness: 2,
+                  ),
+                ),
+                Container(
+                    height: MediaQuery.of(context).size.height,
+                    padding: const EdgeInsets.only(right: 15.0, left: 15.0),
+                    child: GridView.builder(
+                      scrollDirection: Axis.vertical,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: constraints.maxWidth >= 900 ? 4 : 3,
+                        childAspectRatio:
+                        constraints.maxWidth >= 900 ? 0.80 : 0.85,
+                        crossAxisSpacing: constraints.maxWidth >= 900 ? 25 : 15,
+                      ),
+                      itemCount: cou.length,
+                      itemBuilder: (context, index) {
+                        if (cou[index].courseName == "null") {
+                          return Container(
+                            child: Text('This is a container'),
+                          );
+                        }
+                        if (cou[index].show == true)
+                          return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  courseId = cou[index].courseDocumentId;
+                                });
+                                print(courseId);
+                                if (cou[index].isItComboCourse) {
+                                  final id = index.toString();
+                                  final cID = cou[index].courseDocumentId;
+                                  final courseName = cou[index].courseName;
+                                  final courseP = cou[index].coursePrice;
+                                  // GoRouter.of(context).pushNamed('comboStore',
+                                  //     queryParams: {
+                                  //       'courseName': courseName,
+                                  //       'id': id,
+                                  //       'coursePrice': courseP});
+
+                                  GoRouter.of(context).pushNamed(
+                                      'NewFeature',
+                                      queryParams: {
+                                        'cID': cID,
+                                        'courseName': courseName,
+                                        'id': id,
+                                        'coursePrice': courseP
+                                      });
+
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) =>
+                                  //         ComboStore(
+                                  //           courses:
+                                  //           course[index].courses,
+                                  //         ),
+                                  //   ),
+                                  // );
+
+                                } else {
+                                  final id = index.toString();
+                                  GoRouter.of(context)
+                                      .pushNamed('catalogue', queryParams: {
+                                    'id': id,
+                                    'cID': courseId,
+                                  });
+                                }
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(
+                                        width: 0.5,
+                                        color: HexColor("440F87")),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+
+                                      Container(
+                                        height: constraints.maxWidth >= 900
+                                            ? screenHeight / 4.5
+                                            : screenHeight / 5,
+                                        width: screenWidth,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(15),
+                                              topRight: Radius.circular(15)),
+                                          child: CachedNetworkImage(
+                                            placeholder: (context, url) =>
+                                                Center(child: CircularProgressIndicator()),
+                                            errorWidget: (context, url, error) =>
+                                                Icon(Icons.error),
+                                            imageUrl: cou[index].courseImageUrl,
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        width: screenWidth,
+                                        color: Colors.purpleAccent.shade100,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            SizedBox(width: 2 * horizontalScale,),
+                                            Text(
+                                              cou[index]
+                                                  .reviews
+                                                  .isNotEmpty
+                                                  ? cou[index]
+                                                  .reviews
+                                                  : '5.0',
+                                              style: TextStyle(
+                                                  fontSize: 14 * verticalScale,
+                                                  color: HexColor('440F87'),
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            ),
+                                            SizedBox(width: 3 * horizontalScale,),
+                                            Padding(
+                                              padding:
+                                              const EdgeInsets.only(
+                                                  right: 5.0),
+                                              child: StarRating(
+                                                length: 5,
+                                                rating: cou[index]
+                                                    .reviews
+                                                    .isNotEmpty
+                                                    ? double.parse(
+                                                    cou[index]
+                                                        .reviews)
+                                                    : 5.0,
+                                                color: Colors.green,
+                                                // HexColor('440F87'),
+                                                starSize: 20,
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .start,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 35,
+                                        padding: EdgeInsets.only(
+                                            left: 8, right: 8, top: 4),
+                                        width: screenWidth,
+                                        child: Text(
+                                          cou[index].courseName,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: 'Medium',
+                                            fontSize: 14 * verticalScale,
+                                            height: 0.95,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+
+                                      Container(
+                                        height: verticalScale * 50,
+                                        width: screenWidth,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 15),
+                                          child: Column(
+                                            children: [
+                                              // Align(
+                                              //   alignment: Alignment.topLeft,
+                                              //   child: Text(
+                                              //     course[index].courseName,
+                                              //     maxLines: 2,
+                                              //     overflow: TextOverflow.ellipsis,
+                                              //     style: TextStyle(
+                                              //       color: Colors.black,
+                                              //       fontFamily: 'Medium',
+                                              //       fontSize: 12,
+                                              //       height: 0.95,
+                                              //       fontWeight: FontWeight.bold,),
+                                              //   ),
+                                              // ),
+                                              SizedBox(
+                                                height: verticalScale * 5,
+                                              ),
+                                              Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Text(
+                                                  "- ${cou[index].numOfVideos} Videos",
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.black,
+                                                      fontSize: 12 * verticalScale),
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Text(
+                                                  "- Lifetime Access",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                      fontSize: 12 * verticalScale),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: verticalScale * 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Container(
+                                          height: verticalScale * 30,
+                                          width: screenWidth / 8,
+                                          child: ElevatedButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  courseId = cou[index]
+                                                      .courseDocumentId;
+                                                });
+                                                print(courseId);
+                                                if (cou[index]
+                                                    .isItComboCourse) {
+                                                   final id = index.toString();
+                                  final cID = cou[index].courseDocumentId;
+                                  final courseName = cou[index].courseName;
+                                  final courseP = cou[index].coursePrice;
+                                  // GoRouter.of(context).pushNamed('comboStore',
+                                  //     queryParams: {
+                                  //       'courseName': courseName,
+                                  //       'id': id,
+                                  //       'coursePrice': courseP});
+
+                                  GoRouter.of(context).pushNamed(
+                                      'NewFeature',
+                                      queryParams: {
+                                        'cID': cID,
+                                        'courseName': courseName,
+                                        'id': id,
+                                        'coursePrice': courseP
+                                      });
+
+                                                  // Navigator.push(
+                                                  //   context,
+                                                  //   MaterialPageRoute(
+                                                  //     builder: (context) =>
+                                                  //         ComboStore(
+                                                  //           courses:
+                                                  //           course[index].courses,
+                                                  //         ),
+                                                  //   ),
+                                                  // );
+
+                                                } else {
+                                                  final id = index.toString();
+                                                  GoRouter.of(context)
+                                                      .pushNamed('catalogue',
+                                                          queryParams: {
+                                                        'id': id,
+                                                        'cID': courseId,
+                                                      });
+                                                }
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    HexColor("8346E1"),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5)),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "Enroll Now",
+                                                  style: TextStyle(
+                                                      fontSize: 10,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              )),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ));
+                        return Container();
+                      },
+                    )),
+              ],
+            ),
+          );
+        } else {
+          return Container(
+            color: Colors.deepPurple,
+            child: Stack(children: [
+              Positioned(
+                // left: -50,
+                // width: 100,
+                // height: 100,
+                top: -98.00000762939453,
+                left: -88.00000762939453,
+                // child: CircleAvatar(
+                //   radius: 70,
+                //   backgroundColor: Color.fromARGB(255, 173, 149, 149),
+                // ),
+                child: Container(
+                    width: 161.99998474121094,
+                    height: 161.99998474121094,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(55, 126, 106, 228),
+                      borderRadius: BorderRadius.all(Radius.elliptical(
+                          161.99998474121094, 161.99998474121094)),
+                    )),
+              ),
+              Positioned(
+                // right: MediaQuery.of(context).size.width * (-.16),
+                // bottom: MediaQuery.of(context).size.height * .7,
+                top: 73.00000762939453,
+                left: 309,
+
+                // child: CircleAvatar(
+                //   radius: 80,
+                //   backgroundColor: Color.fromARGB(255, 173, 149, 149),
+                // ),
+                child: Container(
+                    width: 161.99998474121094,
+                    height: 161.99998474121094,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(55, 126, 106, 228),
+                      borderRadius: BorderRadius.all(Radius.elliptical(
+                          161.99998474121094, 161.99998474121094)),
+                    )),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                //color: Color.fromARGB(214, 83, 109, 254),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.08,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 30),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              print("yyy");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomePage()),
+                              );
+                              // Scaffold.of(context).openDrawer();
+                            },
+                            icon: Icon(
+                              Icons.arrow_back,
+                              size: 40,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.17,
+                          ),
+                          Text(
+                            'Store',
+                            style: TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.06,
+                    ),
+                    !everycourseispurchased
+                        ? Expanded(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(40),
+                                      topRight: Radius.circular(40)),
+                                  color: Colors.white),
+                              child: MediaQuery.removePadding(
+                                context: context,
+                                removeTop: true,
+                                child: GridView.builder(
+                                    gridDelegate:
+                                        SliverGridDelegateWithMaxCrossAxisExtent(
+                                            maxCrossAxisExtent:
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .5,
+                                            childAspectRatio: .85),
+                                    itemCount: cou.length,
+                                    itemBuilder: (context, index) {
+                                      print(cou);
+                                      print(cou.length);
+                                      print(index);
+                                      return InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            courseId =
+                                                cou[index].courseDocumentId;
+                                          });
+
+                                          print(courseId);
+                                          if (cou[index].isItComboCourse) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ComboStore(
+                                                  courses: cou[index].courses,
+                                                ),
+                                              ),
+                                            );
+                                          } else if (cou[index].free == true ||
+                                              cou[index].free != null) {
+                                            // Navigator.push(context, MaterialPageRoute(builder: (context) => FreeCourseScreen(),));
+                                          } else {
+                                            // Navigator.push(
+                                            //   context,
+                                            //   MaterialPageRoute(
+                                            //       builder: (context) =>
+                                            //       const CatelogueScreen()),
+                                            // );
+
+                                            final id = index.toString();
+                                            GoRouter.of(context).pushNamed(
+                                                'catalogue',
+                                                queryParams: {
+                                                  'id': id,
+                                                  'cID': courseId,
+                                                });
+                                          }
+                                        },
+                                        child: Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              3,
+                                          margin: EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(25),
+                                            color: Color.fromARGB(
+                                                192, 255, 255, 255),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Color.fromRGBO(168, 133,
+                                                    250, 0.7099999785423279),
+                                                offset: Offset(2, 2),
+                                                blurRadius: 5,
+                                              )
+                                            ],
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(08.0),
+                                            child: Column(
+                                              //mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: cou[index]
+                                                          .courseImageUrl,
+                                                      placeholder: (context,
+                                                              url) =>
+                                                          // CircularProgressIndicator(),
+                                                          Container(
+                                                        child: Image(
+                                                          // height: MediaQuery.of(context).size.height / 3,
+                                                          // fit: BoxFit.cover,
+                                                          image: AssetImage(
+                                                              'assets/new.jpg'),
+                                                        ),
+                                                      ),
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Icon(Icons.error),
+                                                      fit: BoxFit.cover,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              .15,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .4,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Container(
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      .07,
+                                                  child: Text(
+                                                    cou[index].courseName,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .030),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      .004,
+                                                ),
+                                                Row(
+                                                  // mainAxisAlignment:
+                                                  //     MainAxisAlignment
+                                                  //         .center,
+                                                  children: [
+                                                    Text(
+                                                      cou[index].courseLanguage,
+                                                      style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .03),
+                                                    ),
+                                                    SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .02,
+                                                    ),
+                                                    Text(
+                                                      '||',
+                                                      style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .03),
+                                                    ),
+                                                    SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .02,
+                                                    ),
+                                                    Text(
+                                                      cou[index].numOfVideos,
+                                                      style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .03),
+                                                    ),
+                                                    // const SizedBox(
+                                                    //   height: 10,
+                                                    // ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      .015,
+                                                ),
+                                                // Row(
+                                                //   children: [
+                                                //     Container(
+                                                //       width:
+                                                //           MediaQuery.of(context)
+                                                //                   .size
+                                                //                   .width *
+                                                //               0.20,
+                                                //       height:
+                                                //           MediaQuery.of(context)
+                                                //                   .size
+                                                //                   .height *
+                                                //               0.030,
+                                                //       decoration: BoxDecoration(
+                                                //           borderRadius:
+                                                //               BorderRadius
+                                                //                   .circular(10),
+                                                //           color: Colors.green),
+                                                //       child: const Center(
+                                                //         child: Text(
+                                                //           'ENROLL NOW',
+                                                //           style: TextStyle(
+                                                //               fontSize: 10,
+                                                //               color:
+                                                //                   Colors.white),
+                                                //         ),
+                                                //       ),
+                                                //     ),
+                                                //     const SizedBox(
+                                                //       width: 15,
+                                                //     ),
+                                                //     Text(
+                                                //       map['Course Price'],
+                                                //       style: const TextStyle(
+                                                //         fontSize: 13,
+                                                //         color: Colors.indigo,
+                                                //         fontWeight:
+                                                //             FontWeight.bold,
+                                                //       ),
+                                                //     ),
+                                                //   ],
+                                                // ),
+                                                Row(
+                                                  children: [
+                                                    // SizedBox(
+                                                    //     width: MediaQuery.of(
+                                                    //         context)
+                                                    //         .size
+                                                    //         .width *
+                                                    //         .23),
+                                                    Text(
+                                                      '₹${cou[index].coursePrice}',
+                                                      style: TextStyle(
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .03,
+                                                        color: Colors.indigo,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            ),
+                          )
+                        : Center(
+                            child: Container(
+                              padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                              child: Text(
+                                "You have already purchased all the courses,"
+                                "\nAny newly added course will start showing here, "
+                                "\nHappy Learning",
+                                style: TextStyle(
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+            ]),
+          );
         }
-      ),
+      }),
     );
   }
 }

@@ -21,7 +21,6 @@ import 'package:http/http.dart' as http;
 import '../Services/code_generator.dart';
 import '../Services/deeplink_service.dart';
 import '../widgets/pay_nowfeature.dart';
-import 'package:sizer/sizer.dart';
 
 class FeatureCourses extends StatefulWidget {
   final String? id;
@@ -277,6 +276,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                 isItComboCourse: true,
                 cID: widget.cID!,
                 id: widget.id,
+                usermap: userMap,
               )
                   : NonTrialCourseBottomSheet(
                 coursePrice: '₹${widget.courseP!}/-',
@@ -1045,6 +1045,7 @@ class _FeatureCoursesState extends State<FeatureCourses> with CouponCodeMixin {
                 isItComboCourse: true,
                 cID: widget.cID!,
                 id: widget.id,
+                usermap: userMap,
               )
                   : NonTrialCourseBottomSheet(
                 coursePrice: '₹${widget.courseP!}/-',

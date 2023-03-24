@@ -1,9 +1,7 @@
-import 'package:cloudyml_app2/payment_screen.dart';
+// TODO Implement this library.import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import '../globals.dart';
 
 class NonTrialCourseBottomSheet extends StatelessWidget {
   // ValueListenable<double> currentPosition;
@@ -18,6 +16,7 @@ class NonTrialCourseBottomSheet extends StatelessWidget {
     // required this.currentPosition,
     required this.coursePrice,
     required this.map,
+
     // required this.popBottomSheetAt,
     required this.isItComboCourse,
     required this.cID,
@@ -41,18 +40,20 @@ class NonTrialCourseBottomSheet extends StatelessWidget {
                 ),
                 Expanded(
                   flex: 1,
-                  child: InkWell(
-                    onTap: () {
+                  child: Center(
+                    child: InkWell(
+                      onTap: () {
 
-                    },
-                    child: Text(
-                      coursePrice,
-                      // 'Start your free trial',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Medium',
-                        color: Colors.black,
+                      },
+                      child: Text(
+                        coursePrice,
+                        // 'Start your free trial',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Medium',
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
