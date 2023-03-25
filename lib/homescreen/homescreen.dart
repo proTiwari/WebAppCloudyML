@@ -611,6 +611,7 @@ class _LandingScreenState extends State<LandingScreen> {
 
   @override
   void initState() {
+    super.initState();
     // print('this is url ${html.window.location.href}');
     // print('this is path ${Uri.base.path}');
     // showNotification();
@@ -628,7 +629,7 @@ class _LandingScreenState extends State<LandingScreen> {
     startTimer();
     // getuserdetails();
     checkrewardexpiry();
-    super.initState();
+
   }
 
   Timer? countDownTimer;
@@ -943,8 +944,7 @@ class _LandingScreenState extends State<LandingScreen> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  GoRouter.of(context)
-                                      .pushReplacementNamed('myCourses');
+                                  GoRouter.of(context).pushReplacementNamed('myCourses');
                                 },
                                 child: Row(
                                   children: [
@@ -1171,12 +1171,15 @@ class _LandingScreenState extends State<LandingScreen> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(15),
-                                                          image: DecorationImage(
-                                                              image: CachedNetworkImageProvider(
-                                                                course[index]
-                                                                    .courseImageUrl,
-                                                              ),
-                                                              fit: BoxFit.fill),
+                                                        ),
+                                                        child: CachedNetworkImage(
+                                                          placeholder: (context, url) =>
+                                                              Center(child: CircularProgressIndicator()),
+                                                          errorWidget: (context, url, error) =>
+                                                              Icon(Icons.error),
+                                                          imageUrl: course[index]
+                                                              .courseImageUrl,
+                                                          fit: BoxFit.fill,
                                                         ),
                                                       ),
                                                       Padding(
@@ -2369,8 +2372,12 @@ class _LandingScreenState extends State<LandingScreen> {
                                                   topLeft: Radius.circular(15),
                                                   topRight:
                                                       Radius.circular(15)),
-                                              child: Image.network(
-                                                featuredCourse[index]
+                                              child: CachedNetworkImage(
+                                                placeholder: (context, url) =>
+                                                    Center(child: CircularProgressIndicator()),
+                                                errorWidget: (context, url, error) =>
+                                                    Icon(Icons.error),
+                                                imageUrl: featuredCourse[index]
                                                     .courseImageUrl,
                                                 fit: BoxFit.fill,
                                               ),
@@ -2592,10 +2599,10 @@ class _LandingScreenState extends State<LandingScreen> {
                             border: Border.all(color: Colors.white, width: 1)),
                         child: TextButton(
                             onPressed: () {
-                              viewAll = !viewAll;
+                              GoRouter.of(context).pushNamed('store');
                             },
                             child: Text(
-                              viewAll ? 'View less' : 'View All',
+                              'View All',
                               style: TextStyle(
                                   fontSize: 26 * verticalScale,
                                   color: Colors.white,
@@ -4486,8 +4493,12 @@ class _LandingScreenState extends State<LandingScreen> {
                                                               topRight: Radius
                                                                   .circular(
                                                                       15)),
-                                                      child: Image.network(
-                                                        featuredCourse[index]
+                                                      child: CachedNetworkImage(
+                                                        placeholder: (context, url) =>
+                                                            Center(child: CircularProgressIndicator()),
+                                                        errorWidget: (context, url, error) =>
+                                                            Icon(Icons.error),
+                                                        imageUrl: featuredCourse[index]
                                                             .courseImageUrl,
                                                         fit: BoxFit.fill,
                                                       ),

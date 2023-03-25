@@ -3,8 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../globals.dart';
-
 class NonTrialCourseBottomSheet extends StatelessWidget {
   // ValueListenable<double> currentPosition;
   // ValueListenable<double> popBottomSheetAt;
@@ -18,6 +16,7 @@ class NonTrialCourseBottomSheet extends StatelessWidget {
     // required this.currentPosition,
     required this.coursePrice,
     required this.map,
+
     // required this.popBottomSheetAt,
     required this.isItComboCourse,
     required this.cID,
@@ -39,9 +38,9 @@ class NonTrialCourseBottomSheet extends StatelessWidget {
                 SizedBox(
                   width: 40,
                 ),
-                Center(
-                  child: Expanded(
-                    flex: 1,
+                Expanded(
+                  flex: 1,
+                  child: Center(
                     child: InkWell(
                       onTap: () {
 

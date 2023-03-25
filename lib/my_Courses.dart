@@ -24,6 +24,9 @@ import 'catalogue_screen.dart';
 import 'home.dart';
 import 'module/pdf_course.dart';
 
+import 'dart:html' as html;
+
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -266,6 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
+    
 
     return Scaffold(
         key: _scaffoldKey,

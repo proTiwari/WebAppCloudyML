@@ -42,75 +42,78 @@ class _QuizPanelState extends State<QuizPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Center(
-            child: Container(
-          child: Row(children: [
-            TextButton(
-              onPressed: () {},
+      body: Center(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Center(
               child: Container(
-                color: Color.fromARGB(255, 58, 255, 160),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                child: Row(
-                  children: [
-                    const Text(
-                      'Global Quiz: ',
-                      style: TextStyle(color: Colors.white, fontSize: 13.0),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    CupertinoSwitch(
-                      value: _switchValue,
-                      onChanged: (value) {
-                        setState(() {
-                          _switchValue = value;
-                        });
-                        updatequizstatus();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                GoRouter.of(context).go('/adminquizpanel');
-                //   // Navigator.pushReplacement(
-                //   //     context,
-                //   //     MaterialPageRoute(
-                //   //         builder: (BuildContext context) => super.widget));
-                //   // ignore: invalid_use_of_protected_member
-                //   (context as Element).reassemble();
-
-                //   Navigator.of(context)
-                //       .push(MaterialPageRoute(builder: (_) => AdminQuizPanel()));
-                //   GoRouter.of(context).push('/adminquizpanel');
-                // Navigator.push(context,
-                //     MaterialPageRoute(builder: (context) => AdminQuizPanel()));
-              },
-              child: Container(
-                height: 50,
-                color: Color.fromARGB(255, 58, 255, 160),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                child: Center(
-                  child: const Text(
-                    'Upload Quiz',
-                    style: TextStyle(color: Colors.white, fontSize: 13.0),
+            child: Row(children: [
+              TextButton(
+                onPressed: () {},
+                child: Container(
+                  color: Color.fromARGB(255, 58, 255, 160),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Global Quiz: ',
+                        style: TextStyle(color: Colors.white, fontSize: 13.0),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      CupertinoSwitch(
+                        value: _switchValue,
+                        onChanged: (value) {
+                          setState(() {
+                            _switchValue = value;
+                          });
+                          updatequizstatus();
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
-          ]),
-        )),
+              SizedBox(
+                width: 15,
+              ),
+              TextButton(
+                onPressed: () {
+                  // Navigator.pop(context);
+                  GoRouter.of(context).go('/adminquizpanel');
+                  //   // Navigator.pushReplacement(
+                  //   //     context,
+                  //   //     MaterialPageRoute(
+                  //   //         builder: (BuildContext context) => super.widget));
+                  //   // ignore: invalid_use_of_protected_member
+                  //   (context as Element).reassemble();
+
+                  //   Navigator.of(context)
+                  //       .push(MaterialPageRoute(builder: (_) => AdminQuizPanel()));
+                  //   GoRouter.of(context).push('/adminquizpanel');
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(builder: (context) => AdminQuizPanel()));
+                },
+                child: Container(
+                  height: 50,
+                  color: Color.fromARGB(255, 58, 255, 160),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  child: Center(
+                    child: const Text(
+                      'Upload Quiz',
+                      style: TextStyle(color: Colors.white, fontSize: 13.0),
+                    ),
+                  ),
+                ),
+              ),
+            ]),
+          )),
+        ),
       ),
     );
   }

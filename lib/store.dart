@@ -23,6 +23,7 @@ import 'aboutus.dart';
 import 'authentication/firebase_auth.dart';
 import 'models/user_details.dart';
 import 'my_Courses.dart';
+import 'package:universal_html/html.dart' as html;
 
 class StoreScreen extends StatefulWidget {
   const StoreScreen({Key? key}) : super(key: key);
@@ -40,6 +41,23 @@ class _StoreScreenState extends State<StoreScreen> {
     fontSize: 14,
     fontFamily: "Semibold",
   );
+
+  var path =
+      Uri.base.path;
+  String? currentPath;
+
+  function() {
+      setState(() {
+        path;
+      });
+  }
+
+  @override
+  void initState(){
+    print('path is  $path');
+    super.initState();
+    function();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +133,11 @@ class _StoreScreenState extends State<StoreScreen> {
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
 
+
+
     return Scaffold(
-      key: _scaffoldKey,
-      drawer: customDrawer(context),
+      // key: _scaffoldKey,
+      // drawer: customDrawer(context),
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
         if (constraints.maxWidth >= 515) {
@@ -126,67 +146,69 @@ class _StoreScreenState extends State<StoreScreen> {
               children: [
                 Container(
                   width: screenWidth,
-                  height: 45,
+                  height: 60,
                   color: HexColor("440F87"),
-                  child: Row(
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            Scaffold.of(context).openDrawer();
-                          },
-                          icon: Icon(
-                            Icons.menu,
-                            color: Colors.white,
-                          )),
-                      SizedBox(
-                        width: horizontalScale * 15,
-                      ),
-                      Image.asset(
-                        "assets/logo2.png",
-                        width: 30,
-                        height: 30,
-                      ),
-                      Text(
-                        "CloudyML",
-                        style: textStyle,
-                      ),
-                      SizedBox(
-                        width: horizontalScale * 25,
-                      ),
-                      // SizedBox(
-                      //   height: 30,
-                      //   width: screenWidth / 3,
-                      //   child: TextField(
-                      //     style: TextStyle(
-                      //         color: HexColor("A7A7A7"), fontSize: 12),
-                      //     decoration: InputDecoration(
-                      //         contentPadding: EdgeInsets.all(5.0),
-                      //         hintText: "Search Courses",
-                      //         focusedBorder: OutlineInputBorder(
-                      //             borderSide: BorderSide(
-                      //                 color: Colors.white, width: 1)),
-                      //         disabledBorder: OutlineInputBorder(
-                      //             borderSide: BorderSide(
-                      //                 color: Colors.white, width: 1)),
-                      //         hintStyle: TextStyle(
-                      //             color: HexColor("A7A7A7"), fontSize: 12),
-                      //         border: OutlineInputBorder(
-                      //             borderSide: BorderSide(
-                      //                 color: Colors.white, width: 1)),
-                      //         enabledBorder: OutlineInputBorder(
-                      //             borderSide: BorderSide(
-                      //                 color: Colors.white, width: 1)),
-                      //         prefixIcon: IconButton(
-                      //             onPressed: () {},
-                      //             icon: Icon(
-                      //               Icons.search_outlined,
-                      //               size: 14,
-                      //               color: Colors.white,
-                      //             ))),
-                      //   ),
-                      // )
-                    ],
-                  ),
+                  child: customMenuBar(context),
+
+                  // Row(
+                  //   children: [
+                  //     IconButton(
+                  //         onPressed: () {
+                  //           Scaffold.of(context).openDrawer();
+                  //         },
+                  //         icon: Icon(
+                  //           Icons.menu,
+                  //           color: Colors.white,
+                  //         )),
+                  //     SizedBox(
+                  //       width: horizontalScale * 15,
+                  //     ),
+                  //     Image.asset(
+                  //       "assets/logo2.png",
+                  //       width: 30,
+                  //       height: 30,
+                  //     ),
+                  //     Text(
+                  //       "CloudyML",
+                  //       style: textStyle,
+                  //     ),
+                  //     SizedBox(
+                  //       width: horizontalScale * 25,
+                  //     ),
+                  //     // SizedBox(
+                  //     //   height: 30,
+                  //     //   width: screenWidth / 3,
+                  //     //   child: TextField(
+                  //     //     style: TextStyle(
+                  //     //         color: HexColor("A7A7A7"), fontSize: 12),
+                  //     //     decoration: InputDecoration(
+                  //     //         contentPadding: EdgeInsets.all(5.0),
+                  //     //         hintText: "Search Courses",
+                  //     //         focusedBorder: OutlineInputBorder(
+                  //     //             borderSide: BorderSide(
+                  //     //                 color: Colors.white, width: 1)),
+                  //     //         disabledBorder: OutlineInputBorder(
+                  //     //             borderSide: BorderSide(
+                  //     //                 color: Colors.white, width: 1)),
+                  //     //         hintStyle: TextStyle(
+                  //     //             color: HexColor("A7A7A7"), fontSize: 12),
+                  //     //         border: OutlineInputBorder(
+                  //     //             borderSide: BorderSide(
+                  //     //                 color: Colors.white, width: 1)),
+                  //     //         enabledBorder: OutlineInputBorder(
+                  //     //             borderSide: BorderSide(
+                  //     //                 color: Colors.white, width: 1)),
+                  //     //         prefixIcon: IconButton(
+                  //     //             onPressed: () {},
+                  //     //             icon: Icon(
+                  //     //               Icons.search_outlined,
+                  //     //               size: 14,
+                  //     //               color: Colors.white,
+                  //     //             ))),
+                  //     //   ),
+                  //     // )
+                  //   ],
+                  // ),
                 ),
                 Container(
                   width: screenWidth,
@@ -260,7 +282,6 @@ class _StoreScreenState extends State<StoreScreen> {
                     thickness: 2,
                   ),
                 ),
-
                 Container(
                     height: MediaQuery.of(context).size.height,
                     padding: const EdgeInsets.only(right: 15.0, left: 15.0),
@@ -269,7 +290,7 @@ class _StoreScreenState extends State<StoreScreen> {
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: constraints.maxWidth >= 900 ? 4 : 3,
                         childAspectRatio:
-                            constraints.maxWidth >= 900 ? 0.80 : 1.05,
+                        constraints.maxWidth >= 900 ? 1.3*verticalScale : .85,
                         crossAxisSpacing: constraints.maxWidth >= 900 ? 25 : 15,
                       ),
                       itemCount: cou.length,
@@ -329,34 +350,83 @@ class _StoreScreenState extends State<StoreScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.all(10.0),
                                 child: Container(
-                                  width: screenWidth,
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
                                     borderRadius: BorderRadius.circular(15),
                                     border: Border.all(
-                                        width: 0.5, color: HexColor("440F87")),
+                                        width: 0.5,
+                                        color: HexColor("440F87")),
                                   ),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
+
                                       Container(
+                                        height: constraints.maxWidth >= 900
+                                            ? screenHeight / 4.5
+                                            : screenHeight / 5,
                                         width: screenWidth,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.only(
                                               topLeft: Radius.circular(15),
                                               topRight: Radius.circular(15)),
-                                          child: Image.network(
-                                            cou[index].courseImageUrl,
+                                          child: CachedNetworkImage(
+                                            placeholder: (context, url) =>
+                                                Center(child: CircularProgressIndicator()),
+                                            errorWidget: (context, url, error) =>
+                                                Icon(Icons.error),
+                                            imageUrl: cou[index].courseImageUrl,
                                             fit: BoxFit.fill,
                                           ),
                                         ),
-                                        height: constraints.maxWidth >= 900
-                                            ? screenHeight / 5.5
-                                            : screenHeight / 6,
                                       ),
                                       Container(
-                                        height: 30,
+                                        width: screenWidth,
+                                        color: Colors.purpleAccent.shade100,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            SizedBox(width: 2 * horizontalScale,),
+                                            Text(
+                                              cou[index]
+                                                  .reviews
+                                                  .isNotEmpty
+                                                  ? cou[index]
+                                                  .reviews
+                                                  : '5.0',
+                                              style: TextStyle(
+                                                  fontSize: 14 * verticalScale,
+                                                  color: HexColor('440F87'),
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            ),
+                                            SizedBox(width: 3 * horizontalScale,),
+                                            Padding(
+                                              padding:
+                                              const EdgeInsets.only(
+                                                  right: 5.0),
+                                              child: StarRating(
+                                                length: 5,
+                                                rating: cou[index]
+                                                    .reviews
+                                                    .isNotEmpty
+                                                    ? double.parse(
+                                                    cou[index]
+                                                        .reviews)
+                                                    : 5.0,
+                                                color: Colors.green,
+                                                // HexColor('440F87'),
+                                                starSize: 20,
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .start,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 35,
                                         padding: EdgeInsets.only(
                                             left: 8, right: 8, top: 4),
                                         width: screenWidth,
@@ -367,17 +437,18 @@ class _StoreScreenState extends State<StoreScreen> {
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontFamily: 'Medium',
-                                            fontSize: 12,
+                                            fontSize: 14 * verticalScale,
                                             height: 0.95,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
+
                                       Container(
-                                        height: verticalScale * 110,
+                                        height: verticalScale * 50,
                                         width: screenWidth,
                                         child: Padding(
-                                          padding: const EdgeInsets.all(4),
+                                          padding: const EdgeInsets.only(left: 15),
                                           child: Column(
                                             children: [
                                               // Align(
@@ -402,10 +473,9 @@ class _StoreScreenState extends State<StoreScreen> {
                                                 child: Text(
                                                   "- ${cou[index].numOfVideos} Videos",
                                                   style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                      fontWeight: FontWeight.bold,
                                                       color: Colors.black,
-                                                      fontSize: 10),
+                                                      fontSize: 12 * verticalScale),
                                                 ),
                                               ),
                                               Align(
@@ -416,70 +486,11 @@ class _StoreScreenState extends State<StoreScreen> {
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.black,
-                                                      fontSize: 10),
+                                                      fontSize: 12 * verticalScale),
                                                 ),
                                               ),
                                               SizedBox(
                                                 height: verticalScale * 5,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 5.0),
-                                                    child: Container(
-                                                      height: 20,
-                                                      width: 25,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5.0),
-                                                        color:
-                                                            HexColor('440F87'),
-                                                      ),
-                                                      child: Center(
-                                                        child: Text(
-                                                          cou[index]
-                                                                  .reviews
-                                                                  .isNotEmpty
-                                                              ? cou[index]
-                                                                  .reviews
-                                                              : '5.0',
-                                                          style: TextStyle(
-                                                              fontSize: 12,
-                                                              color:
-                                                                  Colors.white,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 5.0),
-                                                    child: StarRating(
-                                                      length: 5,
-                                                      rating: cou[index]
-                                                              .reviews
-                                                              .isNotEmpty
-                                                          ? double.parse(
-                                                              cou[index]
-                                                                  .reviews)
-                                                          : 5.0,
-                                                      color: HexColor('440F87'),
-                                                      starSize: 20,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                    ),
-                                                  ),
-                                                ],
                                               ),
                                             ],
                                           ),
@@ -567,209 +578,6 @@ class _StoreScreenState extends State<StoreScreen> {
                         return Container();
                       },
                     )),
-                // Container(
-                //   padding: const EdgeInsets.only(right: 60.0, left: 60.0),
-                //   width: MediaQuery.of(context).size.width,
-                //   height: MediaQuery.of(context).size.height,
-                //   child: GridView.builder(
-                //       gridDelegate:
-                //       SliverGridDelegateWithFixedCrossAxisCount(
-                //         crossAxisCount: constraints.maxWidth >= 650 ? 3 : 2,
-                //       ),
-                //       scrollDirection: Axis.vertical,
-                //       itemCount: course.length,
-                //       itemBuilder: (BuildContext context, index) {
-                //         if (course[index].courseName == "null") {
-                //           return Container(
-                //             child: Text('This is a container'),
-                //           );
-                //         }
-                //         if (course[index].show == true)
-                //           return GestureDetector(
-                //             onTap: () {
-                //               setState(() {
-                //                 courseId = course[index]
-                //                     .courseDocumentId;
-                //               });
-                //               print(courseId);
-                //               if (course[index].isItComboCourse) {
-                //
-                //                 final id = index.toString();
-                //                 final courseName = course[index].courseName;
-                //                 final courseP = course[index].coursePrice;
-                //                 GoRouter.of(context).pushNamed('comboStore', queryParams: {'courseName': courseName, 'id': id, 'coursePrice': courseP});
-                //
-                //                 // Navigator.push(
-                //                 //   context,
-                //                 //   MaterialPageRoute(
-                //                 //     builder: (context) =>
-                //                 //         ComboStore(
-                //                 //           courses:
-                //                 //           course[index].courses,
-                //                 //         ),
-                //                 //   ),
-                //                 // );
-                //
-                //               } else {
-                //                 final id = index.toString();
-                //                 GoRouter.of(context).pushNamed('catalogue', queryParams: {'id': id});
-                //               }
-                //             },
-                //             child: Padding(
-                //               padding: const EdgeInsets.all(10.0),
-                //               child: Container(
-                //                 width: screenWidth,
-                //                 decoration: BoxDecoration(
-                //                   color: Colors.white,
-                //                   borderRadius:
-                //                   BorderRadius.circular(15),
-                //                   border: Border.all(
-                //                       width: 0.5,
-                //                       color: HexColor("440F87")),
-                //                 ),
-                //                 child: Column(
-                //                   crossAxisAlignment:
-                //                   CrossAxisAlignment.center,
-                //                   children: [
-                //                     Container(
-                //                       width: screenWidth / 3.5,
-                //                       height: screenHeight / 6,
-                //                       child: ClipRRect(
-                //                         borderRadius: BorderRadius.only(
-                //                             topLeft:
-                //                             Radius.circular(15),
-                //                             topRight:
-                //                             Radius.circular(15)),
-                //                         child: Image.network(
-                //                           course[index].courseImageUrl,
-                //                           fit: BoxFit.fill,
-                //                         ),
-                //                       ),
-                //                     ),
-                //                     Container(
-                //                       height: 15,
-                //                       color: HexColor('EEE1FF'),
-                //                       child: Row(
-                //                         children: [
-                //                           SizedBox(width: 8,),
-                //                           Image.asset(
-                //                             'assets/Rating.png',
-                //                             fit: BoxFit.fill,
-                //                             height: 10,
-                //                             width: 50,
-                //                           ),
-                //                         ],
-                //                       ),
-                //                     ),
-                //                     Container(
-                //                       // height: verticalScale * 130,
-                //                       child: Padding(
-                //                         padding: const EdgeInsets.all(8),
-                //                         child: Column(
-                //                           children: [
-                //                             Align(
-                //                               alignment:
-                //                               Alignment.topLeft,
-                //                               child: Text(
-                //                                 course[index]
-                //                                     .courseName,
-                //                                 overflow: TextOverflow.ellipsis,
-                //                                 style: TextStyle(
-                //                                     color: Colors
-                //                                         .black,
-                //                                     fontFamily:
-                //                                     'Medium',
-                //                                     fontSize: 12,
-                //                                     fontWeight:
-                //                                     FontWeight
-                //                                         .w500),
-                //                               ),
-                //                             ),
-                //                             SizedBox(
-                //                               height: verticalScale * 5,
-                //                             ),
-                //                             Align(
-                //                               alignment:
-                //                               Alignment.topLeft,
-                //                               child: Text(
-                //                                 "- ${course[index].courseLanguage} Language",
-                //                                 style: TextStyle(
-                //                                     fontWeight:
-                //                                     FontWeight
-                //                                         .bold,
-                //                                     color: Colors
-                //                                         .black,
-                //                                     fontSize: 8),
-                //                               ),
-                //                             ),
-                //                             Align(
-                //                               alignment:
-                //                               Alignment.topLeft,
-                //                               child: Text(
-                //                                 "- ${course[index].numOfVideos} Videos",
-                //                                 style: TextStyle(
-                //                                     fontWeight:
-                //                                     FontWeight
-                //                                         .bold,
-                //                                     color: Colors
-                //                                         .black,
-                //                                     fontSize: 8),
-                //                               ),
-                //                             ),
-                //                             Align(
-                //                               alignment:
-                //                               Alignment.topLeft,
-                //                               child: Text(
-                //                                 "- Lifetime Access",
-                //                                 style: TextStyle(
-                //                                     fontWeight:
-                //                                     FontWeight
-                //                                         .bold,
-                //                                     color: Colors
-                //                                         .black,
-                //                                     fontSize: 8),
-                //                               ),
-                //                             ),
-                //                           ],
-                //                         ),
-                //                       ),
-                //                     ),
-                //                     Container(
-                //                       width: horizontalScale * 50,
-                //                       height: 20,
-                //                       child: ElevatedButton(
-                //                           onPressed: () {},
-                //                           style: ElevatedButton
-                //                               .styleFrom(
-                //                             backgroundColor:
-                //                             HexColor(
-                //                                 "8346E1"),
-                //                             shape: RoundedRectangleBorder(
-                //                                 borderRadius:
-                //                                 BorderRadius
-                //                                     .circular(
-                //                                     5)),
-                //                           ),
-                //                           child: Text(
-                //                             "Enroll Now!",
-                //                             style: TextStyle(
-                //                                 fontSize: 10,
-                //                                 color:
-                //                                 Colors.white,
-                //                                 fontWeight:
-                //                                 FontWeight
-                //                                     .bold),
-                //                           )),
-                //                     ),
-                //                     Spacer(),
-                //                   ],
-                //                 ),
-                //               ),
-                //             ),
-                //           );
-                //         return Container();
-                //       }),
-                // ),
               ],
             ),
           );

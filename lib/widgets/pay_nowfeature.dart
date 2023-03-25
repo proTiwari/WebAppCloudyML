@@ -173,13 +173,17 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                         .contains(featuredCourse[0].courseId)
                                 ? InkWell(
                                     onTap: () {
-                                      GoRouter.of(context).pushNamed(
-                                          'newcomboCourse',
-                                          queryParams: {
-                                            'courseName':
-                                                featuredCourse[0].courseName,
-                                            'id': "37",
-                                          });
+
+                                      GoRouter.of(context).pushReplacementNamed('myCourses');
+
+
+                                      // GoRouter.of(context).pushNamed(
+                                      //     'newcomboCourse',
+                                      //     queryParams: {
+                                      //       'courseName':
+                                      //           featuredCourse[0].courseName,
+                                      //       'id': "40",
+                                      //     });
                                     },
                                     child: Center(
                                       child: Container(
@@ -404,16 +408,16 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                               2),
                                                                       () => {
 
-                                                                            // GoRouter.of(context).pushReplacementNamed('myCourses')
+                                                                            GoRouter.of(context).pushReplacementNamed('myCourses')
 
-                                                                             GoRouter.of(context).pushNamed(
-                                                                            'newcomboCourse',
-                                                                            queryParams: {
-                                                                              'courseName':
-                                                                                  featuredCourse[0]
-                                                                                      .courseName,
-                                                                              'id': "37",
-                                                                            })
+                                                                            //  GoRouter.of(context).pushNamed(
+                                                                            // 'newcomboCourse',
+                                                                            // queryParams: {
+                                                                            //   'courseName':
+                                                                            //       featuredCourse[0]
+                                                                            //           .courseName,
+                                                                            //   'id': "40",
+                                                                            // })
                                                                           });
                                                                 });
                                                               }
@@ -548,15 +552,17 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                         .contains(featuredCourse[0].courseId)
                                 ? InkWell(
                                     onTap: () {
+
+                                      GoRouter.of(context).pushReplacementNamed('myCourses');
                                       
-                                      GoRouter.of(context).pushNamed(
-                                                                            'newcomboCourse',
-                                                                            queryParams: {
-                                                                              'courseName':
-                                                                                  featuredCourse[0]
-                                                                                      .courseName,
-                                                                              'id': "37",
-                                                                            });
+                                      // GoRouter.of(context).pushNamed(
+                                      //                                       'newcomboCourse',
+                                      //                                       queryParams: {
+                                      //                                         'courseName':
+                                      //                                             featuredCourse[0]
+                                      //                                                 .courseName,
+                                      //                                         'id': "40",
+                                      //                                       });
                                     },
                                     child: Center(
                                       child: Container(
@@ -773,15 +779,20 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                   Timer(
                                                                       Duration(
                                                                           seconds:
-                                                                              2),
-                                                                      () => {  GoRouter.of(context).pushNamed(
-                                                                            'newcomboCourse',
-                                                                            queryParams: {
-                                                                              'courseName':
-                                                                                  featuredCourse[0]
-                                                                                      .courseName,
-                                                                              'id': "37",
-                                                                            })});
+                                                                            10),
+                                                                      () => { 
+
+                                                                        GoRouter.of(context).pushReplacementNamed('myCourses')
+                                                                        
+                                                                        //  GoRouter.of(context).pushNamed(
+                                                                        //     'newcomboCourse',
+                                                                        //     queryParams: {
+                                                                        //       'courseName':
+                                                                        //           featuredCourse[0]
+                                                                        //               .courseName,
+                                                                        //       'id': "40",
+                                                                        //     })
+                                                                            });
                                                                 });
                                                               }
                                                             },

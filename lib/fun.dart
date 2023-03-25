@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
+
 import '../global_variable.dart' as globals;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudyml_app2/payments_history.dart';
@@ -20,6 +22,7 @@ import 'authentication/firebase_auth.dart';
 import 'home.dart';
 import 'homepage.dart';
 import 'my_Courses.dart';
+import 'package:universal_html/html.dart' as html;
 import 'package:share_extend/share_extend.dart';
 
 bool isLoading  = false;
@@ -718,7 +721,7 @@ SingleChildScrollView safearea1(BuildContext context) {
 }
 
 final buttonTextStyle = TextStyle(
-  color: Colors.white,
+  // color: Colors.white,
   fontWeight: FontWeight.w500,
   fontSize: 16,
   letterSpacing: 1.1,
@@ -731,8 +734,18 @@ var textStyle = TextStyle(
   fontFamily: "Semibold",
 );
 
-String numberOfLearners = '12000+ learners';
-var items = ['My Courses','My Profile', 'Logout'];
+String numberOfLearners = '14000+ learners';
+var mentorItems = [
+  'My Courses',
+  'Admin Quiz Panel',
+  'Resume Review',
+  'My Profile',
+  'Logout'];
+
+var items = [
+  'My Courses',
+  'My Profile',
+  'Logout'];
 String dropdownValue = '';
 
 Row customMenuBar(BuildContext context) {
@@ -774,7 +787,9 @@ Row customMenuBar(BuildContext context) {
           },
           child: Text(
             'Home',
-            style: buttonTextStyle,
+            style: buttonTextStyle.copyWith(
+              color: Uri.base.path == '/home'? HexColor('873AFF') : Colors.white ,
+            ),
           )),
       SizedBox(
         width: horizontalScale * 15,
@@ -783,20 +798,42 @@ Row customMenuBar(BuildContext context) {
           onPressed: () {
             GoRouter.of(context).pushNamed('store');
           },
-          child: Text(
-              'Store',
-              style: buttonTextStyle
+          child: Text('Store',
+              style: buttonTextStyle.copyWith(
+                color:
+                Uri.base.path == '/store'?
+                HexColor('873AFF') : Colors.white ,
+              )
           )),
       SizedBox(
         width: horizontalScale * 15,
       ),
       TextButton(
           onPressed: () {
+            // GoRouter.of(context).goNamed('reviews');
             GoRouter.of(context).pushNamed('reviews');
           },
           child: Text(
             'Reviews',
-            style:  buttonTextStyle,
+            style:  buttonTextStyle.copyWith(
+              color: Uri.base.path == '/reviews'? HexColor('873AFF') :
+              Colors.white ,
+            ),
+          )),
+      SizedBox(
+        width: horizontalScale * 15,
+      ),
+      TextButton(
+          onPressed: () {
+            GoRouter.of(context).pushNamed('LiveDoubtSession');
+          },
+          child: Text(
+            'Live Doubt Support',
+            style:  buttonTextStyle.copyWith(
+              color:
+              Uri.base.path == '/LiveDoubtScreen'? HexColor('873AFF') :
+              Colors.white ,
+            ),
           )),
       SizedBox(
         width: horizontalScale * 15,
@@ -804,7 +841,11 @@ Row customMenuBar(BuildContext context) {
       DropdownButton(
         underline: Container(),
         hint: Text('Profile',
-          style: buttonTextStyle,),
+          style: buttonTextStyle.copyWith(
+            color: Uri.base.path == '/myCourses'
+                ? HexColor('873AFF') : Colors.white,
+          ),
+        ),
         enableFeedback: false,
         isExpanded: false,
         isDense: false,
@@ -812,21 +853,40 @@ Row customMenuBar(BuildContext context) {
         dropdownColor: Colors.deepPurple,
         // value: dropdownValue,
         icon: Icon(Icons.arrow_drop_down, color: Colors.white,),
-        items: items.map((String items) {
+        items:
+       globals.role == 'mentor' ?
+       mentorItems.map((String mentorItems) {
+         return DropdownMenuItem(
+             value: mentorItems,
+             child: Text(mentorItems,
+               style: buttonTextStyle.copyWith(
+                 color: Colors.white,
+               ),
+             ));
+       }).toList()
+           :  items.map((String items) {
           return DropdownMenuItem(
               value: items,
               child: Text(items,
-                style: buttonTextStyle,
+                style: buttonTextStyle.copyWith(
+                  color: Colors.white,
+                ),
               ));
         }).toList(),
         onChanged: (String? value) {
           if (value != dropdownValue) {
             switch (value) {
               case 'My Courses':
-                GoRouter.of(context).pushNamed('myCourses');
+                GoRouter.of(context).pushReplacementNamed('myCourses');
+                break;
+              case 'Resume Review':
+                GoRouter.of(context).pushReplacementNamed('reviewResume');
+                break;
+              case 'Admin Quiz Panel':
+                GoRouter.of(context).pushReplacementNamed('quizpanel');
                 break;
               case 'My Profile':
-                GoRouter.of(context).pushNamed('myAccount');
+                GoRouter.of(context).pushReplacementNamed('myAccount');
                 break;
               case 'Logout':
                 logOut(context);
@@ -868,6 +928,148 @@ Row customMenuBar(BuildContext context) {
     ],
   );
 }
+
+// Widget featureCPopup(
+//     IconData icon, String T1, double horizontalScale, double verticalScale) {
+//   return LayoutBuilder(
+//     builder: (BuildContext context, BoxConstraints constraints) {
+//       if (constraints.maxWidth >= 330) {
+//         return Padding(
+//           padding: const EdgeInsets.only(bottom: 10),
+//           child: Container(
+//             width: 325 * horizontalScale,
+//             height: 38 * verticalScale,
+//             decoration: BoxDecoration(
+//               borderRadius: BorderRadius.only(
+//                 topLeft: Radius.circular(8),
+//                 topRight: Radius.circular(8),
+//                 bottomLeft: Radius.circular(8),
+//                 bottomRight: Radius.circular(8),
+//               ),
+//               boxShadow: [
+//                 BoxShadow(
+//                     color: Color.fromRGBO(31, 31, 31, 0.25),
+//                     offset: Offset(0, 0),
+//                     blurRadius: 5)
+//               ],
+//               color: Color.fromRGBO(255, 255, 255, 1),
+//             ),
+//             child: Row(
+//               children: [
+//                 Container(
+//                   width: 38 * min(horizontalScale, verticalScale),
+//                   height: 38 * min(horizontalScale, verticalScale),
+//                   decoration: BoxDecoration(
+//                     borderRadius: BorderRadius.only(
+//                       topLeft: Radius.circular(8),
+//                       topRight: Radius.circular(8),
+//                       bottomLeft: Radius.circular(8),
+//                       bottomRight: Radius.circular(8),
+//                     ),
+//                     color: Color.fromRGBO(54, 141, 255, 1),
+//                   ),
+//                   child: Center(
+//                     child: Icon(
+//                       icon,
+//                       color: Colors.white,
+//                       size: 28 * min(horizontalScale, verticalScale),
+//                     ),
+//                   ),
+//                 ),
+//                 SizedBox(
+//                   width: 10,
+//                 ),
+//                 Container(
+//                   // width: 250 * horizontalScale,
+//                   color: Colors.red,
+//                   height: 38 * verticalScale,
+//                   child: Center(
+//                     child: Text(
+//                       '$T1',
+//                       // textScaleFactor: min(horizontalScale, verticalScale),
+//                       style: TextStyle(
+//                           overflow: TextOverflow.ellipsis,
+//                           color: Colors.black,
+//                           fontSize: 16 * verticalScale,
+//                           fontWeight: FontWeight.bold
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         );
+//       } else {
+//         return Padding(
+//           padding: const EdgeInsets.only(bottom: 10),
+//           child: Container(
+//             width: 364 * horizontalScale,
+//             height: 40 * verticalScale,
+//             decoration: BoxDecoration(
+//               borderRadius: BorderRadius.only(
+//                 topLeft: Radius.circular(8),
+//                 topRight: Radius.circular(8),
+//                 bottomLeft: Radius.circular(8),
+//                 bottomRight: Radius.circular(8),
+//               ),
+//               boxShadow: [
+//                 BoxShadow(
+//                     color: Color.fromRGBO(31, 31, 31, 0.25),
+//                     offset: Offset(0, 0),
+//                     blurRadius: 5)
+//               ],
+//               color: Color.fromRGBO(255, 255, 255, 1),
+//             ),
+//             child: Row(
+//               children: [
+//                 Container(
+//                   width: 38 * min(horizontalScale, verticalScale),
+//                   height: 38 * min(horizontalScale, verticalScale),
+//                   decoration: BoxDecoration(
+//                     borderRadius: BorderRadius.only(
+//                       topLeft: Radius.circular(8),
+//                       topRight: Radius.circular(8),
+//                       bottomLeft: Radius.circular(8),
+//                       bottomRight: Radius.circular(8),
+//                     ),
+//                     color: Color.fromRGBO(54, 141, 255, 1),
+//                   ),
+//                   child: Center(
+//                     child: Icon(
+//                       icon,
+//                       color: Colors.white,
+//                       size: 28 * min(horizontalScale, verticalScale),
+//                     ),
+//                   ),
+//                 ),
+//                 SizedBox(
+//                   width: 10,
+//                 ),
+//                 Container(
+//                   width: 215 * horizontalScale,
+//                   child: Text(
+//                     '$T1',
+//                     maxLines: 2,
+//                     textScaleFactor: min(horizontalScale, verticalScale),
+//                     style: TextStyle(
+//                         overflow: TextOverflow.ellipsis,
+//                         color: Colors.black,
+//                         fontSize: 14 * verticalScale,
+//                         fontWeight: FontWeight.bold
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         );
+//       }
+//
+//     }
+//   );
+//
+// }
 
 
 Drawer customDrawer(BuildContext context) {

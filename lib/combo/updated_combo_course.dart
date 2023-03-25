@@ -418,7 +418,7 @@ class _NewScreenState extends State<NewScreen> {
                                                                       .start,
                                                               children: [
                                                                 Text(
-                                                                    "Estimates learning time: ${courseList[index].duration == null ? "0" : courseList[index].duration}",
+                                                                    "Estimated learning time: ${courseList[index].duration == null ? "0" : courseList[index].duration}",
                                                                     overflow:
                                                                         TextOverflow
                                                                             .ellipsis,

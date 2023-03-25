@@ -31,30 +31,80 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png" />
+  <style type="text/css">
+
+    .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    .loader {
+        border: 6px solid #8814e6;
+        border-radius: 50%;
+        border-left: 6px solid white;
+        width: 40px;
+        height: 40px;
+        -webkit-animation: spin 1s linear infinite;
+        animation: spin 1s linear infinite;
+    }
+
+    @-webkit-keyframes spin {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+    .indicator{
+        width: 50vw;
+      }
+
+</style>
 
   <title>CloudyML</title>
   <link rel="manifest" href="manifest.json">
-  <style>
-          .container {
-        width: 100vw;
-        height: 100vh;
-        display: flex; /* Default Axis is X*/
-        justify-content: center; /* Main Axis */
-        align-items: center; /* Cross Axis */
-      }
-      .indicator{
-        width: 50vw;
-      }
-  </style>
+
   <script src="https://unpkg.com/canvaskit-wasm@0.33.0/bin/canvaskit.js"></script>
   <link rel="preload" href="https://unpkg.com/canvaskit-wasm@0.33.0/bin/canvaskit.wasm" as="fetch"
     crossOrigin="anonymous">
 </head>
 
 <body>
-  <div id="loading_indicator" class="container">
-    <img class="indicator" src="./assets/loading.gif" />
+
+  <div class="loading">
+    <div class="loader"></div>
+    <!-- <img class="indicator" src="./assets/loading.gif" /> -->
   </div>
+  
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('flutter_service_worker.js');
+      });
+    }
+  </script>
+  <!-- <div id="loading_indicator" class="container">
+    <img class="indicator" src="./assets/loading.gif" />
+  </div> -->
 
   <script type="text/javascript">
     window.flutterWebRenderer = localStorage.getItem('flutterWebRenderer');
