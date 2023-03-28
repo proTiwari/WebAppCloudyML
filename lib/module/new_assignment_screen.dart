@@ -107,11 +107,15 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
 
 
 
+  var count;
 
   Future submissionTask() async {
     try {
       var storageRef =
-      FirebaseStorage.instance.ref().child('Assignments').child('${user.toString()}').child(fileName!);
+      FirebaseStorage.instance.ref()
+          .child('Assignments')
+          .child('${user.toString()}')
+          .child(fileName!);
 
       var sentData = await _reference.collection('assignment').add({
         "email": FirebaseAuth.instance.currentUser?.email,
@@ -121,6 +125,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
         "filename": fileName!,
         "link": '',
         "note": noteText.text,
+        'assignmentName': widget.assignmentName,
       });
 
 
@@ -131,7 +136,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
       await sentData.update({"link": fileURL});
       print('Assignment file link is here: $fileURL');
       Fluttertoast.showToast(msg: "Your file has been uploaded successfully");
-
+      count = 1;
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
     }
@@ -450,10 +455,11 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
 
                                   }
                                 },
-                                child: Text("Submit"),
+                                child: Text(count == 1 ? "Resubmit" : "Submit",
+                                style: TextStyle(),),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: uploadedFile == null
-                                      ? Colors.grey
+                                      ? count == 1 ? Colors.grey : Colors.green
                                       : Colors.deepPurpleAccent,
                                 ),
                               )

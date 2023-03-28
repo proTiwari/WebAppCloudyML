@@ -8,16 +8,16 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../globals.dart';
 
-class Assignments extends StatefulWidget {
-  const Assignments({Key? key, this.groupData}) : super(key: key);
+class AssignmentScreenForMentors extends StatefulWidget {
+  const AssignmentScreenForMentors({Key? key, this.groupData}) : super(key: key);
 
   final groupData;
 
   @override
-  State<Assignments> createState() => _AssignmentsState();
+  State<AssignmentScreenForMentors> createState() => _AssignmentScreenForMentorsState();
 }
 
-class _AssignmentsState extends State<Assignments> {
+class _AssignmentScreenForMentorsState extends State<AssignmentScreenForMentors> {
   var headerTextStyle =
       TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black);
 
@@ -70,7 +70,7 @@ class _AssignmentsState extends State<Assignments> {
               padding: EdgeInsets.only(top: 8.0 * verticalScale),
               child: Container(
                   width: screenWidth,
-                  height: screenHeight * 0.4,
+                  height: screenHeight/1.2 ,
                   child: StreamBuilder(
                     stream: FirebaseFirestore.instance
                         .collection("assignment")

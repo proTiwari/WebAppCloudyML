@@ -4,20 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class NonTrialCourseBottomSheet extends StatelessWidget {
-  // ValueListenable<double> currentPosition;
-  // ValueListenable<double> popBottomSheetAt;
   String coursePrice;
   Map<String, dynamic> map;
   bool isItComboCourse;
   String cID;
-  // double closeBottomSheetAt;
 
   NonTrialCourseBottomSheet({
-    // required this.currentPosition,
+
     required this.coursePrice,
     required this.map,
-
-    // required this.popBottomSheetAt,
     required this.isItComboCourse,
     required this.cID,
     Key? key,

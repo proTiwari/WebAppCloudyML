@@ -2569,6 +2569,7 @@ class _VideoScreenState extends State<VideoScreen> {
                               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                               child: Column(
                                 children: [
+                                  pathwaydata.isEmpty ? Container() :
                                   Container(
                                     child: ExpansionTile(
                                       title: Text(

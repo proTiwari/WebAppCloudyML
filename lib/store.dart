@@ -288,10 +288,18 @@ class _StoreScreenState extends State<StoreScreen> {
                     child: GridView.builder(
                       scrollDirection: Axis.vertical,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: constraints.maxWidth >= 900 ? 4 : 3,
+                        crossAxisCount:
+                        constraints.maxWidth <= 750 ? 2 :
+                        constraints.maxWidth <= 1050 ? 3 :
+                        constraints.maxWidth >= 1050 ? 4
+                        : 4,
+
                         childAspectRatio:
-                        constraints.maxWidth >= 900 ? 0.80 : 0.85,
-                        crossAxisSpacing: constraints.maxWidth >= 900 ? 25 : 15,
+                        constraints.maxWidth <= 750 ? 1 :
+                        constraints.maxWidth <= 1050 ? 0.8 :
+                        constraints.maxWidth >= 1050 ? 0.85
+                            : 1,
+                        crossAxisSpacing: constraints.maxWidth >= 900 ? 15 : 10,
                       ),
                       itemCount: cou.length,
                       itemBuilder: (context, index) {

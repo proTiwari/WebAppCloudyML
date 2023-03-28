@@ -49,7 +49,7 @@ class _Review1State extends State<ReviewsScreen> {
                 width: screenWidth,
                 height: 60,
                 color: HexColor("440F87"),
-                child: customMenuBar(context),
+                child: Center(child: customMenuBar(context)),
               ),
               SizedBox(
                 height: 25 * verticalScale,
@@ -73,23 +73,7 @@ class _Review1State extends State<ReviewsScreen> {
                         fontSize: 38 * verticalScale,
                       ),)),
               ),
-              // Padding(
-              //   padding: EdgeInsets.only(
-              //     left: 15,
-              //     top: 10,
-              //   ),
-              //   child: Text(
-              //     'Recent reviews',
-              //     textScaleFactor: min(horizontalScale, verticalScale),
-              //     textAlign: TextAlign.center,
-              //     style: TextStyle(
-              //         color: Color.fromRGBO(0, 0, 0, 1),
-              //         fontFamily: 'Poppins',
-              //         fontSize: 28 * verticalScale,
-              //         fontWeight: FontWeight.bold,
-              //         height: 2),
-              //   ),
-              // ),
+
               SizedBox(
                 height: 25,
               ),

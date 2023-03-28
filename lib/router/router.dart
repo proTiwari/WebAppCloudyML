@@ -22,11 +22,11 @@ import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import '../authentication_screens/phone_auth.dart';
 import '../catalogue_screen.dart';
-import '../combo/feature_courses.dart';
 import '../combo/trialfeatutr.dart';
 import '../live_doubt_screen/live_doubt_screen.dart';
 import '../models/course_details.dart';
 import '../my_Courses.dart';
+import '../screens/assignment_tab_screen.dart';
 import '../screens/quiz/admin_quiz.dart';
 import '../screens/quiz/quiz_page.dart';
 import '../screens/quiz/quiz_panel.dart';
@@ -106,6 +106,15 @@ class MyRouter {
             return MaterialPage(
               key: state.pageKey,
                 child:  ReviewsScreen());
+          },
+        ),
+        GoRoute(
+          name: 'AssignmentScreenForMentors',
+          path: '/AssignmentScreenForMentors',
+          pageBuilder: (context, state) {
+            return MaterialPage(
+                key: state.pageKey,
+                child:  AssignmentScreenForMentors());
           },
         ),
         GoRoute(

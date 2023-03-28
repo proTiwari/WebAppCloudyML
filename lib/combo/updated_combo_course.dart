@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:hive/hive.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -149,7 +150,7 @@ class _NewScreenState extends State<NewScreen> {
     getPercentageOfCourse();
 
     return Scaffold(
-     // appBar: appBar(context),
+      // appBar: appBar(context),
       // drawer: width<650?
       // Drawer(
       //   width: 40,
@@ -164,9 +165,7 @@ class _NewScreenState extends State<NewScreen> {
           return Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage("assets/BG.png"),
-                  fit: BoxFit.fill
-                ),
+                    image: AssetImage("assets/BG.png"), fit: BoxFit.fill),
                 color: HexColor("#fef0ff"),
               ),
               width: constraints.maxWidth,
@@ -180,30 +179,29 @@ class _NewScreenState extends State<NewScreen> {
                       height: 10,
                     ),
                     InkWell(
-                                onTap: () {
-                                GoRouter.of(context)
-                                          .pushReplacementNamed('home');
-                                },
-                                child: Container(
-                                    child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
-                                        child: Icon(Icons.arrow_back_rounded),
-                                      ),
-                                      Text(
-                                        'Back',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      )
-                                    ],
-                                  ),
-                                )),
-                              ),
+                      onTap: () {
+                        GoRouter.of(context).pushReplacementNamed('home');
+                      },
+                      child: Container(
+                          child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
+                              child: Icon(Icons.arrow_back_rounded),
+                            ),
+                            Text(
+                              'Back',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                      )),
+                    ),
                     RichText(
-                      text: TextSpan(children: [
+                      text: TextSpan(
+                          children: [
                         TextSpan(
                             text: "Welcome to ",
                             style: TextStyle(
@@ -230,6 +228,9 @@ class _NewScreenState extends State<NewScreen> {
                     SizedBox(
                       height: 10,
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
                     StreamBuilder(
                         stream: counterStream,
                         // FirebaseFirestore.instance
@@ -238,15 +239,15 @@ class _NewScreenState extends State<NewScreen> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData && widget.courses != null) {
                             List courseList = [];
-                          for (var i in widget.courses!) {
+                            for (var i in widget.courses!) {
                               int count = 0;
                               for (var j in course) {
                                 if (i == j.courseId) {
                                   courseList.add(j);
-                                  count=1;
+                                  count = 1;
                                 }
                               }
-                              count==0?widget.courses?.remove(i):null;
+                              count == 0 ? widget.courses?.remove(i) : null;
                               print("**((($count");
                             }
                             print("listoooo $courseList");
@@ -431,104 +432,229 @@ class _NewScreenState extends State<NewScreen> {
                                                                 SizedBox(
                                                                   height: 3,
                                                                 ),
-                                                                // Text(
-                                                                //     "Started on: Jan 01,2023",
-                                                                //     overflow:
-                                                                //         TextOverflow
-                                                                //             .ellipsis,
-                                                                //     style: TextStyle(
-                                                                //         fontSize: width < 540
-                                                                //             ? width < 420
-                                                                //                 ? 11
-                                                                //                 : 13
-                                                                //             : 14)),
-                                                                // SizedBox(
-                                                                //   height: 3,
-                                                                // ),
-                                                                // Text(
-                                                                //     "Completed on: Jan 01,2023",
-                                                                //     overflow:
-                                                                //         TextOverflow
-                                                                //             .ellipsis,
-                                                                //     style: TextStyle(
-                                                                //         fontSize: width < 540
-                                                                //             ? width < 420
-                                                                //                 ? 11
-                                                                //                 : 13
-                                                                //             : 14)),
                                                                 SizedBox(
                                                                   height: 15,
                                                                 ),
-                                                                SizedBox(
-                                                                  width: width <
-                                                                          400
-                                                                      ? 160
-                                                                      : 190,
-                                                                  child:
+
+                                                                width < 450 ? Column(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: width <
+                                                                          450
+                                                                          ? 130
+                                                                          : 190,
+                                                                      child:
                                                                       MaterialButton(
-                                                                    height: width >
+                                                                        height: width >
                                                                             700
-                                                                        ? 50
-                                                                        : 40,
-                                                                    shape:
+                                                                            ? 50
+                                                                            : 40,
+                                                                        shape:
                                                                         RoundedRectangleBorder(
-                                                                      borderRadius:
+                                                                          borderRadius:
                                                                           BorderRadius.circular(
                                                                               20),
-                                                                    ),
-                                                                    padding:
+                                                                        ),
+                                                                        padding:
                                                                         EdgeInsets
                                                                             .all(8),
-                                                                    minWidth:
+                                                                        minWidth:
                                                                         width > 700
                                                                             ? 100
                                                                             : 60,
-                                                                    onPressed:
-                                                                        () {
-                                                                      setState(
-                                                                          () {
-                                                                        courseId =
-                                                                            courseList[index].courseDocumentId;
-                                                                      });
-                                                                      GoRouter.of(context).pushNamed(
-                                                                          'comboVideoScreen',
-                                                                          queryParams: {
-                                                                            'courseName':
+                                                                        onPressed:
+                                                                            () {
+                                                                          setState(
+                                                                                  () {
+                                                                                courseId =
+                                                                                    courseList[index].courseDocumentId;
+                                                                              });
+                                                                          GoRouter.of(context).pushNamed(
+                                                                              'comboVideoScreen',
+                                                                              queryParams: {
+                                                                                'courseName':
                                                                                 courseList[index].courseName,
-                                                                            'cID':
+                                                                                'cID':
                                                                                 courseList[index].courseDocumentId,
-                                                                          });
-                                                                    },
-                                                                    child: Row(
-                                                                      children: [
-                                                                        SizedBox(
-                                                                          width:
+                                                                              });
+                                                                        },
+                                                                        child: Row(
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              width:
                                                                               5,
-                                                                        ),
-                                                                        Expanded(
-                                                                            flex:
+                                                                            ),
+                                                                            Expanded(
+                                                                                flex:
                                                                                 1,
-                                                                            child:
+                                                                                child:
                                                                                 Icon(
-                                                                              Icons.play_arrow,
-                                                                              color: Colors.white,
-                                                                              size: width < 200 ? 2 : null,
-                                                                            )),
-                                                                        Expanded(
-                                                                            flex:
+                                                                                  Icons.play_arrow,
+                                                                                  color: Colors.white,
+                                                                                  size: width < 200 ? 2 : null,
+                                                                                )),
+                                                                            Expanded(
+                                                                                flex:
                                                                                 3,
-                                                                            child:
+                                                                                child:
                                                                                 Text(
-                                                                              "Resume learning",
-                                                                              style: TextStyle(color: Colors.white, fontSize: width < 500 ? 10 : null),
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                            ))
-                                                                      ],
+                                                                                  "Resume learning",
+                                                                                  style: TextStyle(color: Colors.white,
+                                                                                      fontSize: width < 500 ? 10 : null),
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                )),
+                                                                          ],
+                                                                        ),
+                                                                        color: Colors.purple,
+                                                                      ),
                                                                     ),
-                                                                    color: Colors
-                                                                        .purple,
-                                                                  ),
+                                                                    SizedBox(height: 10,),
+                                                                    SizedBox(
+                                                                      width: width <
+                                                                          450
+                                                                          ? 130
+                                                                          : 190,
+                                                                      child: MaterialButton(
+                                                                        onPressed: () {
+                                                                          GoRouter.of(context).pushNamed('LiveDoubtSession');
+                                                                        },
+                                                                        color: Colors.blue,
+                                                                        height: width >
+                                                                            700
+                                                                            ? 50
+                                                                            : 40,
+                                                                        shape:
+                                                                        RoundedRectangleBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              20),
+                                                                        ),
+                                                                        minWidth:
+                                                                        width > 700
+                                                                            ? 100
+                                                                            : 60,
+                                                                        child: Center(
+                                                                          child: Text(
+                                                                            'Live Doubt Support',
+                                                                            style: TextStyle(color: Colors.white,
+                                                                                fontSize: width < 500 ? 10 : null),
+                                                                            overflow: TextOverflow.ellipsis,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 )
+                                                                    : Row(
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: width <
+                                                                              400
+                                                                          ? 160
+                                                                          : 190,
+                                                                      child:
+                                                                          MaterialButton(
+                                                                        height: width >
+                                                                                700
+                                                                            ? 50
+                                                                            : 40,
+                                                                        shape:
+                                                                            RoundedRectangleBorder(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(
+                                                                                  20),
+                                                                        ),
+                                                                        padding:
+                                                                            EdgeInsets
+                                                                                .all(8),
+                                                                        minWidth:
+                                                                            width > 700
+                                                                                ? 100
+                                                                                : 60,
+                                                                        onPressed:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            courseId =
+                                                                                courseList[index].courseDocumentId;
+                                                                          });
+                                                                          GoRouter.of(context).pushNamed(
+                                                                              'comboVideoScreen',
+                                                                              queryParams: {
+                                                                                'courseName':
+                                                                                    courseList[index].courseName,
+                                                                                'cID':
+                                                                                    courseList[index].courseDocumentId,
+                                                                              });
+                                                                        },
+                                                                        child: Row(
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              width:
+                                                                                  5,
+                                                                            ),
+                                                                            Expanded(
+                                                                                flex:
+                                                                                    1,
+                                                                                child:
+                                                                                    Icon(
+                                                                                  Icons.play_arrow,
+                                                                                  color: Colors.white,
+                                                                                  size: width < 200 ? 2 : null,
+                                                                                )),
+                                                                            Expanded(
+                                                                                flex:
+                                                                                    3,
+                                                                                child:
+                                                                                    Text(
+                                                                                  "Resume learning",
+                                                                                  style: TextStyle(color: Colors.white,
+                                                                                      fontSize: width < 500 ? 10 : null),
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                )),
+                                                                          ],
+                                                                        ),
+                                                                        color: Colors.purple,
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(width: 15,),
+                                                                    SizedBox(
+                                                                      width: width <
+                                                                          400
+                                                                          ? 160
+                                                                          : 190,
+                                                                      child: MaterialButton(
+                                                                        onPressed: () {
+                                                                          GoRouter.of(context).pushNamed('LiveDoubtSession');
+                                                                        },
+                                                                        color: Colors.blue,
+                                                                        height: width >
+                                                                            700
+                                                                            ? 50
+                                                                            : 40,
+                                                                        shape:
+                                                                        RoundedRectangleBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              20),
+                                                                        ),
+                                                                        minWidth:
+                                                                        width > 700
+                                                                            ? 100
+                                                                            : 60,
+                                                                        child: Center(
+                                                                            child: Text(
+                                                                              'Live Doubt Support',
+                                                                              style: TextStyle(color: Colors.white,
+                                                                                  fontSize: width < 500 ? 10 : null),
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                            ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ],
                                                             )),
                                                             SizedBox(
@@ -536,57 +662,91 @@ class _NewScreenState extends State<NewScreen> {
                                                             ),
                                                             width < 700
                                                                 ?
-                                                                // Expanded(
-                                                                //   child:
                                                                 Column(
-                                                              mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-                                                              children: [
-                                                                SizedBox(height: 25,),
-                                                                CircularPercentIndicator(
-                                                                  radius: width<700?width<500?20:30:70,
-                                                                  lineWidth: width>700?10.0:4.0,
-                                                                  animation: true,
-                                                                  percent:courseData!=null?courseData[widget.courses![index]+"percentage"]!=null?
-                                                                  (courseData[widget.courses![index]+"percentage"])/100>1?
-                                                                  100/100:
-                                                                  courseData[widget.courses![index]+"percentage"]/100:0/100:0,
-                                                                  center: courseData!=null?
-                                                                  courseData[widget.courses![index]+"percentage"]!=null?
-                                                                  Text(
-                                                                    courseData[widget.courses![index]+"percentage"]>100?
-                                                                    "100%":
-                                                                    courseData[widget.courses![index]+"percentage"].toString()+ "%",
-                                                                    style: TextStyle(
-                                                                        fontSize: width>700?20.0:width<500?8:14,
-                                                                        fontWeight: FontWeight.w600,
-                                                                        color: Colors.black),
-                                                                  ):Text(
-                                                                    0.toString() + "%",
-                                                                    style: TextStyle(
-                                                                        fontSize: width>700?20.0:width<500?8:14,
-                                                                        fontWeight: FontWeight.w600,
-                                                                        color: Colors.black),
-                                                                  ):SizedBox(),
-                                                                  backgroundColor: Colors.black12,
-                                                                  circularStrokeCap: CircularStrokeCap.round,
-                                                                  progressColor: Colors.green,
-                                                                ),
-                                                                SizedBox(height: width<500?3:5,),
-                                                                courseData!=null?
-                                                                Text(
-                                                                    courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"]>100?
-                                                                    "100%":courseData[widget.courses![index]+"percentage"].toString()+"%":"0%",
-                                                                  style: TextStyle(fontSize: 7,fontWeight: FontWeight.bold),):SizedBox()
-                                                                // SizedBox(height: 15,),
-                                                                // Text("10%")
-                                                              ],
-                                                            )
-                                                                // ,
-                                                                // )
+                                                                    mainAxisAlignment: width > 700
+                                                                        ? MainAxisAlignment
+                                                                            .center
+                                                                        : MainAxisAlignment
+                                                                            .end,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        height:
+                                                                            25,
+                                                                      ),
+                                                                      CircularPercentIndicator(
+                                                                        radius: width < 700 ? width < 500 ? 35 : 45 : 70,
+                                                                        lineWidth: width >
+                                                                                700
+                                                                            ? 10.0
+                                                                            : 4.0,
+                                                                        animation:
+                                                                            true,
+                                                                        percent: courseData !=
+                                                                                null
+                                                                            ? courseData[widget.courses![index] + "percentage"] != null
+                                                                                ? (courseData[widget.courses![index] + "percentage"]) / 100 > 1
+                                                                                    ? 100 / 100
+                                                                                    : courseData[widget.courses![index] + "percentage"] / 100
+                                                                                : 0 / 100
+                                                                            : 0,
+                                                                        center: courseData !=
+                                                                                null
+                                                                            ? courseData[widget.courses![index] + "percentage"] != null
+                                                                                ? Text(
+                                                                                    courseData[widget.courses![index] + "percentage"] > 100 ? "100%" : courseData[widget.courses![index] + "percentage"].toString() + "%",
+                                                                                    style: TextStyle(
+                                                                                        fontSize: width > 700
+                                                                                            ? 20.0
+                                                                                            : width < 500
+                                                                                                ? 8
+                                                                                                : 14,
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                        color: Colors.black),
+                                                                                  )
+                                                                                : Text(
+                                                                                    0.toString() + "%",
+                                                                                    style: TextStyle(
+                                                                                        fontSize: width > 700
+                                                                                            ? 20.0
+                                                                                            : width < 500
+                                                                                                ? 8
+                                                                                                : 14,
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                        color: Colors.black),
+                                                                                  )
+                                                                            : SizedBox(),
+                                                                        backgroundColor:
+                                                                            Colors.black12,
+                                                                        circularStrokeCap:
+                                                                            CircularStrokeCap.round,
+                                                                        progressColor:
+                                                                            Colors.green,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: width <
+                                                                                500
+                                                                            ? 3
+                                                                            : 5,
+                                                                      ),
+                                                                      courseData !=
+                                                                              null
+                                                                          ? Text(
+                                                                              courseData[widget.courses![index] + "percentage"] != null
+                                                                                  ? courseData[widget.courses![index] + "percentage"] > 100
+                                                                                      ? "100%"
+                                                                                      : courseData[widget.courses![index] + "percentage"].toString() + "%"
+                                                                                  : "0%",
+                                                                              style: TextStyle(fontSize: 7, fontWeight: FontWeight.bold),
+                                                                            )
+                                                                          : SizedBox()
+                                                                      // SizedBox(height: 15,),
+                                                                      // Text("10%")
+                                                                    ],
+                                                                  )
                                                                 : SizedBox(),
                                                             SizedBox(
                                                               width: 5,
-                                                            )
+                                                            ),
                                                           ],
                                                         ),
                                                       ],
@@ -599,43 +759,102 @@ class _NewScreenState extends State<NewScreen> {
                                                     flex: 2,
                                                     // color: Colors.green,
                                                     child: Column(
-                                                mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
-                                                children: [
-                                                  CircularPercentIndicator(
-                                                    radius: width>700?70.0:40.0,
-                                                    lineWidth: 10.0,
-                                                    animation: true,
-                                                    percent: courseData!=null?courseData[widget.courses![index]+"percentage"]!=null?
-                                                    (courseData[widget.courses![index]+"percentage"])/100>1?
-                                                        100/100:
-                                                    courseData[widget.courses![index]+"percentage"]/100:0/100:0,
-                                                    center: courseData!=null?
-                                                    courseData[widget.courses![index]+"percentage"]!=null?Text(
-                                                      courseData[widget.courses![index]+"percentage"]>100?
-                                                          "100%":
-                                                      courseData[widget.courses![index]+"percentage"].toString()+ "%",
-                                                      style: TextStyle(
-                                                          fontSize: 20.0,
-                                                          fontWeight: FontWeight.w600,
-                                                          color: Colors.black),
-                                                    ):Text(0.toString()+'%',style: TextStyle(
-                                                        fontSize: 20.0,
-                                                        fontWeight: FontWeight.w600,
-                                                        color: Colors.black)):Text("0%",style: TextStyle(
-                                                        fontSize: 20.0,
-                                                        fontWeight: FontWeight.w600,
-                                                        color: Colors.black)),
-                                                    backgroundColor: Colors.black12,
-                                                    circularStrokeCap: CircularStrokeCap.round,
-                                                    progressColor: Colors.green,
-                                                  ),
-                                                  SizedBox(height: 15,),
-                                                  courseData!=null?Text(
-                                                      courseData[widget.courses![index]+"percentage"]!=null?courseData[widget.courses![index]+"percentage"]>100?
-                                                      "100%":courseData[widget.courses![index]+"percentage"].toString()+"%":"0%"
-                                                  ):Text("0%")
-                                                ],
-                                              ),
+                                                      mainAxisAlignment:
+                                                          width > 700
+                                                              ? MainAxisAlignment
+                                                                  .center
+                                                              : MainAxisAlignment
+                                                                  .end,
+                                                      children: [
+                                                        CircularPercentIndicator(
+                                                          radius: width > 700
+                                                              ? 70.0
+                                                              : 40.0,
+                                                          lineWidth: 10.0,
+                                                          animation: true,
+                                                          percent: courseData !=
+                                                                  null
+                                                              ? courseData[widget.courses![
+                                                                              index] +
+                                                                          "percentage"] !=
+                                                                      null
+                                                                  ? (courseData[widget.courses![index] + "percentage"]) /
+                                                                              100 >
+                                                                          1
+                                                                      ? 100 /
+                                                                          100
+                                                                      : courseData[widget.courses![index] +
+                                                                              "percentage"] /
+                                                                          100
+                                                                  : 0 / 100
+                                                              : 0,
+                                                          center: courseData !=
+                                                                  null
+                                                              ? courseData[widget.courses![index] + "percentage"] !=
+                                                                      null
+                                                                  ? Text(
+                                                                      courseData[widget.courses![index] + "percentage"] >
+                                                                              100
+                                                                          ? "100%"
+                                                                          : courseData[widget.courses![index] + "percentage"].toString() +
+                                                                              "%",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              20.0,
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          color:
+                                                                              Colors.black),
+                                                                    )
+                                                                  : Text(
+                                                                      0.toString() +
+                                                                          '%',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              20.0,
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .w600,
+                                                                          color:
+                                                                              Colors
+                                                                                  .black))
+                                                              : Text("0%",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          20.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      color: Colors
+                                                                          .black)),
+                                                          backgroundColor:
+                                                              Colors.black12,
+                                                          circularStrokeCap:
+                                                              CircularStrokeCap
+                                                                  .round,
+                                                          progressColor:
+                                                              Colors.green,
+                                                        ),
+                                                        SizedBox(
+                                                          height: 15,
+                                                        ),
+                                                        courseData != null
+                                                            ? Text(courseData[widget.courses![
+                                                                            index] +
+                                                                        "percentage"] !=
+                                                                    null
+                                                                ? courseData[widget.courses![index] +
+                                                                            "percentage"] >
+                                                                        100
+                                                                    ? "100%"
+                                                                    : courseData[widget.courses![index] +
+                                                                                "percentage"]
+                                                                            .toString() +
+                                                                        "%"
+                                                                : "0%")
+                                                            : Text("0%")
+                                                      ],
+                                                    ),
                                                   )
                                                 : SizedBox()
                                             // Column(

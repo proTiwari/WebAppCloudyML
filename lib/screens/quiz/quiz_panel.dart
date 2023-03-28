@@ -81,8 +81,8 @@ class _QuizPanelState extends State<QuizPanel> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
-                GoRouter.of(context).go('/adminquizpanel');
+                // Navigator.pop(context);
+                GoRouter.of(context).pushNamed('adminquizpanel');
                 //   // Navigator.pushReplacement(
                 //   //     context,
                 //   //     MaterialPageRoute(

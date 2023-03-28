@@ -548,36 +548,36 @@ class _LandingScreenState extends State<LandingScreen> {
     });
   }
 
-  void startTimer() {
-    countDownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setCountDown();
-    });
-  }
+  // void startTimer() {
+  //   countDownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+  //     setCountDown();
+  //   });
+  // }
+  //
+  // void stopTimer() {
+  //   setState(() {
+  //     countDownTimer!.cancel();
+  //   });
+  // }
+  //
+  // void resetTimer() {
+  //   stopTimer();
+  //   setState(() {
+  //     myDuration = Duration(days: 5);
+  //   });
+  // }
 
-  void stopTimer() {
-    setState(() {
-      countDownTimer!.cancel();
-    });
-  }
-
-  void resetTimer() {
-    stopTimer();
-    setState(() {
-      myDuration = Duration(days: 5);
-    });
-  }
-
-  setCountDown() {
-    final reduceSecs = 1;
-    setState(() {
-      final seconds = myDuration.inSeconds - reduceSecs;
-      if (seconds < 0) {
-        countDownTimer!.cancel();
-      } else {
-        myDuration = Duration(seconds: seconds);
-      }
-    });
-  }
+  // setCountDown() {
+  //   final reduceSecs = 1;
+  //   setState(() {
+  //     final seconds = myDuration.inSeconds - reduceSecs;
+  //     if (seconds < 0) {
+  //       countDownTimer!.cancel();
+  //     } else {
+  //       myDuration = Duration(seconds: seconds);
+  //     }
+  //   });
+  // }
 
   String strDigits(int n) => n.toString().padLeft(2, '0');
 
@@ -611,12 +611,10 @@ class _LandingScreenState extends State<LandingScreen> {
 
   @override
   void initState() {
-    
-
+    super.initState();
     // print('this is url ${html.window.location.href}');
     // print('this is path ${Uri.base.path}');
     // showNotification();
-    super.initState();
     _controller = ScrollController();
 
     futureFiles = FirebaseApi.listAll('reviews/recent_review');
@@ -628,9 +626,10 @@ class _LandingScreenState extends State<LandingScreen> {
     fetchCourses();
     dbCheckerForPayInParts();
     userData();
-    startTimer();
+    // startTimer();
     // getuserdetails();
     checkrewardexpiry();
+
   }
 
   Timer? countDownTimer;
@@ -689,23 +688,34 @@ class _LandingScreenState extends State<LandingScreen> {
                     Container(
                       width: screenWidth,
                       height: screenHeight,
-                      child: Image.asset(
-                          "assets/BG_1.png",
-                          fit: BoxFit.fill,
-                          height: screenHeight,
-                          width: screenWidth),
+                      child:
+                      CachedNetworkImage(
+                        placeholder: (context, url) =>
+                            Container(
+                                color: HexColor('0C001B'),
+                            ),
+                        errorWidget: (context, url, error) =>
+                            Icon(Icons.error),
+                        imageUrl: 'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Fwebbg.png?alt=media&token=04326232-0b38-44f3-9722-3dfc1a89e052',
+                        fit: BoxFit.fill,
+                      ),
                     ),
                     // picture of CEO
                     Positioned(
-                      // top: -25,
+                      top: 75,
                       right: 170,
                       child: Container(
                         width: 450,
-                        height: 600,
-                        child: Image.network(
-                          'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Fceopic.png?alt=media&token=27a120b5-b4be-486c-b087-271b4f5e8faa',
-                          fit: BoxFit.fitWidth,
+                        height: 550,
+                        child: CachedNetworkImage(
+                          placeholder: (context, url) =>
+                              Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                          imageUrl: 'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Fceopic.png?alt=media&token=27a120b5-b4be-486c-b087-271b4f5e8faa',
+                          fit: BoxFit.fill,
                         ),
+
                       ),
                     ),
                     Positioned(

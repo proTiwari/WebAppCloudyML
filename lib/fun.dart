@@ -1,4 +1,7 @@
 import 'dart:math';
+import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+
 import '../global_variable.dart' as globals;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudyml_app2/payments_history.dart';
@@ -728,15 +731,26 @@ final buttonTextStyle = TextStyle(
 var textStyle = TextStyle(
   fontWeight: FontWeight.bold,
   color: Colors.white,
-  fontSize: 14,
+  fontSize: 20,
   fontFamily: "Semibold",
 );
 
 String numberOfLearners = '13000+ learners';
-var items = ['My Courses','My Profile', 'Logout'];
+var mentorItems = [
+  'My Courses',
+  'Resume Review',
+  'Admin Quiz Panel',
+  'Assignment Review',
+  'My Profile',
+  'Logout'];
+
+var items = [
+  'My Courses',
+  'My Profile',
+  'Logout'];
 String dropdownValue = '';
 
-Row customMenuBar(BuildContext context) {
+Widget customMenuBar(BuildContext context) {
   void saveLoginOutState(BuildContext context) {
     Provider.of<LoginState>(context, listen: false).loggedIn = false;
   }
@@ -745,157 +759,255 @@ Row customMenuBar(BuildContext context) {
   final screenWidth = MediaQuery.of(context).size.width;
   var verticalScale = screenHeight / mockUpHeight;
   var horizontalScale = screenWidth / mockUpWidth;
-  return Row(
-    children: [
-      // IconButton(
-      //     onPressed: () {
-      //       Scaffold.of(context).openDrawer();
-      //     },
-      //     icon: Icon(
-      //       Icons.menu,
-      //       color: Colors.white,
-      //       size: 30,
-      //     )),
-      SizedBox(
-        width: horizontalScale * 15,
-      ),
-      Image.asset(
-        "assets/logo2.png",
-        width: 50,
-        height: 40,
-      ),
-      Text(
-        "CloudyML",
-        style: textStyle,
-      ),
-      Spacer(),
-      TextButton(
-          onPressed: () {
-            GoRouter.of(context).pushNamed('home');
-          },
-          child: Text(
-            'Home',
-            style: buttonTextStyle.copyWith(
-              color: Uri.base.path == '/home'? HexColor('873AFF') : Colors.white ,
-            ),
-          )),
-      SizedBox(
-        width: horizontalScale * 15,
-      ),
-      TextButton(
-          onPressed: () {
-            GoRouter.of(context).pushNamed('store');
-          },
-          child: Text('Store',
-              style: buttonTextStyle.copyWith(
-                color:
-                Uri.base.path == '/store'?
-                HexColor('873AFF') : Colors.white ,
-              )
-          )),
-      SizedBox(
-        width: horizontalScale * 15,
-      ),
-      TextButton(
-          onPressed: () {
-            GoRouter.of(context).pushNamed('reviews');
-          },
-          child: Text(
-            'Reviews',
-            style:  buttonTextStyle.copyWith(
-              color: Uri.base.path == '/reviews'? HexColor('873AFF') :
-              Colors.white ,
-            ),
-          )),
-      SizedBox(
-        width: horizontalScale * 15,
-      ),
-      TextButton(
-          onPressed: () {
-            GoRouter.of(context).pushNamed('LiveDoubtSession');
-          },
-          child: Text(
-            'Live Doubt Support',
-            style:  buttonTextStyle.copyWith(
-              color:
-              Uri.base.path == '/LiveDoubtScreen'? HexColor('873AFF') :
-              Colors.white ,
-            ),
-          )),
-      SizedBox(
-        width: horizontalScale * 15,
-      ),
-      DropdownButton(
-        underline: Container(),
-        hint: Text('Profile',
-          style: buttonTextStyle.copyWith(
-            color: Uri.base.path == '/myCourses'
-                ? HexColor('873AFF') : Colors.white,
-          ),
+  return Padding(
+    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+    child: Row(
+      children: [
+        SizedBox(
+          width: horizontalScale * 10,
         ),
-        enableFeedback: false,
-        isExpanded: false,
-        isDense: false,
-        borderRadius: BorderRadius.circular(10),
-        dropdownColor: Colors.deepPurple,
-        // value: dropdownValue,
-        icon: Icon(Icons.arrow_drop_down, color: Colors.white,),
-        items: items.map((String items) {
-          return DropdownMenuItem(
-              value: items,
-              child: Text(items,
+        Image.asset(
+          "assets/logo2.png",
+          width: 75,
+          height: 55,
+        ),
+        Text(
+          "CloudyML",
+          style: textStyle,
+        ),
+        Spacer(),
+        TextButton(
+            onPressed: () {
+              GoRouter.of(context).pushNamed('home');
+            },
+            child: Text(
+              'Home',
+              style: buttonTextStyle.copyWith(
+                color: Uri.base.path == '/home'? HexColor('873AFF') : Colors.white ,
+              ),
+            )),
+        SizedBox(
+          width: horizontalScale * 10,
+        ),
+        TextButton(
+            onPressed: () {
+              GoRouter.of(context).pushNamed('store');
+            },
+            child: Text('Store',
                 style: buttonTextStyle.copyWith(
-                  color: Colors.white,
+                  color:
+                  Uri.base.path == '/store'?
+                  HexColor('873AFF') : Colors.white ,
+                )
+            )),
+        SizedBox(
+          width: horizontalScale * 10,
+        ),
+        TextButton(
+            onPressed: () {
+              // GoRouter.of(context).goNamed('reviews');
+              GoRouter.of(context).pushNamed('reviews');
+            },
+            child: Text(
+              'Reviews',
+              style:  buttonTextStyle.copyWith(
+                color: Uri.base.path == '/reviews'? HexColor('873AFF') :
+                Colors.white ,
+              ),
+            )),
+        SizedBox(
+          width: horizontalScale * 10,
+        ),
+        // TextButton(
+        //     onPressed: () {
+        //       GoRouter.of(context).pushNamed('LiveDoubtSession');
+        //     },
+        //     child: Text(
+        //       'Live Doubt Support',
+        //       style:  buttonTextStyle.copyWith(
+        //         color:
+        //         Uri.base.path == '/LiveDoubtScreen'? HexColor('873AFF') :
+        //         Colors.white ,
+        //       ),
+        //     )),
+        // SizedBox(
+        //   width: horizontalScale * 15,
+        // ),
+        DropdownButtonHideUnderline(
+          child: DropdownButton2(
+            customButton: Row(
+              children: [
+                Text('More',
+                  style: buttonTextStyle.copyWith(
+                    color: Uri.base.path == '/myCourses'
+                        ? HexColor('873AFF') : Colors.white,
+                  ),
                 ),
-              ));
-        }).toList(),
-        onChanged: (String? value) {
-          if (value != dropdownValue) {
-            switch (value) {
-              case 'My Courses':
-                GoRouter.of(context).pushReplacementNamed('myCourses');
-                break;
-              case 'My Profile':
-                GoRouter.of(context).pushReplacementNamed('myAccount');
-                break;
-              case 'Logout':
-                logOut(context);
-                saveLoginOutState(context);
-                GoRouter.of(context).pushReplacement('/login');
-                break;
-            }
-          }
-          dropdownValue = value!;
-        },
-      ),
-      SizedBox(width: 15 * horizontalScale,),
-      // TextButton(
-      //     onPressed: () {
-      //       logOut(context);
-      //       saveLoginOutState(context);
-      //       GoRouter.of(context).pushReplacement('/login');
-      //     },
-      //     child: Text(
-      //       'Logout',
-      //       style:  buttonTextStyle,
-      //     )),
+                SizedBox(width: 100,),
+                Icon(Icons.arrow_drop_down, color: Colors.white,)
+              ],
+            ),
+            isExpanded: false,
+            isDense: false,
+            iconStyleData: IconStyleData(
+              icon: Icon(Icons.arrow_drop_down),
+              iconDisabledColor: Colors.white,
+              iconEnabledColor: Colors.white,
+            ),
+            dropdownStyleData:  DropdownStyleData(
+              decoration: BoxDecoration(
+                color: Colors.deepPurple,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            underline: Container(),
+            hint: Text('More',
+              style: buttonTextStyle.copyWith(
+                color: Uri.base.path == '/myCourses'
+                    ? HexColor('873AFF') : Colors.white,
+              ),
+            ),
+            onChanged: (String? value) {
+              if (value != dropdownValue) {
+                switch (value) {
+                  case 'My Courses':
+                    GoRouter.of(context).pushNamed('myCourses');
+                    break;
+                  case 'Resume Review':
+                    GoRouter.of(context).pushNamed('reviewResume');
+                    break;
+                  case 'Admin Quiz Panel':
+                    GoRouter.of(context).pushNamed('quizpanel');
+                    break;
+                  case 'Assignment Review':
+                    GoRouter.of(context).pushNamed('AssignmentScreenForMentors');
+                    break;
+                  case 'My Profile':
+                    GoRouter.of(context).pushNamed('myAccount');
+                    break;
+                  case 'Logout':
+                    logOut(context);
+                    saveLoginOutState(context);
+                    GoRouter.of(context).pushReplacement('/login');
+                    break;
+                }
+              }
+              dropdownValue = value!;
+            },
+            items: globals.role == 'mentor' ?
+            mentorItems.map((String mentorItems) {
+              return DropdownMenuItem(
+                  value: mentorItems,
+                  child: Text(mentorItems,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ));
+            }).toList()
+                :  items.map((String items) {
+              return DropdownMenuItem(
+                  value: items,
+                  child: Text(items,
+                    style: buttonTextStyle.copyWith(
+                      color: Colors.white,
+                    ),
+                  ));
+            }).toList(),
+          ),),
+        // DropdownButton(
+        //   underline: Container(),
+        //   hint: Text('My Profile',
+        //     style: buttonTextStyle.copyWith(
+        //       color: Uri.base.path == '/myCourses'
+        //           ? HexColor('873AFF') : Colors.white,
+        //     ),
+        //   ),
+        //   enableFeedback: false,
+        //   isExpanded: false,
+        //   isDense: false,
+        //   borderRadius: BorderRadius.circular(10),
+        //   dropdownColor: Colors.deepPurple,
+        //   // value: dropdownValue,
+        //   icon: Icon(Icons.arrow_drop_down, color: Colors.white,),
+        //   items:
+        //  globals.role == 'mentor' ?
+        //  mentorItems.map((String mentorItems) {
+        //    return DropdownMenuItem(
+        //        value: mentorItems,
+        //        child: Text(mentorItems,
+        //          style: buttonTextStyle.copyWith(
+        //            color: Colors.white,
+        //          ),
+        //        ));
+        //  }).toList()
+        //      :  items.map((String items) {
+        //     return DropdownMenuItem(
+        //         value: items,
+        //         child: Text(items,
+        //           style: buttonTextStyle.copyWith(
+        //             color: Colors.white,
+        //           ),
+        //         ));
+        //   }).toList(),
+        //   onChanged: (String? value) {
+        //     if (value != dropdownValue) {
+        //       switch (value) {
+        //         case 'My Courses':
+        //           GoRouter.of(context).pushNamed('myCourses');
+        //           break;
+        //         case 'Resume Review':
+        //           GoRouter.of(context).pushNamed('reviewResume');
+        //           break;
+        //         case 'Admin Quiz Panel':
+        //           GoRouter.of(context).pushNamed('quizpanel');
+        //           break;
+        //         case 'Assignment Review':
+        //           GoRouter.of(context).pushNamed('AssignmentScreenForMentors');
+        //           break;
+        //         case 'My Profile':
+        //           GoRouter.of(context).pushNamed('myAccount');
+        //           break;
+        //         case 'Logout':
+        //           logOut(context);
+        //           saveLoginOutState(context);
+        //           GoRouter.of(context).pushReplacement('/login');
+        //           break;
+        //       }
+        //     }
+        //     dropdownValue = value!;
+        //   },
+        // ),
+        SizedBox(width: 15 * horizontalScale,),
+        // TextButton(
+        //     onPressed: () {
+        //       logOut(context);
+        //       saveLoginOutState(context);
+        //       GoRouter.of(context).pushReplacement('/login');
+        //     },
+        //     child: Text(
+        //       'Logout',
+        //       style:  buttonTextStyle,
+        //     )),
 
-      // ElevatedButton(
-      //     onPressed: () {
-  // logOut(context);
-  // saveLoginOutState(context);
-  // GoRouter.of(context).pushReplacement('/login');
-      //     },
-      //     style: ElevatedButton.styleFrom(
-      //       backgroundColor: HexColor("8346E1"),
-      //       shape: RoundedRectangleBorder(
-      //         borderRadius:
-      //         BorderRadius.circular(50),
-      //       ),
-      //     ),
-      //     child: Text("Log out",
-      //         style: textStyle)),
-    ],
+        // ElevatedButton(
+        //     onPressed: () {
+    // logOut(context);
+    // saveLoginOutState(context);
+    // GoRouter.of(context).pushReplacement('/login');
+        //     },
+        //     style: ElevatedButton.styleFrom(
+        //       backgroundColor: HexColor("8346E1"),
+        //       shape: RoundedRectangleBorder(
+        //         borderRadius:
+        //         BorderRadius.circular(50),
+        //       ),
+        //     ),
+        //     child: Text("Log out",
+        //         style: textStyle)),
+      ],
+    ),
   );
 }
 
