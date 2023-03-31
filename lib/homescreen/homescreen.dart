@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../Services/code_generator.dart';
@@ -17,7 +18,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/api/firebase_api.dart';
-import 'package:cloudyml_app2/authentication/firebase_auth.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/router/login_state_check.dart';
 import 'package:cloudyml_app2/screens/exlusive_offer/seasons_offer_screen.dart';
@@ -26,7 +26,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloudyml_app2/fun.dart';
 import 'package:cloudyml_app2/models/firebase_file.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -37,10 +36,8 @@ import 'package:cloudyml_app2/globals.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:star_rating/star_rating.dart';
-import 'package:showcaseview/src/showcase.dart';
 import 'package:cloudyml_app2/global_variable.dart' as globals;
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:html' as html;
 
 var rewardCount = 0;
 String? linkMessage;
@@ -656,6 +653,19 @@ class _LandingScreenState extends State<LandingScreen> {
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Fluttertoast.showToast(
+      //       msg: 'I am toast here.',
+      //       toastLength: Toast.LENGTH_SHORT,
+      //       fontSize: 50.0,
+      //       backgroundColor: Colors.purpleAccent,
+      //       gravity: ToastGravity.CENTER,
+      //       webPosition: 'center ',
+      //       timeInSecForIosWeb: 5,
+      //     );
+      //   },
+      // ),
       drawer: //kIsWeb ? Container() :
           customDrawer(context),
       // floatingActionButton: floatingButton(context),

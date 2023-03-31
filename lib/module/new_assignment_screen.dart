@@ -6,7 +6,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../global_variable.dart';
 import '../models/firebase_file.dart';
+
+import '../screens/flutter_flow/flutter_flow_theme.dart';
 
 class AssignmentScreen extends StatefulWidget {
   const AssignmentScreen(
@@ -135,7 +138,42 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
       final String fileURL = (await downloadUrl.ref.getDownloadURL());
       await sentData.update({"link": fileURL});
       print('Assignment file link is here: $fileURL');
-      Fluttertoast.showToast(msg: "Your file has been uploaded successfully");
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              'Congratulations!',
+              style: FlutterFlowTheme.of(context)
+                  .bodyText1
+                  .override(
+                fontFamily: 'Poppins',
+                fontSize: 25,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            content: Text("Your assignment is submitted successfully.",
+              style:  FlutterFlowTheme.of(context)
+                  .bodyText1
+                  .override(
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),),
+            actions: <Widget>[
+              TextButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+
+      // Fluttertoast.showToast(msg: "Your file has been uploaded successfully");
       count = 1;
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
