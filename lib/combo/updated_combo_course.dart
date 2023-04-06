@@ -139,6 +139,7 @@ class _NewScreenState extends State<NewScreen> {
   void initState() {
     super.initState();
     getTheStreamData();
+    getPercentageOfCourse();
     // getTheDurationOfCourse();
     getAllPaidCourses();
   }
@@ -147,19 +148,9 @@ class _NewScreenState extends State<NewScreen> {
   Widget build(BuildContext context) {
     List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
     final width = MediaQuery.of(context).size.width;
-    getPercentageOfCourse();
+
 
     return Scaffold(
-      // appBar: appBar(context),
-      // drawer: width<650?
-      // Drawer(
-      //   width: 40,
-      //   child: Column(
-      //     children: [
-      //       Text("Hii")
-      //     ],
-      //   ),
-      // ):null,
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Container(
@@ -730,14 +721,7 @@ class _NewScreenState extends State<NewScreen> {
                                                                       ),
                                                                       courseData !=
                                                                               null
-                                                                          ? Text(
-                                                                              courseData[widget.courses![index] + "percentage"] != null
-                                                                                  ? courseData[widget.courses![index] + "percentage"] > 100
-                                                                                      ? "100%"
-                                                                                      : courseData[widget.courses![index] + "percentage"].toString() + "%"
-                                                                                  : "0%",
-                                                                              style: TextStyle(fontSize: 7, fontWeight: FontWeight.bold),
-                                                                            )
+                                                                          ? SizedBox()
                                                                           : SizedBox()
                                                                       // SizedBox(height: 15,),
                                                                       // Text("10%")
@@ -838,21 +822,22 @@ class _NewScreenState extends State<NewScreen> {
                                                         SizedBox(
                                                           height: 15,
                                                         ),
-                                                        courseData != null
-                                                            ? Text(courseData[widget.courses![
-                                                                            index] +
-                                                                        "percentage"] !=
-                                                                    null
-                                                                ? courseData[widget.courses![index] +
-                                                                            "percentage"] >
-                                                                        100
-                                                                    ? "100%"
-                                                                    : courseData[widget.courses![index] +
-                                                                                "percentage"]
-                                                                            .toString() +
-                                                                        "%"
-                                                                : "0%")
-                                                            : Text("0%")
+                                                        // courseData != null
+                                                        //     ? Text(courseData[widget.courses![
+                                                        //                     index] +
+                                                        //                 "percentage"] !=
+                                                        //             null
+                                                        //         ? courseData[widget.courses![index] +
+                                                        //                     "percentage"] >
+                                                        //                 100
+                                                        //             ? "100%"
+                                                        //             : courseData[widget.courses![index] +
+                                                        //                         "percentage"]
+                                                        //                     .toString() +
+                                                        //                 "%"
+                                                        //         : "0%")
+                                                        //     :
+                                                        Text("Progress")
                                                       ],
                                                     ),
                                                   )

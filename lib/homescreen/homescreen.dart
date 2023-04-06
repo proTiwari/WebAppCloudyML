@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-
+import 'package:bot_toast/bot_toast.dart';
 import '../Services/code_generator.dart';
 import '../Services/deeplink_service.dart';
 import '../catalogue_screen.dart';
@@ -134,17 +134,6 @@ class _LandingScreenState extends State<LandingScreen> {
   late ScrollController _controller;
   final notificationBox = Hive.box('NotificationBox');
 
-  // showNotification() async {
-  //   final provider = Provider.of<UserProvider>(context, listen: false);
-  //   if (notificationBox.isEmpty) {
-  //     notificationBox.put(1, {"count": 0});
-  //     provider
-  //         .showNotificationHomeScreen(notificationBox.values.first["count"]);
-  //   } else {
-  //     provider
-  //         .showNotificationHomeScreen(notificationBox.values.first["count"]);
-  //   }
-  // }
 
   List<CourseDetails> featuredCourse = [];
 
@@ -269,56 +258,6 @@ class _LandingScreenState extends State<LandingScreen> {
 
   bool isShow = false;
 
-  _wpshow() async {
-    await FirebaseFirestore.instance
-        .collection('Notice')
-        .doc('rLwaS5rDufmCQ7Gv5vMI')
-        .get()
-        .then((value) {
-      setState(() {
-        isShow = value.data()!['show'];
-      });
-
-      print("show is===$isShow");
-    });
-  }
-
-  _launchWhatsapp() async {
-    var note = await FirebaseFirestore.instance
-        .collection('Notice')
-        .doc('rLwaS5rDufmCQ7Gv5vMI')
-        .get()
-        .then((value) {
-      return value.data()!['msg']; // Access your after your get the data
-    });
-
-    print("the msg is====$note");
-    print("the show is====$isShow");
-
-    var whatsApp1 = await FirebaseFirestore.instance
-        .collection('Notice')
-        .doc('rLwaS5rDufmCQ7Gv5vMI')
-        .get()
-        .then((value) {
-      return value.data()!['number']; // Access your after your get the data
-    });
-
-    print("the number is====$whatsApp1");
-
-    var whatsapp = "+918902530551";
-    var whatsappAndroid =
-        Uri.parse("whatsapp://send?phone=$whatsApp1&text=$note");
-    if (await canLaunchUrl(whatsappAndroid)) {
-      await launchUrl(whatsappAndroid);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("WhatsApp is not installed on the device"),
-        ),
-      );
-    }
-  }
-
   var ref;
   var userDocData;
   userData() async {
@@ -327,6 +266,9 @@ class _LandingScreenState extends State<LandingScreen> {
           .collection("Users")
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
+
+
+        globals.role = ref.data()!["role"].toString();
 
       print('uid is ${FirebaseAuth.instance.currentUser!.uid}');
 
@@ -609,11 +551,7 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   void initState() {
     super.initState();
-    // print('this is url ${html.window.location.href}');
-    // print('this is path ${Uri.base.path}');
-    // showNotification();
     _controller = ScrollController();
-
     futureFiles = FirebaseApi.listAll('reviews/recent_review');
     futurefilesComboCourseReviews =
         FirebaseApi.listAll('reviews/combo_course_review');
@@ -623,10 +561,6 @@ class _LandingScreenState extends State<LandingScreen> {
     fetchCourses();
     dbCheckerForPayInParts();
     userData();
-    // startTimer();
-    // getuserdetails();
-    checkrewardexpiry();
-
   }
 
   Timer? countDownTimer;
@@ -651,24 +585,8 @@ class _LandingScreenState extends State<LandingScreen> {
     var horizontalScale = screenWidth / mockUpWidth;
     setFeaturedCourse(course);
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Fluttertoast.showToast(
-      //       msg: 'I am toast here.',
-      //       toastLength: Toast.LENGTH_SHORT,
-      //       fontSize: 50.0,
-      //       backgroundColor: Colors.purpleAccent,
-      //       gravity: ToastGravity.CENTER,
-      //       webPosition: 'center ',
-      //       timeInSecForIosWeb: 5,
-      //     );
-      //   },
-      // ),
-      drawer: //kIsWeb ? Container() :
-          customDrawer(context),
-      // floatingActionButton: floatingButton(context),
+      drawer: customDrawer(context),
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
         if (constraints.maxWidth >= 650) {
@@ -848,106 +766,6 @@ class _LandingScreenState extends State<LandingScreen> {
                       padding: const EdgeInsets.only(top: 8.0, right: 5),
                       child: customMenuBar(context),
                     ),
-                    // Positioned(
-                    //   top: verticalScale * 475,
-                    //   left: 20 * horizontalScale,
-                    //   child: Row(
-                    //     children: [
-                    //       Stack(
-                    //         children: [
-                    //           Positioned.fill(
-                    //               child: Container(
-                    //             margin: EdgeInsets.all(6),
-                    //             color: Colors.white,
-                    //           )),
-                    //           Icon(
-                    //             Icons.check_circle,
-                    //             color: Colors.deepPurpleAccent,
-                    //             size: 25,
-                    //           ),
-                    //         ],
-                    //       ),
-                    //       SizedBox(
-                    //         width: 5,
-                    //       ),
-                    //       Text('Trusted by $numberOfLearners',
-                    //           style: TextStyle(
-                    //               fontSize: 12,
-                    //               fontWeight: FontWeight.normal,
-                    //               color: Colors.white)),
-                    //       SizedBox(
-                    //         width: 15 * horizontalScale,
-                    //       ),
-                    //       Stack(
-                    //         children: [
-                    //           Positioned.fill(
-                    //               child: Container(
-                    //             margin: EdgeInsets.all(6),
-                    //             color: Colors.white,
-                    //           )),
-                    //           Icon(
-                    //             Icons.check_circle,
-                    //             color: Colors.deepPurpleAccent,
-                    //             size: 25,
-                    //           ),
-                    //         ],
-                    //       ),
-                    //       SizedBox(
-                    //         width: 5,
-                    //       ),
-                    //       Text(
-                    //         'Learn from industry experts',
-                    //         style: TextStyle(
-                    //             fontSize: 12,
-                    //             fontWeight: FontWeight.normal,
-                    //             color: Colors.white),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-
-                    // Positioned(
-                    //     top: verticalScale * 540,
-                    //     left: 50,
-                    //     child: SizedBox(
-                    //       height: 75 * verticalScale,
-                    //       child: ElevatedButton(
-                    //         style: ElevatedButton.styleFrom(
-                    //           backgroundColor: HexColor('8346E1'),
-                    //           shape: RoundedRectangleBorder(
-                    //             borderRadius:
-                    //                 BorderRadius.circular(12), // <-- Radius
-                    //           ),
-                    //         ),
-                    //         onPressed: () {
-                    //           GoRouter.of(context).pushNamed('store');
-                    //         },
-                    //         child: Padding(
-                    //           padding: const EdgeInsets.all(8.0),
-                    //           child: Row(
-                    //             children: [
-                    //               Text(
-                    //                 'View Courses',
-                    //                 style: TextStyle(fontSize: 16),
-                    //               ),
-                    //               SizedBox(
-                    //                 width: 5 * horizontalScale,
-                    //               ),
-                    //               CircleAvatar(
-                    //                   maxRadius: 12,
-                    //                   backgroundColor: Colors.white,
-                    //                   child: Center(
-                    //                     child: Icon(
-                    //                       Icons.arrow_forward_rounded,
-                    //                       color: Colors.black,
-                    //                       size: 17,
-                    //                     ),
-                    //                   ))
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     )),
                     Positioned(
                         top: verticalScale * 700,
                         left: 50,
@@ -2812,7 +2630,6 @@ class _LandingScreenState extends State<LandingScreen> {
                           alignment: Alignment.centerRight,
                           child: IconButton(
                               onPressed: () {
-                                print('its opened');
                                 Scaffold.of(context).openDrawer();
                               },
                               icon: Icon(
@@ -2973,17 +2790,6 @@ class _LandingScreenState extends State<LandingScreen> {
                           fit: BoxFit.fill,
                         ),
                       ),
-                      // Positioned(
-                      //   top: -1,
-                      //   child: Container(
-                      //     width: screenWidth,
-                      //     child: Divider(
-                      //       color: Colors.purple,
-                      //       height: 1,
-                      //       thickness: 1,
-                      //     ),
-                      //   ),
-                      // ),
                       Positioned(
                           top: verticalScale * 30,
                           left: 15 * horizontalScale,
@@ -4769,7 +4575,6 @@ class _LandingScreenState extends State<LandingScreen> {
                           ),
                         ),
                       ),
-
                       Positioned(
                         bottom: 70,
                         left: 15,

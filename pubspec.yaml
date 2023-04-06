@@ -122,8 +122,9 @@ dependencies:
   from_css_color: ^2.0.0
   image_downloader_web: ^2.0.2
   dropdown_button2:
+  bot_toast:
+  responsive_sizer:
 
-  
 dev_dependencies:
   flutter_test:
     sdk: flutter

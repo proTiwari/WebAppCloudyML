@@ -3,7 +3,6 @@ import 'package:cloudyml_app2/MyAccount/myaccount.dart';
 import 'package:cloudyml_app2/combo/combo_course.dart';
 import 'package:cloudyml_app2/combo/combo_store.dart';
 import 'package:cloudyml_app2/combo/updated_combo_course.dart';
-import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/homepage.dart';
 import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:cloudyml_app2/module/review%20resume/review_resume.dart';
@@ -27,6 +26,7 @@ import '../live_doubt_screen/live_doubt_screen.dart';
 import '../models/course_details.dart';
 import '../my_Courses.dart';
 import '../screens/assignment_tab_screen.dart';
+import '../screens/my_profile_screen/my_profile.dart';
 import '../screens/quiz/admin_quiz.dart';
 import '../screens/quiz/quiz_page.dart';
 import '../screens/quiz/quiz_panel.dart';
@@ -61,7 +61,7 @@ class MyRouter {
         }
 
        },
-      routes: <RouteBase>[
+      routes: <GoRoute>[
         GoRoute(
             path: '/',
             pageBuilder: (context, state) {
@@ -121,7 +121,8 @@ class MyRouter {
             name: 'myAccount',
             path: '/myAccount',
             pageBuilder: (context, state) {
-              return MaterialPage(child: MyAccountPage());
+              return MaterialPage(
+                  child: MyAccountPage());
             }
         ),
         GoRoute(
@@ -171,7 +172,6 @@ class MyRouter {
                 key: state.pageKey, child: LiveDoubtScreen());
           },
         ),
-
         GoRoute(
           name: 'quizentry',
           path: '/quizentry',
@@ -213,24 +213,6 @@ class MyRouter {
               ));
           }
         ),
-        // GoRoute(
-        //     name: 'featuredCourses',
-        //     path: '/featuredCourses',
-        //     pageBuilder: (context, state) {
-        //       final String cID = state.queryParams['cID']!;
-        //       final String id = state.queryParams['id']!;
-        //       final String courseName = state.queryParams['courseName']!;
-        //       final String coursePrice = state.queryParams['coursePrice']!;
-        //       return MaterialPage(
-        //           key: state.pageKey,
-        //           child: FeatureCourses(
-        //             cID: cID,
-        //             id: id,
-        //             cName: courseName,
-        //             courseP: coursePrice,
-        //           ));
-        //     }
-        // ),
         GoRoute(
             name: 'NewFeature',
             path: '/NewFeature',
@@ -404,18 +386,6 @@ class MyRouter {
                   ));
             }
         ),
-        // GoRoute(
-        //     name: 'videoNameClass',
-        //     path: '/videoNameClass',
-        //     builder: (context, state) {
-        //       final String videoName = state.queryParams['videoName']!;
-        //       final dynamic videoController = state.queryParams['videoController']!;
-        //       return videoNameClass(
-        //         videoName: videoName,
-        //         videoController: videoController,
-        //       );
-        //     },
-        // ),
 
       ],
       errorPageBuilder: (context, state) {

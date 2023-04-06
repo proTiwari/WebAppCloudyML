@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudyml_app2/home.dart';
+import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -325,7 +325,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                                             Navigator.pushReplacement(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => HomePage(),
+                                                builder: (context) => LandingScreen(),
                                               ),
                                             );
                                             setState(() {
@@ -702,7 +702,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                                         Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => HomePage(),
+                                            builder: (context) => LandingScreen(),
                                           ),
                                         );
                                         setState(() {

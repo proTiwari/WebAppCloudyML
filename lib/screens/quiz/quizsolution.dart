@@ -1,7 +1,7 @@
 import 'package:cloudyml_app2/homepage.dart';
+import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../home.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
@@ -993,7 +993,7 @@ class _QuizSolutionCopyWidgetState extends State<QuizSolutionCopyWidget> {
                 GestureDetector(
                   onTap: (() {
                     Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => HomePage()));
+                        MaterialPageRoute(builder: (context) => LandingScreen()));
                   }),
                   child: Align(
                     alignment: AlignmentDirectional(0.95, 0.95),

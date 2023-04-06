@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../home.dart';
 
 class CheckboxPage extends StatefulWidget {
   const CheckboxPage({Key? key}) : super(key: key);
@@ -223,7 +222,7 @@ class _CheckboxPageState extends State<CheckboxPage> {
                         await addData(addToDB);
                         Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
-                              builder: (_) => HomePage(),
+                              builder: (_) => LandingScreen(),
                             ),
                             (Route<dynamic> route) => false);
                       }

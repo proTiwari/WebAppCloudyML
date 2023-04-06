@@ -8,7 +8,6 @@ import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/Services/UserServices.dart';
 import 'package:cloudyml_app2/authentication/firebase_auth.dart';
 import 'package:cloudyml_app2/globals.dart';
-import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/widgets/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

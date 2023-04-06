@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/AppProvider.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/globals.dart';
-import 'package:cloudyml_app2/home.dart';
+import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:cloudyml_app2/widgets/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +106,7 @@ class _PhoneNameState extends State<PhoneName> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => HomePage(),
+                      builder: (context) => LandingScreen(),
                     ),
                   );
                   currentUser?.updateDisplayName(username.text);

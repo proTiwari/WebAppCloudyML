@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/combo/combo_course.dart';
 import 'package:cloudyml_app2/combo/combo_store.dart';
 import 'package:cloudyml_app2/globals.dart';
-import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';

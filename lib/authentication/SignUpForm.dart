@@ -6,7 +6,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/authentication/firebase_auth.dart';
 import 'package:cloudyml_app2/globals.dart';
-import 'package:cloudyml_app2/home.dart';
+import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:cloudyml_app2/models/existing_user.dart';
 import 'package:cloudyml_app2/widgets/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -101,7 +101,7 @@ class _SignUpformState extends State<SignUpform> {
               duration: Duration(milliseconds: 200),
               curve: Curves.bounceInOut,
               type: PageTransitionType.rightToLeftWithFade,
-              child: HomePage()),
+              child: LandingScreen()),
           (route) => false);
       await AwesomeNotifications().createNotification(
           content: NotificationContent(

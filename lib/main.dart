@@ -5,6 +5,7 @@ import 'dart:core';
 import 'dart:html' as html;
 import 'dart:js';
 import 'dart:ui';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/AppProvider.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
@@ -30,6 +31,7 @@ import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:renderer_switcher/renderer_switcher.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:go_router/go_router.dart';
@@ -366,8 +368,9 @@ class _MyAppState extends State<MyApp> {
           //   );
           // },
 
-          child: Builder(
-            builder: (context) {
+          child: ResponsiveSizer(
+            builder: (context, orientation, screenType) {
+              final botToastBuilder = BotToastInit();
               final router = Provider.of<MyRouter>(context, listen: false).routes;
               return MaterialApp.router(
 
@@ -377,15 +380,17 @@ class _MyAppState extends State<MyApp> {
                 debugShowCheckedModeBanner: false,
                 title: 'CloudyML',
                 scrollBehavior: MyCustomScrollBehavior(),
-                builder: (BuildContext context, Widget? widget) {
+                builder: (BuildContext context, child) {
+                  child = MediaQuery(
+                    child: child!,
+                    data: MediaQuery.of(context).copyWith(textScaleFactor: 1.15),
+                  );
+                  child = botToastBuilder(context,child);
                   ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
                     return Container();
                   };
-                  return MediaQuery(
-                    child: widget!,
-                    data: MediaQuery.of(context).copyWith(textScaleFactor: 1.15),
-                  );
-
+                 botToastBuilder(context,widget);
+                  return child;
                 },
                 theme: ThemeData(
                   primarySwatch: Colors.blue,

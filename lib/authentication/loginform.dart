@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:cloudyml_app2/authentication/firebase_auth.dart';
 import 'package:cloudyml_app2/globals.dart';
-import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/widgets/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +9,8 @@ import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
+
+import '../homescreen/homescreen.dart';
 
 
 class LoginForm extends StatefulWidget {
@@ -277,7 +278,7 @@ class _LoginFormState extends State<LoginForm> {
                                       duration: Duration(milliseconds: 200),
                                       curve: Curves.bounceInOut,
                                       type: PageTransitionType.rightToLeftWithFade,
-                                      child: HomePage()),
+                                      child: LandingScreen()),
                                   (route) => false);
                               setState(() {
                                 _isLoading = false;

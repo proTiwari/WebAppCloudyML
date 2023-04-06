@@ -21,7 +21,7 @@ import 'MyAccount/myaccount.dart';
 import 'Providers/UserProvider.dart';
 import 'authentication/firebase_auth.dart';
 import 'catalogue_screen.dart';
-import 'home.dart';
+
 import 'module/pdf_course.dart';
 
 class HomeScreen extends StatefulWidget {

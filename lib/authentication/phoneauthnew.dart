@@ -6,8 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/authentication/firebase_auth.dart';
 import 'package:cloudyml_app2/globals.dart';
-import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/homepage.dart';
+import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:cloudyml_app2/pages/newentername.dart';
 import 'package:cloudyml_app2/widgets/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -464,7 +464,7 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
                                       duration: Duration(milliseconds: 200),
                                       curve: Curves.bounceInOut,
                                       type: PageTransitionType.rightToLeftWithFade,
-                                      child: HomePage()),
+                                      child: LandingScreen()),
                                       (route) => false);
                             }
                             if(user.displayName==null){

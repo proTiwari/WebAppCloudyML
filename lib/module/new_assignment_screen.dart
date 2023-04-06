@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -173,7 +174,14 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
         },
       );
 
-      // Fluttertoast.showToast(msg: "Your file has been uploaded successfully");
+      // BotToast.showText(
+      //     text: "Your assignment is submitted successfully.",
+      //     contentColor: Colors.blue,
+      //     align: Alignment.center,
+      //     duration: Duration(seconds: 5),
+      //     crossPage: true);
+
+
       count = 1;
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());

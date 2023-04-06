@@ -129,6 +129,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  bot_toast:
+    dependency: "direct main"
+    description:
+      name: bot_toast
+      sha256: "19306147033316a7873c5d261b874fca3f341c05e4e1c12be56153ad11187edd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.3"
   bottom_drawer:
     dependency: "direct main"
     description:
@@ -1605,6 +1613,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.0"
+  responsive_sizer:
+    dependency: "direct main"
+    description:
+      name: responsive_sizer
+      sha256: "1632edd443b9ace1b88b3eb3c0520cb610cc8dcf3710197f7e3a0c0f38aae508"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.1"
   rfc_6901:
     dependency: transitive
     description:

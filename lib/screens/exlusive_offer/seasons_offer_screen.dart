@@ -13,8 +13,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../Providers/UserProvider.dart';
 import '../../globals.dart';
-import '../../home.dart';
 import '../../homepage.dart';
+import '../../homescreen/homescreen.dart';
 import '../../models/course_details.dart';
 
 class SeasonOffer extends StatefulWidget {
@@ -118,7 +118,7 @@ class _SeasonOfferState extends State<SeasonOffer> {
           duration: Duration(milliseconds: 200),
           curve: Curves.bounceInOut,
           type: PageTransitionType.rightToLeftWithFade,
-          child: HomePage(),
+          child: LandingScreen(),
         ),
             (route) => false);
     print('pushedtohome');

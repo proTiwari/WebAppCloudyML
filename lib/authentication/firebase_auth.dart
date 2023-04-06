@@ -2,7 +2,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/globals.dart';
-import 'package:cloudyml_app2/home.dart';
+import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
@@ -70,7 +70,7 @@ class _AuthenticateState extends State<Authenticate> {
               return CatelogueScreen();
             } else {
               // return CatelogueScreen();
-              return HomePage();
+              return LandingScreen();
             }
           } else {
             return CheckboxPage();
@@ -276,7 +276,7 @@ class GoogleSignInProvider extends ChangeNotifier {
               duration: Duration(milliseconds: 20),
               curve: Curves.bounceInOut,
               type: PageTransitionType.rightToLeftWithFade,
-              child: HomePage()),
+              child: LandingScreen()),
           (route) => false,
         );
       }

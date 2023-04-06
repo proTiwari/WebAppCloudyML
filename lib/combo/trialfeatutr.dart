@@ -67,20 +67,7 @@ class _NewFeatureState extends State<NewFeature> {
     });
   }
 
-  var coursePercent = {};
-  var courseData = null;
-  // getPercentageOfCourse() async {
-  //   var data = await FirebaseFirestore.instance
-  //       .collection("courseprogress")
-  //       .doc(FirebaseAuth.instance.currentUser!.uid)
-  //       .get();
-  //   setState(() {
-  //     courseData = data.data();
-  //   });
-  //   print("GETDATA $courseData");
-  //   print(widget.courses);
-  //   print(courseData![widget.courses![2] + "percentage"]);
-  // }
+
 
   Map<String, dynamic> numberOfCourseHours = {};
   late VideoPlayerController _controller;
@@ -238,7 +225,6 @@ class _NewFeatureState extends State<NewFeature> {
     getCourseName();
     // getTheDurationOfCourse();
     getAllPaidCourses();
-    // getPercentageOfCourse();
     super.initState();
   }
 
@@ -388,9 +374,9 @@ class _NewFeatureState extends State<NewFeature> {
                                         color: Colors.white),
                                     child: InkWell(
                                       onTap: () {
-                                        setState(() {
-                                          courseId = courseList[index].courseDocumentId;
-                                        });
+                                        // setState(() {
+                                        //   courseId = courseList[index].courseDocumentId;
+                                        // });
                                         // final id = index.toString();
                                         // GoRouter.of(context).pushNamed('catalogue',
                                         //     queryParams: {'id': id, 'cID': courseId});

@@ -2,11 +2,17 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudyml_app2/api/firebase_api.dart';
 import 'package:cloudyml_app2/fun.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:cloudyml_app2/models/firebase_file.dart';
 import 'package:cloudyml_app2/globals.dart';
+import 'package:provider/provider.dart';
+import '../../authentication/firebase_auth.dart';
+import '../../router/login_state_check.dart';
+import '/global_variable.dart' as globals;
 
 class ReviewsScreen extends StatefulWidget {
   const ReviewsScreen({Key? key}) : super(key: key);
@@ -30,6 +36,9 @@ class _Review1State extends State<ReviewsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    void saveLoginOutState(BuildContext context) {
+      Provider.of<LoginState>(context, listen: false).loggedIn = false;
+    }
     final size = MediaQuery.of(context).size;
     final width = size.width;
     final containerWidth = 300.0;
@@ -49,7 +58,159 @@ class _Review1State extends State<ReviewsScreen> {
                 width: screenWidth,
                 height: 60,
                 color: HexColor("440F87"),
-                child: Center(child: customMenuBar(context)),
+                child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: horizontalScale * 10,
+                          ),
+                          Image.asset(
+                            "assets/logo2.png",
+                            width: 75,
+                            height: 55,
+                          ),
+                          Text(
+                            "CloudyML",
+                            style: textStyle,
+                          ),
+                          Spacer(),
+                          TextButton(
+                              onPressed: () {
+                                GoRouter.of(context).pushNamed('home');
+                              },
+                              child: Text(
+                                'Home',
+                                style: buttonTextStyle.copyWith(
+                                  color: Colors.white ,
+                                ),
+                              )),
+                          SizedBox(
+                            width: horizontalScale * 10,
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                GoRouter.of(context).pushNamed('store');
+                              },
+                              child: Text('Store',
+                                  style: buttonTextStyle.copyWith(
+                                    color: Colors.white ,
+                                  )
+                              )),
+                          SizedBox(
+                            width: horizontalScale * 10,
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                // GoRouter.of(context).goNamed('reviews');
+                                GoRouter.of(context).pushNamed('reviews');
+                              },
+                              child: Text(
+                                'Reviews',
+                                style:  buttonTextStyle.copyWith(
+                                 color: HexColor('873AFF'),
+                                ),
+                              )),
+                          SizedBox(
+                            width: horizontalScale * 10,
+                          ),
+                          // TextButton(
+                          //     onPressed: () {
+                          //       GoRouter.of(context).pushNamed('LiveDoubtSession');
+                          //     },
+                          //     child: Text(
+                          //       'Live Doubt Support',
+                          //       style:  buttonTextStyle.copyWith(
+                          //         color:
+                          //         Uri.base.path == '/LiveDoubtScreen'? HexColor('873AFF') :
+                          //         Colors.white ,
+                          //       ),
+                          //     )),
+                          // SizedBox(
+                          //   width: horizontalScale * 15,
+                          // ),
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton2(
+                              customButton: Row(
+                                children: [
+                                  Text('More',
+                                    style: buttonTextStyle.copyWith(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  SizedBox(width: 100,),
+                                  Icon(Icons.arrow_drop_down, color: Colors.white,)
+                                ],
+                              ),
+                              isExpanded: false,
+                              isDense: false,
+                              iconStyleData: IconStyleData(
+                                icon: Icon(Icons.arrow_drop_down),
+                                iconDisabledColor: Colors.white,
+                                iconEnabledColor: Colors.white,
+                              ),
+                              dropdownStyleData:  DropdownStyleData(
+                                decoration: BoxDecoration(
+                                  color: Colors.deepPurple,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              underline: Container(),
+                              hint: Text('More',
+                                style: buttonTextStyle.copyWith(
+                                  color: Uri.base.path == '/myCourses'
+                                      ? HexColor('873AFF') : Colors.white,
+                                ),
+                              ),
+                              onChanged: (String? value) {
+                                if (value != dropdownValue) {
+
+                                  if (value == 'My Courses') {
+                                    GoRouter.of(context).pushReplacementNamed('myCourses');
+                                  } else if(value == 'Resume Review') {
+                                    GoRouter.of(context).pushReplacementNamed('reviewResume');
+                                  } else if(value == 'Admin Quiz Panel') {
+                                    GoRouter.of(context).pushReplacementNamed('quizpanel');
+                                  } else if(value == 'Assignment Review') {
+                                    GoRouter.of(context).pushReplacementNamed('AssignmentScreenForMentors');
+                                  } else if(value == 'My Profile') {
+                                    GoRouter.of(context).pushReplacementNamed('myAccount');
+                                  } else if(value == 'Logout') {
+                                    logOut(context);
+                                    saveLoginOutState(context);
+                                    GoRouter.of(context).pushReplacement('/login');
+                                  } else {
+                                    Fluttertoast.showToast(msg: 'Please refresh the screen.');
+                                  }
+                                }
+                              },
+                              items: globals.role == 'mentor' ?
+                              mentorItems.map((String mentorItems) {
+                                return DropdownMenuItem(
+                                    value: mentorItems,
+                                    child: Text(mentorItems,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ));
+                              }).toList()
+                                  :  items.map((String items) {
+                                return DropdownMenuItem(
+                                    value: items,
+                                    child: Text(items,
+                                      style: buttonTextStyle.copyWith(
+                                        color: Colors.white,
+                                      ),
+                                    ));
+                              }).toList(),
+                            ),),
+                          SizedBox(width: 15 * horizontalScale,),
+                        ],
+                      ),
+                    )),
               ),
               SizedBox(
                 height: 25 * verticalScale,

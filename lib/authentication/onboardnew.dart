@@ -1,11 +1,11 @@
 import 'dart:math';
-
 import 'package:cloudyml_app2/authentication/SignUpForm.dart';
 import 'package:cloudyml_app2/authentication/firebase_auth.dart';
 import 'package:cloudyml_app2/authentication/loginform.dart';
 import 'package:cloudyml_app2/authentication/onboardbg.dart';
 import 'package:cloudyml_app2/authentication/phoneauthnew.dart';
 import 'package:cloudyml_app2/globals.dart';
+import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:cloudyml_app2/models/existing_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +20,6 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:url_launcher/url_launcher.dart';
-
-import '../home.dart';
 import '../screens/offerscreen.dart';
 import '../widgets/loading.dart';
 
@@ -601,7 +599,7 @@ class _OnboardewState extends State<Onboardew> {
                                               curve: Curves.bounceInOut,
                                               type: PageTransitionType
                                                   .rightToLeftWithFade,
-                                              child: HomePage()),
+                                              child: LandingScreen()),
                                           (route) => false);
                                       setState(() {
                                         _isLoading = false;
@@ -1373,7 +1371,7 @@ class _OnboardewState extends State<Onboardew> {
                                           curve: Curves.bounceInOut,
                                           type: PageTransitionType
                                               .rightToLeftWithFade,
-                                          child: HomePage()),
+                                          child: LandingScreen()),
                                           (route) => false);
                                   setState(() {
                                     _isLoading = false;
