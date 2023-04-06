@@ -39,6 +39,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
   bool loading = false;
 
   late String feaurl;
+  late String deurl;
 
   void url() async {
     diurl = await FirebaseFirestore.instance
@@ -72,6 +73,17 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
     });
 
     print("url is=====$feaurl");
+
+    deurl = await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("fSU4MLz1E0858ft8m7F5_dataeng")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
+
+    print("url is=====$deurl");
   }
 
   @override
@@ -624,11 +636,8 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                             const Duration(
                                                                 seconds: 2),
                                                             () {
-                                                          if (diurl ==
-                                                              '/featuredCourses') {
-                                                            print(
-                                                                "i am in otp if");
-
+                                                          if (feaurl ==
+                                                              'aEGX6kMfHzQrVgP3WCwU') {
                                                             final id = "0";
                                                             final cID =
                                                                 "aEGX6kMfHzQrVgP3WCwU";
@@ -638,7 +647,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                 "9999";
                                                             GoRouter.of(context)
                                                                 .goNamed(
-                                                                    'featuredCourses',
+                                                                    'NewFeature',
                                                                     queryParams: {
                                                                   'cID': cID,
                                                                   'courseName':
@@ -658,15 +667,15 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                               //   'cID': cID,
                                                               //   }
                                                             );
-                                                          } else if (feaurl ==
-                                                              '/NewFeature') {
+                                                          } else if (deurl ==
+                                                              'F9gxnjW9nf5Lxg5A6758') {
                                                             final id = "0";
                                                             final cID =
-                                                                "aEGX6kMfHzQrVgP3WCwU";
+                                                                "F9gxnjW9nf5Lxg5A6758";
                                                             final courseName =
-                                                                "Data Science & Analytics Placement Assurance Program";
+                                                                "Data Engineering Placement Assurance Program";
                                                             final courseP =
-                                                                "9999";
+                                                                "10000";
                                                             GoRouter.of(context)
                                                                 .goNamed(
                                                                     'NewFeature',

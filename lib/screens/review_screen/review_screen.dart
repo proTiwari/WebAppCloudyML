@@ -1,11 +1,18 @@
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudyml_app2/api/firebase_api.dart';
+import 'package:cloudyml_app2/fun.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:cloudyml_app2/models/firebase_file.dart';
 import 'package:cloudyml_app2/globals.dart';
+import 'package:provider/provider.dart';
+import '../../authentication/firebase_auth.dart';
+import '../../router/login_state_check.dart';
+import '/global_variable.dart' as globals;
 
 class ReviewsScreen extends StatefulWidget {
   const ReviewsScreen({Key? key}) : super(key: key);
@@ -29,8 +36,13 @@ class _Review1State extends State<ReviewsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    void saveLoginOutState(BuildContext context) {
+      Provider.of<LoginState>(context, listen: false).loggedIn = false;
+    }
     final size = MediaQuery.of(context).size;
     final width = size.width;
+    final containerWidth = 300.0;
+    final containerHeight = 300.0;
     double height = MediaQuery.of(context).size.height;
     var verticalScale = height / mockUpHeight;
     var horizontalScale = width / mockUpWidth;
@@ -43,93 +55,192 @@ class _Review1State extends State<ReviewsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 414 * horizontalScale,
-                      height: 180 * verticalScale,
-                      decoration: BoxDecoration(
-                        color: HexColor('7A62DE'),
-                      ),
-                    ),
-                    Positioned(
-                      top: 40 * verticalScale,
-                      left: 150 * horizontalScale,
-                      child: Container(alignment: Alignment.center,height: 40,width: 260,
-                          decoration: BoxDecoration(
-                              border: Border.fromBorderSide(
-                                  BorderSide(width: 1,color: Colors.deepPurple.shade700)),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(5)
-                              )),
-                          child: Text(
-                            'Our Learners Speaks',textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.deepPurple.shade700,
-                                fontWeight: FontWeight.bold),
-                          )),
-                    ),
-                    // Positioned(
-                    //     top: 65 * verticalScale,
-                    //     left: 196 * horizontalScale,
-                    //     child: Container(
-                    //       child: Row(
-                    //         children: [
-                    //           Text(
-                    //             'Reviews',
-                    //             textScaleFactor:
-                    //             min(horizontalScale, verticalScale),
-                    //             style: TextStyle(
-                    //                 fontSize: 30,
-                    //                 fontWeight: FontWeight.bold,
-                    //                 color: Colors.white),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     )),
-                    Positioned(
-                        top: 30 * verticalScale,
-                        left: 10 * horizontalScale,
-                        child: IconButton(
-                          onPressed: () {
-                            GoRouter.of(context).push('/home');
-                            // Navigator.pop(context);
-                          },
-                          icon: Icon(
-                            Icons.arrow_back,
-                            size: 40 * min(horizontalScale, verticalScale),
-                            color: Colors.white,
+                width: screenWidth,
+                height: 60,
+                color: HexColor("440F87"),
+                child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: horizontalScale * 10,
                           ),
-                        )),
-                  ],
-                ),
+                          Image.asset(
+                            "assets/logo2.png",
+                            width: 75,
+                            height: 55,
+                          ),
+                          Text(
+                            "CloudyML",
+                            style: textStyle,
+                          ),
+                          Spacer(),
+                          TextButton(
+                              onPressed: () {
+                                GoRouter.of(context).pushNamed('home');
+                              },
+                              child: Text(
+                                'Home',
+                                style: buttonTextStyle.copyWith(
+                                  color: Colors.white ,
+                                ),
+                              )),
+                          SizedBox(
+                            width: horizontalScale * 10,
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                GoRouter.of(context).pushNamed('store');
+                              },
+                              child: Text('Store',
+                                  style: buttonTextStyle.copyWith(
+                                    color: Colors.white ,
+                                  )
+                              )),
+                          SizedBox(
+                            width: horizontalScale * 10,
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                // GoRouter.of(context).goNamed('reviews');
+                                GoRouter.of(context).pushNamed('reviews');
+                              },
+                              child: Text(
+                                'Reviews',
+                                style:  buttonTextStyle.copyWith(
+                                 color: HexColor('873AFF'),
+                                ),
+                              )),
+                          SizedBox(
+                            width: horizontalScale * 10,
+                          ),
+                          // TextButton(
+                          //     onPressed: () {
+                          //       GoRouter.of(context).pushNamed('LiveDoubtSession');
+                          //     },
+                          //     child: Text(
+                          //       'Live Doubt Support',
+                          //       style:  buttonTextStyle.copyWith(
+                          //         color:
+                          //         Uri.base.path == '/LiveDoubtScreen'? HexColor('873AFF') :
+                          //         Colors.white ,
+                          //       ),
+                          //     )),
+                          // SizedBox(
+                          //   width: horizontalScale * 15,
+                          // ),
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton2(
+                              customButton: Row(
+                                children: [
+                                  Text('More',
+                                    style: buttonTextStyle.copyWith(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  SizedBox(width: 100,),
+                                  Icon(Icons.arrow_drop_down, color: Colors.white,)
+                                ],
+                              ),
+                              isExpanded: false,
+                              isDense: false,
+                              iconStyleData: IconStyleData(
+                                icon: Icon(Icons.arrow_drop_down),
+                                iconDisabledColor: Colors.white,
+                                iconEnabledColor: Colors.white,
+                              ),
+                              dropdownStyleData:  DropdownStyleData(
+                                decoration: BoxDecoration(
+                                  color: Colors.deepPurple,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              underline: Container(),
+                              hint: Text('More',
+                                style: buttonTextStyle.copyWith(
+                                  color: Uri.base.path == '/myCourses'
+                                      ? HexColor('873AFF') : Colors.white,
+                                ),
+                              ),
+                              onChanged: (String? value) {
+                                if (value != dropdownValue) {
+
+                                  if (value == 'My Courses') {
+                                    GoRouter.of(context).pushReplacementNamed('myCourses');
+                                  } else if(value == 'Resume Review') {
+                                    GoRouter.of(context).pushReplacementNamed('reviewResume');
+                                  } else if(value == 'Admin Quiz Panel') {
+                                    GoRouter.of(context).pushReplacementNamed('quizpanel');
+                                  } else if(value == 'Assignment Review') {
+                                    GoRouter.of(context).pushReplacementNamed('AssignmentScreenForMentors');
+                                  } else if(value == 'My Profile') {
+                                    GoRouter.of(context).pushReplacementNamed('myAccount');
+                                  } else if(value == 'Logout') {
+                                    logOut(context);
+                                    saveLoginOutState(context);
+                                    GoRouter.of(context).pushReplacement('/login');
+                                  } else {
+                                    Fluttertoast.showToast(msg: 'Please refresh the screen.');
+                                  }
+                                }
+                              },
+                              items: globals.role == 'mentor' ?
+                              mentorItems.map((String mentorItems) {
+                                return DropdownMenuItem(
+                                    value: mentorItems,
+                                    child: Text(mentorItems,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ));
+                              }).toList()
+                                  :  items.map((String items) {
+                                return DropdownMenuItem(
+                                    value: items,
+                                    child: Text(items,
+                                      style: buttonTextStyle.copyWith(
+                                        color: Colors.white,
+                                      ),
+                                    ));
+                              }).toList(),
+                            ),),
+                          SizedBox(width: 15 * horizontalScale,),
+                        ],
+                      ),
+                    )),
               ),
-              // SizedBox(
-              //   height: 10,
-              // ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 20,
-                  top: 10,
-                ),
-                child: Text(
-                  'Recent reviews',
-                  textScaleFactor: min(horizontalScale, verticalScale),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Color.fromRGBO(0, 0, 0, 1),
-                      fontFamily: 'Poppins',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      height: 2),
-                ),
+              SizedBox(
+                height: 25 * verticalScale,
               ),
-              // SizedBox(
-              //   height: 10,
-              // ),
+              Container(
+                width: 414 * horizontalScale,
+                height: 125 * verticalScale,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [
+                        HexColor('8346E1'),
+                        HexColor('411487'),
+                      ]
+                  ),
+                ),
+                child: Center(
+                    child: Text('🤞 Our Learner\'s review speaks 🤞',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: HexColor('FFFFFF'),
+                        fontSize: 38 * verticalScale,
+                      ),)),
+              ),
+
+              SizedBox(
+                height: 25,
+              ),
               Container(
                 // height: screenHeight * 0.81 * verticalScale,
-                height: 230,
+                height: containerHeight,
                 width: screenWidth,
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: FutureBuilder<List<FirebaseFile>>(
@@ -137,7 +248,9 @@ class _Review1State extends State<ReviewsScreen> {
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
-                        return Center(child: CircularProgressIndicator());
+                        return Center(
+                            child: CircularProgressIndicator()
+                        );
                       default:
                         if (snapshot.hasError) {
                           return Center(
@@ -160,7 +273,10 @@ class _Review1State extends State<ReviewsScreen> {
                                     return Container(
                                         decoration: BoxDecoration(
                                             color: HexColor("#FFFFFF"),
-                                            borderRadius: BorderRadius.circular(15),
+                                            // borderRadius: BorderRadius.circular(15),
+                                            border: Border.all(
+                                              color: Colors.black, width: 0.5,
+                                            ),
                                             boxShadow: [
                                               BoxShadow(
                                                   color: Colors.grey,
@@ -174,7 +290,7 @@ class _Review1State extends State<ReviewsScreen> {
                                             right: 5,
                                             top: 5,
                                             bottom: 5),
-                                        width: 210,
+                                        width: containerWidth,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(20),
                                           child: InkWell(
@@ -203,8 +319,11 @@ class _Review1State extends State<ReviewsScreen> {
                                                                       .none),
                                                               scrollable: true,
                                                               content:
-                                                              Container(height:500,width:500,
-                                                                child: ClipRRect(borderRadius:BorderRadius.circular(20) ,
+                                                              Container(
+                                                                height:500,
+                                                                width:500,
+                                                                child: ClipRRect(
+                                                                  borderRadius:BorderRadius.circular(20) ,
                                                                   child: CachedNetworkImage(
                                                                     errorWidget:
                                                                         (context, url,
@@ -231,7 +350,8 @@ class _Review1State extends State<ReviewsScreen> {
                                               fit: BoxFit.fill,
                                             ),
                                           ),
-                                        ));
+                                        )
+                                    );
                                     // buildFile(context, file);
                                   },
                                 ),
@@ -243,29 +363,28 @@ class _Review1State extends State<ReviewsScreen> {
                   },
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 20,
-                  top: 10,
-                ),
-                child: Text(
-                  'Combo course reviews',
-                  textScaleFactor: min(horizontalScale, verticalScale),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Color.fromRGBO(0, 0, 0, 1),
-                      fontFamily: 'Poppins',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      height: 2),
-                ),
-              ),
-              // SizedBox(
-              //   height: 10,
+              // Padding(
+              //   padding: EdgeInsets.only(
+              //     left: 15,
+              //     top: 10,
+              //   ),
+              //   child: Text(
+              //     'Combo course reviews',
+              //     textScaleFactor: min(horizontalScale, verticalScale),
+              //     textAlign: TextAlign.center,
+              //     style: TextStyle(
+              //         color: Color.fromRGBO(0, 0, 0, 1),
+              //         fontFamily: 'Poppins',
+              //         fontSize: 28 * verticalScale,
+              //         fontWeight: FontWeight.bold,
+              //         height: 2),
+              //   ),
               // ),
+              SizedBox(
+                height: 25,
+              ),
               Container(
-
-                height: 230,
+                height: containerHeight,
                 width: screenWidth,
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: FutureBuilder<List<FirebaseFile>>(
@@ -296,7 +415,10 @@ class _Review1State extends State<ReviewsScreen> {
                                     return Container(
                                         decoration: BoxDecoration(
                                             color: HexColor("#FFFFFF"),
-                                            borderRadius: BorderRadius.circular(15),
+                                            border: Border.all(
+                                              color: Colors.black, width: 0.5,
+                                            ),
+                                            // borderRadius: BorderRadius.circular(15),
                                             boxShadow: [
                                               BoxShadow(
                                                   color: Colors.grey,
@@ -310,8 +432,7 @@ class _Review1State extends State<ReviewsScreen> {
                                             right: 5,
                                             top: 5,
                                             bottom: 5),
-                                        height: 180,
-                                        width: 210,
+                                        width: containerWidth,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(20),
                                           child: InkWell(
@@ -380,26 +501,26 @@ class _Review1State extends State<ReviewsScreen> {
                   },
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 20,
-                  top: 10,
-                ),
-                child: Text(
-                  'Social media reviews',
-                  textScaleFactor: min(horizontalScale, verticalScale),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Color.fromRGBO(0, 0, 0, 1),
-                      fontFamily: 'Poppins',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      height: 2),
-                ),
-              ),
-              // SizedBox(height: 10),
+              // Padding(
+              //   padding: EdgeInsets.only(
+              //     left: 15,
+              //     top: 10,
+              //   ),
+              //   child: Text(
+              //     'Social media reviews',
+              //     textScaleFactor: min(horizontalScale, verticalScale),
+              //     textAlign: TextAlign.center,
+              //     style: TextStyle(
+              //         color: Color.fromRGBO(0, 0, 0, 1),
+              //         fontFamily: 'Poppins',
+              //         fontSize: 28 * verticalScale,
+              //         fontWeight: FontWeight.bold,
+              //         height: 2),
+              //   ),
+              // ),
+              SizedBox(height: 25),
               Container(
-                height: 230,
+                height: containerHeight,
                 width: screenWidth,
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: FutureBuilder<List<FirebaseFile>>(
@@ -430,7 +551,10 @@ class _Review1State extends State<ReviewsScreen> {
                                     return Container(
                                         decoration: BoxDecoration(
                                             color: HexColor("#FFFFFF"),
-                                            borderRadius: BorderRadius.circular(15),
+                                            border: Border.all(
+                                              color: Colors.black, width: 0.5,
+                                            ),
+                                            // borderRadius: BorderRadius.circular(15),
                                             boxShadow: [
                                               BoxShadow(
                                                   color: Colors.grey,
@@ -444,8 +568,7 @@ class _Review1State extends State<ReviewsScreen> {
                                             right:5,
                                             top: 5,
                                             bottom: 5),
-                                        height: 180,
-                                        width: 210,
+                                        width: containerWidth,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(20),
                                           child: InkWell(
@@ -513,9 +636,11 @@ class _Review1State extends State<ReviewsScreen> {
                     }
                   },
                 ),
-              )
+              ),
+              SizedBox(height: 25 * verticalScale,)
             ],
           ),
-        ));
+        ),
+    );
   }
 }

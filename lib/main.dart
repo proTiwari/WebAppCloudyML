@@ -6,6 +6,7 @@ import 'dart:html' as html;
 import 'dart:js';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloudyml_app2/Notifications/web_messaging.dart';
 import 'package:cloudyml_app2/Providers/AppProvider.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/Providers/chat_screen_provider.dart';
@@ -17,6 +18,8 @@ import 'package:cloudyml_app2/router/login_state_check.dart';
 import 'package:cloudyml_app2/router/router.dart';
 import 'package:cloudyml_app2/screens/chat_screen.dart';
 import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:cloudyml_app2/screens/splash.dart';
 import 'package:cloudyml_app2/services/local_notificationservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -105,6 +108,7 @@ Future<void> main() async {
   }
   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   LocalNotificationService.initialize();
+  FBMessaging().init();
 
   runApp(MyApp(loginState: state,));
 
@@ -147,16 +151,24 @@ Future<void> main() async {
     print('pushed');
 
   }
-    else if(Uri.base.path == '/NewFeature'){
+ else if (Uri.base.path == '/NewFeature') {
+    if (Uri.base.queryParameters['cID'] == 'aEGX6kMfHzQrVgP3WCwU') {
+      final url = Uri.base.queryParameters['cID'];
+      FirebaseFirestore.instance
+          .collection("Notice")
+          .doc("XdYtk2DJBIkRGx0ASthZ_newfeaturecourse")
+          .set({'url': url});
+    } else if (Uri.base.queryParameters['cID'] == 'F9gxnjW9nf5Lxg5A6758') {
+      final url = Uri.base.queryParameters['cID'];
+      FirebaseFirestore.instance
+          .collection("Notice")
+          .doc("fSU4MLz1E0858ft8m7F5_dataeng")
+          .set({'url': url});
+    }
 
-    final url=Uri.base.path;
-    FirebaseFirestore.instance.collection("Notice")
-        .doc("XdYtk2DJBIkRGx0ASthZ_newfeaturecourse").set({
-      'url' : url });
 // navigatorKey.currentState?.pushNamed('/login');
 
     print('pushed');
-
   }
 
  
@@ -315,7 +327,7 @@ class _MyAppState extends State<MyApp> {
       child: StyledToast(
         locale: const Locale('en', 'US'),
         textStyle: TextStyle(
-            fontSize: 16.0, color: Colors.white, fontFamily: 'Medium'),
+            fontSize: 25.0, color: Colors.white, fontFamily: 'Medium'),
         backgroundColor: Colors.black,
         borderRadius: BorderRadius.circular(30.0),
         textPadding: EdgeInsets.symmetric(horizontal: 17.0, vertical: 10.0),
@@ -326,7 +338,7 @@ class _MyAppState extends State<MyApp> {
         duration: Duration(seconds: 5),
         animDuration: Duration(milliseconds: 500),
         alignment: Alignment.center,
-        toastPositions: StyledToastPosition.bottom,
+        toastPositions: StyledToastPosition.center,
         curve: Curves.bounceIn,
         reverseCurve: Curves.bounceOut,
         dismissOtherOnShow: true,
@@ -365,8 +377,9 @@ class _MyAppState extends State<MyApp> {
           //   );
           // },
 
-          child: Builder(
-            builder: (context) {
+          child: ResponsiveSizer(
+            builder: (context, orientation, screenType) {
+              final botToastBuilder = BotToastInit();
               final router = Provider.of<MyRouter>(context, listen: false).routes;
               return MaterialApp.router(
 
@@ -376,15 +389,17 @@ class _MyAppState extends State<MyApp> {
                 debugShowCheckedModeBanner: false,
                 title: 'CloudyML',
                 scrollBehavior: MyCustomScrollBehavior(),
-                builder: (BuildContext context, Widget? widget) {
+                builder: (BuildContext context, child) {
+                  child = MediaQuery(
+                    child: child!,
+                    data: MediaQuery.of(context).copyWith(textScaleFactor: 1.15),
+                  );
+                  child = botToastBuilder(context,child);
                   ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
                     return Container();
                   };
-                  return MediaQuery(
-                    child: widget!,
-                    data: MediaQuery.of(context).copyWith(textScaleFactor: 1.15),
-                  );
-
+                 botToastBuilder(context,widget);
+                  return child;
                 },
                 theme: ThemeData(
                   primarySwatch: Colors.blue,

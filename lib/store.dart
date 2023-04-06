@@ -1,30 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudyml_app2/catalogue_screen.dart';
 import 'package:cloudyml_app2/combo/combo_store.dart';
 import 'package:cloudyml_app2/fun.dart';
 import 'package:cloudyml_app2/globals.dart';
-import 'package:cloudyml_app2/home.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
-import 'package:cloudyml_app2/payments_history.dart';
-import 'package:cloudyml_app2/privacy_policy.dart';
-import 'package:cloudyml_app2/screens/assignment_tab_screen.dart';
-import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloudyml_app2/router/login_state_check.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:star_rating/star_rating.dart';
-
-import 'MyAccount/myaccount.dart';
-import 'Providers/UserProvider.dart';
-import 'aboutus.dart';
+import '../global_variable.dart' as globals;
 import 'authentication/firebase_auth.dart';
 import 'models/user_details.dart';
-import 'my_Courses.dart';
-import 'package:universal_html/html.dart' as html;
-
 class StoreScreen extends StatefulWidget {
   const StoreScreen({Key? key}) : super(key: key);
 
@@ -61,6 +50,9 @@ class _StoreScreenState extends State<StoreScreen> {
 
   @override
   Widget build(BuildContext context) {
+    void saveLoginOutState(BuildContext context) {
+      Provider.of<LoginState>(context, listen: false).loggedIn = false;
+    }
     List<CourseDetails> courseList = Provider.of<List<CourseDetails>>(context);
 
     List<CourseDetails> course = [];
@@ -148,7 +140,159 @@ class _StoreScreenState extends State<StoreScreen> {
                   width: screenWidth,
                   height: 60,
                   color: HexColor("440F87"),
-                  child: customMenuBar(context),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: horizontalScale * 10,
+                        ),
+                        Image.asset(
+                          "assets/logo2.png",
+                          width: 75,
+                          height: 55,
+                        ),
+                        Text(
+                          "CloudyML",
+                          style: textStyle,
+                        ),
+                        Spacer(),
+                        TextButton(
+                            onPressed: () {
+                              GoRouter.of(context).pushNamed('home');
+                            },
+                            child: Text(
+                              'Home',
+                              style: buttonTextStyle.copyWith(
+                                color: Colors.white ,
+                              ),
+                            )),
+                        SizedBox(
+                          width: horizontalScale * 10,
+                        ),
+                        TextButton(
+                            onPressed: () {
+                              GoRouter.of(context).pushNamed('store');
+                            },
+                            child: Text('Store',
+                                style: buttonTextStyle.copyWith(
+                                  color: HexColor('873AFF') ,
+                                )
+                            )),
+                        SizedBox(
+                          width: horizontalScale * 10,
+                        ),
+                        TextButton(
+                            onPressed: () {
+                              // GoRouter.of(context).goNamed('reviews');
+                              GoRouter.of(context).pushNamed('reviews');
+                            },
+                            child: Text(
+                              'Reviews',
+                              style:  buttonTextStyle.copyWith(
+                                color:
+                                Colors.white ,
+                              ),
+                            )),
+                        SizedBox(
+                          width: horizontalScale * 10,
+                        ),
+                        // TextButton(
+                        //     onPressed: () {
+                        //       GoRouter.of(context).pushNamed('LiveDoubtSession');
+                        //     },
+                        //     child: Text(
+                        //       'Live Doubt Support',
+                        //       style:  buttonTextStyle.copyWith(
+                        //         color:
+                        //         Uri.base.path == '/LiveDoubtScreen'? HexColor('873AFF') :
+                        //         Colors.white ,
+                        //       ),
+                        //     )),
+                        // SizedBox(
+                        //   width: horizontalScale * 15,
+                        // ),
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton2(
+                            customButton: Row(
+                              children: [
+                                Text('More',
+                                  style: buttonTextStyle.copyWith(
+                                    color: Uri.base.path == '/myCourses'
+                                        ? HexColor('873AFF') : Colors.white,
+                                  ),
+                                ),
+                                SizedBox(width: 100,),
+                                Icon(Icons.arrow_drop_down, color: Colors.white,)
+                              ],
+                            ),
+                            isExpanded: false,
+                            isDense: false,
+                            iconStyleData: IconStyleData(
+                              icon: Icon(Icons.arrow_drop_down),
+                              iconDisabledColor: Colors.white,
+                              iconEnabledColor: Colors.white,
+                            ),
+                            dropdownStyleData:  DropdownStyleData(
+                              decoration: BoxDecoration(
+                                color: Colors.deepPurple,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            underline: Container(),
+                            hint: Text('More',
+                              style: buttonTextStyle.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
+                            onChanged: (String? value) {
+                              if (value != dropdownValue) {
+
+                                if (value == 'My Courses') {
+                                  GoRouter.of(context).pushReplacementNamed('myCourses');
+                                } else if(value == 'Resume Review') {
+                                  GoRouter.of(context).pushReplacementNamed('reviewResume');
+                                } else if(value == 'Admin Quiz Panel') {
+                                  GoRouter.of(context).pushReplacementNamed('quizpanel');
+                                } else if(value == 'Assignment Review') {
+                                  GoRouter.of(context).pushReplacementNamed('AssignmentScreenForMentors');
+                                } else if(value == 'My Profile') {
+                                  GoRouter.of(context).pushReplacementNamed('myAccount');
+                                } else if(value == 'Logout') {
+                                  logOut(context);
+                                  saveLoginOutState(context);
+                                  GoRouter.of(context).pushReplacement('/login');
+                                } else {
+                                  Fluttertoast.showToast(msg: 'Please refresh the screen.');
+                                }
+                              }
+                            },
+                            items: globals.role == 'mentor' ?
+                            mentorItems.map((String mentorItems) {
+                              return DropdownMenuItem(
+                                  value: mentorItems,
+                                  child: Text(mentorItems,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ));
+                            }).toList()
+                                :  items.map((String items) {
+                              return DropdownMenuItem(
+                                  value: items,
+                                  child: Text(items,
+                                    style: buttonTextStyle.copyWith(
+                                      color: Colors.white,
+                                    ),
+                                  ));
+                            }).toList(),
+                          ),),
+                        SizedBox(width: 15 * horizontalScale,),
+                      ],
+                    ),
+                  ),
 
                   // Row(
                   //   children: [
@@ -288,10 +432,18 @@ class _StoreScreenState extends State<StoreScreen> {
                     child: GridView.builder(
                       scrollDirection: Axis.vertical,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: constraints.maxWidth >= 900 ? 4 : 3,
+                        crossAxisCount:
+                        constraints.maxWidth <= 750 ? 2 :
+                        constraints.maxWidth <= 1050 ? 3 :
+                        constraints.maxWidth >= 1050 ? 4
+                        : 4,
+
                         childAspectRatio:
-                        constraints.maxWidth >= 900 ? 1.3*verticalScale : .85,
-                        crossAxisSpacing: constraints.maxWidth >= 900 ? 25 : 15,
+                        constraints.maxWidth <= 750 ? 1 :
+                        constraints.maxWidth <= 1050 ? 0.8 :
+                        constraints.maxWidth >= 1050 ? 0.85
+                            : 1,
+                        crossAxisSpacing: constraints.maxWidth >= 900 ? 15 : 10,
                       ),
                       itemCount: cou.length,
                       itemBuilder: (context, index) {
@@ -636,22 +788,22 @@ class _StoreScreenState extends State<StoreScreen> {
                       padding: const EdgeInsets.only(left: 30),
                       child: Row(
                         children: [
-                          IconButton(
-                            onPressed: () {
-                              print("yyy");
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomePage()),
-                              );
-                              // Scaffold.of(context).openDrawer();
-                            },
-                            icon: Icon(
-                              Icons.arrow_back,
-                              size: 40,
-                              color: Colors.white,
-                            ),
-                          ),
+                          // IconButton(
+                          //   onPressed: () {
+                          //     print("yyy");
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //           builder: (context) => HomePage()),
+                          //     );
+                          //     // Scaffold.of(context).openDrawer();
+                          //   },
+                          //   icon: Icon(
+                          //     Icons.arrow_back,
+                          //     size: 40,
+                          //     color: Colors.white,
+                          //   ),
+                          // ),
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.17,
                           ),

@@ -2569,6 +2569,7 @@ class _VideoScreenState extends State<VideoScreen> {
                               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                               child: Column(
                                 children: [
+                                  pathwaydata.isEmpty ? Container() :
                                   Container(
                                     child: ExpansionTile(
                                       title: Text(
@@ -2767,8 +2768,13 @@ class _VideoScreenState extends State<VideoScreen> {
                                                               ElevatedButton(
                                                                   onPressed:
                                                                       () {
-                                                                    print(
-                                                                        'dipen Pau');
+                                                                        Random number = Random();
+                                                                        int min = 1;
+                                                                        int max = 1000;
+                                                                        int randomNumber = min + number.nextInt(max - min);
+                                                                        print("$randomNumber is in the range of $min and $max");
+
+                                                                    print('dipen Pau');
                                                                     print('$id' +
                                                                         '${listOfSectionData[widget.courseName][editIndex].length}' +
                                                                         '${listOfSectionData[widget.courseName][editIndex]['videos'].length}');
@@ -2788,17 +2794,12 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                         'id': '$id' +
                                                                             'V' +
                                                                             '${listOfSectionData[widget.courseName][editIndex].length}' +
-                                                                            '${listOfSectionData[widget.courseName][editIndex]['videos'].length}',
-                                                                        'url': addVideoUrl
-                                                                            .text,
-                                                                        'type':
-                                                                            'video',
-                                                                        'offline':
-                                                                            false,
-                                                                        'demo':
-                                                                            false,
-                                                                        'sr': listOfSectionData[widget.courseName][editIndex]['videos']
-                                                                            .length,
+                                                                            '$randomNumber',
+                                                                        'url': addVideoUrl.text,
+                                                                        'type': 'video',
+                                                                        'offline': false,
+                                                                        'demo': false,
+                                                                        'sr': listOfSectionData[widget.courseName][editIndex]['videos'].length,
                                                                       });
                                                                       try {
                                                                         FirebaseFirestore

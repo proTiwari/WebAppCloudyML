@@ -1241,7 +1241,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             child: VideoScreen(
                                               isDemo: true,
                                               courseName:
-                                                  course[index].courseName,
+                                                  course[index].curriculum.keys.toList().first.toString()
+,
                                               sr: 1,
                                             ),
                                           ),
@@ -1292,7 +1293,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               child: VideoScreen(
                                                 isDemo: true,
                                                 courseName:
-                                                    course[index].courseName,
+                                                    course[index].curriculum.keys.toList().first.toString()
+,
                                                 sr: 1,
                                               ),
                                             ),

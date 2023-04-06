@@ -52,6 +52,8 @@ class _OtpPageState extends State<OtpPage> {
   late String diurl;
   late String payurl;
   late String feaurl;
+    late String deurl;
+
 
   void _onKeyboardTap(String value) {
     setState(() {
@@ -128,6 +130,17 @@ class _OtpPageState extends State<OtpPage> {
     });
 
     print("url is=====$feaurl");
+    
+        deurl = await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("fSU4MLz1E0858ft8m7F5_dataeng")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
+
+    print("url is=====$deurl");
   }
 
   Widget _otpTextField(BuildContext context, bool autoFocus, int position) {
@@ -686,7 +699,7 @@ class _OtpPageState extends State<OtpPage> {
                 // GoRouter.of(context).pushReplacement('/home');
                 String location = GoRouter.of(context).location;
 
-                if (feaurl == '/NewFeature') {
+                if (feaurl == 'aEGX6kMfHzQrVgP3WCwU') {
                   final id = "0";
                   final cID = "aEGX6kMfHzQrVgP3WCwU";
                   final courseName =
@@ -698,7 +711,21 @@ class _OtpPageState extends State<OtpPage> {
                     'id': id,
                     'coursePrice': courseP
                   });
-                } else if (payurl == '/comboPaymentPortal') {
+                } 
+                else if (deurl == 'F9gxnjW9nf5Lxg5A6758') {
+                  final id = "0";
+                  final cID = "F9gxnjW9nf5Lxg5A6758";
+                  final courseName =
+                      "Data Engineering Placement Assurance Program";
+                  final courseP = "10000";
+                  GoRouter.of(context).goNamed('NewFeature', queryParams: {
+                    'cID': cID,
+                    'courseName': courseName,
+                    'id': id,
+                    'coursePrice': courseP
+                  });
+                }
+                else if (payurl == '/comboPaymentPortal') {
                   final cID = "aEGX6kMfHzQrVgP3WCwU";
                   GoRouter.of(context).go(
                     '/comboPaymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',

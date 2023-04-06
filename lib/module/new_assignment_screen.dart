@@ -6,7 +6,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../global_variable.dart';
 import '../models/firebase_file.dart';
+
+import '../screens/flutter_flow/flutter_flow_theme.dart';
 
 class AssignmentScreen extends StatefulWidget {
   const AssignmentScreen(
@@ -107,11 +110,15 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
 
 
 
+  var count;
 
   Future submissionTask() async {
     try {
       var storageRef =
-      FirebaseStorage.instance.ref().child('Assignments').child('${user.toString()}').child(fileName!);
+      FirebaseStorage.instance.ref()
+          .child('Assignments')
+          .child('${user.toString()}')
+          .child(fileName!);
 
       var sentData = await _reference.collection('assignment').add({
         "email": FirebaseAuth.instance.currentUser?.email,
@@ -121,6 +128,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
         "filename": fileName!,
         "link": '',
         "note": noteText.text,
+        'assignmentName': widget.assignmentName,
       });
 
 
@@ -130,8 +138,43 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
       final String fileURL = (await downloadUrl.ref.getDownloadURL());
       await sentData.update({"link": fileURL});
       print('Assignment file link is here: $fileURL');
-      Fluttertoast.showToast(msg: "Your file has been uploaded successfully");
 
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              'Congratulations!',
+              style: FlutterFlowTheme.of(context)
+                  .bodyText1
+                  .override(
+                fontFamily: 'Poppins',
+                fontSize: 25,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            content: Text("Your assignment is submitted successfully.",
+              style:  FlutterFlowTheme.of(context)
+                  .bodyText1
+                  .override(
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),),
+            actions: <Widget>[
+              TextButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+
+      // Fluttertoast.showToast(msg: "Your file has been uploaded successfully");
+      count = 1;
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
     }
@@ -438,7 +481,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                               ElevatedButton(
                                 onPressed: () async {
                                   if (uploadedFile == null) {
-                                    Fluttertoast.showToast(msg: 'Please upload a file');
+                                    Fluttertoast.showToast(msg: 'Please upload a file',fontSize: 35,);
                                   } else {
 
                                     await submissionTask();
@@ -450,10 +493,11 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
 
                                   }
                                 },
-                                child: Text("Submit"),
+                                child: Text(count == 1 ? "Resubmit" : "Submit",
+                                style: TextStyle(),),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: uploadedFile == null
-                                      ? Colors.grey
+                                      ? count == 1 ? Colors.grey : Colors.green
                                       : Colors.deepPurpleAccent,
                                 ),
                               )

@@ -184,6 +184,12 @@ class _NewFeatureState extends State<NewFeature> {
           .update({'url': ""}).whenComplete(() {
         print('New feature Deleted');
       });
+
+      FirebaseFirestore.instance.collection('Notice')
+      ..doc("fSU4MLz1E0858ft8m7F5_dataeng")
+          .update({'url': ""}).whenComplete(() {
+        print('New feature Deleted');
+      });
   }
 
   Map userMap = Map<String, dynamic>();
@@ -515,7 +521,7 @@ class _NewFeatureState extends State<NewFeature> {
                                                                                   : 14),
                                                         overflow: TextOverflow
                                                             .ellipsis,
-                                                        maxLines: 3,
+                                                        maxLines: 4,
                                                         
                                                       ),
                                                       // SizedBox(height: width>750?0:10,),

@@ -1,5 +1,9 @@
 import 'dart:math';
+import 'package:badges/badges.dart';
 import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
+import 'package:cloudyml_app2/widgets/notification_popup.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../global_variable.dart' as globals;
 import 'package:cached_network_image/cached_network_image.dart';
@@ -24,8 +28,9 @@ import 'homepage.dart';
 import 'my_Courses.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:share_extend/share_extend.dart';
+import 'package:custom_pop_up_menu/custom_pop_up_menu.dart';
 
-bool isLoading  = false;
+bool isLoading = false;
 
 Row Star() {
   return Row(
@@ -59,8 +64,6 @@ Row Star() {
     ],
   );
 }
-
-
 
 Widget buildFile(BuildContext context, FirebaseFile file) => Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -730,25 +733,24 @@ final buttonTextStyle = TextStyle(
 var textStyle = TextStyle(
   fontWeight: FontWeight.bold,
   color: Colors.white,
-  fontSize: 14,
+  fontSize: 20,
   fontFamily: "Semibold",
 );
 
-String numberOfLearners = '14000+ learners';
+String numberOfLearners = '13000+ learners';
 var mentorItems = [
   'My Courses',
-  'Admin Quiz Panel',
   'Resume Review',
+  'Admin Quiz Panel',
+  'Assignment Review',
   'My Profile',
-  'Logout'];
+  'Logout'
+];
 
-var items = [
-  'My Courses',
-  'My Profile',
-  'Logout'];
+var items = ['My Courses', 'My Profile', 'Logout'];
 String dropdownValue = '';
 
-Row customMenuBar(BuildContext context) {
+Widget customMenuBar(BuildContext context) {
   void saveLoginOutState(BuildContext context) {
     Provider.of<LoginState>(context, listen: false).loggedIn = false;
   }
@@ -757,175 +759,161 @@ Row customMenuBar(BuildContext context) {
   final screenWidth = MediaQuery.of(context).size.width;
   var verticalScale = screenHeight / mockUpHeight;
   var horizontalScale = screenWidth / mockUpWidth;
-  return Row(
-    children: [
-      // IconButton(
-      //     onPressed: () {
-      //       Scaffold.of(context).openDrawer();
-      //     },
-      //     icon: Icon(
-      //       Icons.menu,
-      //       color: Colors.white,
-      //       size: 30,
-      //     )),
-      SizedBox(
-        width: horizontalScale * 15,
-      ),
-      Image.asset(
-        "assets/logo2.png",
-        width: 50,
-        height: 40,
-      ),
-      Text(
-        "CloudyML",
-        style: textStyle,
-      ),
-      Spacer(),
-      TextButton(
-          onPressed: () {
-            GoRouter.of(context).pushNamed('home');
-          },
-          child: Text(
-            'Home',
-            style: buttonTextStyle.copyWith(
-              color: Uri.base.path == '/home'? HexColor('873AFF') : Colors.white ,
-            ),
-          )),
-      SizedBox(
-        width: horizontalScale * 15,
-      ),
-      TextButton(
-          onPressed: () {
-            GoRouter.of(context).pushNamed('store');
-          },
-          child: Text('Store',
-              style: buttonTextStyle.copyWith(
-                color:
-                Uri.base.path == '/store'?
-                HexColor('873AFF') : Colors.white ,
-              )
-          )),
-      SizedBox(
-        width: horizontalScale * 15,
-      ),
-      TextButton(
-          onPressed: () {
-            // GoRouter.of(context).goNamed('reviews');
-            GoRouter.of(context).pushNamed('reviews');
-          },
-          child: Text(
-            'Reviews',
-            style:  buttonTextStyle.copyWith(
-              color: Uri.base.path == '/reviews'? HexColor('873AFF') :
-              Colors.white ,
-            ),
-          )),
-      SizedBox(
-        width: horizontalScale * 15,
-      ),
-      TextButton(
-          onPressed: () {
-            GoRouter.of(context).pushNamed('LiveDoubtSession');
-          },
-          child: Text(
-            'Live Doubt Support',
-            style:  buttonTextStyle.copyWith(
-              color:
-              Uri.base.path == '/LiveDoubtScreen'? HexColor('873AFF') :
-              Colors.white ,
-            ),
-          )),
-      SizedBox(
-        width: horizontalScale * 15,
-      ),
-      DropdownButton(
-        underline: Container(),
-        hint: Text('Profile',
-          style: buttonTextStyle.copyWith(
-            color: Uri.base.path == '/myCourses'
-                ? HexColor('873AFF') : Colors.white,
-          ),
+  return Padding(
+    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+    child: Row(
+      children: [
+        SizedBox(
+          width: horizontalScale * 10,
         ),
-        enableFeedback: false,
-        isExpanded: false,
-        isDense: false,
-        borderRadius: BorderRadius.circular(10),
-        dropdownColor: Colors.deepPurple,
-        // value: dropdownValue,
-        icon: Icon(Icons.arrow_drop_down, color: Colors.white,),
-        items:
-       globals.role == 'mentor' ?
-       mentorItems.map((String mentorItems) {
-         return DropdownMenuItem(
-             value: mentorItems,
-             child: Text(mentorItems,
-               style: buttonTextStyle.copyWith(
-                 color: Colors.white,
-               ),
-             ));
-       }).toList()
-           :  items.map((String items) {
-          return DropdownMenuItem(
-              value: items,
-              child: Text(items,
+        Image.asset(
+          "assets/logo2.png",
+          width: 75,
+          height: 55,
+        ),
+        Text(
+          "CloudyML",
+          style: textStyle,
+        ),
+        Spacer(),
+        TextButton(
+            onPressed: () {
+              GoRouter.of(context).pushNamed('home');
+            },
+            child: Text(
+              'Home',
+              style: buttonTextStyle.copyWith(
+                color: Uri.base.path == '/home'? HexColor('873AFF') : Colors.white ,
+              ),
+            )),
+        SizedBox(
+          width: horizontalScale * 10,
+        ),
+        TextButton(
+            onPressed: () {
+              GoRouter.of(context).pushNamed('store');
+            },
+            child: Text('Store',
                 style: buttonTextStyle.copyWith(
-                  color: Colors.white,
+                  color:
+                  Uri.base.path == '/store'?
+                  HexColor('873AFF') : Colors.white ,
+                )
+            )),
+        SizedBox(
+          width: horizontalScale * 10,
+        ),
+        TextButton(
+            onPressed: () {
+              // GoRouter.of(context).goNamed('reviews');
+              GoRouter.of(context).pushNamed('reviews');
+            },
+            child: Text(
+              'Reviews',
+              style:  buttonTextStyle.copyWith(
+                color: Uri.base.path == '/reviews'? HexColor('873AFF') :
+                Colors.white ,
+              ),
+            )),
+        SizedBox(
+          width: horizontalScale * 10,
+        ),
+        // TextButton(
+        //     onPressed: () {
+        //       GoRouter.of(context).pushNamed('LiveDoubtSession');
+        //     },
+        //     child: Text(
+        //       'Live Doubt Support',
+        //       style:  buttonTextStyle.copyWith(
+        //         color:
+        //         Uri.base.path == '/LiveDoubtScreen'? HexColor('873AFF') :
+        //         Colors.white ,
+        //       ),
+        //     )),
+        // SizedBox(
+        //   width: horizontalScale * 15,
+        // ),
+        DropdownButtonHideUnderline(
+          child: DropdownButton2(
+            customButton: Row(
+              children: [
+                Text('More',
+                  style: buttonTextStyle.copyWith(
+                    color: Uri.base.path == '/myCourses'
+                        ? HexColor('873AFF') : Colors.white,
+                  ),
                 ),
-              ));
-        }).toList(),
-        onChanged: (String? value) {
-          if (value != dropdownValue) {
-            switch (value) {
-              case 'My Courses':
-                GoRouter.of(context).pushReplacementNamed('myCourses');
-                break;
-              case 'Resume Review':
-                GoRouter.of(context).pushReplacementNamed('reviewResume');
-                break;
-              case 'Admin Quiz Panel':
-                GoRouter.of(context).pushReplacementNamed('quizpanel');
-                break;
-              case 'My Profile':
-                GoRouter.of(context).pushReplacementNamed('myAccount');
-                break;
-              case 'Logout':
-                logOut(context);
-                saveLoginOutState(context);
-                GoRouter.of(context).pushReplacement('/login');
-                break;
-            }
-          }
-          dropdownValue = value!;
-        },
-      ),
-      SizedBox(width: 15 * horizontalScale,),
-      // TextButton(
-      //     onPressed: () {
-      //       logOut(context);
-      //       saveLoginOutState(context);
-      //       GoRouter.of(context).pushReplacement('/login');
-      //     },
-      //     child: Text(
-      //       'Logout',
-      //       style:  buttonTextStyle,
-      //     )),
+                SizedBox(width: 100,),
+                Icon(Icons.arrow_drop_down, color: Colors.white,)
+              ],
+            ),
+            isExpanded: false,
+            isDense: false,
+            iconStyleData: IconStyleData(
+              icon: Icon(Icons.arrow_drop_down),
+              iconDisabledColor: Colors.white,
+              iconEnabledColor: Colors.white,
+            ),
+            dropdownStyleData:  DropdownStyleData(
+              decoration: BoxDecoration(
+                color: Colors.deepPurple,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            underline: Container(),
+            hint: Text('More',
+              style: buttonTextStyle.copyWith(
+                color: Uri.base.path == '/myCourses'
+                    ? HexColor('873AFF') : Colors.white,
+              ),
+            ),
+            onChanged: (String? value) {
+              if (value != dropdownValue) {
 
-      // ElevatedButton(
-      //     onPressed: () {
-  // logOut(context);
-  // saveLoginOutState(context);
-  // GoRouter.of(context).pushReplacement('/login');
-      //     },
-      //     style: ElevatedButton.styleFrom(
-      //       backgroundColor: HexColor("8346E1"),
-      //       shape: RoundedRectangleBorder(
-      //         borderRadius:
-      //         BorderRadius.circular(50),
-      //       ),
-      //     ),
-      //     child: Text("Log out",
-      //         style: textStyle)),
-    ],
+                if (value == 'My Courses') {
+                  GoRouter.of(context).pushReplacementNamed('myCourses');
+                } else if(value == 'Resume Review') {
+                  GoRouter.of(context).pushReplacementNamed('reviewResume');
+                } else if(value == 'Admin Quiz Panel') {
+                  GoRouter.of(context).pushReplacementNamed('quizpanel');
+                } else if(value == 'Assignment Review') {
+                  GoRouter.of(context).pushReplacementNamed('AssignmentScreenForMentors');
+                } else if(value == 'My Profile') {
+                  GoRouter.of(context).pushReplacementNamed('myAccount');
+                } else if(value == 'Logout') {
+                  logOut(context);
+                  saveLoginOutState(context);
+                  GoRouter.of(context).pushReplacement('/login');
+                } else {
+                  Fluttertoast.showToast(msg: 'Please refresh the screen.');
+                }
+              }
+            },
+            items: globals.role == 'mentor' ?
+            mentorItems.map((String mentorItems) {
+              return DropdownMenuItem(
+                  value: mentorItems,
+                  child: Text(mentorItems,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ));
+            }).toList()
+                :  items.map((String items) {
+              return DropdownMenuItem(
+                  value: items,
+                  child: Text(items,
+                    style: buttonTextStyle.copyWith(
+                      color: Colors.white,
+                    ),
+                  ));
+            }).toList(),
+          ),),
+        SizedBox(width: 15 * horizontalScale,),
+      ],
+    ),
   );
 }
 
@@ -1071,11 +1059,11 @@ Row customMenuBar(BuildContext context) {
 //
 // }
 
-
 Drawer customDrawer(BuildContext context) {
   void saveLoginState(BuildContext context) {
     Provider.of<LoginState>(context, listen: false).loggedIn = false;
   }
+
   final userProvider = Provider.of<UserProvider>(context);
   return Drawer(
     child: Container(
@@ -1092,14 +1080,13 @@ Drawer customDrawer(BuildContext context) {
                   ),
                   UserAccountsDrawerHeader(
                     accountName: Text(
-                      userProvider.userModel?.name.toString() ??
-                          'Enter name',
+                      userProvider.userModel?.name.toString() ?? 'Enter name',
                     ),
                     accountEmail: Text(
                       userProvider.userModel?.email.toString() == ''
                           ? userProvider.userModel?.mobile.toString() ?? ''
                           : userProvider.userModel?.email.toString() ??
-                          'Enter email',
+                              'Enter email',
                     ),
                     currentAccountPicture: GestureDetector(
                       onTap: () {
@@ -1109,8 +1096,8 @@ Drawer customDrawer(BuildContext context) {
                       child: CircleAvatar(
                         foregroundColor: Colors.black,
                         //foregroundImage: NetworkImage('https://stratosphere.co.in/img/user.jpg'),
-                        foregroundImage: NetworkImage(
-                            userProvider.userModel?.image ?? ''),
+                        foregroundImage:
+                            NetworkImage(userProvider.userModel?.image ?? ''),
                         backgroundColor: Colors.transparent,
                         backgroundImage: CachedNetworkImageProvider(
                           'https://stratosphere.co.in/img/user.jpg',
@@ -1146,7 +1133,6 @@ Drawer customDrawer(BuildContext context) {
                   GoRouter.of(context).push('/store');
                 },
               ),
-
 
               //navigate to messages
               // InkWell(
@@ -1186,21 +1172,20 @@ Drawer customDrawer(BuildContext context) {
                   GoRouter.of(context).push('/myCourses');
                 },
               ),
-               globals.role == 'mentor' ?
-              InkWell(
-                child: ListTile(
-                  title: Text('Review Resume'),
-                  leading: Icon(
-                    Icons.reviews,
-                    color: HexColor('691EC8'),
-                  ),
-                ),
-                onTap: () {
-
-                  GoRouter.of(context).push('/reviewResume');
-
-                },
-              ) : SizedBox(),
+              globals.role == 'mentor'
+                  ? InkWell(
+                      child: ListTile(
+                        title: Text('Review Resume'),
+                        leading: Icon(
+                          Icons.reviews,
+                          color: HexColor('691EC8'),
+                        ),
+                      ),
+                      onTap: () {
+                        GoRouter.of(context).push('/reviewResume');
+                      },
+                    )
+                  : SizedBox(),
               globals.role == "mentor"
                   ? InkWell(
                       child: ListTile(
@@ -1340,143 +1325,138 @@ Drawer customDrawer(BuildContext context) {
 Widget featureCPopup(
     IconData icon, String T1, double horizontalScale, double verticalScale) {
   return LayoutBuilder(
-    builder: (BuildContext context, BoxConstraints constraints) {
-      if (constraints.maxWidth >= 650) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Container(
-            width: 250 * horizontalScale,
-            height: 38 * verticalScale,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-                bottomLeft: Radius.circular(8),
-                bottomRight: Radius.circular(8),
-              ),
-              boxShadow: [
-                BoxShadow(
-                    color: Color.fromRGBO(31, 31, 31, 0.25),
-                    offset: Offset(0, 0),
-                    blurRadius: 5)
-              ],
-              color: Color.fromRGBO(255, 255, 255, 1),
+      builder: (BuildContext context, BoxConstraints constraints) {
+    if (constraints.maxWidth >= 650) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Container(
+          width: 250 * horizontalScale,
+          height: 38 * verticalScale,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+              bottomLeft: Radius.circular(8),
+              bottomRight: Radius.circular(8),
             ),
-            child: Row(
-              children: [
-                Container(
-                  width: 38 * min(horizontalScale, verticalScale),
-                  height: 38 * min(horizontalScale, verticalScale),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
-                      bottomLeft: Radius.circular(8),
-                      bottomRight: Radius.circular(8),
-                    ),
-                    color: Color.fromRGBO(54, 141, 255, 1),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      icon,
-                      color: Colors.white,
-                      size: 28 * min(horizontalScale, verticalScale),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  // width: 250 * horizontalScale,
-                  child: Text(
-                    '$T1',
-                    textScaleFactor: min(horizontalScale, verticalScale),
-                    style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
-                        color: Colors.black,
-                        fontSize: 18 * verticalScale,
-                        fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            boxShadow: [
+              BoxShadow(
+                  color: Color.fromRGBO(31, 31, 31, 0.25),
+                  offset: Offset(0, 0),
+                  blurRadius: 5)
+            ],
+            color: Color.fromRGBO(255, 255, 255, 1),
           ),
-        );
-      } else {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Container(
-            width: 364 * horizontalScale,
-            height: 40 * verticalScale,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-                bottomLeft: Radius.circular(8),
-                bottomRight: Radius.circular(8),
+          child: Row(
+            children: [
+              Container(
+                width: 38 * min(horizontalScale, verticalScale),
+                height: 38 * min(horizontalScale, verticalScale),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                    bottomLeft: Radius.circular(8),
+                    bottomRight: Radius.circular(8),
+                  ),
+                  color: Color.fromRGBO(54, 141, 255, 1),
+                ),
+                child: Center(
+                  child: Icon(
+                    icon,
+                    color: Colors.white,
+                    size: 28 * min(horizontalScale, verticalScale),
+                  ),
+                ),
               ),
-              boxShadow: [
-                BoxShadow(
-                    color: Color.fromRGBO(31, 31, 31, 0.25),
-                    offset: Offset(0, 0),
-                    blurRadius: 5)
-              ],
-              color: Color.fromRGBO(255, 255, 255, 1),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 38 * min(horizontalScale, verticalScale),
-                  height: 38 * min(horizontalScale, verticalScale),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
-                      bottomLeft: Radius.circular(8),
-                      bottomRight: Radius.circular(8),
-                    ),
-                    color: Color.fromRGBO(54, 141, 255, 1),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      icon,
-                      color: Colors.white,
-                      size: 28 * min(horizontalScale, verticalScale),
-                    ),
-                  ),
+              SizedBox(
+                width: 10,
+              ),
+              Container(
+                // width: 250 * horizontalScale,
+                child: Text(
+                  '$T1',
+                  textScaleFactor: min(horizontalScale, verticalScale),
+                  style: TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      color: Colors.black,
+                      fontSize: 18 * verticalScale,
+                      fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  // width: 215 * horizontalScale,
-                  // color: Colors.red,
-                  child: Text(
-                    '$T1',
-                    maxLines: 2,
-                    textScaleFactor: min(horizontalScale, verticalScale),
-                    style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
-                        color: Colors.black,
-                        fontSize: 14 * verticalScale,
-                        fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      }
-
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Container(
+          width: 364 * horizontalScale,
+          height: 40 * verticalScale,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+              bottomLeft: Radius.circular(8),
+              bottomRight: Radius.circular(8),
+            ),
+            boxShadow: [
+              BoxShadow(
+                  color: Color.fromRGBO(31, 31, 31, 0.25),
+                  offset: Offset(0, 0),
+                  blurRadius: 5)
+            ],
+            color: Color.fromRGBO(255, 255, 255, 1),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 38 * min(horizontalScale, verticalScale),
+                height: 38 * min(horizontalScale, verticalScale),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                    bottomLeft: Radius.circular(8),
+                    bottomRight: Radius.circular(8),
+                  ),
+                  color: Color.fromRGBO(54, 141, 255, 1),
+                ),
+                child: Center(
+                  child: Icon(
+                    icon,
+                    color: Colors.white,
+                    size: 28 * min(horizontalScale, verticalScale),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Container(
+                // width: 215 * horizontalScale,
+                // color: Colors.red,
+                child: Text(
+                  '$T1',
+                  maxLines: 2,
+                  textScaleFactor: min(horizontalScale, verticalScale),
+                  style: TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      color: Colors.black,
+                      fontSize: 14 * verticalScale,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
     }
-  );
-
+  });
 }
-Drawer dr(BuildContext context) {
 
+Drawer dr(BuildContext context) {
   void saveLoginState(BuildContext context) {
     Provider.of<LoginState>(context, listen: false).loggedIn = false;
   }
@@ -1600,9 +1580,7 @@ Drawer dr(BuildContext context) {
               color: HexColor('6153D3'),
             ),
           ),
-          onTap: () {
-
-          },
+          onTap: () {},
         ),
         InkWell(
           onTap: () {
@@ -1776,4 +1754,3 @@ Column chat() {
     ],
   );
 }
-

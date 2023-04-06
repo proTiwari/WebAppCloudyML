@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'package:cloudyml_app2/widgets/notification_popup.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -89,6 +90,28 @@ class _LandingScreenState extends State<LandingScreen> {
       'paidCourseNames': FieldValue.arrayUnion([id])
     });
   }
+
+  setNotification()async{
+    
+   var time;
+final DocumentSnapshot doc =
+    await FirebaseFirestore.instance.collection('Notice').doc('UcQl27Kl9hEEr1g2s0CK').get();
+ time = doc['time'].toDate();
+if(DateTime.now().isAfter(time)) {
+
+  if(!notificationList.contains(doc['Msg'].toString())){
+  print('Notification settted');
+  print('Notification ${notificationList.length}');
+setState(() {
+  notificationList.add(doc['Msg'].toString());
+   
+});
+  }
+
+  }else{
+    notificationList.clear();
+}
+}
 
   List<Icon> list = [];
 
@@ -548,36 +571,36 @@ class _LandingScreenState extends State<LandingScreen> {
     });
   }
 
-  void startTimer() {
-    countDownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setCountDown();
-    });
-  }
+  // void startTimer() {
+  //   countDownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+  //     setCountDown();
+  //   });
+  // }
+  //
+  // void stopTimer() {
+  //   setState(() {
+  //     countDownTimer!.cancel();
+  //   });
+  // }
+  //
+  // void resetTimer() {
+  //   stopTimer();
+  //   setState(() {
+  //     myDuration = Duration(days: 5);
+  //   });
+  // }
 
-  void stopTimer() {
-    setState(() {
-      countDownTimer!.cancel();
-    });
-  }
-
-  void resetTimer() {
-    stopTimer();
-    setState(() {
-      myDuration = Duration(days: 5);
-    });
-  }
-
-  setCountDown() {
-    final reduceSecs = 1;
-    setState(() {
-      final seconds = myDuration.inSeconds - reduceSecs;
-      if (seconds < 0) {
-        countDownTimer!.cancel();
-      } else {
-        myDuration = Duration(seconds: seconds);
-      }
-    });
-  }
+  // setCountDown() {
+  //   final reduceSecs = 1;
+  //   setState(() {
+  //     final seconds = myDuration.inSeconds - reduceSecs;
+  //     if (seconds < 0) {
+  //       countDownTimer!.cancel();
+  //     } else {
+  //       myDuration = Duration(seconds: seconds);
+  //     }
+  //   });
+  // }
 
   String strDigits(int n) => n.toString().padLeft(2, '0');
 
@@ -626,7 +649,7 @@ class _LandingScreenState extends State<LandingScreen> {
     fetchCourses();
     dbCheckerForPayInParts();
     userData();
-    startTimer();
+    // startTimer();
     // getuserdetails();
     checkrewardexpiry();
 
@@ -653,6 +676,7 @@ class _LandingScreenState extends State<LandingScreen> {
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
     setFeaturedCourse(course);
+    setNotification();
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
@@ -688,23 +712,34 @@ class _LandingScreenState extends State<LandingScreen> {
                     Container(
                       width: screenWidth,
                       height: screenHeight,
-                      child: Image.asset(
-                          "assets/BG_1.png",
-                          fit: BoxFit.fill,
-                          height: screenHeight,
-                          width: screenWidth),
+                      child:
+                      CachedNetworkImage(
+                        placeholder: (context, url) =>
+                            Container(
+                                color: HexColor('0C001B'),
+                            ),
+                        errorWidget: (context, url, error) =>
+                            Icon(Icons.error),
+                        imageUrl: 'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Fwebbg.png?alt=media&token=04326232-0b38-44f3-9722-3dfc1a89e052',
+                        fit: BoxFit.fill,
+                      ),
                     ),
                     // picture of CEO
                     Positioned(
-                      // top: -25,
+                      top: 75,
                       right: 170,
                       child: Container(
                         width: 450,
-                        height: 600,
-                        child: Image.network(
-                          'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Fceopic.png?alt=media&token=27a120b5-b4be-486c-b087-271b4f5e8faa',
-                          fit: BoxFit.fitWidth,
+                        height: 550,
+                        child: CachedNetworkImage(
+                          placeholder: (context, url) =>
+                              Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                          imageUrl: 'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Fceopic.png?alt=media&token=27a120b5-b4be-486c-b087-271b4f5e8faa',
+                          fit: BoxFit.fill,
                         ),
+
                       ),
                     ),
                     Positioned(
@@ -1443,7 +1478,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                                 final id = index.toString();
                                                                                 final courseName = course[index].courseName;
 
-                                                                                GoRouter.of(context).pushNamed('comboCourse', queryParams: {
+                                                                                GoRouter.of(context).pushNamed('newcomboCourse', queryParams: {
                                                                                   'id': id,
                                                                                   'courseName': courseName
                                                                                 });
@@ -2485,71 +2520,63 @@ class _LandingScreenState extends State<LandingScreen> {
                                                   children: [
                                                     ElevatedButton(
                                                         onPressed: () {
-                                                          setState(() {
-                                                            courseId =
-                                                                featuredCourse[
-                                                                        index]
-                                                                    .courseDocumentId;
-                                                          });
-                                                          print(courseId);
-                                                          if (featuredCourse[
-                                                                  index]
-                                                              .isItComboCourse) {
-                                                            print(
-                                                                featuredCourse[
-                                                                        index]
-                                                                    .courses);
+                                    setState(() {
+                                      courseId = featuredCourse[index]
+                                          .courseDocumentId;
+                                    });
+                                    print(courseId);
+                                    if (featuredCourse[index].isItComboCourse) {
+                                      print(featuredCourse[index].courses);
 
-                                                            final id = index
-                                                                .toString();
-                                                            final cID =
-                                                                featuredCourse[
-                                                                        index]
-                                                                    .courseDocumentId;
-                                                            final courseName =
-                                                                featuredCourse[
-                                                                        index]
-                                                                    .courseName;
-                                                            final courseP =
-                                                                featuredCourse[
-                                                                        index]
-                                                                    .coursePrice;
-                                                            GoRouter.of(context)
-                                                                .pushNamed(
-                                                                    'featuredCourses',
-                                                                    queryParams: {
-                                                                  'cID': cID,
-                                                                  'courseName':
-                                                                      courseName,
-                                                                  'id': id,
-                                                                  'coursePrice':
-                                                                      courseP
-                                                                });
+                                      final id = index.toString();
+                                      final cID = featuredCourse[index]
+                                          .courseDocumentId;
+                                      final courseName =
+                                          featuredCourse[index].courseName;
+                                      final courseP =
+                                          featuredCourse[index].coursePrice;
+                                      // GoRouter.of(context).pushNamed(
+                                      //     'featuredCourses',
+                                      //     queryParams: {
+                                      //       'cID': cID,
+                                      //       'courseName': courseName,
+                                      //       'id': id,
+                                      //       'coursePrice': courseP
+                                      //     });
 
-                                                            // Navigator.push(
-                                                            //   context,
-                                                            //   MaterialPageRoute(
-                                                            //     builder: (context) =>
-                                                            //         ComboStore(
-                                                            //           courses:
-                                                            //           course[index].courses,
-                                                            //         ),
-                                                            //   ),
-                                                            // );
+                                      //  final id = index.toString();
+                                      //       final cID = featuredCourse[index].courseDocumentId;
+                                      //       final courseName = featuredCourse[index].courseName;
+                                      //       final courseP = featuredCourse[index].coursePrice;
+                                      GoRouter.of(context).pushNamed(
+                                          'NewFeature',
+                                          queryParams: {
+                                            'cID': cID,
+                                            'courseName': courseName,
+                                            'id': id,
+                                            'coursePrice': courseP
+                                          });
 
-                                                          } else {
-                                                            final id = index
-                                                                .toString();
-                                                            GoRouter.of(context)
-                                                                .pushNamed(
-                                                                    'catalogue',
-                                                                    queryParams: {
-                                                                  'id': id,
-                                                                  'cID':
-                                                                      courseId,
-                                                                });
-                                                          }
-                                                        },
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) =>
+                                      //         ComboStore(
+                                      //           courses:
+                                      //           course[index].courses,
+                                      //         ),
+                                      //   ),
+                                      // );
+
+                                    } else {
+                                      final id = index.toString();
+                                      GoRouter.of(context)
+                                          .pushNamed('catalogue', queryParams: {
+                                        'id': id,
+                                        'cID': courseId,
+                                      });
+                                    }
+                                  },
                                                         style: ElevatedButton
                                                             .styleFrom(
                                                           backgroundColor:
@@ -3047,7 +3074,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                     child: VideoScreen(
                                                       isDemo: true,
                                                       courseName: course[index]
-                                                          .courseName,
+                                                          .curriculum.keys.toList().first.toString()
+,
                                                       sr: 1,
                                                     ),
                                                   ),
@@ -3104,7 +3132,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                         isDemo: true,
                                                         courseName:
                                                             course[index]
-                                                                .courseName,
+                                                                .curriculum.keys.toList().first.toString()
+,
                                                         sr: 1,
                                                       ),
                                                     ),

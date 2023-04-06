@@ -41,7 +41,7 @@ class DatabaseServices {
                   courseName: documentSnapshot.data()['name'],
                   // isItPaidCourse: documentSnapshot.data()['paid'],
                   numOfVideos: documentSnapshot.data()['videosCount'].toString(),
-                  curriculum: documentSnapshot.data()['curriculum'],
+                  curriculum: documentSnapshot.data()['curriculum1'],
                   courseDescription: documentSnapshot.data()['description'],
                   FcSerialNumber: documentSnapshot.data()['FC'] ?? '',
                   courseContent: documentSnapshot.data()['courseContent'],
