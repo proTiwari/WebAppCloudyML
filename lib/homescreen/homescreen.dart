@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:bot_toast/bot_toast.dart';
 import '../Services/code_generator.dart';
@@ -74,7 +73,7 @@ class _LandingScreenState extends State<LandingScreen> {
         });
       });
     } catch (e) {
-      print("llooooooooooooo$e");
+      print("oooo$e");
     }
   }
 
@@ -284,7 +283,7 @@ class _LandingScreenState extends State<LandingScreen> {
     var referralCode = await deepLinkRepo?.referrerCode.value;
 
     print(
-        "sddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd $referralCode ddd");
+        "dd $referralCode ddd");
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -358,7 +357,7 @@ class _LandingScreenState extends State<LandingScreen> {
       final deepLinkRepo = await DeepLinkService.instance;
       var referralCode = await deepLinkRepo?.referrerCode.value;
       print(
-          "sddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd ${referralCode}");
+          " ${referralCode}");
       final referCode = await CodeGenerator().generateCode('refer');
       final referLink =
           await DeepLinkService.instance?.createReferLink(referCode);
@@ -384,7 +383,7 @@ class _LandingScreenState extends State<LandingScreen> {
               "send data to firebase uid: ${FirebaseAuth.instance.currentUser!.uid}"));
 
       Future<ReferalModel> getReferrerUser(String referCode) async {
-        print("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ${referCode}");
+        print(" ${referCode}");
         final docSnapshots = await FirebaseFirestore.instance
             .collection('Users')
             .where('refer_code', isEqualTo: referCode)
@@ -392,7 +391,7 @@ class _LandingScreenState extends State<LandingScreen> {
 
         final userSnapshot = docSnapshots.docs.first;
         print(
-            "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ${userSnapshot.exists}");
+            " ${userSnapshot.exists}");
         if (userSnapshot.exists) {
           print(userSnapshot.data());
           return ReferalModel.fromJson(userSnapshot.data());
@@ -407,7 +406,7 @@ class _LandingScreenState extends State<LandingScreen> {
           if (referrerCode.toString().substring(0, 11) != "moneyreward") {
             final referer = await getReferrerUser(referrerCode);
             print(
-                "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ${referer.id}");
+                " ${referer.id}");
 
             final checkIfUserAlreadyExist = await FirebaseFirestore.instance
                 .collection('Users')
@@ -442,7 +441,7 @@ class _LandingScreenState extends State<LandingScreen> {
       }
 
       if (referralCode != "") {
-        print("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ${referralCode}");
+        print(" ${referralCode}");
         await rewardUser(FirebaseAuth.instance.currentUser!.uid, referralCode!);
       }
       ;
@@ -766,7 +765,8 @@ class _LandingScreenState extends State<LandingScreen> {
                       padding: const EdgeInsets.only(top: 8.0, right: 5),
                       child: customMenuBar(context),
                     ),
-                    Positioned(
+                    courses.length > 0
+                        ? Positioned(
                         top: verticalScale * 700,
                         left: 50,
                         child: Container(
@@ -782,7 +782,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                     fontSize: 36 * verticalScale),
                               ),
                               InkWell(
-                                onTap: () {
+                                onTap: ()  {
                                   GoRouter.of(context).pushReplacementNamed('myCourses');
                                 },
                                 child: Row(
@@ -804,7 +804,8 @@ class _LandingScreenState extends State<LandingScreen> {
                               ),
                             ],
                           ),
-                        )),
+                        ))
+                        : Container(),
                     Positioned(
                         top: verticalScale * 785,
                         child: courses.length > 0
@@ -825,11 +826,9 @@ class _LandingScreenState extends State<LandingScreen> {
                                             "null") {
                                           return Container();
                                         }
-                                        if (courses
-                                            .contains(course[index].courseId)) {
+                                        if (courses.contains(course[index].courseId)) {
                                           return InkWell(
                                             onTap: (() async {
-                                              // setModuleId(snapshot.data!.docs[index].id);
                                               await getCourseName();
                                               if (navigateToCatalogueScreen(
                                                       course[index].courseId) &&
@@ -950,6 +949,12 @@ class _LandingScreenState extends State<LandingScreen> {
                                                     // );
                                                   }
                                                 } else {
+                                                  await FirebaseFirestore.instance
+                                                      .collection("courses").doc(course[index]
+                                                      .courseDocumentId).update({
+                                                    'fIndex': index.toString(),
+                                                  });
+
                                                   ComboCourse.comboId.value =
                                                       course[index].courseId;
                                                   final id = index.toString();
@@ -963,6 +968,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                         'id': id,
                                                         'courseName': courseName
                                                       });
+
                                                   // Navigator.push(
                                                   //   context,
                                                   //   PageTransition(
@@ -1370,37 +1376,40 @@ class _LandingScreenState extends State<LandingScreen> {
                                   ),
                                 ),
                               )
-                            : Container(
-                                width: screenWidth,
-                                height: screenHeight / 4.5,
-                                child: Center(
-                                  child: Container(
-                                    width: screenWidth / 2,
-                                    height: screenHeight / 5.5,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.black26,
-                                            offset: Offset(
-                                              2, // Move to right 10  horizontally
-                                              2.0, // Move to bottom 10 Vertically
-                                            ),
-                                            blurRadius: 40)
-                                      ],
-                                      // border: Border.all(
-                                      //   color: HexColor('440F87'),
-                                      //   width: 1.5,
-                                      // ),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Center(
-                                        child: Text(
-                                      'There are zero courses. Please enroll.',
-                                    )),
-                                  ),
-                                ),
-                              )),
+                            :
+                            Container()
+                        // Container(
+                        //         width: screenWidth,
+                        //         height: screenHeight / 4.5,
+                        //         child: Center(
+                        //           child: Container(
+                        //             width: screenWidth / 2,
+                        //             height: screenHeight / 5.5,
+                        //             decoration: BoxDecoration(
+                        //               color: Colors.white,
+                        //               boxShadow: [
+                        //                 BoxShadow(
+                        //                     color: Colors.black26,
+                        //                     offset: Offset(
+                        //                       2, // Move to right 10  horizontally
+                        //                       2.0, // Move to bottom 10 Vertically
+                        //                     ),
+                        //                     blurRadius: 40)
+                        //               ],
+                        //               // border: Border.all(
+                        //               //   color: HexColor('440F87'),
+                        //               //   width: 1.5,
+                        //               // ),
+                        //               borderRadius: BorderRadius.circular(15),
+                        //             ),
+                        //             child: Center(
+                        //                 child: Text(
+                        //               'There are zero courses. Please enroll.',
+                        //             )),
+                        //           ),
+                        //         ),
+                        //       )
+                    ),
 
                     Positioned(
                         bottom: verticalScale * 1150,
@@ -1558,7 +1567,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                     }
                                 }
                               } catch (e) {
-                                print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
+                                print("${e}");
 
                                 Fluttertoast.showToast(msg: e.toString());
                                 return Center(
@@ -1681,7 +1690,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                     }
                                 }
                               } catch (e) {
-                                print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
+                                print("${e}");
 
                                 Fluttertoast.showToast(msg: e.toString());
                                 return Center(
@@ -1804,7 +1813,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                     }
                                 }
                               } catch (e) {
-                                print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
+                                print("${e}");
 
                                 Fluttertoast.showToast(msg: e.toString());
                                 return Center(
@@ -2126,9 +2135,13 @@ class _LandingScreenState extends State<LandingScreen> {
                                       courseId = featuredCourse[index]
                                           .courseDocumentId;
                                     });
+
                                     print(courseId);
                                     if (featuredCourse[index].isItComboCourse) {
                                       print(featuredCourse[index].courses);
+
+
+
 
                                       final id = index.toString();
                                       final cID = featuredCourse[index]
@@ -2137,6 +2150,10 @@ class _LandingScreenState extends State<LandingScreen> {
                                           featuredCourse[index].courseName;
                                       final courseP =
                                           featuredCourse[index].coursePrice;
+
+
+
+
                                       // GoRouter.of(context).pushNamed(
                                       //     'featuredCourses',
                                       //     queryParams: {
@@ -2790,6 +2807,7 @@ class _LandingScreenState extends State<LandingScreen> {
                           fit: BoxFit.fill,
                         ),
                       ),
+                      courses.length > 0 ?
                       Positioned(
                           top: verticalScale * 30,
                           left: 15 * horizontalScale,
@@ -2829,7 +2847,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                 ),
                               ],
                             ),
-                          )),
+                          )) :
+                      Container(),
                       Positioned(
                         top: 115 * verticalScale,
                         child: Container(
@@ -3481,27 +3500,28 @@ class _LandingScreenState extends State<LandingScreen> {
                                     },
                                   ),
                                 )
-                              : Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Container(
-                                    width: screenWidth,
-                                    height: screenHeight / 3,
-                                    padding: EdgeInsets.all(5.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    child: Center(
-                                        child: Text(
-                                      'There are no courses. Please enroll.',
-                                      style: TextStyle(
-                                        fontSize: 18 * verticalScale,
-                                        fontWeight: FontWeight.bold,
-                                        height: 1,
-                                      ),
-                                    )),
-                                  ),
-                                ),
+                              : Container()
+                          // Padding(
+                          //         padding: const EdgeInsets.all(15.0),
+                          //         child: Container(
+                          //           width: screenWidth,
+                          //           height: screenHeight / 3,
+                          //           padding: EdgeInsets.all(5.0),
+                          //           decoration: BoxDecoration(
+                          //             color: Colors.white,
+                          //             borderRadius: BorderRadius.circular(25),
+                          //           ),
+                          //           child: Center(
+                          //               child: Text(
+                          //             'There are no courses. Please enroll.',
+                          //             style: TextStyle(
+                          //               fontSize: 18 * verticalScale,
+                          //               fontWeight: FontWeight.bold,
+                          //               height: 1,
+                          //             ),
+                          //           )),
+                          //         ),
+                          //       ),
                         ),
                       ),
                       Positioned(
@@ -3660,7 +3680,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                           }
                                       }
                                     } catch (e) {
-                                      print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
+                                      print("kkk${e}");
 
                                       Fluttertoast.showToast(msg: e.toString());
                                       return Center(
@@ -3780,7 +3800,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                           }
                                       }
                                     } catch (e) {
-                                      print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
+                                      print("jjkkk${e}");
 
                                       Fluttertoast.showToast(msg: e.toString());
                                       return Center(
@@ -3901,7 +3921,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                       }
                                   }
                                 } catch (e) {
-                                  print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
+                                  print("jkkk${e}");
 
                                   Fluttertoast.showToast(msg: e.toString());
                                   return Center(

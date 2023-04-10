@@ -3791,8 +3791,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                                   GestureDetector(
                                                     onTap: () {
                                                       setState(() {
-                                                        quizdata =
-                                                            coursequiz[index1];
+                                                        quizdata = coursequiz[index1];
                                                         quizbool = true;
                                                         htmlbool = true;
                                                       });

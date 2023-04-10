@@ -5,6 +5,7 @@ import 'package:cloudyml_app2/combo/combo_store.dart';
 import 'package:cloudyml_app2/combo/updated_combo_course.dart';
 import 'package:cloudyml_app2/homepage.dart';
 import 'package:cloudyml_app2/homescreen/homescreen.dart';
+import 'package:cloudyml_app2/live_doubt_screen/live_doubt_session.dart';
 import 'package:cloudyml_app2/module/review%20resume/review_resume.dart';
 import 'package:cloudyml_app2/module/review%20resume/review_resume_detailed.dart';
 import 'package:cloudyml_app2/module/video_screen.dart';
@@ -22,7 +23,6 @@ import 'package:provider/provider.dart';
 import '../authentication_screens/phone_auth.dart';
 import '../catalogue_screen.dart';
 import '../combo/trialfeatutr.dart';
-import '../live_doubt_screen/live_doubt_screen.dart';
 import '../models/course_details.dart';
 import '../my_Courses.dart';
 import '../screens/assignment_tab_screen.dart';
@@ -139,6 +139,13 @@ class MyRouter {
             }
         ),
         GoRoute(
+          name: 'LiveDoubtSession',
+          path: '/LiveDoubtSession',
+          pageBuilder: (context, state) {
+            return MaterialPage(
+                key: state.pageKey, child: LiveDoubtScreen());
+       },),
+        GoRoute(
           name: 'myCourses',
           path: '/myCourses',
           pageBuilder: (context, state) {
@@ -164,14 +171,6 @@ class MyRouter {
           },
         ),
         // CongratulationsWidget
-        GoRoute(
-          name: 'LiveDoubtSession',
-          path: '/LiveDoubtSession',
-          pageBuilder: (context, state) {
-            return MaterialPage(
-                key: state.pageKey, child: LiveDoubtScreen());
-          },
-        ),
         GoRoute(
           name: 'quizentry',
           path: '/quizentry',

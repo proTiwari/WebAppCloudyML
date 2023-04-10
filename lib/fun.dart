@@ -21,7 +21,7 @@ import 'Providers/UserProvider.dart';
 import 'authentication/firebase_auth.dart';
 import 'homepage.dart';
 
-bool isLoading  = false;
+bool isLoading = false;
 
 Row Star() {
   return Row(
@@ -55,8 +55,6 @@ Row Star() {
     ],
   );
 }
-
-
 
 Widget buildFile(BuildContext context, FirebaseFile file) => Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -737,12 +735,10 @@ var mentorItems = [
   'Admin Quiz Panel',
   'Assignment Review',
   'My Profile',
-  'Logout'];
+  'Logout'
+];
 
-var items = [
-  'My Courses',
-  'My Profile',
-  'Logout'];
+var items = ['My Courses', 'My Profile', 'Logout'];
 String dropdownValue = '';
 
 Widget customMenuBar(BuildContext context) {
@@ -778,7 +774,9 @@ Widget customMenuBar(BuildContext context) {
             child: Text(
               'Home',
               style: buttonTextStyle.copyWith(
-                color: Uri.base.path == '/home'? HexColor('873AFF') : Colors.white ,
+                color: Uri.base.path == '/home'
+                    ? HexColor('873AFF')
+                    : Colors.white,
               ),
             )),
         SizedBox(
@@ -790,11 +788,10 @@ Widget customMenuBar(BuildContext context) {
             },
             child: Text('Store',
                 style: buttonTextStyle.copyWith(
-                  color:
-                  Uri.base.path == '/store'?
-                  HexColor('873AFF') : Colors.white ,
-                )
-            )),
+                  color: Uri.base.path == '/store'
+                      ? HexColor('873AFF')
+                      : Colors.white,
+                ))),
         SizedBox(
           width: horizontalScale * 10,
         ),
@@ -805,41 +802,34 @@ Widget customMenuBar(BuildContext context) {
             },
             child: Text(
               'Reviews',
-              style:  buttonTextStyle.copyWith(
-                color: Uri.base.path == '/reviews'? HexColor('873AFF') :
-                Colors.white ,
+              style: buttonTextStyle.copyWith(
+                color: Uri.base.path == '/reviews'
+                    ? HexColor('873AFF')
+                    : Colors.white,
               ),
             )),
         SizedBox(
           width: horizontalScale * 10,
         ),
-        // TextButton(
-        //     onPressed: () {
-        //       GoRouter.of(context).pushNamed('LiveDoubtSession');
-        //     },
-        //     child: Text(
-        //       'Live Doubt Support',
-        //       style:  buttonTextStyle.copyWith(
-        //         color:
-        //         Uri.base.path == '/LiveDoubtScreen'? HexColor('873AFF') :
-        //         Colors.white ,
-        //       ),
-        //     )),
-        // SizedBox(
-        //   width: horizontalScale * 15,
-        // ),
         DropdownButtonHideUnderline(
           child: DropdownButton2(
             customButton: Row(
               children: [
-                Text('More',
+                Text(
+                  'More',
                   style: buttonTextStyle.copyWith(
                     color: Uri.base.path == '/myCourses'
-                        ? HexColor('873AFF') : Colors.white,
+                        ? HexColor('873AFF')
+                        : Colors.white,
                   ),
                 ),
-                SizedBox(width: 100,),
-                Icon(Icons.arrow_drop_down, color: Colors.white,)
+                SizedBox(
+                  width: 100,
+                ),
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.white,
+                )
               ],
             ),
             isExpanded: false,
@@ -849,33 +839,35 @@ Widget customMenuBar(BuildContext context) {
               iconDisabledColor: Colors.white,
               iconEnabledColor: Colors.white,
             ),
-            dropdownStyleData:  DropdownStyleData(
+            dropdownStyleData: DropdownStyleData(
               decoration: BoxDecoration(
                 color: Colors.deepPurple,
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
             underline: Container(),
-            hint: Text('More',
+            hint: Text(
+              'More',
               style: buttonTextStyle.copyWith(
                 color: Uri.base.path == '/myCourses'
-                    ? HexColor('873AFF') : Colors.white,
+                    ? HexColor('873AFF')
+                    : Colors.white,
               ),
             ),
             onChanged: (String? value) {
               if (value != dropdownValue) {
-
                 if (value == 'My Courses') {
                   GoRouter.of(context).pushReplacementNamed('myCourses');
-                } else if(value == 'Resume Review') {
+                } else if (value == 'Resume Review') {
                   GoRouter.of(context).pushReplacementNamed('reviewResume');
-                } else if(value == 'Admin Quiz Panel') {
+                } else if (value == 'Admin Quiz Panel') {
                   GoRouter.of(context).pushReplacementNamed('quizpanel');
-                } else if(value == 'Assignment Review') {
-                  GoRouter.of(context).pushReplacementNamed('AssignmentScreenForMentors');
-                } else if(value == 'My Profile') {
+                } else if (value == 'Assignment Review') {
+                  GoRouter.of(context)
+                      .pushReplacementNamed('AssignmentScreenForMentors');
+                } else if (value == 'My Profile') {
                   GoRouter.of(context).pushReplacementNamed('myAccount');
-                } else if(value == 'Logout') {
+                } else if (value == 'Logout') {
                   logOut(context);
                   saveLoginOutState(context);
                   GoRouter.of(context).pushReplacement('/login');
@@ -884,40 +876,44 @@ Widget customMenuBar(BuildContext context) {
                 }
               }
             },
-            items: globals.role == 'mentor' ?
-            mentorItems.map((String mentorItems) {
-              return DropdownMenuItem(
-                  value: mentorItems,
-                  child: Text(mentorItems,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ));
-            }).toList()
-                :  items.map((String items) {
-              return DropdownMenuItem(
-                  value: items,
-                  child: Text(items,
-                    style: buttonTextStyle.copyWith(
-                      color: Colors.white,
-                    ),
-                  ));
-            }).toList(),
-          ),),
-        SizedBox(width: 15 * horizontalScale,),
+            items: globals.role == 'mentor'
+                ? mentorItems.map((String mentorItems) {
+                    return DropdownMenuItem(
+                        value: mentorItems,
+                        child: Text(
+                          mentorItems,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ));
+                  }).toList()
+                : items.map((String items) {
+                    return DropdownMenuItem(
+                        value: items,
+                        child: Text(
+                          items,
+                          style: buttonTextStyle.copyWith(
+                            color: Colors.white,
+                          ),
+                        ));
+                  }).toList(),
+          ),
+        ),
+        SizedBox(
+          width: 15 * horizontalScale,
+        ),
       ],
     ),
   );
 }
 
-
-
 Drawer customDrawer(BuildContext context) {
   void saveLoginState(BuildContext context) {
     Provider.of<LoginState>(context, listen: false).loggedIn = false;
   }
+
   final userProvider = Provider.of<UserProvider>(context);
   return Drawer(
     child: Container(
@@ -934,14 +930,13 @@ Drawer customDrawer(BuildContext context) {
                   ),
                   UserAccountsDrawerHeader(
                     accountName: Text(
-                      userProvider.userModel?.name.toString() ??
-                          'Enter name',
+                      userProvider.userModel?.name.toString() ?? 'Enter name',
                     ),
                     accountEmail: Text(
                       userProvider.userModel?.email.toString() == ''
                           ? userProvider.userModel?.mobile.toString() ?? ''
                           : userProvider.userModel?.email.toString() ??
-                          'Enter email',
+                              'Enter email',
                     ),
                     currentAccountPicture: GestureDetector(
                       onTap: () {
@@ -951,8 +946,8 @@ Drawer customDrawer(BuildContext context) {
                       child: CircleAvatar(
                         foregroundColor: Colors.black,
                         //foregroundImage: NetworkImage('https://stratosphere.co.in/img/user.jpg'),
-                        foregroundImage: NetworkImage(
-                            userProvider.userModel?.image ?? ''),
+                        foregroundImage:
+                            NetworkImage(userProvider.userModel?.image ?? ''),
                         backgroundColor: Colors.transparent,
                         backgroundImage: CachedNetworkImageProvider(
                           'https://stratosphere.co.in/img/user.jpg',
@@ -988,7 +983,6 @@ Drawer customDrawer(BuildContext context) {
                   GoRouter.of(context).push('/store');
                 },
               ),
-
 
               //navigate to messages
               // InkWell(
@@ -1028,21 +1022,20 @@ Drawer customDrawer(BuildContext context) {
                   GoRouter.of(context).push('/myCourses');
                 },
               ),
-               globals.role == 'mentor' ?
-              InkWell(
-                child: ListTile(
-                  title: Text('Review Resume'),
-                  leading: Icon(
-                    Icons.reviews,
-                    color: HexColor('691EC8'),
-                  ),
-                ),
-                onTap: () {
-
-                  GoRouter.of(context).push('/reviewResume');
-
-                },
-              ) : SizedBox(),
+              globals.role == 'mentor'
+                  ? InkWell(
+                      child: ListTile(
+                        title: Text('Review Resume'),
+                        leading: Icon(
+                          Icons.reviews,
+                          color: HexColor('691EC8'),
+                        ),
+                      ),
+                      onTap: () {
+                        GoRouter.of(context).push('/reviewResume');
+                      },
+                    )
+                  : SizedBox(),
               globals.role == "mentor"
                   ? InkWell(
                       child: ListTile(
@@ -1168,140 +1161,135 @@ Drawer customDrawer(BuildContext context) {
 Widget featureCPopup(
     IconData icon, String T1, double horizontalScale, double verticalScale) {
   return LayoutBuilder(
-    builder: (BuildContext context, BoxConstraints constraints) {
-      if (constraints.maxWidth >= 650) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Container(
-            width: 250 * horizontalScale,
-            height: 38 * verticalScale,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-                bottomLeft: Radius.circular(8),
-                bottomRight: Radius.circular(8),
-              ),
-              boxShadow: [
-                BoxShadow(
-                    color: Color.fromRGBO(31, 31, 31, 0.25),
-                    offset: Offset(0, 0),
-                    blurRadius: 5)
-              ],
-              color: Color.fromRGBO(255, 255, 255, 1),
+      builder: (BuildContext context, BoxConstraints constraints) {
+    if (constraints.maxWidth >= 650) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Container(
+          width: 250 * horizontalScale,
+          height: 38 * verticalScale,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+              bottomLeft: Radius.circular(8),
+              bottomRight: Radius.circular(8),
             ),
-            child: Row(
-              children: [
-                Container(
-                  width: 38 * min(horizontalScale, verticalScale),
-                  height: 38 * min(horizontalScale, verticalScale),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
-                      bottomLeft: Radius.circular(8),
-                      bottomRight: Radius.circular(8),
-                    ),
-                    color: Color.fromRGBO(54, 141, 255, 1),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      icon,
-                      color: Colors.white,
-                      size: 28 * min(horizontalScale, verticalScale),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  // width: 250 * horizontalScale,
-                  child: Text(
-                    '$T1',
-                    textScaleFactor: min(horizontalScale, verticalScale),
-                    style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
-                        color: Colors.black,
-                        fontSize: 18 * verticalScale,
-                        fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            boxShadow: [
+              BoxShadow(
+                  color: Color.fromRGBO(31, 31, 31, 0.25),
+                  offset: Offset(0, 0),
+                  blurRadius: 5)
+            ],
+            color: Color.fromRGBO(255, 255, 255, 1),
           ),
-        );
-      } else {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Container(
-            width: 364 * horizontalScale,
-            height: 40 * verticalScale,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-                bottomLeft: Radius.circular(8),
-                bottomRight: Radius.circular(8),
+          child: Row(
+            children: [
+              Container(
+                width: 38 * min(horizontalScale, verticalScale),
+                height: 38 * min(horizontalScale, verticalScale),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                    bottomLeft: Radius.circular(8),
+                    bottomRight: Radius.circular(8),
+                  ),
+                  color: Color.fromRGBO(54, 141, 255, 1),
+                ),
+                child: Center(
+                  child: Icon(
+                    icon,
+                    color: Colors.white,
+                    size: 28 * min(horizontalScale, verticalScale),
+                  ),
+                ),
               ),
-              boxShadow: [
-                BoxShadow(
-                    color: Color.fromRGBO(31, 31, 31, 0.25),
-                    offset: Offset(0, 0),
-                    blurRadius: 5)
-              ],
-              color: Color.fromRGBO(255, 255, 255, 1),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 38 * min(horizontalScale, verticalScale),
-                  height: 38 * min(horizontalScale, verticalScale),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
-                      bottomLeft: Radius.circular(8),
-                      bottomRight: Radius.circular(8),
-                    ),
-                    color: Color.fromRGBO(54, 141, 255, 1),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      icon,
-                      color: Colors.white,
-                      size: 28 * min(horizontalScale, verticalScale),
-                    ),
-                  ),
+              SizedBox(
+                width: 10,
+              ),
+              Container(
+                // width: 250 * horizontalScale,
+                child: Text(
+                  '$T1',
+                  textScaleFactor: min(horizontalScale, verticalScale),
+                  style: TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      color: Colors.black,
+                      fontSize: 18 * verticalScale,
+                      fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  // width: 215 * horizontalScale,
-                  // color: Colors.red,
-                  child: Text(
-                    '$T1',
-                    maxLines: 2,
-                    textScaleFactor: min(horizontalScale, verticalScale),
-                    style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
-                        color: Colors.black,
-                        fontSize: 14 * verticalScale,
-                        fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      }
-
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Container(
+          width: 364 * horizontalScale,
+          height: 40 * verticalScale,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+              bottomLeft: Radius.circular(8),
+              bottomRight: Radius.circular(8),
+            ),
+            boxShadow: [
+              BoxShadow(
+                  color: Color.fromRGBO(31, 31, 31, 0.25),
+                  offset: Offset(0, 0),
+                  blurRadius: 5)
+            ],
+            color: Color.fromRGBO(255, 255, 255, 1),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 38 * min(horizontalScale, verticalScale),
+                height: 38 * min(horizontalScale, verticalScale),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                    bottomLeft: Radius.circular(8),
+                    bottomRight: Radius.circular(8),
+                  ),
+                  color: Color.fromRGBO(54, 141, 255, 1),
+                ),
+                child: Center(
+                  child: Icon(
+                    icon,
+                    color: Colors.white,
+                    size: 28 * min(horizontalScale, verticalScale),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Container(
+                // width: 215 * horizontalScale,
+                // color: Colors.red,
+                child: Text(
+                  '$T1',
+                  maxLines: 2,
+                  textScaleFactor: min(horizontalScale, verticalScale),
+                  style: TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      color: Colors.black,
+                      fontSize: 14 * verticalScale,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
     }
-  );
-
+  });
 }
 
 Column chat() {
@@ -1416,4 +1404,3 @@ Column chat() {
     ],
   );
 }
-
