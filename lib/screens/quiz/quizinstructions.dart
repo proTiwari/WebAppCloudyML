@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloudyml_app2/screens/flutter_flow/flutter_flow_util.dart';
+import 'package:cloudyml_app2/screens/quiz/model/quiztrackmodel.dart';
 import 'package:cloudyml_app2/screens/quiz/quiz_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
-import 'model/quiztrackmodel.dart';
 
 class InstructionspageWidget extends StatefulWidget {
   var quizdata;
@@ -22,12 +23,6 @@ class _InstructionspageWidgetState extends State<InstructionspageWidget> {
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _unfocusNode.dispose();
-    super.dispose();
   }
 
   checkQuizStatusOrNavigate() async {
@@ -137,6 +132,11 @@ class _InstructionspageWidgetState extends State<InstructionspageWidget> {
     });
   }
 
+  @override
+  void dispose() {
+    _unfocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,99 +147,391 @@ class _InstructionspageWidgetState extends State<InstructionspageWidget> {
         child: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
           child: Align(
-            alignment: AlignmentDirectional(0, -0.35),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                  child: Align(
-                    alignment: AlignmentDirectional(0, 0),
-                    child: Material(
-                      color: Colors.transparent,
-                      elevation: 5,
-                      child: Container(
-                        width: 800,
-                        height: 540,
-                        decoration: BoxDecoration(
-                          color:
-                              FlutterFlowTheme.of(context).secondaryBackground,
+            alignment: AlignmentDirectional(0, 0),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.95,
+              height: 600,
+              decoration: BoxDecoration(
+                color: FlutterFlowTheme.of(context).secondaryBackground,
+                border: Border.all(
+                  color: Color(0xFF14181B),
+                ),
+              ),
+              child: ListView(
+                padding: EdgeInsets.zero,
+                scrollDirection: Axis.vertical,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: AlignmentDirectional(0, 0),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                            child: Text(
+                              'Instructions',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyText1
+                                  .override(
+                                    fontFamily: 'Urbanist',
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    fontSize: 24,
+                                  ),
+                            ),
+                          ),
                         ),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    10, 10, 10, 10),
-                                child: Text(
-                                  'Quiz Instructions\nThe quizzes consists of questions carefully designed to help you self-assess your comprehension of the information presented on the topics covered in the module. No data will be collected on the website regarding your responses or how many times you take the quiz.\n\nEach question in the quiz is of multiple-choice or \"true or false\" format. Read each question carefully, and click on the button next to your response that is based on the information covered on the topic in the module. Each correct or incorrect response will result in appropriate feedback immediately at the bottom of the screen.\n\nAfter responding to a question, click on the \"Next Question\" button at the bottom to go to the next questino. After responding to the 8th question, click on \"Close\" on the top of the window to exit the quiz.\n\nIf you select an incorrect response for a question, you can try again until you get the correct response. If you retake the quiz, the questions and their respective responses will be randomized.\n\nThe total score for the quiz is based on your responses to all questions. If you respond incorrectly to a question or retake a question again and get the correct response, your quiz score will reflect it appropriately. However, your quiz will not be graded, if you skip a question or exit before responding to all the questions.\n\nQuiz Instructions\nThe quizzes consists of questions carefully designed to help you self-assess your comprehension of the information presented on the topics covered in the module. No data will be collected on the website regarding your responses or how many times you take the quiz.\n\nEach question in the quiz is of multiple-choice or \"true or false\" format. Read each question carefully, and click on the button next to your response that is based on the information covered on the topic in the module. Each correct or incorrect response will result in appropriate feedback immediately at the bottom of the screen.\n\nAfter responding to a question, click on the \"Next Question\" button at the bottom to go to the next questino. After responding to the 8th question, click on \"Close\" on the top of the window to exit the quiz.\n\nIf you select an incorrect response for a question, you can try again until you get the correct response. If you retake the quiz, the questions and their respective responses will be randomized.\n\nThe total score for the quiz is based on your responses to all questions. If you respond incorrectly to a question or retake a question again and get the correct response, your quiz score will reflect it appropriately. However, your quiz will not be graded, if you skip a question or exit before responding to all the questions.',
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyText1
-                                      .override(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 20, 0, 0),
+                    child: Text(
+                      'General instructions',
+                      style: FlutterFlowTheme.of(context).bodyText1.override(
+                            fontFamily: 'Urbanist',
+                            color: FlutterFlowTheme.of(context).primaryText,
+                            fontWeight: FontWeight.w900,
+                            decoration: TextDecoration.underline,
+                          ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
+                    child: Text(
+                      '1. The Question Palette displayed on the right side of screen will show the status of each question using one of the following symbols:',
+                      style: FlutterFlowTheme.of(context).bodyText1.override(
+                            fontFamily: 'Urbanist',
+                            color: FlutterFlowTheme.of(context).primaryText,
+                          ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.1,
+                    height: 315.6,
+                    decoration: BoxDecoration(
+                      color: FlutterFlowTheme.of(context).secondaryBackground,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryText,
                                 ),
-                              ),
-                              Align(
-                                alignment: AlignmentDirectional(0, -0.2),
-                                child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      10, 10, 10, 10),
-                                  child: GestureDetector(
-                                    onTap: (() {
-                                       checkQuizStatusOrNavigate();
-                                      // GoRouter.of(context)
-                                      //     .pushNamed('/quizpage', queryParams: {
-                                      //   'data': "${widget.quizdata}"
-                                      // });
-                                    }),
-                                    child: Container(
-                                      width: 780,
-                                      height: 70,
-                                      decoration: BoxDecoration(
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(
+                                child: Align(
+                                  alignment: AlignmentDirectional(0, 0),
+                                  child: Text(
+                                    '1',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Urbanist',
                                           color: FlutterFlowTheme.of(context)
-                                              .secondaryColor,
+                                              .secondaryBackground,
+                                          fontSize: 20,
                                         ),
-                                      ),
-                                      child: Align(
-                                        alignment:
-                                            AlignmentDirectional(-0.05, 0),
-                                        child: Text(
-                                          'Start',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyText1
-                                              .override(
-                                                fontFamily: 'Poppins',
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryColor,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.normal,
-                                              ),
-                                        ),
-                                      ),
-                                    ),
                                   ),
                                 ),
                               ),
-                            ],
+                            ),
+                            Text(
+                              'You have not visited the question Yet!',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyText1
+                                  .override(
+                                    fontFamily: 'Urbanist',
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    fontSize: 13,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Color(0xDEF32B2B),
+                                ),
+                                child: Align(
+                                  alignment: AlignmentDirectional(0, 0),
+                                  child: Text(
+                                    '3',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Urbanist',
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryBackground,
+                                          fontSize: 20,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'You have not answered the question',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyText1
+                                  .override(
+                                    fontFamily: 'Urbanist',
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    fontSize: 13,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                ),
+                                child: Align(
+                                  alignment: AlignmentDirectional(0, 0),
+                                  child: Text(
+                                    '5',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Urbanist',
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryBackground,
+                                          fontSize: 20,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'You have answered the question',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyText1
+                                  .override(
+                                    fontFamily: 'Urbanist',
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    fontSize: 13,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color:
+                                      FlutterFlowTheme.of(context).primaryColor,
+                                ),
+                                child: Align(
+                                  alignment: AlignmentDirectional(0, 0),
+                                  child: Text(
+                                    '7',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Urbanist',
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryBackground,
+                                          fontSize: 20,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'You have NOT answered the question,\nbut have marked the question\nfor review.',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyText1
+                                  .override(
+                                    fontFamily: 'Urbanist',
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    fontSize: 13,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF2488E4),
+                                ),
+                                child: Align(
+                                  alignment: AlignmentDirectional(0, 0),
+                                  child: Text(
+                                    '9',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Urbanist',
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryBackground,
+                                          fontSize: 20,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'You have answered the question, but\n marked it for review.',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyText1
+                                  .override(
+                                    fontFamily: 'Urbanist',
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    fontSize: 13,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 0, 5, 0),
+                    child: Text(
+                      '2. The Marked for Review status for a question simply indicates that you would like to look at that question again.',
+                      style: FlutterFlowTheme.of(context).bodyText1.override(
+                            fontFamily: 'Urbanist',
+                            color: FlutterFlowTheme.of(context).primaryText,
+                          ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 0, 5, 0),
+                    child: Text(
+                      'If a question is answered and Marked for Review, your answer for that question will be considered in the evaluation.',
+                      style: FlutterFlowTheme.of(context).bodyText1.override(
+                            fontFamily: 'Urbanist',
+                            color: Color(0xB1D90808),
+                            fontStyle: FontStyle.italic,
+                          ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 10, 0, 0),
+                    child: Text(
+                      'Navigating to a question:',
+                      style: FlutterFlowTheme.of(context).bodyText1.override(
+                            fontFamily: 'Urbanist',
+                            color: FlutterFlowTheme.of(context).primaryText,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
+                            decoration: TextDecoration.underline,
+                          ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 10, 5, 0),
+                    child: Text(
+                      '3. To answer a question, do the following:\na. Click on the question number in the Wuestion Palette to go to that numbered question directly.\nb. Click on Save & Next to save your answer for the current question and then go to the next question.\nc. Click on Mark for Review & Next to save your answer for the current question, mark if for review, and then go the next question.\nd. Caution: Note that your answer for the current question will not be saved, if you navigate to another question directly by clicking on its question number.\n4. You can view all the questions by clicking on the Question Pager button. Note that the options for multiple choice type questions will not be shown.',
+                      style: FlutterFlowTheme.of(context).bodyText1.override(
+                            fontFamily: 'Urbanist',
+                            color: FlutterFlowTheme.of(context).primaryText,
+                          ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 10, 0, 0),
+                    child: Text(
+                      'Answering a Question:',
+                      style: FlutterFlowTheme.of(context).bodyText1.override(
+                            fontFamily: 'Urbanist',
+                            color: FlutterFlowTheme.of(context).primaryText,
+                            fontWeight: FontWeight.w900,
+                            decoration: TextDecoration.underline,
+                          ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 0),
+                    child: Text(
+                      '5. Procedure for answering a multiple choice type question:\na. To select your answer, click on the button of one of the options.\nb. To deselect your chosen answer, click on the button of the chosen option again or click on the Clear Response\nbutton.\nc. To change your chosen answer, click on the button of another option.\nd. To save your answer, you MUST click on teh save & Next Button.\ne. To mark the question for review, click on the Mark for Review & Next button.\nf. If an answer is selected for a question that is \'Marked for Review\', that answer will be considered in the evaluation even if it is not marked as \'Save & Next\', at the time of final submission.\n\n6. To change your answer to a question that has already been answered, first select that question for answering and then\nfollow the procedure for answering that type of question.\n7. Note that questions for which option has been chosen and answers are saved or marked for review will be considered for evaluation.',
+                      style: FlutterFlowTheme.of(context).bodyText1.override(
+                            fontFamily: 'Urbanist',
+                            color: FlutterFlowTheme.of(context).primaryText,
+                          ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      checkQuizStatusOrNavigate();
+                    },
+                    child: Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                      child: Container(
+                        width: 40,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color:
+                              FlutterFlowTheme.of(context).secondaryBackground,
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: Colors.green,
+                            width: 2,
+                          ),
+                        ),
+                        child: Align(
+                          alignment: AlignmentDirectional(0, 0),
+                          child: Text(
+                            'Start',
+                            style:
+                                FlutterFlowTheme.of(context).bodyText1.override(
+                                      fontFamily: 'Urbanist',
+                                      color: Colors.green,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
+     ),
+);
+}
 }

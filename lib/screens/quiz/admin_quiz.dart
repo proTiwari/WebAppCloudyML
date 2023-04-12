@@ -3,6 +3,7 @@ import 'package:cloudyml_app2/homepage.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:uuid/uuid.dart';
 import '../../global_variable.dart' as globals;
 import '../flutter_flow/flutter_flow_theme.dart';
 
@@ -93,6 +94,10 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
     quiznameController?.dispose();
     super.dispose();
   }
+  String generateId() {
+  var uuid = Uuid();
+  return uuid.v4();
+}
 
   List questionslist = [];
   var items = ['Global quiz', 'Modular quiz'];
@@ -1995,6 +2000,7 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                             "courseName":
                                                                 tempcoursename,
                                                             "sr": leng,
+                                                            "quizid": generateId(),
                                                             "type": "quiz"
                                                           };
                                                           print("3");

@@ -24,6 +24,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:hive/hive.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -1076,6 +1077,8 @@ class _VideoScreenState extends State<VideoScreen> {
   String? userEmail;
    String? studentId;
  String? studentName;
+ 
+List videos=[];
   getUserRole() async {
     await FirebaseFirestore.instance
         .collection("Users")
@@ -1138,6 +1141,94 @@ class _VideoScreenState extends State<VideoScreen> {
     );
   }
 
+
+  getcoursedata(valuepassed) async {
+  
+    var coursedata =
+        await FirebaseFirestore.instance.collection("courses").get();
+    print("kokokokokok:  ${coursedata.docs})}");
+    var data = coursedata.docs;
+    List newlist = [];
+    data.forEach(
+      (element) {
+        print(element['name']);
+        if (element['name'] == widget.courseName) {
+          var gecoursedata = element['curriculum1'][widget.courseName];
+          for (var k in gecoursedata) {
+            videos.addAll(k['videos']);
+          }
+          print('klklklk....l: $videos');
+          print(gecoursedata);
+          for (var i = 1; i <= 20; i++) {
+            for (var j in gecoursedata) {
+              if (j['sr'] == i) {
+                newlist.add(j);
+              }
+            }
+          }
+        
+        }
+      },
+    );
+    globalquizstatus();
+}
+
+  globalquizstatus() async {
+    List modularquizlist = [];
+    for (var j in videos) {
+      if (j['type'] == 'quiz') {
+        modularquizlist.add(j['name']);
+      }
+      print("wiefjwoie$modularquizlist");
+    }
+    print("hoiwejiowj${modularquizlist}");
+    List userquiztakenlist = [];
+    bool showglobalquiz = true;
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((value) async {
+      print("fiweofw${modularquizlist}");
+      try {
+        print("hoiwejiiweofowowj${modularquizlist}");
+        print("quiztaken iwfejo ${value.data()!['quiztrack']}");
+        for (var i in value.data()!['quiztrack']) {
+          if (i['quizlevel'] == 'modulelevel') {
+            userquiztakenlist.add(i['quizname']);
+          }
+
+          if (i['quizCleared'] == false && i['quizlevel'] == 'modulelevel') {
+            setState(() {
+              showglobalquiz = false;
+            });
+          }
+        }
+        print("wefiwjeofiw${modularquizlist}");
+        print("userquiijowe ${userquiztakenlist.length}");
+        print("modularquis ijweo ${modularquizlist}");
+        if (userquiztakenlist.length != modularquizlist.length) {
+          print("yes it is not equal");
+          setState(() {
+            showglobalquiz = false;
+          });
+        }
+        if (showglobalquiz == true) {
+          await FirebaseFirestore.instance
+              .collection("Controllers")
+              .doc('variables')
+              .get()
+              .then((value) {
+            setState(() {
+              _switchValue = value.data()!['globalquiz'];
+            });
+          });
+        }
+      } catch (e) {
+        print("quizid: wej3434434fwio: ${e}");
+   }
+});}
+
   @override
   void initState() {
     globalquizstatus();
@@ -1154,21 +1245,12 @@ class _VideoScreenState extends State<VideoScreen> {
       getFirstVideo();
 
     });
+    getcoursedata("");
 
     super.initState();
   }
   bool _switchValue = false;
-  globalquizstatus() async {
-    await FirebaseFirestore.instance
-        .collection("Controllers")
-        .doc('variables')
-        .get()
-        .then((value) {
-      setState(() {
-        _switchValue = value.data()!['globalquiz'];
-      });
-    });
-  }
+
 
   List coursequiz = [];
 
@@ -1232,6 +1314,7 @@ class _VideoScreenState extends State<VideoScreen> {
                             children: [
                               InkWell(
                                 onTap: () {
+                                  _videoController!.pause();
                                   widget.isDemo == null
                                       ? Navigator.pop(context)
                                       : GoRouter.of(context)

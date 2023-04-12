@@ -149,6 +149,7 @@ setState(() {
       // print(map['payInPartsDetails'][id]['outStandingAmtPaid']);
       setState(() {
         userMap = userDocs.data() as Map<String, dynamic>;
+        globals.quiztrack = userMap['quiztrack'];
         // whetherSubScribedToPayInParts =
         //     !(!(map['payInPartsDetails']['outStandingAmtPaid'] == null));
       });
@@ -962,7 +963,7 @@ setState(() {
                     //         ),
                     //       ),
                     //     )),
-                    Positioned(
+                    courses.length >0?Positioned(
                         top: verticalScale * 700,
                         left: 50,
                         child: Container(
@@ -1000,7 +1001,7 @@ setState(() {
                               ),
                             ],
                           ),
-                        )),
+                        )):Container(),
                     Positioned(
                         top: verticalScale * 785,
                         child: courses.length > 0
@@ -1571,37 +1572,39 @@ setState(() {
                                   ),
                                 ),
                               )
-                            : Container(
-                                width: screenWidth,
-                                height: screenHeight / 4.5,
-                                child: Center(
-                                  child: Container(
-                                    width: screenWidth / 2,
-                                    height: screenHeight / 5.5,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.black26,
-                                            offset: Offset(
-                                              2, // Move to right 10  horizontally
-                                              2.0, // Move to bottom 10 Vertically
-                                            ),
-                                            blurRadius: 40)
-                                      ],
-                                      // border: Border.all(
-                                      //   color: HexColor('440F87'),
-                                      //   width: 1.5,
-                                      // ),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Center(
-                                        child: Text(
-                                      'There are zero courses. Please enroll.',
-                                    )),
-                                  ),
-                                ),
-                              )),
+                            : Container()
+                            // Container(
+                            //     width: screenWidth,
+                            //     height: screenHeight / 4.5,
+                            //     child: Center(
+                            //       child: Container(
+                            //         width: screenWidth / 2,
+                            //         height: screenHeight / 5.5,
+                            //         decoration: BoxDecoration(
+                            //           color: Colors.white,
+                            //           boxShadow: [
+                            //             BoxShadow(
+                            //                 color: Colors.black26,
+                            //                 offset: Offset(
+                            //                   2, // Move to right 10  horizontally
+                            //                   2.0, // Move to bottom 10 Vertically
+                            //                 ),
+                            //                 blurRadius: 40)
+                            //           ],
+                            //           // border: Border.all(
+                            //           //   color: HexColor('440F87'),
+                            //           //   width: 1.5,
+                            //           // ),
+                            //           borderRadius: BorderRadius.circular(15),
+                            //         ),
+                            //         child: Center(
+                            //             child: Text(
+                            //           'There are zero courses. Please enroll.',
+                            //         )),
+                            //       ),
+                            //     ),
+                            //   )
+                              ),
 
                     Positioned(
                         bottom: verticalScale * 1150,

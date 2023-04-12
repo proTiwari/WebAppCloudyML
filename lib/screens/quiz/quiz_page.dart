@@ -339,14 +339,14 @@ class _QuizPageState extends State<QuizPage> {
       var courseid = "";
       await FirebaseFirestore.instance
           .collection("courses")
-          .where("name", isEqualTo: widget.quizdata['course'])
+          .where("name", isEqualTo: widget.quizdata['courseName'])
           .get()
           .then((value) async {
         courseid = await value.docs[0]['id'];
       });
-
-      print(widget.quizdata['course']);
-      print(courseid);
+      print("****************");
+      print(widget.quizdata['courseName']);
+      print("the course id is-----lklklkl$courseid");
 
       var resultString =
           await handlingCasesAccoridingToTotal(total, quizdata, courseid);

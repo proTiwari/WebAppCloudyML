@@ -125,6 +125,7 @@ dependencies:
   bot_toast:
   responsive_sizer:
   pinput:
+  image_picker_web: ^3.0.0+1
 
 
   

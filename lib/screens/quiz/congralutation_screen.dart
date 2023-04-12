@@ -5,6 +5,7 @@ import 'package:image_downloader_web/image_downloader_web.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
+import '../../global_variable.dart' as globals;
 // import 'certificate.dart';
 
 class CongratulationsWidget extends StatefulWidget {
@@ -39,9 +40,23 @@ class _CongratulationsWidgetState extends State<CongratulationsWidget> {
   void initState() {
     super.initState();
   }
+  void printWrapped(String text) {
+    final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
+    pattern.allMatches(text).forEach((match) => print(match.group(0)));
+}
 
   Future<void> _downloadImage() async {
-    await WebImageDownloader.downloadImageFromWeb("https://picsum.photos/200");
+    // print("aaaaaaaaaaaaaaaaaaaaaa");
+    // printWrapped(Uri.parse(globals.downloadCertificateLink).toString().replaceAll('"', ''));
+    // print('kkkkkkkkkkkkkkkkkkkkkkk');
+
+    try{
+          await WebImageDownloader.downloadImageFromWeb(globals.downloadCertificateLink.replaceAll('"', ""));
+          // url.replaceAll('"', '');
+
+    }catch(e){
+      print("the cer error is$e");
+    }
   }
 
   @override
@@ -82,11 +97,11 @@ class _CongratulationsWidgetState extends State<CongratulationsWidget> {
                               children: [
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
-                                      0, 140, 0, 0),
+                                      0, 0, 0, 0),
                                   child: Image.asset(
                                     'assets/cloud.jpeg',
-                                    width: 250,
-                                    height: 250,
+                                    width: 150,
+                                    height: 150,
                                     fit: BoxFit.cover,
                                   ),
                                 ),

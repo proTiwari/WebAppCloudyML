@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:cloudyml_app2/global_variable.dart' as globals;
+
 
 import '../flutter_flow/flutter_flow_theme.dart';
 
@@ -18,10 +20,25 @@ class QuizentrypageWidget extends StatefulWidget {
 class _QuizentrypageWidgetState extends State<QuizentrypageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
+bool quizNameExistsInList = false;
+  checkIfQuizIsAttempted() {
+    try{
+
+      for (var item in globals.quiztrack) {
+        if (item['quizname'] == widget.quizdata['name']) {
+          quizNameExistsInList = true;
+          break;
+        }
+      }
+    }catch(e){
+      print('quiz taken error $e');
+}
+}
 
   @override
   void initState() {
     super.initState();
+    checkIfQuizIsAttempted();
   }
 
   @override
@@ -170,7 +187,8 @@ class _QuizentrypageWidgetState extends State<QuizentrypageWidget> {
                                   child: Align(
                                     alignment: AlignmentDirectional(0, 0),
                                     child: Text(
-                                      'Start Quz',
+                                      quizNameExistsInList ? 'Re-take Quiz' :
+                                      'Start Quiz',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyText1
                                           .override(
@@ -179,7 +197,7 @@ class _QuizentrypageWidgetState extends State<QuizentrypageWidget> {
                                                 .primaryBtnText,
                                             fontSize: 17,
                                           ),
-                                    ),
+                      ),
                                   ),
                                 ),
                               ),
