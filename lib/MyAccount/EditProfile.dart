@@ -928,7 +928,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   _displayChild() {
     final userprovider =Provider.of<UserProvider>(context);
     if(_image==null){
-      return (userprovider.userModel?.image=='')?AssetImage('assets/user.jpg'):NetworkImage(userprovider.userModel?.image??'');
+      return (userprovider.userModel?.image=='')
+          ?
+      AssetImage('assets/user.jpg'):NetworkImage(userprovider.userModel?.image??'');
     }else{
       final File _imagex=File(_image!.path);
       //Image.file(File(_imagex.path));

@@ -3,14 +3,13 @@ library globals;
 late String diurl;
 late String payurl;
 
-const mockUpHeight = 896;
-const mockUpWidth = 414;
 
 String phone = "";
 String email = "";
 String name = "";
 String? action;
 String role = "";
+List quizTrack = [];
 String? signoutvalue;
 var actualCode;
 String phoneNumberexists = 'false';

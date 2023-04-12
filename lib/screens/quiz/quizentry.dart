@@ -1,3 +1,4 @@
+import 'package:cloudyml_app2/global_variable.dart';
 import 'package:cloudyml_app2/screens/quiz/quizinstructions.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,8 +20,26 @@ class _QuizentrypageWidgetState extends State<QuizentrypageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
 
+  bool quizNameExistsInList = false;
+
+
+  checkIfQuizIsAttempted() {
+    try{
+
+      for (var item in quizTrack) {
+        if (item['quizname'] == widget.quizdata['name']) {
+          quizNameExistsInList = true;
+          break;
+        }
+      }
+    }catch(e){
+      print('quiz taken error $e');
+    }
+  }
+
   @override
   void initState() {
+    checkIfQuizIsAttempted();
     super.initState();
   }
 
@@ -170,7 +189,8 @@ class _QuizentrypageWidgetState extends State<QuizentrypageWidget> {
                                   child: Align(
                                     alignment: AlignmentDirectional(0, 0),
                                     child: Text(
-                                      'Start Quz',
+                                      quizNameExistsInList ? 'Re-take Quiz' :
+                                      'Start Quiz',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyText1
                                           .override(

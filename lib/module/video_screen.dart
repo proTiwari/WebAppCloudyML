@@ -1232,6 +1232,7 @@ class _VideoScreenState extends State<VideoScreen> {
                             children: [
                               InkWell(
                                 onTap: () {
+                                  _videoController!.pause();
                                   widget.isDemo == null
                                       ? Navigator.of(context).pop()
                                       : GoRouter.of(context)
@@ -1400,7 +1401,8 @@ class _VideoScreenState extends State<VideoScreen> {
                         )
                       : quizbool
                           ? Expanded(
-                              flex: 2, child: QuizentrypageWidget(quizdata))
+                              flex: 2,
+                              child: QuizentrypageWidget(quizdata))
                           : Expanded(
                               flex: 2,
                               child: Align(

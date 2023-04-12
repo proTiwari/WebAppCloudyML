@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,8 +10,10 @@ import 'package:cloudyml_app2/authentication/firebase_auth.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/offline/offline_videos.dart';
 import 'package:cloudyml_app2/pages/notificationpage.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +21,12 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../router/login_state_check.dart';
-
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker_web/image_picker_web.dart';
+import 'package:path/path.dart' as path;
 late DocumentSnapshot snapshot;
 
 class MyAccountPage extends StatefulWidget {
@@ -41,6 +49,60 @@ class _MyAccountPageState extends State<MyAccountPage> {
       print(userData!);
     });
   }
+
+  final picker = ImagePicker();
+  final _auth = FirebaseAuth.instance;
+  Uint8List? uploadedFile;
+
+  Future<void> uploadImage() async {
+      FilePickerResult? result;
+      try {
+        result = await FilePicker.platform.pickFiles(
+          type: FileType.image,
+          allowCompression: true,
+          withData: true,
+        );
+      } catch (e) {
+        print(e.toString());
+      }
+      if (result != null && result.files.isNotEmpty) {
+        try {
+          Uint8List? uploadFile = result.files.single.bytes;
+          uploadedFile = uploadFile;
+          String pickedFileName = result.files.first.name;
+          var storageRef = FirebaseStorage.instance
+              .ref()
+              .child('Users')
+              .child(pickedFileName);
+
+
+
+          final UploadTask uploadTask = storageRef.putData(uploadFile!);
+
+          final TaskSnapshot downloadUrl = await uploadTask;
+          final String attachUrl = (await downloadUrl.ref.getDownloadURL());
+          await FirebaseFirestore.instance
+              .collection("Users")
+              .doc(_auth.currentUser!.uid).update({
+            'image': attachUrl,
+          });
+          setState(() {
+            userData['image'] = attachUrl;
+          });
+
+
+          print('link is here: $attachUrl - $pickedFileName');
+          Fluttertoast.showToast(msg: 'Profile picture uploaded successfully');
+        } catch (e) {
+          Fluttertoast.showToast(msg: e.toString());
+          print(e.toString());
+        }
+      }
+
+
+    }
+
+
 
   //custom widget for tiles
   Widget container(width, height, icon, String name) {
@@ -92,7 +154,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
   }
 
   void initState() {
-    Provider.of<UserProvider>(context, listen: false).reloadUserModel();
+    // Provider.of<UserProvider>(context, listen: false).reloadUserModel();
     getUser();
     super.initState();
   }
@@ -116,7 +178,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
         title: Text('My profile'),
         backgroundColor: HexColor('946AA8'),
         elevation: 0,
-        leading: IconButton(onPressed: (){
+        leading: IconButton(
+            onPressed: (){
           GoRouter.of(context).pushReplacementNamed('home');
         }, icon: Icon(Icons.arrow_back_rounded)),
       ),
@@ -142,10 +205,10 @@ class _MyAccountPageState extends State<MyAccountPage> {
                     width: Adaptive.w(100),
                     child: CachedNetworkImage(
                       placeholder: (context, url) => Container(
-                        color: HexColor('0C001B'),
+                        child: Image.asset('assets/user.jpg'),
                       ),
                       errorWidget: (context, url, error) => Icon(Icons.error),
-                      imageUrl: userData!['image'],
+                      imageUrl: userData!['image'] == '' ? 'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Fuser.jpg?alt=media&token=f04ea1b0-0a07-4c7a-8e69-f0fbaebfa3fe' : userData!['image'],
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -217,7 +280,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                     child: Padding(
                                       padding: EdgeInsets.only(left: 20.sp),
                                       child: Text(
-                                        'Hello!! ${userData!['name']}',
+                                        'Hello!! ${userData!['name'] ?? 'Guest'}',
                                         style: TextStyle(
                                           fontSize: 20.sp,
                                           color: Colors.white,
@@ -240,7 +303,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            '${userData!['email']}',
+                                            '${userData!['email'] ?? 'Loading...'}',
                                             style: TextStyle(
                                               fontSize: 16.sp,
                                               fontWeight: FontWeight.bold,
@@ -248,7 +311,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                             ),
                                           ),
                                           Text(
-                                            '${userData!['mobilenumber']}',
+                                            '${userData!['mobilenumber'] ?? 'Loading...'}',
                                             style: TextStyle(
                                               fontSize: 16.sp,
                                               fontWeight: FontWeight.bold,
@@ -482,11 +545,11 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                               'Certificate'),
                                           InkWell(
                                             onTap: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ChangePassword()));
+                                              // Navigator.push(
+                                              //     context,
+                                              //     MaterialPageRoute(
+                                              //         builder: (context) =>
+                                              //             ChangePassword()));
                                             },
                                             child: container(
                                                 Adaptive.w(10),
@@ -559,318 +622,333 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 ),
                 child: Row(
                   children: [
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        margin: EdgeInsets.all(10.sp),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(15.sp),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15.sp),
-                          child: CachedNetworkImage(
-                            placeholder: (context, url) => Container(
-                              color: HexColor('0C001B'),
+                    Container(
+                      width: Adaptive.w(22.5),
+                      margin: EdgeInsets.all(10.sp),
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(15.sp),
+                      ),
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(15.sp),
+                            child: CachedNetworkImage(
+                              placeholder: (context, url) => Container(
+                                child: Image.asset('assets/user.jpg'),
+                              ),
+                              errorWidget: (context, url, error) => Icon(Icons.error),
+                              imageUrl: userData!['image'] == '' || userData!['image'] == null ? 'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Fuser.jpg?alt=media&token=f04ea1b0-0a07-4c7a-8e69-f0fbaebfa3fe' : userData!['image'],
+                              fit: BoxFit.fill,
+                              height: Adaptive.h(65),
+                              width: Adaptive.w(22.5),
                             ),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
-                            imageUrl: userData!['image'],
-                            fit: BoxFit.fill,
-                            height: Adaptive.h(65),
                           ),
-                        ),
+                          Positioned(
+                            right: 15.sp,
+                            bottom: 15.sp,
+                            child: IconButton(
+                                onPressed: () {
+                                  uploadImage();
+                                },
+                                icon: Icon(Icons.add_a_photo_outlined,
+                                  size: 20.sp,)),
+                          )
+                        ],
                       ),
                     ),
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                          margin: EdgeInsets.only(
-                              top: 15.sp, bottom: 10.sp, right: 10.sp, left: 10.sp),
-                          child: Column(
-                            children: [
-                              Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  'Hello, ${userData!['name']}',
+                    Container(
+                      width: Adaptive.w(22.5),
+                      margin: EdgeInsets.only(
+                          top: 15.sp, bottom: 10.sp, right: 10.sp, left: 10.sp),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              'Hello, ${userData!['name'] ?? 'Guest'}',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10.sp,
+                          ),
+                          Padding(
+                            padding:
+                                EdgeInsets.symmetric(horizontal: 0.sp),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${userData!['email'] ?? 'Loading...'}',
                                   style: TextStyle(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.bold,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10.sp,
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: 0.sp),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      '${userData!['email']}',
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.normal,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    Text(
-                                      '${userData!['mobilenumber']}',
-                                      style: TextStyle(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.normal,
                                     overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10.sp,
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(left: 15.sp, right: 15.sp),
-                                child: Container(
-                                  height: Adaptive.h(45),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        EditProfilePage()));
-                                          },
-                                          child: container(width, height,
-                                              Icons.edit, 'Edit Profile')),
-                                      InkWell(
-                                        onTap: () {
-                                          showModalBottomSheet(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return Container(
-                                                  height: 260 * verticalScale,
-                                                  width: width,
-                                                  child: Padding(
-                                                    padding: EdgeInsets.all(
-                                                        min(horizontalScale, verticalScale) *
-                                                            16.0),
-                                                    child: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      children: [
-                                                        Padding(
-                                                          padding: EdgeInsets.all(min(
-                                                              horizontalScale,
-                                                              verticalScale) *
-                                                              14.0),
-                                                          child: Text(
-                                                            'Support',
-                                                            style: TextStyle(
-                                                                fontSize: 22,
-                                                                color: HexColor('7A62DE'),
-                                                                fontWeight: FontWeight.bold),
-                                                            textScaleFactor: min(
-                                                                horizontalScale,
-                                                                verticalScale),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: verticalScale * 20,
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.spaceEvenly,
-                                                          children: [
-                                                            InkWell(
-                                                              onTap: () async {
-                                                                String telephoneUrl =
-                                                                    'tel:8587911971';
-                                                                if (await canLaunch(
-                                                                    telephoneUrl)) {
-                                                                  await launch(telephoneUrl);
-                                                                } else {
-                                                                  throw 'Could not launch $telephoneUrl';
-                                                                }
-                                                              },
-                                                              child: Card(
-                                                                elevation: 5,
-                                                                shape: RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius
-                                                                      .circular(min(
-                                                                      horizontalScale,
-                                                                      verticalScale) *
-                                                                      10.0),
-                                                                ),
-                                                                child: Container(
-                                                                  width:
-                                                                  horizontalScale * 120,
-                                                                  child: Padding(
-                                                                    padding: EdgeInsets.all(min(
-                                                                        horizontalScale,
-                                                                        verticalScale) *
-                                                                        14.0),
-                                                                    child: Container(
-                                                                      child: Column(
-                                                                        children: [
-                                                                          Icon(
-                                                                            Icons.phone,
-                                                                            color: HexColor(
-                                                                                '7A62DE'),
-                                                                            size: min(
-                                                                                horizontalScale,
-                                                                                verticalScale) *
-                                                                                40,
-                                                                          ),
-                                                                          SizedBox(
-                                                                            height:
-                                                                            verticalScale *
-                                                                                12,
-                                                                          ),
-                                                                          Text(
-                                                                            'Call us',
-                                                                            textScaleFactor: min(
-                                                                                horizontalScale,
-                                                                                verticalScale),
-                                                                            style: TextStyle(
-                                                                                fontWeight:
-                                                                                FontWeight
-                                                                                    .w400,
-                                                                                fontSize: 20),
-                                                                          )
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            InkWell(
-                                                              onTap: () async {
-                                                                final Uri params = Uri(
-                                                                    scheme: 'mailto',
-                                                                    path: 'app.support@cloudyml.com',
-                                                                    query:
-                                                                    'subject=Query about App');
-                                                                var mailurl =
-                                                                params.toString();
-                                                                if (await canLaunch(
-                                                                    mailurl)) {
-                                                                  await launch(mailurl);
-                                                                } else {
-                                                                  throw 'Could not launch $mailurl';
-                                                                }
-                                                              },
-                                                              child: Card(
-                                                                elevation: 5,
-                                                                shape: RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius
-                                                                      .circular(min(
-                                                                      horizontalScale,
-                                                                      verticalScale) *
-                                                                      10.0),
-                                                                ),
-                                                                child: Container(
-                                                                  width: verticalScale * 120,
-                                                                  child: Padding(
-                                                                    padding: EdgeInsets.all(min(
-                                                                        horizontalScale,
-                                                                        verticalScale) *
-                                                                        14.0),
-                                                                    child: Container(
-                                                                      child: Column(
-                                                                        children: [
-                                                                          Icon(
-                                                                            Icons.mail,
-                                                                            color: HexColor(
-                                                                                '7A62DE'),
-                                                                            size: min(
-                                                                                horizontalScale,
-                                                                                verticalScale) *
-                                                                                40,
-                                                                          ),
-                                                                          SizedBox(
-                                                                            height:
-                                                                            verticalScale *
-                                                                                12,
-                                                                          ),
-                                                                          Text(
-                                                                            'Mail us',
-                                                                            textScaleFactor: min(
-                                                                                horizontalScale,
-                                                                                verticalScale),
-                                                                            style: TextStyle(
-                                                                                fontWeight:
-                                                                                FontWeight
-                                                                                    .w400,
-                                                                                fontSize: 20),
-                                                                          )
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            )
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ));
-                                            },
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(30.0),
-                                            ),
-                                          );
-                                        },
-                                        child: container(
-                                            width,
-                                            height,
-                                            Icons.support_agent_outlined,
-                                            'Support'),
-                                      ),
-                                      container(
-                                          width,
-                                          height,
-                                          Icons.download_for_offline_outlined,
-                                          'Certificate'),
-                                      InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ChangePassword()));
-                                          },
-                                          child: container(
-                                              width,
-                                              height,
-                                              Icons.key_outlined,
-                                              'Change Password')),
-                                      InkWell(
-                                        onTap: () {
-                                          logOut(context);
-                                          saveLoginOutState(context);
-                                          GoRouter.of(context).pushReplacement('/login');
-                                        },
-                                        child: container(width, height, Icons.logout,
-                                            'Logout'),
-                                      ),
-                                    ],
                                   ),
                                 ),
-                              ),
-                            ],
+                                Text(
+                                  '${userData!['mobilenumber'] ?? 'Loading...'}',
+                                  style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.normal,
+                                overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        )),
+                          SizedBox(
+                            height: 10.sp,
+                          ),
+                          Padding(
+                            padding:
+                                EdgeInsets.only(left: 15.sp, right: 15.sp),
+                            child: Container(
+                              height: Adaptive.h(45),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EditProfilePage()));
+                                      },
+                                      child: container(width, height,
+                                          Icons.edit, 'Edit Profile')),
+                                  InkWell(
+                                    onTap: () {
+                                      // showModalBottomSheet(
+                                      //   context: context,
+                                      //   builder: (BuildContext context) {
+                                      //     return Container(
+                                      //         height: 260 * verticalScale,
+                                      //         width: width,
+                                      //         child: Padding(
+                                      //           padding: EdgeInsets.all(
+                                      //               min(horizontalScale, verticalScale) *
+                                      //                   16.0),
+                                      //           child: Column(
+                                      //             mainAxisSize: MainAxisSize.min,
+                                      //             children: [
+                                      //               Padding(
+                                      //                 padding: EdgeInsets.all(min(
+                                      //                     horizontalScale,
+                                      //                     verticalScale) *
+                                      //                     14.0),
+                                      //                 child: Text(
+                                      //                   'Support',
+                                      //                   style: TextStyle(
+                                      //                       fontSize: 22,
+                                      //                       color: HexColor('7A62DE'),
+                                      //                       fontWeight: FontWeight.bold),
+                                      //                   textScaleFactor: min(
+                                      //                       horizontalScale,
+                                      //                       verticalScale),
+                                      //                 ),
+                                      //               ),
+                                      //               SizedBox(
+                                      //                 height: verticalScale * 20,
+                                      //               ),
+                                      //               Row(
+                                      //                 mainAxisAlignment:
+                                      //                 MainAxisAlignment.spaceEvenly,
+                                      //                 children: [
+                                      //                   InkWell(
+                                      //                     onTap: () async {
+                                      //                       String telephoneUrl =
+                                      //                           'tel:8587911971';
+                                      //                       if (await canLaunch(
+                                      //                           telephoneUrl)) {
+                                      //                         await launch(telephoneUrl);
+                                      //                       } else {
+                                      //                         throw 'Could not launch $telephoneUrl';
+                                      //                       }
+                                      //                     },
+                                      //                     child: Card(
+                                      //                       elevation: 5,
+                                      //                       shape: RoundedRectangleBorder(
+                                      //                         borderRadius: BorderRadius
+                                      //                             .circular(min(
+                                      //                             horizontalScale,
+                                      //                             verticalScale) *
+                                      //                             10.0),
+                                      //                       ),
+                                      //                       child: Container(
+                                      //                         width:
+                                      //                         horizontalScale * 120,
+                                      //                         child: Padding(
+                                      //                           padding: EdgeInsets.all(min(
+                                      //                               horizontalScale,
+                                      //                               verticalScale) *
+                                      //                               14.0),
+                                      //                           child: Container(
+                                      //                             child: Column(
+                                      //                               children: [
+                                      //                                 Icon(
+                                      //                                   Icons.phone,
+                                      //                                   color: HexColor(
+                                      //                                       '7A62DE'),
+                                      //                                   size: min(
+                                      //                                       horizontalScale,
+                                      //                                       verticalScale) *
+                                      //                                       40,
+                                      //                                 ),
+                                      //                                 SizedBox(
+                                      //                                   height:
+                                      //                                   verticalScale *
+                                      //                                       12,
+                                      //                                 ),
+                                      //                                 Text(
+                                      //                                   'Call us',
+                                      //                                   textScaleFactor: min(
+                                      //                                       horizontalScale,
+                                      //                                       verticalScale),
+                                      //                                   style: TextStyle(
+                                      //                                       fontWeight:
+                                      //                                       FontWeight
+                                      //                                           .w400,
+                                      //                                       fontSize: 20),
+                                      //                                 )
+                                      //                               ],
+                                      //                             ),
+                                      //                           ),
+                                      //                         ),
+                                      //                       ),
+                                      //                     ),
+                                      //                   ),
+                                      //                   InkWell(
+                                      //                     onTap: () async {
+                                      //                       final Uri params = Uri(
+                                      //                           scheme: 'mailto',
+                                      //                           path: 'app.support@cloudyml.com',
+                                      //                           query:
+                                      //                           'subject=Query about App');
+                                      //                       var mailurl =
+                                      //                       params.toString();
+                                      //                       if (await canLaunch(
+                                      //                           mailurl)) {
+                                      //                         await launch(mailurl);
+                                      //                       } else {
+                                      //                         throw 'Could not launch $mailurl';
+                                      //                       }
+                                      //                     },
+                                      //                     child: Card(
+                                      //                       elevation: 5,
+                                      //                       shape: RoundedRectangleBorder(
+                                      //                         borderRadius: BorderRadius
+                                      //                             .circular(min(
+                                      //                             horizontalScale,
+                                      //                             verticalScale) *
+                                      //                             10.0),
+                                      //                       ),
+                                      //                       child: Container(
+                                      //                         width: verticalScale * 120,
+                                      //                         child: Padding(
+                                      //                           padding: EdgeInsets.all(min(
+                                      //                               horizontalScale,
+                                      //                               verticalScale) *
+                                      //                               14.0),
+                                      //                           child: Container(
+                                      //                             child: Column(
+                                      //                               children: [
+                                      //                                 Icon(
+                                      //                                   Icons.mail,
+                                      //                                   color: HexColor(
+                                      //                                       '7A62DE'),
+                                      //                                   size: min(
+                                      //                                       horizontalScale,
+                                      //                                       verticalScale) *
+                                      //                                       40,
+                                      //                                 ),
+                                      //                                 SizedBox(
+                                      //                                   height:
+                                      //                                   verticalScale *
+                                      //                                       12,
+                                      //                                 ),
+                                      //                                 Text(
+                                      //                                   'Mail us',
+                                      //                                   textScaleFactor: min(
+                                      //                                       horizontalScale,
+                                      //                                       verticalScale),
+                                      //                                   style: TextStyle(
+                                      //                                       fontWeight:
+                                      //                                       FontWeight
+                                      //                                           .w400,
+                                      //                                       fontSize: 20),
+                                      //                                 )
+                                      //                               ],
+                                      //                             ),
+                                      //                           ),
+                                      //                         ),
+                                      //                       ),
+                                      //                     ),
+                                      //                   )
+                                      //                 ],
+                                      //               )
+                                      //             ],
+                                      //           ),
+                                      //         ));
+                                      //   },
+                                      //   shape: RoundedRectangleBorder(
+                                      //     borderRadius: BorderRadius.circular(30.0),
+                                      //   ),
+                                      // );
+                                    },
+                                    child: container(
+                                        width,
+                                        height,
+                                        Icons.support_agent_outlined,
+                                        'Support'),
+                                  ),
+                                  container(
+                                      width,
+                                      height,
+                                      Icons.download_for_offline_outlined,
+                                      'Certificate'),
+                                  InkWell(
+                                      onTap: () {
+                                        // if (context != null) {
+                                        //   Navigator.push(
+                                        //       context,
+                                        //       MaterialPageRoute(
+                                        //           builder: (context) =>
+                                        //               ChangePassword()));
+                                        // }
+
+
+                                      },
+                                      child: container(
+                                          width,
+                                          height,
+                                          Icons.key_outlined,
+                                          'Change Password')),
+                                  InkWell(
+                                    onTap: () {
+                                      logOut(context);
+                                      saveLoginOutState(context);
+                                      GoRouter.of(context).pushReplacement('/login');
+                                    },
+                                    child: container(width, height, Icons.logout,
+                                        'Logout'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               )),

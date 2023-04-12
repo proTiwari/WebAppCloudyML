@@ -10,6 +10,7 @@ import '../Services/deeplink_service.dart';
 import '../catalogue_screen.dart';
 import '../combo/combo_course.dart';
 import '../combo/combo_store.dart';
+import '../global_variable.dart';
 import '../models/referal_model.dart';
 import '../module/pdf_course.dart';
 import '../module/video_screen.dart';
@@ -122,6 +123,9 @@ class _LandingScreenState extends State<LandingScreen> {
       // print(map['payInPartsDetails'][id]['outStandingAmtPaid']);
       setState(() {
         userMap = userDocs.data() as Map<String, dynamic>;
+        quizTrack = userMap['quiztrack'];
+
+        print('quiztrack $quizTrack');
         // whetherSubScribedToPayInParts =
         //     !(!(map['payInPartsDetails']['outStandingAmtPaid'] == null));
       });
@@ -804,7 +808,7 @@ class _LandingScreenState extends State<LandingScreen> {
                               ),
                             ],
                           ),
-                        ))
+                        )) 
                         : Container(),
                     Positioned(
                         top: verticalScale * 785,
@@ -1222,7 +1226,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                               } else {
                                                                                 final id = index.toString();
                                                                                 final courseName = course[index].courseName;
-                                                                                context.goNamed('comboStore', queryParams: {
+                                                                                context.goNamed('comboStore',
+                                                                                    queryParams: {
                                                                                   'courseName': courseName,
                                                                                   'id': id
                                                                                 });
@@ -1288,7 +1293,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                                 final id = index.toString();
                                                                                 final courseName = course[index].courseName;
 
-                                                                                GoRouter.of(context).pushNamed('comboCourse', queryParams: {
+                                                                                GoRouter.of(context).pushNamed('NewScreen',
+                                                                                    queryParams: {
                                                                                   'id': id,
                                                                                   'courseName': courseName
                                                                                 });
@@ -1376,8 +1382,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                   ),
                                 ),
                               )
-                            :
-                            Container()
+                            : Container()
                         // Container(
                         //         width: screenWidth,
                         //         height: screenHeight / 4.5,
@@ -1466,9 +1471,10 @@ class _LandingScreenState extends State<LandingScreen> {
                                         child: CircularProgressIndicator());
                                   default:
                                     if (snapshot.hasError) {
+                                      print(snapshot.error);
                                       return Center(
                                           child: Text(
-                                        'Some error occurred!',
+                                        'Some error occurred! ${snapshot.error}',
                                         textScaleFactor:
                                             min(horizontalScale, verticalScale),
                                       ));
