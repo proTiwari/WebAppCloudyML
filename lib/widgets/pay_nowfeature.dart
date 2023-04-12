@@ -68,7 +68,7 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
         featuredCourse.add(element);
         // featuredCourse.add(element.courses);
 
-        print('element ${featuredCourse[0].courseId} ');
+        print('element ${featuredCourse[0].findex}');
       }
     });
     print('function ');
@@ -120,7 +120,6 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
   @override
   void initState() {
     super.initState();
-
     getuserdata();
     print("usermap1==$userMap1");
     // print("vid is===${featuredCourse[int.parse(widget.id!)]}");
@@ -174,7 +173,31 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                 ? InkWell(
                                     onTap: () {
 
-                                      GoRouter.of(context).pushReplacementNamed('myCourses');
+                                      // GoRouter.of(context).pushReplacementNamed('myCourses');
+
+                                      
+                                                                        if(featuredCourse[0].findex=='40')
+                                                                        {
+                                                                                   GoRouter.of(context).pushNamed(
+                                                                            'newcomboCourse',
+                                                                            queryParams: {
+                                                                              'courseName':
+                                                                                  featuredCourse[0]
+                                                                                      .courseName,
+                                                                              'id': "40",
+                                                                            });
+                                                                        }
+                                                                        else if(featuredCourse[0].findex=='14')
+                                                                        {
+                                                                                   GoRouter.of(context).pushNamed(
+                                                                            'newcomboCourse',
+                                                                            queryParams: {
+                                                                              'courseName':
+                                                                                  featuredCourse[0]
+                                                                                      .courseName,
+                                                                              'id': "14",
+                                                                            });
+                                                                        }
 
 
                                       // GoRouter.of(context).pushNamed(
@@ -408,7 +431,31 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                               2),
                                                                       () => {
 
-                                                                            GoRouter.of(context).pushReplacementNamed('myCourses')
+
+                                                                        if(featuredCourse[0].findex=='40')
+                                                                        {
+                                                                                   GoRouter.of(context).pushNamed(
+                                                                            'newcomboCourse',
+                                                                            queryParams: {
+                                                                              'courseName':
+                                                                                  featuredCourse[0]
+                                                                                      .courseName,
+                                                                              'id': "40",
+                                                                            })
+                                                                        }
+                                                                        else if(featuredCourse[0].findex=='14')
+                                                                        {
+                                                                                   GoRouter.of(context).pushNamed(
+                                                                            'newcomboCourse',
+                                                                            queryParams: {
+                                                                              'courseName':
+                                                                                  featuredCourse[0]
+                                                                                      .courseName,
+                                                                              'id': "14",
+                                                                            })
+                                                                        }
+
+                                                                            // GoRouter.of(context).pushReplacementNamed('myCourses')
 
                                                                             //  GoRouter.of(context).pushNamed(
                                                                             // 'newcomboCourse',
@@ -553,7 +600,31 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                 ? InkWell(
                                     onTap: () {
 
-                                      GoRouter.of(context).pushReplacementNamed('myCourses');
+                                      
+                                                                        if(featuredCourse[0].findex=='40')
+                                                                        {
+                                                                                   GoRouter.of(context).pushNamed(
+                                                                            'newcomboCourse',
+                                                                            queryParams: {
+                                                                              'courseName':
+                                                                                  featuredCourse[0]
+                                                                                      .courseName,
+                                                                              'id': "40",
+                                                                            });
+                                                                        }
+                                                                        else if(featuredCourse[0].findex=='14')
+                                                                        {
+                                                                                   GoRouter.of(context).pushNamed(
+                                                                            'newcomboCourse',
+                                                                            queryParams: {
+                                                                              'courseName':
+                                                                                  featuredCourse[0]
+                                                                                      .courseName,
+                                                                              'id': "14",
+                                                                            });
+                                                                        }
+
+                                      // GoRouter.of(context).pushReplacementNamed('myCourses');
                                       
                                       // GoRouter.of(context).pushNamed(
                                       //                                       'newcomboCourse',
@@ -779,10 +850,34 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                   Timer(
                                                                       Duration(
                                                                           seconds:
-                                                                            10),
+                                                                            2),
                                                                       () => { 
 
-                                                                        GoRouter.of(context).pushReplacementNamed('myCourses')
+                                                                        // GoRouter.of(context).pushReplacementNamed('myCourses')
+
+                                                                        
+                                                                        if(featuredCourse[0].findex=='40')
+                                                                        {
+                                                                                   GoRouter.of(context).pushNamed(
+                                                                            'newcomboCourse',
+                                                                            queryParams: {
+                                                                              'courseName':
+                                                                                  featuredCourse[0]
+                                                                                      .courseName,
+                                                                              'id': "40",
+                                                                            })
+                                                                        }
+                                                                        else if(featuredCourse[0].findex=='14')
+                                                                        {
+                                                                                   GoRouter.of(context).pushNamed(
+                                                                            'newcomboCourse',
+                                                                            queryParams: {
+                                                                              'courseName':
+                                                                                  featuredCourse[0]
+                                                                                      .courseName,
+                                                                              'id': "14",
+                                                                            })
+                                                                        }
                                                                         
                                                                         //  GoRouter.of(context).pushNamed(
                                                                         //     'newcomboCourse',

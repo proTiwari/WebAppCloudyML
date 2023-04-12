@@ -502,53 +502,53 @@ class _MyAccountPageState extends State<MyAccountPage> {
                         //     color: Colors.black,
                         //   ),
                         // ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => NotificationPage()));
-                          },
-                          child: Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                  horizontalScale * 29,
-                                  verticalScale * 22,
-                                  horizontalScale * 18,
-                                  verticalScale * 14),
-                              child: Row(
-                                children: [
-                                  Container(
-                                      height:
-                                          min(horizontalScale, verticalScale) *
-                                              42,
-                                      width:
-                                          min(horizontalScale, verticalScale) *
-                                              42,
-                                      decoration: BoxDecoration(
-                                        color: HexColor('EBE9FE'),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(min(horizontalScale,
-                                                    verticalScale) *
-                                                8)),
-                                      ),
-                                      child: Icon(
-                                        Icons.notifications_active,
-                                        color: HexColor('6153D3'),
-                                      )),
-                                  SizedBox(
-                                    width: horizontalScale * 18,
-                                  ),
-                                  Text(
-                                    'Notifications',
-                                    textScaleFactor:
-                                        min(horizontalScale, verticalScale),
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                ],
-                              )),
-                        ),
+                        // InkWell(
+                        //   onTap: () {
+                        //     Navigator.push(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //             builder: (context) => NotificationPage()));
+                        //   },
+                        //   child: Padding(
+                        //       padding: EdgeInsets.fromLTRB(
+                        //           horizontalScale * 29,
+                        //           verticalScale * 22,
+                        //           horizontalScale * 18,
+                        //           verticalScale * 14),
+                        //       child: Row(
+                        //         children: [
+                        //           Container(
+                        //               height:
+                        //                   min(horizontalScale, verticalScale) *
+                        //                       42,
+                        //               width:
+                        //                   min(horizontalScale, verticalScale) *
+                        //                       42,
+                        //               decoration: BoxDecoration(
+                        //                 color: HexColor('EBE9FE'),
+                        //                 borderRadius: BorderRadius.all(
+                        //                     Radius.circular(min(horizontalScale,
+                        //                             verticalScale) *
+                        //                         8)),
+                        //               ),
+                        //               child: Icon(
+                        //                 Icons.notifications_active,
+                        //                 color: HexColor('6153D3'),
+                        //               )),
+                        //           SizedBox(
+                        //             width: horizontalScale * 18,
+                        //           ),
+                        //           Text(
+                        //             'Notifications',
+                        //             textScaleFactor:
+                        //                 min(horizontalScale, verticalScale),
+                        //             style: TextStyle(
+                        //                 fontSize: 18,
+                        //                 fontWeight: FontWeight.w600),
+                        //           ),
+                        //         ],
+                        //       )),
+                        // ),
                         Padding(
                           padding: EdgeInsets.fromLTRB(
                               horizontalScale * 30,

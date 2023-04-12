@@ -43,7 +43,7 @@ class _NewFeatureState extends State<NewFeature> {
         featuredCourse.add(element);
         // featuredCourse.add(element.courses);
 
-        print('element ${featuredCourse[0].courseId} ');
+        print('element ${featuredCourse[0].findex} ');
       }
     });
     print('function ');
