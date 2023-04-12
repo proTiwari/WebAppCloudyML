@@ -33,7 +33,7 @@ dependencies:
 
   hive:
   hive_flutter:
-  showcaseview:
+  # showcaseview:
   flutter_rating_bar:
   renderer_switcher: ^0.1.0
   firebase_dynamic_links:  #deep linking

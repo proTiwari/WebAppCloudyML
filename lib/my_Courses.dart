@@ -411,7 +411,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 'videoScreen',
                                                 queryParams: {
                                                   'courseName':
-                                                      course[index].courseName,
+                                                      course[index].curriculum.keys.toList().first.toString(),
                                                   'cID': course[index]
                                                       .courseDocumentId,
                                                 });
@@ -484,7 +484,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 'videoScreen',
                                                 queryParams: {
                                                   'courseName':
-                                                      course[index].courseName,
+                                                      course[index].curriculum.keys.toList().first.toString(),
                                                   'cID': course[index]
                                                       .courseDocumentId,
                                                 },

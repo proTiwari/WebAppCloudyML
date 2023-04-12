@@ -38,7 +38,7 @@ import 'package:cloudyml_app2/globals.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:star_rating/star_rating.dart';
-import 'package:showcaseview/src/showcase.dart';
+// import 'package:showcaseview/src/showcase.dart';
 import 'package:cloudyml_app2/global_variable.dart' as globals;
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:html' as html;
@@ -1040,7 +1040,7 @@ setState(() {
                                                           queryParams: {
                                                         'courseName':
                                                             course[index]
-                                                                .courseName,
+                                                                .curriculum.keys.toList().first.toString(),
                                                         'cID': course[index]
                                                             .courseDocumentId,
                                                       });
@@ -1121,7 +1121,7 @@ setState(() {
                                                             queryParams: {
                                                           'courseName':
                                                               course[index]
-                                                                  .courseName,
+                                                                  .curriculum.keys.toList().first.toString(),
                                                           'cID': course[index]
                                                               .courseDocumentId,
                                                         });
@@ -1146,6 +1146,11 @@ setState(() {
                                                     // );
                                                   }
                                                 } else {
+                                                  await FirebaseFirestore.instance
+                                                      .collection("courses").doc(course[index]
+                                                      .courseDocumentId).update({
+                                                    'fIndex': index.toString(),});
+
                                                   ComboCourse.comboId.value =
                                                       course[index].courseId;
                                                   final id = index.toString();
@@ -1387,7 +1392,7 @@ setState(() {
                                                                                 !(userMap['payInPartsDetails'][course[index].courseId]['outStandingAmtPaid'])) {
                                                                               if (!course[index].isItComboCourse) {
                                                                                 GoRouter.of(context).pushNamed('videoScreen', queryParams: {
-                                                                                  'courseName': course[index].courseName,
+                                                                                  'courseName': course[index].curriculum.keys.toList().first.toString(),
                                                                                   'cID': course[index].courseDocumentId,
                                                                                 });
 
@@ -1449,7 +1454,7 @@ setState(() {
                                                                                   );
                                                                                 } else {
                                                                                   GoRouter.of(context).pushNamed('videoScreen', queryParams: {
-                                                                                    'courseName': course[index].courseName,
+                                                                                    'courseName': course[index].curriculum.keys.toList().first.toString(),
                                                                                     'cID': course[index].courseDocumentId,
                                                                                   });
                                                                                   // Navigator.push(
@@ -3474,7 +3479,7 @@ setState(() {
                                                                         GoRouter.of(context).pushNamed(
                                                                             'videoScreen',
                                                                             queryParams: {
-                                                                              'courseName': course[index].courseName,
+                                                                              'courseName': course[index].curriculum.keys.toList().first.toString(),
                                                                               'cID': course[index].courseDocumentId,
                                                                             });
 
@@ -3546,7 +3551,7 @@ setState(() {
                                                                           GoRouter.of(context).pushNamed(
                                                                               'videoScreen',
                                                                               queryParams: {
-                                                                                'courseName': course[index].courseName,
+                                                                                'courseName': course[index].curriculum.keys.toList().first.toString(),
                                                                                 'cID': course[index].courseDocumentId,
                                                                               });
                                                                           // Navigator.push(

@@ -1233,7 +1233,7 @@ class _VideoScreenState extends State<VideoScreen> {
                               InkWell(
                                 onTap: () {
                                   widget.isDemo == null
-                                      ? Navigator.of(context).pop()
+                                      ? Navigator.pop(context)
                                       : GoRouter.of(context)
                                           .pushReplacementNamed('myCourses');
                                   // Navigator.pop(context);

@@ -704,7 +704,7 @@ class _OtpPageState extends State<OtpPage> {
                   final cID = "aEGX6kMfHzQrVgP3WCwU";
                   final courseName =
                       "Data Science & Analytics Placement Assurance Program";
-                  final courseP = "9999";
+                  final courseP = "11999";
                   GoRouter.of(context).goNamed('NewFeature', queryParams: {
                     'cID': cID,
                     'courseName': courseName,
@@ -717,7 +717,7 @@ class _OtpPageState extends State<OtpPage> {
                   final cID = "F9gxnjW9nf5Lxg5A6758";
                   final courseName =
                       "Data Engineering Placement Assurance Program";
-                  final courseP = "10000";
+                  final courseP = "12000";
                   GoRouter.of(context).goNamed('NewFeature', queryParams: {
                     'cID': cID,
                     'courseName': courseName,

@@ -644,7 +644,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                             final courseName =
                                                                 "Data Science & Analytics Placement Assurance Program";
                                                             final courseP =
-                                                                "9999";
+                                                                "11999";
                                                             GoRouter.of(context)
                                                                 .goNamed(
                                                                     'NewFeature',
@@ -675,7 +675,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                             final courseName =
                                                                 "Data Engineering Placement Assurance Program";
                                                             final courseP =
-                                                                "10000";
+                                                                "12000";
                                                             GoRouter.of(context)
                                                                 .goNamed(
                                                                     'NewFeature',
@@ -971,7 +971,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                           "aEGX6kMfHzQrVgP3WCwU";
                                                       final courseName =
                                                           "Data Science & Analytics Placement Assurance Program";
-                                                      final courseP = "9999";
+                                                      final courseP = "11999";
                                                       GoRouter.of(context)
                                                           .goNamed(
                                                               'featuredCourses',
@@ -983,7 +983,28 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                             'coursePrice':
                                                                 courseP
                                                           });
-                                                    } else if (payurl ==
+                                                    } else if (deurl ==
+                                                              'F9gxnjW9nf5Lxg5A6758') {
+                                                            final id = "0";
+                                                            final cID =
+                                                                "F9gxnjW9nf5Lxg5A6758";
+                                                            final courseName =
+                                                                "Data Engineering Placement Assurance Program";
+                                                            final courseP =
+                                                                "12000";
+                                                            GoRouter.of(context)
+                                                                .goNamed(
+                                                                    'NewFeature',
+                                                                    queryParams: {
+                                                                  'cID': cID,
+                                                                  'courseName':
+                                                                      courseName,
+                                                                  'id': id,
+                                                                  'coursePrice':
+                                                                      courseP
+                                                                });
+                                                          }
+                                                     else if (payurl ==
                                                         '/comboPaymentPortal') {
                                                       final cID =
                                                           "aEGX6kMfHzQrVgP3WCwU";
