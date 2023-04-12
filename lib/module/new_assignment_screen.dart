@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -174,14 +173,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
         },
       );
 
-      // BotToast.showText(
-      //     text: "Your assignment is submitted successfully.",
-      //     contentColor: Colors.blue,
-      //     align: Alignment.center,
-      //     duration: Duration(seconds: 5),
-      //     crossPage: true);
-
-
+      // Fluttertoast.showToast(msg: "Your file has been uploaded successfully");
       count = 1;
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
@@ -489,7 +481,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                               ElevatedButton(
                                 onPressed: () async {
                                   if (uploadedFile == null) {
-                                    Fluttertoast.showToast(msg: 'Please upload a file');
+                                    Fluttertoast.showToast(msg: 'Please upload a file',fontSize: 35,);
                                   } else {
 
                                     await submissionTask();

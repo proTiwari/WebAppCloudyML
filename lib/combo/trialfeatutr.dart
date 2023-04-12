@@ -43,7 +43,7 @@ class _NewFeatureState extends State<NewFeature> {
         featuredCourse.add(element);
         // featuredCourse.add(element.courses);
 
-        print('element ${featuredCourse[0].courseId} ');
+        print('element ${featuredCourse[0].findex} ');
       }
     });
     print('function ');
@@ -168,6 +168,12 @@ class _NewFeatureState extends State<NewFeature> {
     void url_del() {
     FirebaseFirestore.instance.collection('Notice')
       ..doc("XdYtk2DJBIkRGx0ASthZ_newfeaturecourse")
+          .update({'url': ""}).whenComplete(() {
+        print('New feature Deleted');
+      });
+
+      FirebaseFirestore.instance.collection('Notice')
+      ..doc("fSU4MLz1E0858ft8m7F5_dataeng")
           .update({'url': ""}).whenComplete(() {
         print('New feature Deleted');
       });
@@ -492,7 +498,7 @@ class _NewFeatureState extends State<NewFeature> {
                                                                                   : 14),
                                                         overflow: TextOverflow
                                                             .ellipsis,
-                                                        maxLines: 3,
+                                                        maxLines: 4,
                                                         
                                                       ),
                                                       // SizedBox(height: width>750?0:10,),

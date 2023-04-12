@@ -7,6 +7,7 @@ import 'dart:js';
 import 'dart:ui';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloudyml_app2/Notifications/web_messaging.dart';
 import 'package:cloudyml_app2/Providers/AppProvider.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/Providers/chat_screen_provider.dart';
@@ -18,6 +19,8 @@ import 'package:cloudyml_app2/router/login_state_check.dart';
 import 'package:cloudyml_app2/router/router.dart';
 import 'package:cloudyml_app2/screens/chat_screen.dart';
 import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:cloudyml_app2/screens/splash.dart';
 import 'package:cloudyml_app2/services/local_notificationservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -108,6 +111,7 @@ Future<void> main() async {
   }
   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   LocalNotificationService.initialize();
+  FBMessaging().init();
 
   runApp(MyApp(loginState: state,));
 
@@ -150,16 +154,24 @@ Future<void> main() async {
     print('pushed');
 
   }
-    else if(Uri.base.path == '/NewFeature'){
+ else if (Uri.base.path == '/NewFeature') {
+    if (Uri.base.queryParameters['cID'] == 'aEGX6kMfHzQrVgP3WCwU') {
+      final url = Uri.base.queryParameters['cID'];
+      FirebaseFirestore.instance
+          .collection("Notice")
+          .doc("XdYtk2DJBIkRGx0ASthZ_newfeaturecourse")
+          .set({'url': url});
+    } else if (Uri.base.queryParameters['cID'] == 'F9gxnjW9nf5Lxg5A6758') {
+      final url = Uri.base.queryParameters['cID'];
+      FirebaseFirestore.instance
+          .collection("Notice")
+          .doc("fSU4MLz1E0858ft8m7F5_dataeng")
+          .set({'url': url});
+    }
 
-    final url=Uri.base.path;
-    FirebaseFirestore.instance.collection("Notice")
-        .doc("XdYtk2DJBIkRGx0ASthZ_newfeaturecourse").set({
-      'url' : url });
 // navigatorKey.currentState?.pushNamed('/login');
 
     print('pushed');
-
   }
 
  
@@ -329,7 +341,7 @@ class _MyAppState extends State<MyApp> {
         duration: Duration(seconds: 5),
         animDuration: Duration(milliseconds: 500),
         alignment: Alignment.center,
-        toastPositions: StyledToastPosition.bottom,
+        toastPositions: StyledToastPosition.center,
         curve: Curves.bounceIn,
         reverseCurve: Curves.bounceOut,
         dismissOtherOnShow: true,

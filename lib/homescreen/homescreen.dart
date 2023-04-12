@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'package:cloudyml_app2/widgets/notification_popup.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:bot_toast/bot_toast.dart';
+
 import '../Services/code_generator.dart';
 import '../Services/deeplink_service.dart';
 import '../catalogue_screen.dart';
@@ -18,6 +19,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/api/firebase_api.dart';
+import 'package:cloudyml_app2/authentication/firebase_auth.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/router/login_state_check.dart';
 import 'package:cloudyml_app2/screens/exlusive_offer/seasons_offer_screen.dart';
@@ -26,6 +28,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloudyml_app2/fun.dart';
 import 'package:cloudyml_app2/models/firebase_file.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -36,8 +39,10 @@ import 'package:cloudyml_app2/globals.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:star_rating/star_rating.dart';
+// import 'package:showcaseview/src/showcase.dart';
 import 'package:cloudyml_app2/global_variable.dart' as globals;
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:html' as html;
 
 var rewardCount = 0;
 String? linkMessage;
@@ -74,7 +79,7 @@ class _LandingScreenState extends State<LandingScreen> {
         });
       });
     } catch (e) {
-      print("oooo$e");
+      print("llooooooooooooo$e");
     }
   }
 
@@ -86,6 +91,28 @@ class _LandingScreenState extends State<LandingScreen> {
       'paidCourseNames': FieldValue.arrayUnion([id])
     });
   }
+
+  setNotification()async{
+    
+   var time;
+final DocumentSnapshot doc =
+    await FirebaseFirestore.instance.collection('Notice').doc('UcQl27Kl9hEEr1g2s0CK').get();
+ time = doc['time'].toDate();
+if(DateTime.now().isAfter(time)) {
+
+  if(!notificationList.contains(doc['Msg'].toString())){
+  print('Notification settted');
+  print('Notification ${notificationList.length}');
+setState(() {
+  notificationList.add(doc['Msg'].toString());
+   
+});
+  }
+
+  }else{
+    notificationList.clear();
+}
+}
 
   List<Icon> list = [];
 
@@ -124,8 +151,6 @@ class _LandingScreenState extends State<LandingScreen> {
       setState(() {
         userMap = userDocs.data() as Map<String, dynamic>;
         quizTrack = userMap['quiztrack'];
-
-        print('quiztrack $quizTrack');
         // whetherSubScribedToPayInParts =
         //     !(!(map['payInPartsDetails']['outStandingAmtPaid'] == null));
       });
@@ -137,6 +162,17 @@ class _LandingScreenState extends State<LandingScreen> {
   late ScrollController _controller;
   final notificationBox = Hive.box('NotificationBox');
 
+  // showNotification() async {
+  //   final provider = Provider.of<UserProvider>(context, listen: false);
+  //   if (notificationBox.isEmpty) {
+  //     notificationBox.put(1, {"count": 0});
+  //     provider
+  //         .showNotificationHomeScreen(notificationBox.values.first["count"]);
+  //   } else {
+  //     provider
+  //         .showNotificationHomeScreen(notificationBox.values.first["count"]);
+  //   }
+  // }
 
   List<CourseDetails> featuredCourse = [];
 
@@ -261,6 +297,56 @@ class _LandingScreenState extends State<LandingScreen> {
 
   bool isShow = false;
 
+  _wpshow() async {
+    await FirebaseFirestore.instance
+        .collection('Notice')
+        .doc('rLwaS5rDufmCQ7Gv5vMI')
+        .get()
+        .then((value) {
+      setState(() {
+        isShow = value.data()!['show'];
+      });
+
+      print("show is===$isShow");
+    });
+  }
+
+  _launchWhatsapp() async {
+    var note = await FirebaseFirestore.instance
+        .collection('Notice')
+        .doc('rLwaS5rDufmCQ7Gv5vMI')
+        .get()
+        .then((value) {
+      return value.data()!['msg']; // Access your after your get the data
+    });
+
+    print("the msg is====$note");
+    print("the show is====$isShow");
+
+    var whatsApp1 = await FirebaseFirestore.instance
+        .collection('Notice')
+        .doc('rLwaS5rDufmCQ7Gv5vMI')
+        .get()
+        .then((value) {
+      return value.data()!['number']; // Access your after your get the data
+    });
+
+    print("the number is====$whatsApp1");
+
+    var whatsapp = "+918902530551";
+    var whatsappAndroid =
+        Uri.parse("whatsapp://send?phone=$whatsApp1&text=$note");
+    if (await canLaunchUrl(whatsappAndroid)) {
+      await launchUrl(whatsappAndroid);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("WhatsApp is not installed on the device"),
+        ),
+      );
+    }
+  }
+
   var ref;
   var userDocData;
   userData() async {
@@ -269,9 +355,6 @@ class _LandingScreenState extends State<LandingScreen> {
           .collection("Users")
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
-
-
-        globals.role = ref.data()!["role"].toString();
 
       print('uid is ${FirebaseAuth.instance.currentUser!.uid}');
 
@@ -287,7 +370,7 @@ class _LandingScreenState extends State<LandingScreen> {
     var referralCode = await deepLinkRepo?.referrerCode.value;
 
     print(
-        "dd $referralCode ddd");
+        "sddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd $referralCode ddd");
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -361,7 +444,7 @@ class _LandingScreenState extends State<LandingScreen> {
       final deepLinkRepo = await DeepLinkService.instance;
       var referralCode = await deepLinkRepo?.referrerCode.value;
       print(
-          " ${referralCode}");
+          "sddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd ${referralCode}");
       final referCode = await CodeGenerator().generateCode('refer');
       final referLink =
           await DeepLinkService.instance?.createReferLink(referCode);
@@ -387,7 +470,7 @@ class _LandingScreenState extends State<LandingScreen> {
               "send data to firebase uid: ${FirebaseAuth.instance.currentUser!.uid}"));
 
       Future<ReferalModel> getReferrerUser(String referCode) async {
-        print(" ${referCode}");
+        print("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ${referCode}");
         final docSnapshots = await FirebaseFirestore.instance
             .collection('Users')
             .where('refer_code', isEqualTo: referCode)
@@ -395,7 +478,7 @@ class _LandingScreenState extends State<LandingScreen> {
 
         final userSnapshot = docSnapshots.docs.first;
         print(
-            " ${userSnapshot.exists}");
+            "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ${userSnapshot.exists}");
         if (userSnapshot.exists) {
           print(userSnapshot.data());
           return ReferalModel.fromJson(userSnapshot.data());
@@ -410,7 +493,7 @@ class _LandingScreenState extends State<LandingScreen> {
           if (referrerCode.toString().substring(0, 11) != "moneyreward") {
             final referer = await getReferrerUser(referrerCode);
             print(
-                " ${referer.id}");
+                "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ${referer.id}");
 
             final checkIfUserAlreadyExist = await FirebaseFirestore.instance
                 .collection('Users')
@@ -445,7 +528,7 @@ class _LandingScreenState extends State<LandingScreen> {
       }
 
       if (referralCode != "") {
-        print(" ${referralCode}");
+        print("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ${referralCode}");
         await rewardUser(FirebaseAuth.instance.currentUser!.uid, referralCode!);
       }
       ;
@@ -554,7 +637,11 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   void initState() {
     super.initState();
+    // print('this is url ${html.window.location.href}');
+    // print('this is path ${Uri.base.path}');
+    // showNotification();
     _controller = ScrollController();
+
     futureFiles = FirebaseApi.listAll('reviews/recent_review');
     futurefilesComboCourseReviews =
         FirebaseApi.listAll('reviews/combo_course_review');
@@ -564,6 +651,10 @@ class _LandingScreenState extends State<LandingScreen> {
     fetchCourses();
     dbCheckerForPayInParts();
     userData();
+    // startTimer();
+    // getuserdetails();
+    checkrewardexpiry();
+
   }
 
   Timer? countDownTimer;
@@ -587,9 +678,13 @@ class _LandingScreenState extends State<LandingScreen> {
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
     setFeaturedCourse(course);
+    setNotification();
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
-      drawer: customDrawer(context),
+      drawer: //kIsWeb ? Container() :
+          customDrawer(context),
+      // floatingActionButton: floatingButton(context),
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
         if (constraints.maxWidth >= 650) {
@@ -769,8 +864,107 @@ class _LandingScreenState extends State<LandingScreen> {
                       padding: const EdgeInsets.only(top: 8.0, right: 5),
                       child: customMenuBar(context),
                     ),
-                    courses.length > 0
-                        ? Positioned(
+                    // Positioned(
+                    //   top: verticalScale * 475,
+                    //   left: 20 * horizontalScale,
+                    //   child: Row(
+                    //     children: [
+                    //       Stack(
+                    //         children: [
+                    //           Positioned.fill(
+                    //               child: Container(
+                    //             margin: EdgeInsets.all(6),
+                    //             color: Colors.white,
+                    //           )),
+                    //           Icon(
+                    //             Icons.check_circle,
+                    //             color: Colors.deepPurpleAccent,
+                    //             size: 25,
+                    //           ),
+                    //         ],
+                    //       ),
+                    //       SizedBox(
+                    //         width: 5,
+                    //       ),
+                    //       Text('Trusted by $numberOfLearners',
+                    //           style: TextStyle(
+                    //               fontSize: 12,
+                    //               fontWeight: FontWeight.normal,
+                    //               color: Colors.white)),
+                    //       SizedBox(
+                    //         width: 15 * horizontalScale,
+                    //       ),
+                    //       Stack(
+                    //         children: [
+                    //           Positioned.fill(
+                    //               child: Container(
+                    //             margin: EdgeInsets.all(6),
+                    //             color: Colors.white,
+                    //           )),
+                    //           Icon(
+                    //             Icons.check_circle,
+                    //             color: Colors.deepPurpleAccent,
+                    //             size: 25,
+                    //           ),
+                    //         ],
+                    //       ),
+                    //       SizedBox(
+                    //         width: 5,
+                    //       ),
+                    //       Text(
+                    //         'Learn from industry experts',
+                    //         style: TextStyle(
+                    //             fontSize: 12,
+                    //             fontWeight: FontWeight.normal,
+                    //             color: Colors.white),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+
+                    // Positioned(
+                    //     top: verticalScale * 540,
+                    //     left: 50,
+                    //     child: SizedBox(
+                    //       height: 75 * verticalScale,
+                    //       child: ElevatedButton(
+                    //         style: ElevatedButton.styleFrom(
+                    //           backgroundColor: HexColor('8346E1'),
+                    //           shape: RoundedRectangleBorder(
+                    //             borderRadius:
+                    //                 BorderRadius.circular(12), // <-- Radius
+                    //           ),
+                    //         ),
+                    //         onPressed: () {
+                    //           GoRouter.of(context).pushNamed('store');
+                    //         },
+                    //         child: Padding(
+                    //           padding: const EdgeInsets.all(8.0),
+                    //           child: Row(
+                    //             children: [
+                    //               Text(
+                    //                 'View Courses',
+                    //                 style: TextStyle(fontSize: 16),
+                    //               ),
+                    //               SizedBox(
+                    //                 width: 5 * horizontalScale,
+                    //               ),
+                    //               CircleAvatar(
+                    //                   maxRadius: 12,
+                    //                   backgroundColor: Colors.white,
+                    //                   child: Center(
+                    //                     child: Icon(
+                    //                       Icons.arrow_forward_rounded,
+                    //                       color: Colors.black,
+                    //                       size: 17,
+                    //                     ),
+                    //                   ))
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     )),
+                    Positioned(
                         top: verticalScale * 700,
                         left: 50,
                         child: Container(
@@ -786,7 +980,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                     fontSize: 36 * verticalScale),
                               ),
                               InkWell(
-                                onTap: ()  {
+                                onTap: () {
                                   GoRouter.of(context).pushReplacementNamed('myCourses');
                                 },
                                 child: Row(
@@ -808,8 +1002,7 @@ class _LandingScreenState extends State<LandingScreen> {
                               ),
                             ],
                           ),
-                        )) 
-                        : Container(),
+                        )),
                     Positioned(
                         top: verticalScale * 785,
                         child: courses.length > 0
@@ -830,9 +1023,11 @@ class _LandingScreenState extends State<LandingScreen> {
                                             "null") {
                                           return Container();
                                         }
-                                        if (courses.contains(course[index].courseId)) {
+                                        if (courses
+                                            .contains(course[index].courseId)) {
                                           return InkWell(
                                             onTap: (() async {
+                                              // setModuleId(snapshot.data!.docs[index].id);
                                               await getCourseName();
                                               if (navigateToCatalogueScreen(
                                                       course[index].courseId) &&
@@ -847,7 +1042,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                           queryParams: {
                                                         'courseName':
                                                             course[index]
-                                                                .courseName,
+                                                                .curriculum.keys.toList().first.toString(),
                                                         'cID': course[index]
                                                             .courseDocumentId,
                                                       });
@@ -928,7 +1123,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                             queryParams: {
                                                           'courseName':
                                                               course[index]
-                                                                  .courseName,
+                                                                  .curriculum.keys.toList().first.toString(),
                                                           'cID': course[index]
                                                               .courseDocumentId,
                                                         });
@@ -956,8 +1151,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                   await FirebaseFirestore.instance
                                                       .collection("courses").doc(course[index]
                                                       .courseDocumentId).update({
-                                                    'fIndex': index.toString(),
-                                                  });
+                                                    'fIndex': index.toString(),});
 
                                                   ComboCourse.comboId.value =
                                                       course[index].courseId;
@@ -972,7 +1166,6 @@ class _LandingScreenState extends State<LandingScreen> {
                                                         'id': id,
                                                         'courseName': courseName
                                                       });
-
                                                   // Navigator.push(
                                                   //   context,
                                                   //   PageTransition(
@@ -1201,7 +1394,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                                 !(userMap['payInPartsDetails'][course[index].courseId]['outStandingAmtPaid'])) {
                                                                               if (!course[index].isItComboCourse) {
                                                                                 GoRouter.of(context).pushNamed('videoScreen', queryParams: {
-                                                                                  'courseName': course[index].courseName,
+                                                                                  'courseName': course[index].curriculum.keys.toList().first.toString(),
                                                                                   'cID': course[index].courseDocumentId,
                                                                                 });
 
@@ -1226,8 +1419,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                               } else {
                                                                                 final id = index.toString();
                                                                                 final courseName = course[index].courseName;
-                                                                                context.goNamed('comboStore',
-                                                                                    queryParams: {
+                                                                                context.goNamed('comboStore', queryParams: {
                                                                                   'courseName': courseName,
                                                                                   'id': id
                                                                                 });
@@ -1264,7 +1456,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                                   );
                                                                                 } else {
                                                                                   GoRouter.of(context).pushNamed('videoScreen', queryParams: {
-                                                                                    'courseName': course[index].courseName,
+                                                                                    'courseName': course[index].curriculum.keys.toList().first.toString(),
                                                                                     'cID': course[index].courseDocumentId,
                                                                                   });
                                                                                   // Navigator.push(
@@ -1293,8 +1485,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                                 final id = index.toString();
                                                                                 final courseName = course[index].courseName;
 
-                                                                                GoRouter.of(context).pushNamed('NewScreen',
-                                                                                    queryParams: {
+                                                                                GoRouter.of(context).pushNamed('newcomboCourse', queryParams: {
                                                                                   'id': id,
                                                                                   'courseName': courseName
                                                                                 });
@@ -1382,39 +1573,37 @@ class _LandingScreenState extends State<LandingScreen> {
                                   ),
                                 ),
                               )
-                            : Container()
-                        // Container(
-                        //         width: screenWidth,
-                        //         height: screenHeight / 4.5,
-                        //         child: Center(
-                        //           child: Container(
-                        //             width: screenWidth / 2,
-                        //             height: screenHeight / 5.5,
-                        //             decoration: BoxDecoration(
-                        //               color: Colors.white,
-                        //               boxShadow: [
-                        //                 BoxShadow(
-                        //                     color: Colors.black26,
-                        //                     offset: Offset(
-                        //                       2, // Move to right 10  horizontally
-                        //                       2.0, // Move to bottom 10 Vertically
-                        //                     ),
-                        //                     blurRadius: 40)
-                        //               ],
-                        //               // border: Border.all(
-                        //               //   color: HexColor('440F87'),
-                        //               //   width: 1.5,
-                        //               // ),
-                        //               borderRadius: BorderRadius.circular(15),
-                        //             ),
-                        //             child: Center(
-                        //                 child: Text(
-                        //               'There are zero courses. Please enroll.',
-                        //             )),
-                        //           ),
-                        //         ),
-                        //       )
-                    ),
+                            : Container(
+                                width: screenWidth,
+                                height: screenHeight / 4.5,
+                                child: Center(
+                                  child: Container(
+                                    width: screenWidth / 2,
+                                    height: screenHeight / 5.5,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.black26,
+                                            offset: Offset(
+                                              2, // Move to right 10  horizontally
+                                              2.0, // Move to bottom 10 Vertically
+                                            ),
+                                            blurRadius: 40)
+                                      ],
+                                      // border: Border.all(
+                                      //   color: HexColor('440F87'),
+                                      //   width: 1.5,
+                                      // ),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Center(
+                                        child: Text(
+                                      'There are zero courses. Please enroll.',
+                                    )),
+                                  ),
+                                ),
+                              )),
 
                     Positioned(
                         bottom: verticalScale * 1150,
@@ -1471,10 +1660,9 @@ class _LandingScreenState extends State<LandingScreen> {
                                         child: CircularProgressIndicator());
                                   default:
                                     if (snapshot.hasError) {
-                                      print(snapshot.error);
                                       return Center(
                                           child: Text(
-                                        'Some error occurred! ${snapshot.error}',
+                                        'Some error occurred!',
                                         textScaleFactor:
                                             min(horizontalScale, verticalScale),
                                       ));
@@ -1573,7 +1761,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                     }
                                 }
                               } catch (e) {
-                                print("${e}");
+                                print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
 
                                 Fluttertoast.showToast(msg: e.toString());
                                 return Center(
@@ -1696,7 +1884,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                     }
                                 }
                               } catch (e) {
-                                print("${e}");
+                                print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
 
                                 Fluttertoast.showToast(msg: e.toString());
                                 return Center(
@@ -1819,7 +2007,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                     }
                                 }
                               } catch (e) {
-                                print("${e}");
+                                print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
 
                                 Fluttertoast.showToast(msg: e.toString());
                                 return Center(
@@ -2141,13 +2329,9 @@ class _LandingScreenState extends State<LandingScreen> {
                                       courseId = featuredCourse[index]
                                           .courseDocumentId;
                                     });
-
                                     print(courseId);
                                     if (featuredCourse[index].isItComboCourse) {
                                       print(featuredCourse[index].courses);
-
-
-
 
                                       final id = index.toString();
                                       final cID = featuredCourse[index]
@@ -2156,10 +2340,6 @@ class _LandingScreenState extends State<LandingScreen> {
                                           featuredCourse[index].courseName;
                                       final courseP =
                                           featuredCourse[index].coursePrice;
-
-
-
-
                                       // GoRouter.of(context).pushNamed(
                                       //     'featuredCourses',
                                       //     queryParams: {
@@ -2347,71 +2527,63 @@ class _LandingScreenState extends State<LandingScreen> {
                                                   children: [
                                                     ElevatedButton(
                                                         onPressed: () {
-                                                          setState(() {
-                                                            courseId =
-                                                                featuredCourse[
-                                                                        index]
-                                                                    .courseDocumentId;
-                                                          });
-                                                          print(courseId);
-                                                          if (featuredCourse[
-                                                                  index]
-                                                              .isItComboCourse) {
-                                                            print(
-                                                                featuredCourse[
-                                                                        index]
-                                                                    .courses);
+                                    setState(() {
+                                      courseId = featuredCourse[index]
+                                          .courseDocumentId;
+                                    });
+                                    print(courseId);
+                                    if (featuredCourse[index].isItComboCourse) {
+                                      print(featuredCourse[index].courses);
 
-                                                            final id = index
-                                                                .toString();
-                                                            final cID =
-                                                                featuredCourse[
-                                                                        index]
-                                                                    .courseDocumentId;
-                                                            final courseName =
-                                                                featuredCourse[
-                                                                        index]
-                                                                    .courseName;
-                                                            final courseP =
-                                                                featuredCourse[
-                                                                        index]
-                                                                    .coursePrice;
-                                                            GoRouter.of(context)
-                                                                .pushNamed(
-                                                                    'featuredCourses',
-                                                                    queryParams: {
-                                                                  'cID': cID,
-                                                                  'courseName':
-                                                                      courseName,
-                                                                  'id': id,
-                                                                  'coursePrice':
-                                                                      courseP
-                                                                });
+                                      final id = index.toString();
+                                      final cID = featuredCourse[index]
+                                          .courseDocumentId;
+                                      final courseName =
+                                          featuredCourse[index].courseName;
+                                      final courseP =
+                                          featuredCourse[index].coursePrice;
+                                      // GoRouter.of(context).pushNamed(
+                                      //     'featuredCourses',
+                                      //     queryParams: {
+                                      //       'cID': cID,
+                                      //       'courseName': courseName,
+                                      //       'id': id,
+                                      //       'coursePrice': courseP
+                                      //     });
 
-                                                            // Navigator.push(
-                                                            //   context,
-                                                            //   MaterialPageRoute(
-                                                            //     builder: (context) =>
-                                                            //         ComboStore(
-                                                            //           courses:
-                                                            //           course[index].courses,
-                                                            //         ),
-                                                            //   ),
-                                                            // );
+                                      //  final id = index.toString();
+                                      //       final cID = featuredCourse[index].courseDocumentId;
+                                      //       final courseName = featuredCourse[index].courseName;
+                                      //       final courseP = featuredCourse[index].coursePrice;
+                                      GoRouter.of(context).pushNamed(
+                                          'NewFeature',
+                                          queryParams: {
+                                            'cID': cID,
+                                            'courseName': courseName,
+                                            'id': id,
+                                            'coursePrice': courseP
+                                          });
 
-                                                          } else {
-                                                            final id = index
-                                                                .toString();
-                                                            GoRouter.of(context)
-                                                                .pushNamed(
-                                                                    'catalogue',
-                                                                    queryParams: {
-                                                                  'id': id,
-                                                                  'cID':
-                                                                      courseId,
-                                                                });
-                                                          }
-                                                        },
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) =>
+                                      //         ComboStore(
+                                      //           courses:
+                                      //           course[index].courses,
+                                      //         ),
+                                      //   ),
+                                      // );
+
+                                    } else {
+                                      final id = index.toString();
+                                      GoRouter.of(context)
+                                          .pushNamed('catalogue', queryParams: {
+                                        'id': id,
+                                        'cID': courseId,
+                                      });
+                                    }
+                                  },
                                                         style: ElevatedButton
                                                             .styleFrom(
                                                           backgroundColor:
@@ -2653,6 +2825,7 @@ class _LandingScreenState extends State<LandingScreen> {
                           alignment: Alignment.centerRight,
                           child: IconButton(
                               onPressed: () {
+                                print('its opened');
                                 Scaffold.of(context).openDrawer();
                               },
                               icon: Icon(
@@ -2813,7 +2986,17 @@ class _LandingScreenState extends State<LandingScreen> {
                           fit: BoxFit.fill,
                         ),
                       ),
-                      courses.length > 0 ?
+                      // Positioned(
+                      //   top: -1,
+                      //   child: Container(
+                      //     width: screenWidth,
+                      //     child: Divider(
+                      //       color: Colors.purple,
+                      //       height: 1,
+                      //       thickness: 1,
+                      //     ),
+                      //   ),
+                      // ),
                       Positioned(
                           top: verticalScale * 30,
                           left: 15 * horizontalScale,
@@ -2853,8 +3036,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                 ),
                               ],
                             ),
-                          )) :
-                      Container(),
+                          )),
                       Positioned(
                         top: 115 * verticalScale,
                         child: Container(
@@ -2899,7 +3081,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                     child: VideoScreen(
                                                       isDemo: true,
                                                       courseName: course[index]
-                                                          .courseName,
+                                                          .curriculum.keys.toList().first.toString()
+,
                                                       sr: 1,
                                                     ),
                                                   ),
@@ -2956,7 +3139,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                         isDemo: true,
                                                         courseName:
                                                             course[index]
-                                                                .courseName,
+                                                                .curriculum.keys.toList().first.toString()
+,
                                                         sr: 1,
                                                       ),
                                                     ),
@@ -3297,7 +3481,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                         GoRouter.of(context).pushNamed(
                                                                             'videoScreen',
                                                                             queryParams: {
-                                                                              'courseName': course[index].courseName,
+                                                                              'courseName': course[index].curriculum.keys.toList().first.toString(),
                                                                               'cID': course[index].courseDocumentId,
                                                                             });
 
@@ -3369,7 +3553,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                           GoRouter.of(context).pushNamed(
                                                                               'videoScreen',
                                                                               queryParams: {
-                                                                                'courseName': course[index].courseName,
+                                                                                'courseName': course[index].curriculum.keys.toList().first.toString(),
                                                                                 'cID': course[index].courseDocumentId,
                                                                               });
                                                                           // Navigator.push(
@@ -3506,28 +3690,27 @@ class _LandingScreenState extends State<LandingScreen> {
                                     },
                                   ),
                                 )
-                              : Container()
-                          // Padding(
-                          //         padding: const EdgeInsets.all(15.0),
-                          //         child: Container(
-                          //           width: screenWidth,
-                          //           height: screenHeight / 3,
-                          //           padding: EdgeInsets.all(5.0),
-                          //           decoration: BoxDecoration(
-                          //             color: Colors.white,
-                          //             borderRadius: BorderRadius.circular(25),
-                          //           ),
-                          //           child: Center(
-                          //               child: Text(
-                          //             'There are no courses. Please enroll.',
-                          //             style: TextStyle(
-                          //               fontSize: 18 * verticalScale,
-                          //               fontWeight: FontWeight.bold,
-                          //               height: 1,
-                          //             ),
-                          //           )),
-                          //         ),
-                          //       ),
+                              : Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: Container(
+                                    width: screenWidth,
+                                    height: screenHeight / 3,
+                                    padding: EdgeInsets.all(5.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    child: Center(
+                                        child: Text(
+                                      'There are no courses. Please enroll.',
+                                      style: TextStyle(
+                                        fontSize: 18 * verticalScale,
+                                        fontWeight: FontWeight.bold,
+                                        height: 1,
+                                      ),
+                                    )),
+                                  ),
+                                ),
                         ),
                       ),
                       Positioned(
@@ -3686,7 +3869,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                           }
                                       }
                                     } catch (e) {
-                                      print("kkk${e}");
+                                      print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
 
                                       Fluttertoast.showToast(msg: e.toString());
                                       return Center(
@@ -3806,7 +3989,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                           }
                                       }
                                     } catch (e) {
-                                      print("jjkkk${e}");
+                                      print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
 
                                       Fluttertoast.showToast(msg: e.toString());
                                       return Center(
@@ -3927,7 +4110,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                       }
                                   }
                                 } catch (e) {
-                                  print("jkkk${e}");
+                                  print("jjkkjkjkkkkjkjjjjjjjjkkk${e}");
 
                                   Fluttertoast.showToast(msg: e.toString());
                                   return Center(
@@ -4601,6 +4784,7 @@ class _LandingScreenState extends State<LandingScreen> {
                           ),
                         ),
                       ),
+
                       Positioned(
                         bottom: 70,
                         left: 15,

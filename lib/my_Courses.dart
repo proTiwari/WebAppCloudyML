@@ -417,7 +417,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 'videoScreen',
                                                 queryParams: {
                                                   'courseName':
-                                                      course[index].courseName,
+                                                      course[index].curriculum.keys.toList().first.toString(),
                                                   'cID': course[index]
                                                       .courseDocumentId,
                                                 });
@@ -490,7 +490,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 'videoScreen',
                                                 queryParams: {
                                                   'courseName':
-                                                      course[index].courseName,
+                                                      course[index].curriculum.keys.toList().first.toString(),
                                                   'cID': course[index]
                                                       .courseDocumentId,
                                                 },
@@ -1247,7 +1247,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             child: VideoScreen(
                                               isDemo: true,
                                               courseName:
-                                                  course[index].courseName,
+                                                  course[index].curriculum.keys.toList().first.toString()
+,
                                               sr: 1,
                                             ),
                                           ),
@@ -1298,7 +1299,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               child: VideoScreen(
                                                 isDemo: true,
                                                 courseName:
-                                                    course[index].courseName,
+                                                    course[index].curriculum.keys.toList().first.toString()
+,
                                                 sr: 1,
                                               ),
                                             ),

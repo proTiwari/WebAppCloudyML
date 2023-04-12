@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/screens/quiz/quiz_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
+import 'model/quiztrackmodel.dart';
 
 class InstructionspageWidget extends StatefulWidget {
   var quizdata;
@@ -25,6 +29,114 @@ class _InstructionspageWidgetState extends State<InstructionspageWidget> {
     _unfocusNode.dispose();
     super.dispose();
   }
+
+  checkQuizStatusOrNavigate() async {
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((value) {
+      try {
+        var data = value.data()!['quiztrack'];
+        bool attemptingquizforthefirsttime = true;
+        for (var i in data) {
+          if (i != null) {
+            i = QuizTrackModel.fromJson(i);
+            print(i.quizname);
+            print(widget.quizdata['name']);
+            try {
+              if (i!.quizname == widget.quizdata['name']) {
+                attemptingquizforthefirsttime = false;
+                print("quiz found");
+                if (i.quizCleared == true) {
+                  print("quiz cleared");
+                  showToast('You have already aced this quiz!',
+                      context: context,
+                      animation: StyledToastAnimation.slideFromBottom,
+                      reverseAnimation: StyledToastAnimation.slideToBottom,
+                      position: StyledToastPosition.bottom,
+                      animDuration: Duration(seconds: 1),
+                      duration: Duration(seconds: 4),
+                      curve: Curves.elasticOut,
+                      reverseCurve: Curves.fastOutSlowIn);
+                }
+
+                // condition for quiz not cleared
+                if (i.quizCleared == false) {
+                  print("quiz not cleared");
+                  // condition for course quiz
+                  if (i.quizlevel == "courselevel") {
+                    if (i.quizAttemptGapForCourseQuiz!
+                            .compareTo(DateTime.now()) <
+                        0) {
+                      print("quiz attempt gap over");
+                      print(i.quizAttemptGapForCourseQuiz);
+                      print(DateTime.now());
+                      // navigate to quiz page
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => QuizPage(widget.quizdata)));
+                    } else {
+                      print("quiz attempt gap not over");
+                      showToast(
+                          'You can attempt this quiz after ${i.quizAttemptGapForCourseQuiz}',
+                          context: context,
+                          animation: StyledToastAnimation.slideFromBottom,
+                          reverseAnimation: StyledToastAnimation.slideToBottom,
+                          position: StyledToastPosition.bottom,
+                          animDuration: Duration(seconds: 1),
+                          duration: Duration(seconds: 4),
+                          curve: Curves.elasticOut,
+                          reverseCurve: Curves.fastOutSlowIn);
+                    }
+                  } else {
+                    print("quiz attempt gap not over");
+                    // condition for modular quiz
+                    if (i.quizAttemptGapForModularQuiz!
+                            .compareTo(DateTime.now()) <
+                        0) {
+                      // navigate to quiz page
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => QuizPage(widget.quizdata)));
+                    } else {
+                      print('quiz attempt gap not over');
+                      showToast(
+                          'You can attempt this quiz after ${i.quizAttemptGapForModularQuiz}',
+                          context: context,
+                          animation: StyledToastAnimation.slideFromBottom,
+                          reverseAnimation: StyledToastAnimation.slideToBottom,
+                          position: StyledToastPosition.bottom,
+                          animDuration: Duration(seconds: 1),
+                          duration: Duration(seconds: 4),
+                          curve: Curves.elasticOut,
+                          reverseCurve: Curves.fastOutSlowIn);
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              print("error id: ifwjoefjwoeivfff: ${e.toString()}");
+            }
+          }
+        }
+        if (attemptingquizforthefirsttime) {
+          print("quiz is taken for the first time");
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => QuizPage(widget.quizdata)));
+        }
+      } catch (e) {
+        print("error id: efwefwe3223232: ${e.toString()}");
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => QuizPage(widget.quizdata)));
+      }
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,12 +189,7 @@ class _InstructionspageWidgetState extends State<InstructionspageWidget> {
                                       10, 10, 10, 10),
                                   child: GestureDetector(
                                     onTap: (() {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                QuizPage(widget.quizdata)),
-                                      );
+                                       checkQuizStatusOrNavigate();
                                       // GoRouter.of(context)
                                       //     .pushNamed('/quizpage', queryParams: {
                                       //   'data': "${widget.quizdata}"

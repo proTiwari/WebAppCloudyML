@@ -1234,7 +1234,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                 onTap: () {
                                   _videoController!.pause();
                                   widget.isDemo == null
-                                      ? Navigator.of(context).pop()
+                                      ? Navigator.pop(context)
                                       : GoRouter.of(context)
                                           .pushReplacementNamed('myCourses');
                                   // Navigator.pop(context);

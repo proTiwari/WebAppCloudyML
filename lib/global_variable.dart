@@ -2,14 +2,13 @@ library globals;
 
 late String diurl;
 late String payurl;
-
-
+var downloadCertificateLink = "";
+List quizTrack = [];
 String phone = "";
 String email = "";
 String name = "";
 String? action;
 String role = "";
-List quizTrack = [];
 String? signoutvalue;
 var actualCode;
 String phoneNumberexists = 'false';

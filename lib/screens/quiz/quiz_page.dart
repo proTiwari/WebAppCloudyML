@@ -5,6 +5,9 @@ import 'package:cloudyml_app2/MyAccount/myaccount.dart';
 import 'package:cloudyml_app2/screens/quiz/quizsolution.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'certificate_api.dart';
+import 'model/certificatemodel.dart';
+import 'model/quiztrackmodel.dart';
 import 'quiz_model.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
@@ -42,6 +45,228 @@ class _QuizPageState extends State<QuizPage> {
     super.initState();
     print("uuuiiioookljlk");
     getQuiz();
+  }
+
+  var userName = '';
+
+  Future<String> handlingCasesAccoridingToTotal(
+      double total, List quizdata, String courseid) async {
+    print("total is $total");
+    // coursequizwindowindays
+    int coursequizwindowindays = 0;
+    int modulerquizwindowinhours = 0;
+    int coursequizpassingpercentage = 0;
+    int modulequizpassingpercentage = 0;
+    QuizTrackModel? quizTrackModel;
+    String returningString = "";
+    int coursequizwindowindaysmorethan50percent = 0;
+
+    // removing the quiz from the quiztrack list
+    try {
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((value) async {
+        var data = value.data()!['quiztrack'];
+        print("data id iwjore9fjwj3r32r1 ${data.length}");
+        int customIndex = 0;
+        for (var i in data) {
+          try {
+            i = QuizTrackModel.fromJson(i);
+            if (widget.quizdata['name'] == i.quizname) {
+              print("wwiejfowjeojwefjwjfe $customIndex ${i.quizname}");
+              await data.removeAt(customIndex);
+              print("data $customIndex id iwjore9fjwj3r32r1 ${data.length}");
+              await FirebaseFirestore.instance
+                  .collection("Users")
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .update({
+                "quiztrack": await data,
+              });
+              print("data id iwjore9fjwj3r32r2 ${data.length}");
+            }
+          } catch (e) {
+            print("errorid: sdfwefwef323: ${e}");
+          }
+          customIndex = customIndex + 1;
+        }
+      });
+    } catch (e) {
+      print("errorid: fwf9398wfeu: ${e}");
+    }
+
+    // getting the variables from the controllers collection
+    try {
+      await FirebaseFirestore.instance
+          .collection("Controllers")
+          .doc("variables")
+          .get()
+          .then((value) {
+        coursequizwindowindays = value.data()!['coursequizwindowindays'];
+        print("coursequizwindowindays: $coursequizwindowindays");
+        modulerquizwindowinhours = value.data()!['modulerquizwindowinhours'];
+        coursequizpassingpercentage =
+            value.data()!['coursequizpassingpercentage'];
+        coursequizwindowindaysmorethan50percent =
+            value.data()!['coursequizwindowindaysmorethan50percent'];
+        modulequizpassingpercentage =
+            value.data()!['modulequizpassingpercentage'];
+      });
+    } catch (e) {
+      print("errorid: ff93u98e9w: ${e}");
+    }
+
+    // course quiz cleared condition
+    try {
+      if (total >= coursequizpassingpercentage &&
+          widget.quizdata['quizlevel'] == "courselevel") {
+        print("course quiz cleared");
+        await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .get()
+            .then(
+          (value) {
+            userName = value.data()!['name'];
+          },
+        );
+        // track this quiz in user's doc
+        quizTrackModel = QuizTrackModel(
+          quizname: widget.quizdata['name'],
+          quizdata: quizdata,
+          date: DateTime.now(),
+          quizlevel: widget.quizdata['quizlevel'],
+          courseName: widget.quizdata['courseName'],
+          courseId: courseid,
+          quizCleared: true,
+          quizAttemptGapForModularQuiz:
+              DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+          quizAttemptGapForCourseQuiz:
+              DateTime.now().add(Duration(days: coursequizwindowindays)),
+        );
+        returningString = "Congratulations!";
+      }
+    } catch (e) {
+      print("errorid: f32ifjwejjfiwe: ${e}");
+    }
+
+    // course quiz not cleared condition with above 50% condition
+    try {
+      if (total >= 50 &&
+          total < coursequizpassingpercentage &&
+          widget.quizdata['quizlevel'] == "courselevel") {
+        print("course quiz not cleared");
+        // open this quiz after 3 days
+        quizTrackModel = QuizTrackModel(
+          quizname: widget.quizdata['name'],
+          quizdata: quizdata,
+          date: DateTime.now(),
+          quizlevel: widget.quizdata['quizlevel'],
+          courseName: widget.quizdata['courseName'],
+          courseId: courseid,
+          quizCleared: false,
+          quizAttemptGapForModularQuiz:
+              DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+          quizAttemptGapForCourseQuiz:
+              DateTime.now().add(Duration(days: coursequizwindowindays)),
+        );
+        returningString =
+            "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${coursequizwindowindaysmorethan50percent} days";
+      }
+    } catch (e) {
+      print("errorid: r82u93r9fw3: ${e}");
+    }
+
+    // course quiz not cleared condition with below 50% condition
+    try {
+      if (total < 50 && widget.quizdata['quizlevel'] == "courselevel") {
+        print("course quiz not cleared with less than 50%");
+        // open this quiz after 7 days
+        quizTrackModel = QuizTrackModel(
+          quizname: widget.quizdata['name'],
+          quizdata: quizdata,
+          date: DateTime.now(),
+          quizlevel: widget.quizdata['quizlevel'],
+          courseName: widget.quizdata['courseName'],
+          courseId: courseid,
+          quizCleared: false,
+          quizAttemptGapForModularQuiz:
+              DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+          quizAttemptGapForCourseQuiz: DateTime.now()
+              .add(Duration(days: coursequizwindowindaysmorethan50percent)),
+        );
+        returningString =
+            "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${coursequizwindowindays} days";
+      }
+    } catch (e) {
+      print("errorid: i23rjo23jio2: ${e}");
+    }
+
+    // module quiz cleared condition
+    try {
+      if (total >= modulequizpassingpercentage &&
+          widget.quizdata['quizlevel'] == "modulelevel") {
+        print("module quiz cleared");
+        quizTrackModel = QuizTrackModel(
+          quizname: widget.quizdata['name'],
+          quizdata: quizdata,
+          date: DateTime.now(),
+          quizlevel: widget.quizdata['quizlevel'],
+          courseName: widget.quizdata['courseName'],
+          courseId: courseid,
+          quizCleared: true,
+          quizAttemptGapForModularQuiz:
+              DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+          quizAttemptGapForCourseQuiz:
+              DateTime.now().add(Duration(days: coursequizwindowindays)),
+        );
+        returningString = "Congratulations!";
+      }
+    } catch (e) {
+      print("errorid: wuhfiw3r23r23: ${e}");
+    }
+
+    // module quiz not cleared condition
+    try {
+      if (total < modulequizpassingpercentage &&
+          widget.quizdata['quizlevel'] == "modulelevel") {
+        print("module quiz not cleared");
+        // open this quiz after 6 hours
+        quizTrackModel = QuizTrackModel(
+          quizname: widget.quizdata['name'],
+          quizdata: quizdata,
+          date: DateTime.now(),
+          quizlevel: widget.quizdata['quizlevel'],
+          courseName: widget.quizdata['courseName'],
+          courseId: courseid,
+          quizCleared: false,
+          quizAttemptGapForModularQuiz:
+              DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+          quizAttemptGapForCourseQuiz:
+              DateTime.now().add(Duration(days: coursequizwindowindays)),
+        );
+        returningString =
+            "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${modulerquizwindowinhours} hours";
+      }
+    } catch (e) {
+      print("errorid: fif3sdwf: ${e}");
+    }
+
+    // update the quiztrack in user's doc
+    try {
+      print("update the quiztrack in user's doc ${quizTrackModel!.toJson()}");
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        "quiztrack": FieldValue.arrayUnion([quizTrackModel!.toJson()])
+      });
+    } catch (e) {
+      print("errorid: efwif23r2r3ref: ${e}");
+    }
+
+    return returningString;
   }
 
   countDownTimer(quiztiming) async {
@@ -111,11 +336,47 @@ class _QuizPageState extends State<QuizPage> {
       print("lll4");
       var total = (correctint / widget.quizdata['questionbucket'].length) * 100;
       print("lll5");
+      var courseid = "";
+      await FirebaseFirestore.instance
+          .collection("courses")
+          .where("name", isEqualTo: widget.quizdata['course'])
+          .get()
+          .then((value) async {
+        courseid = await value.docs[0]['id'];
+      });
+
+      print(widget.quizdata['course']);
+      print(courseid);
+
+      var resultString =
+          await handlingCasesAccoridingToTotal(total, quizdata, courseid);
+
+      if (resultString == "Congratulations!") {
+        CertificateModel Model = CertificateModel(
+            uid: FirebaseAuth.instance.currentUser!.uid,
+            name: userName,
+            course: courseid,
+            finishdate: DateTime.now().day.toString() +
+                "-" +
+                DateTime.now().month.toString() +
+                "-" +
+                DateTime.now().year.toString());
+        await certificateApi.getCertificate(Model);
+      }
+
       await FirebaseFirestore.instance.collection("quizTaken").add({
         "uid": FirebaseAuth.instance.currentUser!.uid,
         "quizInfo": quizdata,
-        "date": DateTime.now()
+        "finishdate": DateTime.now().day.toString() +
+            "-" +
+            DateTime.now().month.toString() +
+            "-" +
+            DateTime.now().year.toString(),
+        "course": courseid,
+        "name": userName,
+        "quizlevel": widget.quizdata['quizlevel'],
       });
+
       print("lll6");
       print("isfojsoiefj${total} ${unanswered} ${wronganswered} ${correctint}");
       print("lll7");
@@ -123,7 +384,8 @@ class _QuizPageState extends State<QuizPage> {
         context,
         MaterialPageRoute(
             builder: (context) => CongratulationsWidget(
-                quizdata, total, unanswered, wronganswered, correctint)),
+                quizdata, total, unanswered, wronganswered, correctint, widget.quizdata,
+                resultString)),
       );
       // Navigator.push(
       //   context,
@@ -297,7 +559,6 @@ class _QuizPageState extends State<QuizPage> {
         }
 
         // logic for MFR
-
       }
     });
     countParameter("save");
@@ -2187,7 +2448,8 @@ class _QuizPageState extends State<QuizPage> {
                                                                 children: [
                                                                   Expanded(
                                                                     flex: 1,
-                                                                    child: Padding(
+                                                                    child:
+                                                                        Padding(
                                                                       padding: EdgeInsetsDirectional
                                                                           .fromSTEB(
                                                                               10,
@@ -2213,9 +2475,8 @@ class _QuizPageState extends State<QuizPage> {
                                                                           ),
                                                                           child:
                                                                               Align(
-                                                                            alignment: AlignmentDirectional(
-                                                                                0,
-                                                                                0),
+                                                                            alignment:
+                                                                                AlignmentDirectional(0, 0),
                                                                             child:
                                                                                 Text(
                                                                               'SAVE & NEXT',
@@ -2271,8 +2532,10 @@ class _QuizPageState extends State<QuizPage> {
                                                                   ),
                                                                   Expanded(
                                                                     flex: 1,
-                                                                    child: GestureDetector(
-                                                                      onTap: () {
+                                                                    child:
+                                                                        GestureDetector(
+                                                                      onTap:
+                                                                          () {
                                                                         setState(
                                                                             () {
                                                                           A = false;
@@ -2291,12 +2554,12 @@ class _QuizPageState extends State<QuizPage> {
                                                                       },
                                                                       child:
                                                                           Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
                                                                             10,
                                                                             0,
                                                                             10,
                                                                             0),
-                                                                          child:
+                                                                        child:
                                                                             Container(
                                                                           width:
                                                                               100,
@@ -2321,8 +2584,8 @@ class _QuizPageState extends State<QuizPage> {
                                                                                   ),
                                                                             ),
                                                                           ),
-                                                                          ),
                                                                         ),
+                                                                      ),
                                                                     ),
                                                                   ),
                                                                 ],
