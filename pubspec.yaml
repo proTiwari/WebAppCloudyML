@@ -115,7 +115,6 @@ dependencies:
   firestore_ui: ^1.24.0
   flutter_widget_from_html: ^0.8.5
   numeric_keyboard: ^1.1.0
-  pinput:
   g_recaptcha_v3: ^0.0.5
   timeago: ^3.3.0
   json_path: ^0.4.2
@@ -125,6 +124,7 @@ dependencies:
   custom_pop_up_menu: ^1.2.4
   bot_toast:
   responsive_sizer:
+  pinput:
 
 
   

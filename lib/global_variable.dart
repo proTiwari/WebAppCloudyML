@@ -2,7 +2,7 @@ library globals;
 
 late String diurl;
 late String payurl;
-
+var downloadCertificateLink = "";
 const mockUpHeight = 896;
 const mockUpWidth = 414;
 
