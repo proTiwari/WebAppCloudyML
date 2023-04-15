@@ -529,11 +529,13 @@ class _NewScreenState extends State<NewScreen> {
                                                                                   )
                                                                                 : Text(
                                                                                     'Complete First Module To Unlock',
-                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                    maxLines: 3,
+                                                                                    // overflow: TextOverflow.ellipsis,
                                                                                     style: TextStyle(fontSize: width / 60, fontWeight: FontWeight.w600, color: Colors.black),
                                                                                   ):Text(
                                                                                     'Complete First Module To Unlock',
-                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                    maxLines: 3,
+                                                                                    // overflow: TextOverflow.ellipsis,
                                                                                     style: TextStyle(fontSize: width / 60, fontWeight: FontWeight.w600, color: Colors.black),
                                                                                   ),
                                                                         SizedBox(
@@ -659,13 +661,15 @@ class _NewScreenState extends State<NewScreen> {
                                                                                 : Expanded(
                                                                                     child: Text(
                                                                                       'Complete First Module To Unlock',
-                                                                                      overflow: TextOverflow.ellipsis,
+                                                                                      // overflow: TextOverflow.ellipsis,
+                                                                                      maxLines: 3,
                                                                                       style: TextStyle(fontSize: width / 100, fontWeight: FontWeight.w600, color: Colors.black),
                                                                                     ),
                                                                                   ):Expanded(
                                                                                     child: Text(
                                                                                       'Complete First Module To Unlock',
-                                                                                      overflow: TextOverflow.ellipsis,
+                                                                                      // overflow: TextOverflow.ellipsis,
+                                                                                      maxLines: 3,
                                                                                       style: TextStyle(fontSize: width / 100, fontWeight: FontWeight.w600, color: Colors.black),
                                                                                     ),
                                                                                   ),
@@ -886,21 +890,22 @@ class _NewScreenState extends State<NewScreen> {
                                                       SizedBox(
                                                         height: 15,
                                                       ),
-                                                      courseData != null
-                                                          ? Text(courseData[widget.courses![
-                                                                          index] +
-                                                                      "percentage"] !=
-                                                                  null
-                                                              ? courseData[widget.courses![index] +
-                                                                          "percentage"] >
-                                                                      100
-                                                                  ? "100%"
-                                                                  : courseData[widget.courses![index] +
-                                                                              "percentage"]
-                                                                          .toString() +
-                                                                      "%"
-                                                              : "0%")
-                                                          : Text("0%")
+                                                      // courseData != null
+                                                      //     ? Text(courseData[widget.courses![
+                                                      //                     index] +
+                                                      //                 "percentage"] !=
+                                                      //             null
+                                                      //         ? courseData[widget.courses![index] +
+                                                      //                     "percentage"] >
+                                                      //                 100
+                                                      //             ? "Course progress"
+                                                      //             : courseData[widget.courses![index] +
+                                                      //                         "percentage"]
+                                                      //                     .toString() +
+                                                      //                 "%"
+                                                      //         : "Course progress")
+                                                      //     : 
+                                                          Text("Progress")
                                                     ],
                                                   ),
                                                 )

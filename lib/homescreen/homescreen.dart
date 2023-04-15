@@ -789,7 +789,7 @@ setState(() {
                               height: 75,
                               width: screenWidth / 2.6,
                               child: Text(
-                                'Get Complete Hands-on Practical Learning Experience with CloudyML and become Job-Ready Data Scientist, Data Analyst, Business Analyst, Research Analyst and ML Engineer.',
+                                'Get Complete Hands-on Practical Learning Experience with CloudyML and become Job-Ready Data Scientist, Data Analyst, Data Engineer, Business Analyst, Research Analyst and ML Engineer.',
                                 maxLines: 3,
                                 style: TextStyle(
                                   color: Colors.white,
@@ -2880,7 +2880,7 @@ setState(() {
                                 height: 60,
                                 width: screenWidth / 1.5,
                                 child: Text(
-                                  'Get Complete Hands-on Practical Learning Experience with CloudyML and become Job-Ready Data Scientist, Data Analyst, Business Analyst, Research Analyst and ML Engineer.',
+                                  'Get Complete Hands-on Practical Learning Experience with CloudyML and become Job-Ready Data Scientist, Data Analyst, Data Engineer, Business Analyst, Research Analyst and ML Engineer.',
                                   maxLines: 3,
                                   style: TextStyle(
                                     color: Colors.white,

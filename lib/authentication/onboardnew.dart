@@ -158,7 +158,7 @@ class _OnboardewState extends State<Onboardew> {
                                   fontSize: 22),
                             ),
                             Text(
-                              "Data Science & Analytics together!",
+                              "Data Science & Analytics together and Data Engineering!",
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
