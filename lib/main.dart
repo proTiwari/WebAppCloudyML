@@ -37,10 +37,6 @@ import 'package:renderer_switcher/renderer_switcher.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_strategy/url_strategy.dart';
-import 'package:go_router/go_router.dart';
-
-import 'authentication_screens/phone_auth.dart';
-import 'homepage.dart';
 
 
 

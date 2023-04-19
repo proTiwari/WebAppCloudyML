@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_web/razorpay_web.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:upi_plugin/upi_plugin.dart';
 import 'package:cloudyml_app2/widgets/coupon_code.dart';
 import 'dart:convert';
@@ -43,23 +44,23 @@ class PaymentButton extends StatefulWidget {
 
   PaymentButton(
       {Key? key,
-        required this.scrollController,
-        required this.isPayButtonPressed,
-        required this.changeState,
-        required this.NoCouponApplied,
-        required this.buttonText,
-        required this.courseImageUrl,
-        required this.buttonTextForCode,
-        required this.amountString,
-        required this.courseName,
-        required this.courseDescription,
-        required this.updateCourseIdToCouponDetails,
-        required this.outStandingAmountString,
-        required this.courseId,
-        required this.couponCodeText,
-        required this.isItComboCourse,
-        required this.whichCouponCode,
-        required this.coursePriceMoneyRef})
+      required this.scrollController,
+      required this.isPayButtonPressed,
+      required this.changeState,
+      required this.NoCouponApplied,
+      required this.buttonText,
+      required this.courseImageUrl,
+      required this.buttonTextForCode,
+      required this.amountString,
+      required this.courseName,
+      required this.courseDescription,
+      required this.updateCourseIdToCouponDetails,
+      required this.outStandingAmountString,
+      required this.courseId,
+      required this.couponCodeText,
+      required this.isItComboCourse,
+      required this.whichCouponCode,
+      required this.coursePriceMoneyRef})
       : super(key: key);
 
   @override
@@ -76,8 +77,6 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
 
   Map userData = Map<String, dynamic>();
   var _razorpay = Razorpay();
-
-
 
   Future<String> intiateUpiTransaction(String appName) async {
     String response = await UpiTransaction.initiateTransaction(
@@ -219,9 +218,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     }
   }
 
-  void getrzpkey() async{
-
-
+  void getrzpkey() async {
     key_id = await FirebaseFirestore.instance
         .collection('Notice')
         .doc('razorpay_key_t0i1VbF9aPBZlB7PEanv')
@@ -253,8 +250,11 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     var data =
         '{ "amount": $amount, "currency": "INR", "receipt": "receipt#R1", "payment_capture": 1 }'; // as per my experience the receipt doesn't play any role in helping you generate a certain pattern in your Order ID!!
 
-    var res = await http.post(Uri.parse('https://us-central1-cloudyml-app.cloudfunctions.net/order/order'),
-        headers: headers, body: data);
+    var res = await http.post(
+        Uri.parse(
+            'https://us-central1-cloudyml-app.cloudfunctions.net/order/order'),
+        headers: headers,
+        body: data);
     if (res.statusCode != 200)
       throw Exception('http.post error: statusCode= ${res.statusCode}');
     print('ORDER ID response => ${res.body}');
@@ -395,7 +395,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                 .doc(sendermoneyrefuid.toString())
                 .update({
               "moneyreward":
-              FieldValue.increment(widget.coursePriceMoneyRef / 10)
+                  FieldValue.increment(widget.coursePriceMoneyRef / 10)
             }).whenComplete(() {
               print('success');
             }).onError((error, stackTrace) => print(error));
@@ -465,6 +465,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     // disableMinAmtBtn();
     // enableoutStandingAmtBtn();
     print("Payment Done");
+
     _purchasedCourses();
     await AwesomeNotifications().createNotification(
         content: NotificationContent(
@@ -476,10 +477,10 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
             largeIcon: 'asset://assets/logo2.png',
             notificationLayout: NotificationLayout.BigPicture,
             displayOnForeground: true));
-    await Provider.of<UserProvider>(context,
-        listen: false).addToNotificationP(
+
+    await Provider.of<UserProvider>(context, listen: false).addToNotificationP(
       title: widget.courseName,
-      body: 'You bought ${widget.courseName}.Go to My courses.',
+      body: 'You bought ${widget.courseName}. Go to My courses.',
       notifyImage: widget.courseImageUrl,
       NDate: DateFormat('dd-MM-yyyy | h:mm a').format(DateTime.now()),
       //index:
@@ -513,56 +514,30 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     });
   }
 
-//   void pushToMyCourses() async {
-    
-//  print('i am after payment1');
-
-//      const url = 'https://www.cloudyml.com/tnkyu/';
-//   final uri = Uri.parse(url);
-  
-// // if (  await canLaunchUrl(uri)){
-// //    launchUrl(uri);
-// //        print('i am after payment2');}
-
-// // else 
-// //   // can't launch url, there is some error
-// //   {throw "Could not launch $url";}
-
-//   // GoRouter.of(context).pushReplacement('/myCourses');
-
-//   }
-  void pushToHome() async{
-    // Navigator.push(
-    //   context,
-    //   PageTransition(
-    //     duration: Duration(milliseconds: 400),
-    //     curve: Curves.bounceInOut,
-    //     type: PageTransitionType.topToBottom,
-    //     child: HomePage(),
-    //   ),
-    // );
-
-print('i am after payment1');
+  void pushToHome() async {
 
 
+    print('i am after payment1');
+    GoRouter.of(context).pushReplacementNamed('myCourses');
+    // const url = 'https://www.cloudyml.com/tnkyu/';
+    // final url = widget.courseId ==
+    //     'F9gxnjW9nf5Lxg5A6758'
+    //     ? 'https://de.cloudyml.com/enrolled'
+    //     : 'https://ds.cloudyml.com/enrolled';
 
-     const url = 'https://www.cloudyml.com/tnkyu/';
-  final uri = Uri.parse(url);
-html.WindowBase _popup = html.window.open(url,'Thank you');
-if (_popup.closed!) {
-  throw("Popups blocked");
-}
+    final url;
+    if(widget.courseId == 'F9gxnjW9nf5Lxg5A6758') {
+        url = 'https://de.cloudyml.com/enrolled';
+    } else {
+        url = 'https://ds.cloudyml.com/enrolled';
+    }
 
-    // Navigator.pushAndRemoveUntil(
-    //     context,
-    //     PageTransition(
-    //       duration: Duration(milliseconds: 200),
-    //       curve: Curves.bounceInOut,
-    //       type: PageTransitionType.rightToLeftWithFade,
-    //       child: HomePage(),
-    //     ),
-    //         (route) => false);
-    // print('pushedtohome');
+
+    final uri = Uri.parse(url);
+    html.WindowBase _popup = html.window.open(url, 'Thank you');
+    if (_popup.closed!) {
+      throw ("Popups blocked");
+    }
   }
 
   bool stateOfMinAmtBtn() {
@@ -612,15 +587,15 @@ if (_popup.closed!) {
 
         map['minAmtPaid'] = true;
         map['startDateOfLimitedAccess'] = await userData['payInPartsDetails']
-        ['${widget.courseId}']['startDateOfLimitedAccess'];
+            ['${widget.courseId}']['startDateOfLimitedAccess'];
         map['endDateOfLimitedAccess'] = await userData['payInPartsDetails']
-        ['${widget.courseId}']['endDateOfLimitedAccess'];
+            ['${widget.courseId}']['endDateOfLimitedAccess'];
         map['outStandingAmtPaid'] = true;
         await FirebaseFirestore.instance
             .collection('Users')
             .doc(FirebaseAuth.instance.currentUser!.uid)
             .update(
-            {'payInPartsDetails.${widget.courseId}': FieldValue.delete()});
+                {'payInPartsDetails.${widget.courseId}': FieldValue.delete()});
         await FirebaseFirestore.instance
             .collection('Users')
             .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -657,595 +632,609 @@ if (_popup.closed!) {
     final screenWidth = MediaQuery.of(context).size.width;
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
-    return isLoading ? Center(
-        child: CircularProgressIndicator()) : Container(
-      width: screenWidth/3.5,
-      height: 70 * verticalScale,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.white,
-      ),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: () async {
+    return isLoading
+        ? Center(child: CircularProgressIndicator())
+        : Container(
+            width: screenWidth / 3.5,
+            height: Device.screenType == ScreenType.mobile ? 30.sp : 22.5.sp,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+            ),
+            child: Column(
+              children: [
+                InkWell(
+                  onTap: () async {
+                    // if (widget.isPayButtonPressed) {
+                    //   Future.delayed(Duration(milliseconds: 150), () {
+                    //     widget.scrollController.animateTo(
+                    //         widget.scrollController.position.maxScrollExtent,
+                    //         duration: Duration(milliseconds: 800),
+                    //         curve: Curves.easeIn);
+                    //   });
+                    // } else {
+                    //   Future.delayed(Duration(milliseconds: 150), () {
+                    //     widget.scrollController.animateTo(
+                    //         widget.scrollController.position.minScrollExtent,
+                    //         duration: Duration(milliseconds: 400),
+                    //         curve: Curves.easeIn);
+                    //   });
+                    // }
 
-              // if (widget.isPayButtonPressed) {
-              //   Future.delayed(Duration(milliseconds: 150), () {
-              //     widget.scrollController.animateTo(
-              //         widget.scrollController.position.maxScrollExtent,
-              //         duration: Duration(milliseconds: 800),
-              //         curve: Curves.easeIn);
-              //   });
-              // } else {
-              //   Future.delayed(Duration(milliseconds: 150), () {
-              //     widget.scrollController.animateTo(
-              //         widget.scrollController.position.minScrollExtent,
-              //         duration: Duration(milliseconds: 400),
-              //         curve: Curves.easeIn);
-              //   });
-              // }
+                    setState(() {
+                      isLoading = true;
+                    });
 
-              setState((){
-                isLoading = true;
-              });
+                    updateAmoutStringForRP(
+                        isPayInPartsPressed,
+                        isMinAmountCheckerPressed,
+                        isOutStandingAmountCheckerPressed);
+                    widget.updateCourseIdToCouponDetails();
+                    order_id = await generateOrderId(
+                        key_id, ////rzp_live_ESC1ad8QCKo9zb
+                        key_secret, ////D5fscRQB6i7dwCQlZybecQND
+                        amountStringForRp!);
 
+                    print('order id is out--$order_id');
+                    // Future.delayed(const Duration(milliseconds: 300), () {
+                    print('order id is --$order_id');
+                    var options = {
+                      'key': key_id, ////rzp_live_ESC1ad8QCKo9zb
+                      'amount': amountStringForRp, //amount is paid in paises so pay in multiples of 100
+                      'name': widget.courseName,
+                      'description': widget.courseDescription,
+                      'timeout': 300, //in seconds
+                      'order_id': order_id,
+                      'prefill': {
+                        'contact': userprovider.userModel!.mobile,
+                        // '7003482660', //original number and email
+                        'email': userprovider.userModel!.email,
+                        // 'cloudyml.com@gmail.com'
+                        // 'test@razorpay.com'
+                        'name': userprovider.userModel!.name
+                      },
+                      'notes': {
+                        'contact': userprovider.userModel!.mobile,
+                        'email': userprovider.userModel!.email,
+                        'name': userprovider.userModel!.name
+                      }
+                    };
+                    _razorpay.open(options);
+                    setState(() {
+                      isLoading = false;
+                    });
 
-
-              updateAmoutStringForRP(
-                  isPayInPartsPressed,
-                  isMinAmountCheckerPressed,
-                  isOutStandingAmountCheckerPressed);
-              widget.updateCourseIdToCouponDetails();
-              order_id = await generateOrderId(
-                  key_id, ////rzp_live_ESC1ad8QCKo9zb
-                  key_secret, ////D5fscRQB6i7dwCQlZybecQND
-                  amountStringForRp!);
-
-              print('order id is out--$order_id');
-              // Future.delayed(const Duration(milliseconds: 300), () {
-              print('order id is --$order_id');
-              var options = {
-                'key':
-                key_id, ////rzp_live_ESC1ad8QCKo9zb
-                'amount':
-                amountStringForRp, //amount is paid in paises so pay in multiples of 100
-
-                'name': widget.courseName,
-                'description': widget.courseDescription,
-                'timeout': 300, //in seconds
-                'order_id': order_id,
-                'prefill': {
-                  'contact': userprovider.userModel!.mobile,
-                  // '7003482660', //original number and email
-                  'email': userprovider.userModel!.email,
-                  // 'cloudyml.com@gmail.com'
-                  // 'test@razorpay.com'
-                  'name': userprovider.userModel!.name
-                },
-                'notes': {
-                  'contact': userprovider.userModel!.mobile,
-                  'email': userprovider.userModel!.email,
-                  'name': userprovider.userModel!.name
-                }
-              };
-              _razorpay.open(options);
-              setState((){
-                isLoading = false;
-              });
-
-              // setState(() {
-              //   widget.isPayButtonPressed = !widget.isPayButtonPressed;
-              // });
-              // widget.changeState;
-            },
-            child: Center(
-              child: Container(
-                width: screenWidth,
-                height: 70 * verticalScale,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //       color:
-                  //       Color.fromRGBO(48, 209, 151, 0.20000000298023224),
-                  //       offset: Offset(0, 10),
-                  //       blurRadius: 8)
-                  // ],
-                  color: Colors.deepPurple.shade600,
-                ),
-                child: Center(
-                  child: Text(
-                    widget.NoCouponApplied
-                        ? widget.buttonText
-                        : widget.buttonTextForCode,
-                    style: TextStyle(
-                        color: Color.fromRGBO(255, 255, 255, 1),
-                        fontFamily: 'Poppins',
-                        fontSize: 24 * verticalScale,
-                        letterSpacing: 0 /*percentages not used in flutter. defaulting to zero*/,
-                        fontWeight: FontWeight.bold,
-                        height: 1),
+                    // setState(() {
+                    //   widget.isPayButtonPressed = !widget.isPayButtonPressed;
+                    // });
+                    // widget.changeState;
+                  },
+                  child: Center(
+                    child: Container(
+                      width: screenWidth,
+                      height: Device.screenType == ScreenType.mobile ? 30.sp : 22.5.sp,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.deepPurple.shade600,
+                      ),
+                      child: Center(
+                        child: Text(
+                          widget.NoCouponApplied
+                              ? widget.buttonText
+                              : widget.buttonTextForCode,
+                          style: TextStyle(
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontFamily: 'Poppins',
+                              fontSize: 24 * verticalScale,
+                              letterSpacing: 0 /*percentages not used in flutter. defaulting to zero*/,
+                              fontWeight: FontWeight.bold,
+                              height: 1),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
-          widget.isPayButtonPressed
-              ? Column(
-            children: [
-              SizedBox(
-                height: 15,
-              ),
-              (widget.isItComboCourse &&
-                  (widget.whichCouponCode == 'parts2'))
-                  ? Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(25, 10, 245, 10),
-                      child: Text('Pay in parts'),
-                    ),
-                    Container(
-                      width: 300,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Colors.grey.shade200,
-                          width: 1.1,
-                        ),
-                        color: Colors.grey.shade100,
-                      ),
-                      child: Column(
+                widget.isPayButtonPressed
+                    ? Column(
                         children: [
+                          SizedBox(
+                            height: 15,
+                          ),
+                          (widget.isItComboCourse &&
+                                  (widget.whichCouponCode == 'parts2'))
+                              ? Container(
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.fromLTRB(
+                                            25, 10, 245, 10),
+                                        child: Text('Pay in parts'),
+                                      ),
+                                      Container(
+                                        width: 300,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: Colors.grey.shade200,
+                                            width: 1.1,
+                                          ),
+                                          color: Colors.grey.shade100,
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  isPayInPartsPressed =
+                                                      !isPayInPartsPressed;
+                                                });
+                                                // widget.pressPayInPartsButton();
+                                              },
+                                              child: Container(
+                                                height: 60,
+                                                width: 300,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                    color: Colors.grey.shade200,
+                                                    width: 1.1,
+                                                  ),
+                                                  color: Colors.white,
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        left: 10,
+                                                        right: 10,
+                                                      ),
+                                                      child: Icon(
+                                                          Icons.pie_chart,
+                                                          size: 43),
+                                                    ),
+                                                    Expanded(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            'Pay in parts',
+                                                            style: TextStyle(
+                                                                fontSize: 17),
+                                                          ),
+                                                          Text(
+                                                            'Pay min ₹1000 to get limited access of 20 days after that pay the rest and enjoy lifetime access',
+                                                            style: TextStyle(
+                                                                fontSize: 9,
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade500),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            isPayInPartsPressed
+                                                ? Container(
+                                                    //this container will expand onTap
+                                                    child: Column(
+                                                      children: [
+                                                        Container(
+                                                          height: 50,
+                                                          width: 180,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            border: Border.all(
+                                                              color: Colors.grey
+                                                                  .shade200,
+                                                              width: 1.1,
+                                                            ),
+                                                            color: userData['payInPartsDetails']
+                                                                        [widget
+                                                                            .courseId] !=
+                                                                    null
+                                                                ? Colors.grey
+                                                                    .shade100
+                                                                : Colors.white,
+                                                            // color:if(userData[
+                                                            //                   'payInPartsDetails']
+                                                            //               [widget.courseId]==null){
+                                                            //                 Colors.white
+                                                            //               }else if(userData[
+                                                            //                   'payInPartsDetails']
+                                                            //               [widget.courseId]['isMinAmtPaid']){
+                                                            //                 Colors.grey.shade100
+                                                            //               }
+                                                          ),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            20),
+                                                                child: Text(
+                                                                    'Pay  ₹1000.0/-'),
+                                                              ),
+                                                              InkWell(
+                                                                onTap: () {
+                                                                  if (userData[
+                                                                              'payInPartsDetails']
+                                                                          [
+                                                                          widget
+                                                                              .courseId] !=
+                                                                      null)
+                                                                    return;
+                                                                  setState(() {
+                                                                    isMinAmountCheckerPressed =
+                                                                        !isMinAmountCheckerPressed;
+                                                                  });
+                                                                  updateAmoutStringForUPI(
+                                                                      isPayInPartsPressed,
+                                                                      isMinAmountCheckerPressed,
+                                                                      isOutStandingAmountCheckerPressed);
+                                                                  updateAmoutStringForRP(
+                                                                      isPayInPartsPressed,
+                                                                      isMinAmountCheckerPressed,
+                                                                      isOutStandingAmountCheckerPressed);
+                                                                  print(
+                                                                      isMinAmountCheckerPressed);
+                                                                  print(
+                                                                      "Print payinparts:${isPayInPartsPressed}");
+                                                                  print(
+                                                                      amountStringForUPI);
+                                                                },
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      right:
+                                                                          20),
+                                                                  child:
+                                                                      Container(
+                                                                    width: 30,
+                                                                    height: 30,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              50),
+                                                                      border:
+                                                                          Border
+                                                                              .all(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .shade300,
+                                                                        width:
+                                                                            3,
+                                                                      ),
+                                                                      color: isMinAmountCheckerPressed
+                                                                          ? Color(
+                                                                              0xFFaefb2a)
+                                                                          : Colors
+                                                                              .grey
+                                                                              .shade100,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          height: 50,
+                                                          width: 180,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            border: Border.all(
+                                                              color: Colors.grey
+                                                                  .shade200,
+                                                              width: 1.1,
+                                                            ),
+                                                            color: !(userData[
+                                                                            'payInPartsDetails']
+                                                                        [widget
+                                                                            .courseId] ==
+                                                                    null)
+                                                                ? Colors.white
+                                                                : Colors.grey
+                                                                    .shade100,
+                                                          ),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            20),
+                                                                child: Text(
+                                                                  'Pay ₹${widget.outStandingAmountString}/-',
+                                                                ),
+                                                              ),
+                                                              InkWell(
+                                                                onTap: () {
+                                                                  if (userData[
+                                                                              'payInPartsDetails']
+                                                                          [
+                                                                          widget
+                                                                              .courseId] ==
+                                                                      null)
+                                                                    return;
+                                                                  setState(() {
+                                                                    isOutStandingAmountCheckerPressed =
+                                                                        !isOutStandingAmountCheckerPressed;
+                                                                  });
+                                                                  updateAmoutStringForUPI(
+                                                                      isPayInPartsPressed,
+                                                                      isMinAmountCheckerPressed,
+                                                                      isOutStandingAmountCheckerPressed);
+                                                                  updateAmoutStringForRP(
+                                                                      isPayInPartsPressed,
+                                                                      isMinAmountCheckerPressed,
+                                                                      isOutStandingAmountCheckerPressed);
+                                                                },
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      right:
+                                                                          20),
+                                                                  child:
+                                                                      Container(
+                                                                    width: 30,
+                                                                    height: 30,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              50),
+                                                                      border:
+                                                                          Border
+                                                                              .all(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .shade300,
+                                                                        width:
+                                                                            3,
+                                                                      ),
+                                                                      color: isOutStandingAmountCheckerPressed
+                                                                          ? Color(
+                                                                              0xFFaefb2a)
+                                                                          : Colors
+                                                                              .grey
+                                                                              .shade100,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                : Container(),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                          // Padding(
+                          //   padding: EdgeInsets.fromLTRB(25, 10, 240, 10),
+                          //   child: Text('Pay with UPI'),
+                          // ),
+                          // Container(
+                          //   width: 300,
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(10),
+                          //     border: Border.all(
+                          //       color: Colors.grey.shade200,
+                          //       width: 1.1,
+                          //     ),
+                          //     color: Colors.white,
+                          //   ),
+                          //   child: Column(
+                          //     children: [
+                          //       InkWell(
+                          //         onTap: () {
+                          //           intiateUpiTransaction(UpiApps.GooglePay);
+                          //         },
+                          //         child: Container(
+                          //           height: 60,
+                          //           child: Row(
+                          //             // mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                          //             children: [
+                          //               Padding(
+                          //                 padding: const EdgeInsets.only(
+                          //                   top: 10,
+                          //                   left: 20,
+                          //                   right: 15,
+                          //                 ),
+                          //                 child: Image.asset(
+                          //                   'assets/Google_Pay.png',
+                          //                   width: 45,
+                          //                   height: 45,
+                          //                 ),
+                          //               ),
+                          //               Padding(
+                          //                 padding: const EdgeInsets.only(
+                          //                   top: 10,
+                          //                 ),
+                          //                 child: Text(
+                          //                   'Google Pay',
+                          //                   style: TextStyle(fontSize: 17),
+                          //                 ),
+                          //               ),
+                          //               Padding(
+                          //                 padding: const EdgeInsets.only(
+                          //                   left: 100,
+                          //                   top: 10,
+                          //                 ),
+                          //                 child: Icon(
+                          //                   Icons.keyboard_arrow_right,
+                          //                   color: Colors.grey.shade300,
+                          //                 ),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //         ),
+                          //       ),
+                          //       Divider(),
+                          //       InkWell(
+                          //         onTap: () {
+                          //           intiateUpiTransaction(UpiApps.PhonePe);
+                          //         },
+                          //         child: Container(
+                          //           height: 60,
+                          //           child: Row(
+                          //             // mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                          //             children: [
+                          //               Padding(
+                          //                 padding: const EdgeInsets.only(
+                          //                   bottom: 10,
+                          //                   left: 20,
+                          //                   right: 15,
+                          //                 ),
+                          //                 child: Image.asset(
+                          //                   'assets/phonepe.png',
+                          //                   width: 45,
+                          //                   height: 45,
+                          //                 ),
+                          //               ),
+                          //               Padding(
+                          //                 padding: const EdgeInsets.only(
+                          //                   bottom: 10,
+                          //                 ),
+                          //                 child: Text(
+                          //                   'PhonePe',
+                          //                   style: TextStyle(fontSize: 17),
+                          //                 ),
+                          //               ),
+                          //               Padding(
+                          //                 padding: const EdgeInsets.only(
+                          //                   left: 116,
+                          //                   bottom: 10,
+                          //                 ),
+                          //                 child: Icon(
+                          //                   Icons.keyboard_arrow_right,
+                          //                   color: Colors.grey.shade300,
+                          //                 ),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                          // Padding(
+                          //   padding: EdgeInsets.fromLTRB(25, 10, 170, 10),
+                          //   child: Text('Other payment methods'),
+                          // ),
                           InkWell(
-                            onTap: () {
-                              setState(() {
-                                isPayInPartsPressed =
-                                !isPayInPartsPressed;
-                              });
-                              // widget.pressPayInPartsButton();
+                            onTap: () async {
+                              // setState(() {
+                              //   widget.courseId = widget.courseFetchedId;
+                              // });
+
+                              updateAmoutStringForRP(
+                                  isPayInPartsPressed,
+                                  isMinAmountCheckerPressed,
+                                  isOutStandingAmountCheckerPressed);
+                              widget.updateCourseIdToCouponDetails();
+                              order_id = await generateOrderId(
+                                  key_id, ////rzp_live_ESC1ad8QCKo9zb
+                                  key_secret, ////D5fscRQB6i7dwCQlZybecQND
+                                  amountStringForRp!);
+
+                              print('order id is out--$order_id');
+                              // Future.delayed(const Duration(milliseconds: 300), () {
+                              print('order id is --$order_id');
+                              var options = {
+                                'key': key_id, ////rzp_live_ESC1ad8QCKo9zb
+                                'amount': amountStringForRp, //amount is paid in paises so pay in multiples of 100
+
+                                'name': widget.courseName,
+                                'description': widget.courseDescription,
+                                'timeout': 300, //in seconds
+                                'order_id': order_id,
+                                'prefill': {
+                                  'contact': userprovider.userModel!.mobile,
+                                  // '7003482660', //original number and email
+                                  'email': userprovider.userModel!.email,
+                                  // 'cloudyml.com@gmail.com'
+                                  // 'test@razorpay.com'
+                                  'name': userprovider.userModel!.name
+                                },
+                                'notes': {
+                                  'contact': userprovider.userModel!.mobile,
+                                  'email': userprovider.userModel!.email,
+                                  'name': userprovider.userModel!.name
+                                }
+                              };
+                              _razorpay.open(options);
+                              // });
                             },
                             child: Container(
                               height: 60,
                               width: 300,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: Colors.grey.shade200,
-                                  width: 1.1,
-                                ),
+                                borderRadius: BorderRadius.circular(10),
                                 color: Colors.white,
                               ),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 10,
-                                      right: 10,
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      'assets/razorpay1.jpg',
+                                      width: 45,
+                                      height: 45,
                                     ),
-                                    child: Icon(Icons.pie_chart,
-                                        size: 43),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment
-                                          .spaceEvenly,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Pay in parts',
-                                          style: TextStyle(
-                                              fontSize: 17),
-                                        ),
-                                        Text(
-                                          'Pay min ₹1000 to get limited access of 20 days after that pay the rest and enjoy lifetime access',
-                                          style: TextStyle(
-                                              fontSize: 9,
-                                              color: Colors
-                                                  .grey.shade500),
-                                        ),
-                                      ],
+                                    Text(
+                                      'Razorpay',
+                                      style: TextStyle(fontSize: 18),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                          isPayInPartsPressed
-                              ? Container(
-                            //this container will expand onTap
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 50,
-                                  width: 180,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(
-                                        10),
-                                    border: Border.all(
-                                      color: Colors
-                                          .grey.shade200,
-                                      width: 1.1,
-                                    ),
-                                    color: userData['payInPartsDetails']
-                                    [widget.courseId] != null
-                                        ? Colors.grey.shade100
-                                        : Colors.white,
-                                    // color:if(userData[
-                                    //                   'payInPartsDetails']
-                                    //               [widget.courseId]==null){
-                                    //                 Colors.white
-                                    //               }else if(userData[
-                                    //                   'payInPartsDetails']
-                                    //               [widget.courseId]['isMinAmtPaid']){
-                                    //                 Colors.grey.shade100
-                                    //               }
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment
-                                        .spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                        const EdgeInsets
-                                            .only(
-                                            left: 20),
-                                        child: Text(
-                                            'Pay  ₹1000.0/-'),
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          if (userData[
-                                          'payInPartsDetails']
-                                          [widget
-                                              .courseId] !=
-                                              null) return;
-                                          setState(() {
-                                            isMinAmountCheckerPressed =
-                                            !isMinAmountCheckerPressed;
-                                          });
-                                          updateAmoutStringForUPI(
-                                              isPayInPartsPressed,
-                                              isMinAmountCheckerPressed,
-                                              isOutStandingAmountCheckerPressed);
-                                          updateAmoutStringForRP(
-                                              isPayInPartsPressed,
-                                              isMinAmountCheckerPressed,
-                                              isOutStandingAmountCheckerPressed);
-                                          print(
-                                              isMinAmountCheckerPressed);
-                                          print(
-                                              "Print payinparts:${isPayInPartsPressed}");
-                                          print(
-                                              amountStringForUPI);
-                                        },
-                                        child: Padding(
-                                          padding:
-                                          const EdgeInsets
-                                              .only(
-                                              right: 20),
-                                          child: Container(
-                                            width: 30,
-                                            height: 30,
-                                            decoration:
-                                            BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius
-                                                  .circular(
-                                                  50),
-                                              border:
-                                              Border.all(
-                                                color: Colors
-                                                    .grey
-                                                    .shade300,
-                                                width: 3,
-                                              ),
-                                              color: isMinAmountCheckerPressed
-                                                  ? Color(
-                                                  0xFFaefb2a)
-                                                  : Colors
-                                                  .grey
-                                                  .shade100,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  height: 50,
-                                  width: 180,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(
-                                        10),
-                                    border: Border.all(
-                                      color: Colors
-                                          .grey.shade200,
-                                      width: 1.1,
-                                    ),
-                                    color: !(userData['payInPartsDetails']
-                                    [widget.courseId] == null) ? Colors.white
-                                        : Colors
-                                        .grey.shade100,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment
-                                        .spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                        const EdgeInsets
-                                            .only(
-                                            left: 20),
-                                        child: Text(
-                                            'Pay ₹${widget.outStandingAmountString}/-',),
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          if (userData[
-                                          'payInPartsDetails']
-                                          [widget
-                                              .courseId] ==
-                                              null) return;
-                                          setState(() {
-                                            isOutStandingAmountCheckerPressed =
-                                            !isOutStandingAmountCheckerPressed;
-                                          });
-                                          updateAmoutStringForUPI(
-                                              isPayInPartsPressed,
-                                              isMinAmountCheckerPressed,
-                                              isOutStandingAmountCheckerPressed);
-                                          updateAmoutStringForRP(
-                                              isPayInPartsPressed,
-                                              isMinAmountCheckerPressed,
-                                              isOutStandingAmountCheckerPressed);
-                                        },
-                                        child: Padding(
-                                          padding:
-                                          const EdgeInsets
-                                              .only(
-                                              right: 20),
-                                          child: Container(
-                                            width: 30,
-                                            height: 30,
-                                            decoration:
-                                            BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius
-                                                  .circular(
-                                                  50),
-                                              border:
-                                              Border.all(
-                                                color: Colors
-                                                    .grey
-                                                    .shade300,
-                                                width: 3,
-                                              ),
-                                              color: isOutStandingAmountCheckerPressed
-                                                  ? Color(
-                                                  0xFFaefb2a)
-                                                  : Colors
-                                                  .grey
-                                                  .shade100,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                              : Container(),
+                          SizedBox(
+                            height: 10,
+                          ),
                         ],
-                      ),
-                    ),
-                  ],
-                ),
-              )
-                  : Container(),
-              // Padding(
-              //   padding: EdgeInsets.fromLTRB(25, 10, 240, 10),
-              //   child: Text('Pay with UPI'),
-              // ),
-              // Container(
-              //   width: 300,
-              //   decoration: BoxDecoration(
-              //     borderRadius: BorderRadius.circular(10),
-              //     border: Border.all(
-              //       color: Colors.grey.shade200,
-              //       width: 1.1,
-              //     ),
-              //     color: Colors.white,
-              //   ),
-              //   child: Column(
-              //     children: [
-              //       InkWell(
-              //         onTap: () {
-              //           intiateUpiTransaction(UpiApps.GooglePay);
-              //         },
-              //         child: Container(
-              //           height: 60,
-              //           child: Row(
-              //             // mainAxisAlignment:MainAxisAlignment.spaceBetween,
-              //             children: [
-              //               Padding(
-              //                 padding: const EdgeInsets.only(
-              //                   top: 10,
-              //                   left: 20,
-              //                   right: 15,
-              //                 ),
-              //                 child: Image.asset(
-              //                   'assets/Google_Pay.png',
-              //                   width: 45,
-              //                   height: 45,
-              //                 ),
-              //               ),
-              //               Padding(
-              //                 padding: const EdgeInsets.only(
-              //                   top: 10,
-              //                 ),
-              //                 child: Text(
-              //                   'Google Pay',
-              //                   style: TextStyle(fontSize: 17),
-              //                 ),
-              //               ),
-              //               Padding(
-              //                 padding: const EdgeInsets.only(
-              //                   left: 100,
-              //                   top: 10,
-              //                 ),
-              //                 child: Icon(
-              //                   Icons.keyboard_arrow_right,
-              //                   color: Colors.grey.shade300,
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              //       ),
-              //       Divider(),
-              //       InkWell(
-              //         onTap: () {
-              //           intiateUpiTransaction(UpiApps.PhonePe);
-              //         },
-              //         child: Container(
-              //           height: 60,
-              //           child: Row(
-              //             // mainAxisAlignment:MainAxisAlignment.spaceBetween,
-              //             children: [
-              //               Padding(
-              //                 padding: const EdgeInsets.only(
-              //                   bottom: 10,
-              //                   left: 20,
-              //                   right: 15,
-              //                 ),
-              //                 child: Image.asset(
-              //                   'assets/phonepe.png',
-              //                   width: 45,
-              //                   height: 45,
-              //                 ),
-              //               ),
-              //               Padding(
-              //                 padding: const EdgeInsets.only(
-              //                   bottom: 10,
-              //                 ),
-              //                 child: Text(
-              //                   'PhonePe',
-              //                   style: TextStyle(fontSize: 17),
-              //                 ),
-              //               ),
-              //               Padding(
-              //                 padding: const EdgeInsets.only(
-              //                   left: 116,
-              //                   bottom: 10,
-              //                 ),
-              //                 child: Icon(
-              //                   Icons.keyboard_arrow_right,
-              //                   color: Colors.grey.shade300,
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // Padding(
-              //   padding: EdgeInsets.fromLTRB(25, 10, 170, 10),
-              //   child: Text('Other payment methods'),
-              // ),
-              InkWell(
-                onTap: () async {
-                  // setState(() {
-                  //   widget.courseId = widget.courseFetchedId;
-                  // });
-
-                  updateAmoutStringForRP(
-                      isPayInPartsPressed,
-                      isMinAmountCheckerPressed,
-                      isOutStandingAmountCheckerPressed);
-                  widget.updateCourseIdToCouponDetails();
-                  order_id = await generateOrderId(
-                      key_id, ////rzp_live_ESC1ad8QCKo9zb
-                      key_secret, ////D5fscRQB6i7dwCQlZybecQND
-                      amountStringForRp!);
-
-                  print('order id is out--$order_id');
-                  // Future.delayed(const Duration(milliseconds: 300), () {
-                  print('order id is --$order_id');
-                  var options = {
-                    'key':
-                    key_id, ////rzp_live_ESC1ad8QCKo9zb
-                    'amount':
-                    amountStringForRp, //amount is paid in paises so pay in multiples of 100
-
-                    'name': widget.courseName,
-                    'description': widget.courseDescription,
-                    'timeout': 300, //in seconds
-                    'order_id': order_id,
-                    'prefill': {
-                      'contact': userprovider.userModel!.mobile,
-                      // '7003482660', //original number and email
-                      'email': userprovider.userModel!.email,
-                      // 'cloudyml.com@gmail.com'
-                      // 'test@razorpay.com'
-                      'name': userprovider.userModel!.name
-                    },
-                    'notes': {
-                      'contact': userprovider.userModel!.mobile,
-                      'email': userprovider.userModel!.email,
-                      'name': userprovider.userModel!.name
-                    }
-                  };
-                  _razorpay.open(options);
-                  // });
-                },
-                child: Container(
-                  height: 60,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
-                  ),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/razorpay1.jpg',
-                          width: 45,
-                          height: 45,
-                        ),
-                        Text(
-                          'Razorpay',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-            ],
-          )
-              : Container(),
-        ],
-      ),
-    );
+                      )
+                    : Container(),
+              ],
+            ),
+          );
   }
 }

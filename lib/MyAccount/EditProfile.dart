@@ -104,56 +104,56 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               color: Colors.white
                           ),
                         ),
-                        SizedBox(height: verticalScale*51,),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: InkWell(
-                            onTap: (){
-                              final _picker=ImagePicker();
-                              _selectImagex(_picker.pickImage(source: ImageSource.gallery,imageQuality: 60));
-                            },
-                            child: SizedBox(
-                              child: Container(
-                                height: verticalScale*158,
-                                width: horizontalScale*158,
-                                child: CircleAvatar(
-                                  radius: min(horizontalScale,verticalScale)*32.0,
-                                  backgroundColor: HexColor('6153D3'),
-                                  child: Container(
-                                    height: verticalScale*154,
-                                    width: horizontalScale*154,
-                                    child: CircleAvatar(
-                                        radius: min(horizontalScale,verticalScale)*30.0,
-                                        backgroundImage:_displayChild(),
-                                        backgroundColor: Colors.transparent,
-                                        child: Align(
-                                          alignment: Alignment.topRight,
-                                          child: CircleAvatar(
-                                            radius: min(horizontalScale,verticalScale)*26,
-                                            backgroundColor: Colors.white,
-                                            child: Icon(
-                                              Icons.edit,
-                                              size: min(horizontalScale,verticalScale)*30,
-                                              color: HexColor('6153D3'),
-                                            ),
-                                          ),
-                                        )
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                        SizedBox(height: verticalScale*100,),
+                        // Align(
+                        //   alignment: Alignment.bottomCenter,
+                        //   child: InkWell(
+                        //     onTap: (){
+                        //       final _picker=ImagePicker();
+                        //       _selectImagex(_picker.pickImage(source: ImageSource.gallery,imageQuality: 60));
+                        //     },
+                        //     child: SizedBox(
+                        //       child: Container(
+                        //         height: verticalScale*158,
+                        //         width: horizontalScale*158,
+                        //         child: CircleAvatar(
+                        //           radius: min(horizontalScale,verticalScale)*32.0,
+                        //           backgroundColor: HexColor('6153D3'),
+                        //           child: Container(
+                        //             height: verticalScale*154,
+                        //             width: horizontalScale*154,
+                        //             child: CircleAvatar(
+                        //                 radius: min(horizontalScale,verticalScale)*30.0,
+                        //                 backgroundImage:_displayChild(),
+                        //                 backgroundColor: Colors.transparent,
+                        //                 child: Align(
+                        //                   alignment: Alignment.topRight,
+                        //                   child: CircleAvatar(
+                        //                     radius: min(horizontalScale,verticalScale)*26,
+                        //                     backgroundColor: Colors.white,
+                        //                     child: Icon(
+                        //                       Icons.edit,
+                        //                       size: min(horizontalScale,verticalScale)*30,
+                        //                       color: HexColor('6153D3'),
+                        //                     ),
+                        //                   ),
+                        //                 )
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(height: verticalScale*40,),
-                        Text(
-                          'Edit Details',
-                          textScaleFactor: min(horizontalScale,verticalScale),
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'Bold',
-                          ),
-                        ),
+                        // Text(
+                        //   'Edit Details',
+                        //   textScaleFactor: min(horizontalScale,verticalScale),
+                        //   style: TextStyle(
+                        //     fontSize: 20,
+                        //     fontFamily: 'Bold',
+                        //   ),
+                        // ),
                         Form(
                           key: _formKey,
                           child: Column(
@@ -251,118 +251,118 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   },
                                 ),
                               ):Container(),
-                              Padding(
-                                padding:  EdgeInsets.fromLTRB(horizontalScale*24,verticalScale*0,horizontalScale*24,verticalScale*10),
-                                child: TextFormField(
-                                  initialValue: _mobile,
-                                  //(userprovider.userModel?.authType=='emailAuth' && userprovider.userModel?.phoneVerified==true)?
-                                  readOnly: ((userprovider.userModel?.authType=='emailAuth' && userprovider.userModel?.phoneVerified==true)||userprovider.userModel?.authType=='phoneAuth')?true:false,
-                                  decoration: InputDecoration(
-                                      counterText: '',
-                                      hintText: 'Update Your Number',
-                                      hintStyle: TextStyle(
-                                        fontSize: 20 * min(horizontalScale, verticalScale),
-                                      ),
-                                      labelText: 'Phone Number',
-                                      floatingLabelStyle: TextStyle(
-                                          fontSize: 18 * min(horizontalScale, verticalScale),
-                                          fontWeight: FontWeight.w500,
-                                          color: HexColor('7B62DF')),
-                                      labelStyle: TextStyle(
-                                        fontSize: 18 * min(horizontalScale, verticalScale),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide:
-                                          BorderSide(color: HexColor('7B62DF'), width: 2)),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: HexColor('7B62DF'), width: 2),
-                                      ),
-                                      suffixIcon: Icon(
-                                        Icons.phone,
-                                        color: HexColor('6153D3'),
-                                      )
-
-                                  ),
-                                  onSaved: (value){
-                                    _mobile=value;
-                                  },
-                                  onChanged: (value){
-                                    setState((){
-                                      _mobile=value;
-                                    });
-                                  },
-                                  keyboardType: TextInputType.phone,
-                                  maxLength: 10,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Please Enter Phone No';
-                                    } else if (!RegExp(
-                                        r'^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$')
-                                        .hasMatch(value)) {
-                                      return 'Please enter a valid Phone Number';
-                                    } else if (value.length < 10) {
-                                      return 'Enter 10 digit Phone number';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
+                              // Padding(
+                              //   padding:  EdgeInsets.fromLTRB(horizontalScale*24,verticalScale*0,horizontalScale*24,verticalScale*10),
+                              //   child: TextFormField(
+                              //     initialValue: _mobile,
+                              //     //(userprovider.userModel?.authType=='emailAuth' && userprovider.userModel?.phoneVerified==true)?
+                              //     readOnly: ((userprovider.userModel?.authType=='emailAuth' && userprovider.userModel?.phoneVerified==true)||userprovider.userModel?.authType=='phoneAuth')?true:false,
+                              //     decoration: InputDecoration(
+                              //         counterText: '',
+                              //         hintText: 'Update Your Number',
+                              //         hintStyle: TextStyle(
+                              //           fontSize: 20 * min(horizontalScale, verticalScale),
+                              //         ),
+                              //         labelText: 'Phone Number',
+                              //         floatingLabelStyle: TextStyle(
+                              //             fontSize: 18 * min(horizontalScale, verticalScale),
+                              //             fontWeight: FontWeight.w500,
+                              //             color: HexColor('7B62DF')),
+                              //         labelStyle: TextStyle(
+                              //           fontSize: 18 * min(horizontalScale, verticalScale),
+                              //         ),
+                              //         focusedBorder: OutlineInputBorder(
+                              //             borderSide:
+                              //             BorderSide(color: HexColor('7B62DF'), width: 2)),
+                              //         enabledBorder: OutlineInputBorder(
+                              //           borderSide: BorderSide(color: HexColor('7B62DF'), width: 2),
+                              //         ),
+                              //         suffixIcon: Icon(
+                              //           Icons.phone,
+                              //           color: HexColor('6153D3'),
+                              //         )
+                              //
+                              //     ),
+                              //     onSaved: (value){
+                              //       _mobile=value;
+                              //     },
+                              //     onChanged: (value){
+                              //       setState((){
+                              //         _mobile=value;
+                              //       });
+                              //     },
+                              //     keyboardType: TextInputType.phone,
+                              //     maxLength: 10,
+                              //     validator: (value) {
+                              //       if (value!.isEmpty) {
+                              //         return 'Please Enter Phone No';
+                              //       } else if (!RegExp(
+                              //           r'^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$')
+                              //           .hasMatch(value)) {
+                              //         return 'Please enter a valid Phone Number';
+                              //       } else if (value.length < 10) {
+                              //         return 'Enter 10 digit Phone number';
+                              //       }
+                              //       return null;
+                              //     },
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
-                        (userprovider.userModel?.phoneVerified==true && FirebaseAuth.instance.currentUser?.phoneNumber=="+91"+_mobile.toString())?
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(horizontalScale*24,verticalScale*0,horizontalScale*24,verticalScale*2),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                'Verified ',
-                                textScaleFactor: min(horizontalScale, verticalScale),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.green,
-                                  //HexColor('#d91f2a'),
-                                ),
-                              ),
-                              Icon(
-                                Icons.check_circle_rounded,
-                                color: Colors.green,
-                                size: 22*min(horizontalScale, verticalScale),
-                              )
-                            ],
-                          ),
-                        )
-                            :
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(horizontalScale*24,verticalScale*0,horizontalScale*24,verticalScale*2),
-                          child: InkWell(
-                            onTap: (){
-                              if(_formKey.currentState!.validate()){
-                                setState(() {
-                                  phoneVisibleEdit = true;
-                                });
-
-                              }
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  ' VERIFY ?',
-                                  textScaleFactor: min(horizontalScale, verticalScale),
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: HexColor('#d91f2a'),
-                                    //backgroundColor: Colors.red[100]
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        // (userprovider.userModel?.phoneVerified==true && FirebaseAuth.instance.currentUser?.phoneNumber=="+91"+_mobile.toString())?
+                        // Padding(
+                        //   padding: EdgeInsets.fromLTRB(horizontalScale*24,verticalScale*0,horizontalScale*24,verticalScale*2),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.end,
+                        //     children: [
+                        //       Text(
+                        //         'Verified ',
+                        //         textScaleFactor: min(horizontalScale, verticalScale),
+                        //         style: TextStyle(
+                        //           fontSize: 16,
+                        //           fontWeight: FontWeight.w600,
+                        //           color: Colors.green,
+                        //           //HexColor('#d91f2a'),
+                        //         ),
+                        //       ),
+                        //       Icon(
+                        //         Icons.check_circle_rounded,
+                        //         color: Colors.green,
+                        //         size: 22*min(horizontalScale, verticalScale),
+                        //       )
+                        //     ],
+                        //   ),
+                        // )
+                        //     :
+                        // Padding(
+                        //   padding: EdgeInsets.fromLTRB(horizontalScale*24,verticalScale*0,horizontalScale*24,verticalScale*2),
+                        //   child: InkWell(
+                        //     onTap: (){
+                        //       if(_formKey.currentState!.validate()){
+                        //         setState(() {
+                        //           phoneVisibleEdit = true;
+                        //         });
+                        //
+                        //       }
+                        //     },
+                        //     child: Row(
+                        //       mainAxisAlignment: MainAxisAlignment.end,
+                        //       children: [
+                        //         Text(
+                        //           ' VERIFY ?',
+                        //           textScaleFactor: min(horizontalScale, verticalScale),
+                        //           style: TextStyle(
+                        //             fontSize: 16,
+                        //             fontWeight: FontWeight.w700,
+                        //             color: HexColor('#d91f2a'),
+                        //             //backgroundColor: Colors.red[100]
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(
                           height: verticalScale * 4,
                         ),

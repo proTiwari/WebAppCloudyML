@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:cloudyml_app2/global_variable.dart' as globals;
 import 'package:cloudyml_app2/globals.dart';
 
-import '../homepage.dart';
-
 
 class DeepLinkService {
   DeepLinkService._();

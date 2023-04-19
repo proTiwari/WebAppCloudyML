@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudyml_app2/api/firebase_api.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:cloudyml_app2/models/firebase_file.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../authentication/firebase_auth.dart';
 import '../../router/login_state_check.dart';
 import '/global_variable.dart' as globals;
@@ -115,21 +117,6 @@ class _Review1State extends State<ReviewsScreen> {
                           SizedBox(
                             width: horizontalScale * 10,
                           ),
-                          // TextButton(
-                          //     onPressed: () {
-                          //       GoRouter.of(context).pushNamed('LiveDoubtSession');
-                          //     },
-                          //     child: Text(
-                          //       'Live Doubt Support',
-                          //       style:  buttonTextStyle.copyWith(
-                          //         color:
-                          //         Uri.base.path == '/LiveDoubtScreen'? HexColor('873AFF') :
-                          //         Colors.white ,
-                          //       ),
-                          //     )),
-                          // SizedBox(
-                          //   width: horizontalScale * 15,
-                          // ),
                           DropdownButtonHideUnderline(
                             child: DropdownButton2(
                               customButton: Row(
@@ -213,7 +200,7 @@ class _Review1State extends State<ReviewsScreen> {
                     )),
               ),
               SizedBox(
-                height: 25 * verticalScale,
+                height: 10.sp,
               ),
               Container(
                 width: 414 * horizontalScale,
@@ -236,408 +223,373 @@ class _Review1State extends State<ReviewsScreen> {
               ),
 
               SizedBox(
-                height: 25,
+                height: 10.sp,
               ),
-              Container(
-                // height: screenHeight * 0.81 * verticalScale,
-                height: containerHeight,
-                width: screenWidth,
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                child: FutureBuilder<List<FirebaseFile>>(
-                  future: futurefilesRecentReviews,
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                        return Center(
-                            child: CircularProgressIndicator()
-                        );
-                      default:
-                        if (snapshot.hasError) {
-                          return Center(
-                              child: Text(
-                                'Some error occurred!',
-                                textScaleFactor: min(horizontalScale, verticalScale),
-                              ));
-                        } else {
-                          final files = snapshot.data!;
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  // physics: NeverScrollableScrollPhysics(),
-                                  itemCount: files.length,
-                                  itemBuilder: (context, index) {
-                                    final file = files[index];
-                                    return Container(
-                                        decoration: BoxDecoration(
-                                            color: HexColor("#FFFFFF"),
-                                            // borderRadius: BorderRadius.circular(15),
-                                            border: Border.all(
-                                              color: Colors.black, width: 0.5,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  color: Colors.grey,
-                                                  blurRadius: 5,
-                                                  offset: Offset(0, 1))
-                                            ]),
-                                        margin: EdgeInsets.only(
-                                            left: 15, top: 5, bottom: 5),
-                                        padding: EdgeInsets.only(
-                                            left: 5,
-                                            right: 5,
-                                            top: 5,
-                                            bottom: 5),
-                                        width: containerWidth,
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(20),
-                                          child: InkWell(
-                                            onTap: () {
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      GestureDetector(
-                                                          onTap: () =>
-                                                              Navigator.pop(
-                                                                  context),
-                                                          child: Container(
-                                                            alignment:
-                                                            Alignment.center,
-                                                            color:
-                                                            Colors.transparent,
-                                                            height: 400,
-                                                            width: 300,
-                                                            child: AlertDialog(
-                                                              shape: RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                      15.0),
-                                                                  side: BorderSide
-                                                                      .none),
-                                                              scrollable: true,
-                                                              content:
-                                                              Container(
-                                                                height:500,
-                                                                width:500,
-                                                                child: ClipRRect(
-                                                                  borderRadius:BorderRadius.circular(20) ,
-                                                                  child: CachedNetworkImage(
-                                                                    errorWidget:
-                                                                        (context, url,
-                                                                        error) =>
-                                                                        Icon(Icons
-                                                                            .error),
-                                                                    imageUrl: file.url,
-                                                                    fit: BoxFit.fill,
-                                                                    placeholder: (context,
-                                                                        url) =>
-                                                                        Center(child: CircularProgressIndicator()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    height: screenHeight * 2,
+                    width: Adaptive.h(50),
+                    child: FutureBuilder<List<FirebaseFile>>(
+                      future: futurefilesRecentReviews,
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return Center(
+                                child: CircularProgressIndicator()
+                            );
+                          default:
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text(
+                                    'Some error occurred!',
+                                    textScaleFactor: min(horizontalScale, verticalScale),
+                                  ));
+                            } else {
+                              final files = snapshot.data!;
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.vertical,
+                                      // physics: NeverScrollableScrollPhysics(),
+                                      itemCount: files.length,
+                                      itemBuilder: (context, index) {
+                                        final file = files[index];
+                                        return Container(
+                                            width: Adaptive.h(30),
+                                            decoration: BoxDecoration(
+                                                color: HexColor("#FFFFFF"),
+                                                // borderRadius: BorderRadius.circular(15),
+                                                border: Border.all(
+                                                  color: Colors.black, width: 0.5,
+                                                ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      color: Colors.grey,
+                                                      blurRadius: 5,
+                                                      offset: Offset(0, 1))
+                                                ]),
+                                            margin: EdgeInsets.only(left: 15, top: 5, bottom: 5),
+                                            padding: EdgeInsets.only(
+                                                left: 5,
+                                                right: 5,
+                                                top: 5,
+                                                bottom: 5),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(20),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          GestureDetector(
+                                                              onTap: () =>
+                                                                  Navigator.pop(
+                                                                      context),
+                                                              child: Container(
+                                                                alignment:
+                                                                Alignment.center,
+                                                                color:
+                                                                Colors.transparent,
+                                                                height: 400,
+                                                                width: 300,
+                                                                child: AlertDialog(
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                          15.0),
+                                                                      side: BorderSide
+                                                                          .none),
+                                                                  scrollable: true,
+                                                                  content:
+                                                                  Container(
+                                                                    height:500,
+                                                                    width:500,
+                                                                    child: ClipRRect(
+                                                                      borderRadius:BorderRadius.circular(20) ,
+                                                                      child: CachedNetworkImage(
+                                                                        errorWidget:
+                                                                            (context, url,
+                                                                            error) =>
+                                                                            Icon(Icons
+                                                                                .error),
+                                                                        imageUrl: file.url,
+                                                                        fit: BoxFit.fill,
+                                                                        placeholder: (context,
+                                                                            url) =>
+                                                                            Center(child: CircularProgressIndicator()),
+                                                                      ),
+                                                                    ),
                                                                   ),
                                                                 ),
-                                                              ),
-                                                            ),
-                                                          )));
-                                            },
-                                            child: CachedNetworkImage(
-                                              placeholder: (context, url) =>
-                                                  Center(child: CircularProgressIndicator()),
-                                              errorWidget: (context, url, error) =>
-                                                  Icon(Icons.error),
-                                              imageUrl: file.url,
-                                              fit: BoxFit.fill,
-                                            ),
-                                          ),
-                                        )
-                                    );
-                                    // buildFile(context, file);
-                                  },
-                                ),
-                              ),
-                            ],
-                          );
+                                                              )));
+                                                },
+                                                child: CachedNetworkImage(
+                                                  placeholder: (context, url) =>
+                                                      Center(child: CircularProgressIndicator()),
+                                                  errorWidget: (context, url, error) =>
+                                                      Icon(Icons.error),
+                                                  imageUrl: file.url,
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              ),
+                                            )
+                                        );
+                                        // buildFile(context, file);
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
                         }
-                    }
-                  },
-                ),
-              ),
-              // Padding(
-              //   padding: EdgeInsets.only(
-              //     left: 15,
-              //     top: 10,
-              //   ),
-              //   child: Text(
-              //     'Combo course reviews',
-              //     textScaleFactor: min(horizontalScale, verticalScale),
-              //     textAlign: TextAlign.center,
-              //     style: TextStyle(
-              //         color: Color.fromRGBO(0, 0, 0, 1),
-              //         fontFamily: 'Poppins',
-              //         fontSize: 28 * verticalScale,
-              //         fontWeight: FontWeight.bold,
-              //         height: 2),
-              //   ),
-              // ),
-              SizedBox(
-                height: 25,
-              ),
-              Container(
-                height: containerHeight,
-                width: screenWidth,
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                child: FutureBuilder<List<FirebaseFile>>(
-                  future: futurefilesComboCourseReviews,
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                        return Center(child: CircularProgressIndicator());
-                      default:
-                        if (snapshot.hasError) {
-                          return Center(
-                              child: Text(
-                                'Some error occurred!',
-                                textScaleFactor: min(horizontalScale, verticalScale),
-                              ));
-                        } else {
-                          final files = snapshot.data!;
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  // physics: NeverScrollableScrollPhysics(),
-                                  itemCount: files.length,
-                                  itemBuilder: (context, index) {
-                                    final file = files[index];
-                                    return Container(
-                                        decoration: BoxDecoration(
-                                            color: HexColor("#FFFFFF"),
-                                            border: Border.all(
-                                              color: Colors.black, width: 0.5,
-                                            ),
-                                            // borderRadius: BorderRadius.circular(15),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  color: Colors.grey,
-                                                  blurRadius: 5,
-                                                  offset: Offset(0, 1))
-                                            ]),
-                                        margin: EdgeInsets.only(
-                                            left: 15, top: 5, bottom: 5),
-                                        padding: EdgeInsets.only(
-                                            left: 5,
-                                            right: 5,
-                                            top: 5,
-                                            bottom: 5),
-                                        width: containerWidth,
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(20),
-                                          child: InkWell(
-                                            onTap: () {
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      GestureDetector(
-                                                          onTap: () =>
-                                                              Navigator.pop(
-                                                                  context),
-                                                          child: Container(
-                                                            alignment:
-                                                            Alignment.center,
-                                                            color:
-                                                            Colors.transparent,
-                                                            height: 400,
-                                                            width: 300,
-                                                            child: AlertDialog(
-                                                              shape: RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                      15.0),
-                                                                  side: BorderSide
-                                                                      .none),
-                                                              scrollable: true,
-                                                              content:
-                                                              Container(height:500,width:500,
-                                                                child: ClipRRect(borderRadius:BorderRadius.circular(20) ,
-                                                                  child: CachedNetworkImage(
-                                                                    errorWidget:
-                                                                        (context, url,
-                                                                        error) =>
-                                                                        Icon(Icons
-                                                                            .error),
-                                                                    imageUrl: file.url,
-                                                                    fit: BoxFit.fill,
-                                                                    placeholder: (context,
-                                                                        url) =>
-                                                                        Center(child: CircularProgressIndicator()),
+                      },
+                    ),
+                  ),
+                  Container(
+                    height: screenHeight * 2,
+                    width: Adaptive.h(50),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    child: FutureBuilder<List<FirebaseFile>>(
+                      future: futurefilesComboCourseReviews,
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return Center(child: CircularProgressIndicator());
+                          default:
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text(
+                                    'Some error occurred!',
+                                    textScaleFactor: min(horizontalScale, verticalScale),
+                                  ));
+                            } else {
+                              final files = snapshot.data!;
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.vertical,
+                                      shrinkWrap: true,
+                                      // physics: NeverScrollableScrollPhysics(),
+                                      itemCount: files.length,
+                                      itemBuilder: (context, index) {
+                                        final file = files[index];
+                                        return Container(
+                                            decoration: BoxDecoration(
+                                                color: HexColor("#FFFFFF"),
+                                                border: Border.all(
+                                                  color: Colors.black, width: 0.5,
+                                                ),
+                                                // borderRadius: BorderRadius.circular(15),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      color: Colors.grey,
+                                                      blurRadius: 5,
+                                                      offset: Offset(0, 1))
+                                                ]),
+                                            margin: EdgeInsets.only(
+                                                left: 15, top: 5, bottom: 5),
+                                            padding: EdgeInsets.only(
+                                                left: 5,
+                                                right: 5,
+                                                top: 5,
+                                                bottom: 5),
+                                            width: containerWidth,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(20),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          GestureDetector(
+                                                              onTap: () =>
+                                                                  Navigator.pop(
+                                                                      context),
+                                                              child: Container(
+                                                                alignment:
+                                                                Alignment.center,
+                                                                color:
+                                                                Colors.transparent,
+                                                                height: 400,
+                                                                width: 300,
+                                                                child: AlertDialog(
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                          15.0),
+                                                                      side: BorderSide
+                                                                          .none),
+                                                                  scrollable: true,
+                                                                  content:
+                                                                  Container(height:500,width:500,
+                                                                    child: ClipRRect(borderRadius:BorderRadius.circular(20) ,
+                                                                      child: CachedNetworkImage(
+                                                                        errorWidget:
+                                                                            (context, url,
+                                                                            error) =>
+                                                                            Icon(Icons
+                                                                                .error),
+                                                                        imageUrl: file.url,
+                                                                        fit: BoxFit.fill,
+                                                                        placeholder: (context,
+                                                                            url) =>
+                                                                            Center(child: CircularProgressIndicator()),
+                                                                      ),
+                                                                    ),
                                                                   ),
                                                                 ),
-                                                              ),
-                                                            ),
-                                                          )));
-                                            },
-                                            child: CachedNetworkImage(
-                                              placeholder: (context, url) =>
-                                                  Center(child: CircularProgressIndicator()),
-                                              errorWidget: (context, url, error) =>
-                                                  Icon(Icons.error),
-                                              imageUrl: file.url,
-                                              fit: BoxFit.fill,
-                                            ),
-                                          ),
-                                        ));
-                                    // buildFile(context, file);
-                                  },
-                                ),
-                              ),
-                            ],
-                          );
+                                                              )));
+                                                },
+                                                child: CachedNetworkImage(
+                                                  placeholder: (context, url) =>
+                                                      Center(child: CircularProgressIndicator()),
+                                                  errorWidget: (context, url, error) =>
+                                                      Icon(Icons.error),
+                                                  imageUrl: file.url,
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              ),
+                                            ));
+                                        // buildFile(context, file);
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
                         }
-                    }
-                  },
-                ),
-              ),
-              // Padding(
-              //   padding: EdgeInsets.only(
-              //     left: 15,
-              //     top: 10,
-              //   ),
-              //   child: Text(
-              //     'Social media reviews',
-              //     textScaleFactor: min(horizontalScale, verticalScale),
-              //     textAlign: TextAlign.center,
-              //     style: TextStyle(
-              //         color: Color.fromRGBO(0, 0, 0, 1),
-              //         fontFamily: 'Poppins',
-              //         fontSize: 28 * verticalScale,
-              //         fontWeight: FontWeight.bold,
-              //         height: 2),
-              //   ),
-              // ),
-              SizedBox(height: 25),
-              Container(
-                height: containerHeight,
-                width: screenWidth,
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                child: FutureBuilder<List<FirebaseFile>>(
-                  future: futurefilesSocialMediaReviews,
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                        return Center(child: CircularProgressIndicator());
-                      default:
-                        if (snapshot.hasError) {
-                          return Center(
-                              child: Text(
-                                'Some error occurred!',
-                                textScaleFactor: min(horizontalScale, verticalScale),
-                              ));
-                        } else {
-                          final files = snapshot.data!;
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  // physics: NeverScrollableScrollPhysics(),
-                                  itemCount: files.length,
-                                  itemBuilder: (context, index) {
-                                    final file = files[index];
-                                    return Container(
-                                        decoration: BoxDecoration(
-                                            color: HexColor("#FFFFFF"),
-                                            border: Border.all(
-                                              color: Colors.black, width: 0.5,
-                                            ),
-                                            // borderRadius: BorderRadius.circular(15),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  color: Colors.grey,
-                                                  blurRadius: 5,
-                                                  offset: Offset(0, 1))
-                                            ]),
-                                        margin: EdgeInsets.only(
-                                            left: 15, top: 5, bottom: 5),
-                                        padding: EdgeInsets.only(
-                                            left: 5,
-                                            right:5,
-                                            top: 5,
-                                            bottom: 5),
-                                        width: containerWidth,
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(20),
-                                          child: InkWell(
-                                            onTap: () {
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      GestureDetector(
-                                                          onTap: () =>
-                                                              Navigator.pop(
-                                                                  context),
-                                                          child: Container(
-                                                            alignment:
-                                                            Alignment.center,
-                                                            color:
-                                                            Colors.transparent,
-                                                            height: 400,
-                                                            width: 300,
-                                                            child: AlertDialog(
-                                                              shape: RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                      15.0),
-                                                                  side: BorderSide
-                                                                      .none),
-                                                              scrollable: true,
-                                                              content:
-                                                              Container(height:500,width:500,
-                                                                child: ClipRRect(borderRadius: BorderRadius.circular(20),
-                                                                  child: CachedNetworkImage(
-                                                                    errorWidget:
-                                                                        (context, url,
-                                                                        error) =>
-                                                                        Icon(Icons
-                                                                            .error),
-                                                                    imageUrl: file.url,
-                                                                    fit: BoxFit.fill,
-                                                                    placeholder: (context,
-                                                                        url) =>
-                                                                        Center(child: CircularProgressIndicator()),
+                      },
+                    ),
+                  ),
+                  Container(
+                    height: screenHeight * 2,
+                    width: Adaptive.h(50),
+                    padding: EdgeInsets.fromLTRB(0, 0, 12.sp, 0),
+                    child: FutureBuilder<List<FirebaseFile>>(
+                      future: futurefilesSocialMediaReviews,
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return Center(child: CircularProgressIndicator());
+                          default:
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text(
+                                    'Some error occurred!',
+                                    textScaleFactor: min(horizontalScale, verticalScale),
+                                  ));
+                            } else {
+                              final files = snapshot.data!;
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.vertical,
+                                      shrinkWrap: true,
+                                      // physics: NeverScrollableScrollPhysics(),
+                                      itemCount: files.length,
+                                      itemBuilder: (context, index) {
+                                        final file = files[index];
+                                        return Container(
+                                            decoration: BoxDecoration(
+                                                color: HexColor("#FFFFFF"),
+                                                border: Border.all(
+                                                  color: Colors.black, width: 0.5,
+                                                ),
+                                                // borderRadius: BorderRadius.circular(15),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      color: Colors.grey,
+                                                      blurRadius: 5,
+                                                      offset: Offset(0, 1))
+                                                ]),
+                                            margin: EdgeInsets.only(
+                                                left: 15, top: 5, bottom: 5),
+                                            padding: EdgeInsets.only(
+                                                left: 5,
+                                                right:5,
+                                                top: 5,
+                                                bottom: 5),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(20),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          GestureDetector(
+                                                              onTap: () =>
+                                                                  Navigator.pop(
+                                                                      context),
+                                                              child: Container(
+                                                                alignment:
+                                                                Alignment.center,
+                                                                color:
+                                                                Colors.transparent,
+                                                                height: 400,
+                                                                width: 300,
+                                                                child: AlertDialog(
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                          15.0),
+                                                                      side: BorderSide
+                                                                          .none),
+                                                                  scrollable: true,
+                                                                  content:
+                                                                  Container(height:500,width:500,
+                                                                    child: ClipRRect(borderRadius: BorderRadius.circular(20),
+                                                                      child: CachedNetworkImage(
+                                                                        errorWidget:
+                                                                            (context, url,
+                                                                            error) =>
+                                                                            Icon(Icons
+                                                                                .error),
+                                                                        imageUrl: file.url,
+                                                                        fit: BoxFit.fill,
+                                                                        placeholder: (context,
+                                                                            url) =>
+                                                                            Center(child: CircularProgressIndicator()),
+                                                                      ),
+                                                                    ),
                                                                   ),
                                                                 ),
-                                                              ),
-                                                            ),
-                                                          )));
-                                            },
-                                            child: CachedNetworkImage(
-                                              placeholder: (context, url) =>
-                                                  Center(child: CircularProgressIndicator()),
-                                              errorWidget: (context, url, error) =>
-                                                  Icon(Icons.error),
-                                              imageUrl: file.url,
-                                              fit: BoxFit.fill,
-                                            ),
-                                          ),
-                                        ));
-                                    // buildFile(context, file);
-                                  },
-                                ),
-                              ),
-                            ],
-                          );
+                                                              )));
+                                                },
+                                                child: CachedNetworkImage(
+                                                  placeholder: (context, url) =>
+                                                      Center(child: CircularProgressIndicator()),
+                                                  errorWidget: (context, url, error) =>
+                                                      Icon(Icons.error),
+                                                  imageUrl: file.url,
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              ),
+                                            ));
+                                        // buildFile(context, file);
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
                         }
-                    }
-                  },
-                ),
+                      },
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 25 * verticalScale,)
             ],
           ),
         ),

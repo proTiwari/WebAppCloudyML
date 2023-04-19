@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:video_player/video_player.dart';
 
 import '../widgets/pay_nowfeature.dart';
@@ -24,7 +25,13 @@ class NewFeature extends StatefulWidget {
   final String? courseName;
   final String? cID;
   final String? courseP;
-  const NewFeature({Key? key, this.cID, this.courses, this.id, this.courseName, this.courseP})
+  const NewFeature(
+      {Key? key,
+      this.cID,
+      this.courses,
+      this.id,
+      this.courseName,
+      this.courseP})
       : super(key: key);
 
   @override
@@ -66,8 +73,6 @@ class _NewFeatureState extends State<NewFeature> {
       print(value);
     });
   }
-
-
 
   Map<String, dynamic> numberOfCourseHours = {};
   late VideoPlayerController _controller;
@@ -144,8 +149,8 @@ class _NewFeatureState extends State<NewFeature> {
       counterSink.add(value.docs);
     });
   }
-  Map<String, dynamic> comboMap = {};
 
+  Map<String, dynamic> comboMap = {};
 
   void getCourseName() async {
     print('this idd ${widget.cID}');
@@ -159,20 +164,18 @@ class _NewFeatureState extends State<NewFeature> {
         comboMap = value.data()!;
         print('this is $comboMap');
         print('cid is ${comboMap['trialCourse']} ${int.parse(widget.id!)}');
-
       });
     });
   }
 
-
-    void url_del() {
+  void url_del() {
     FirebaseFirestore.instance.collection('Notice')
       ..doc("XdYtk2DJBIkRGx0ASthZ_newfeaturecourse")
           .update({'url': ""}).whenComplete(() {
         print('New feature Deleted');
       });
 
-      FirebaseFirestore.instance.collection('Notice')
+    FirebaseFirestore.instance.collection('Notice')
       ..doc("fSU4MLz1E0858ft8m7F5_dataeng")
           .update({'url': ""}).whenComplete(() {
         print('New feature Deleted');
@@ -181,7 +184,7 @@ class _NewFeatureState extends State<NewFeature> {
 
   Map userMap = Map<String, dynamic>();
 
-    void dbCheckerForPayInParts() async {
+  void dbCheckerForPayInParts() async {
     try {
       DocumentSnapshot userDocs = await FirebaseFirestore.instance
           .collection('Users')
@@ -198,7 +201,7 @@ class _NewFeatureState extends State<NewFeature> {
     }
   }
 
-    void checkl() async {
+  void checkl() async {
     CollectionReference users = FirebaseFirestore.instance.collection('Users');
     var doc = await users.doc(FirebaseAuth.instance.currentUser!.uid).get();
     if (doc.exists) {
@@ -207,7 +210,6 @@ class _NewFeatureState extends State<NewFeature> {
         // Replace field by the field you want to check.
         var valueOfField = map['trialCourseList'];
         print('i am in main if');
-
       } else {
         FirebaseFirestore.instance
             .collection('Users')
@@ -223,7 +225,6 @@ class _NewFeatureState extends State<NewFeature> {
 
   @override
   void initState() {
-
     checkl();
     dbCheckerForPayInParts();
 
@@ -244,30 +245,28 @@ class _NewFeatureState extends State<NewFeature> {
     url_del();
 
     return Scaffold(
-      bottomSheet:
-      comboMap['trialCourse']! != null && comboMap['trialCourse']!
-          ?
-      PayNowBottomSheetfeature(
-        coursePrice: '₹${widget.courseP!}/-',
-        map: comboMap,
-        isItComboCourse: true,
-        cID: widget.cID!,
-        id: widget.id,
-        usermap: userMap,
-      )
-          :
-      NonTrialCourseBottomSheet(
-        coursePrice: '₹${widget.courseP!}/-',
-        map: comboMap,
-        isItComboCourse: true,
-        cID: widget.cID!,
-      ),
+      bottomSheet: comboMap['trialCourse']! != null && comboMap['trialCourse']!
+          ? PayNowBottomSheetfeature(
+              coursePrice: '₹${widget.courseP!}/-',
+              map: comboMap,
+              isItComboCourse: true,
+              cID: widget.cID!,
+              id: widget.id,
+              usermap: userMap,
+            )
+          : NonTrialCourseBottomSheet(
+              coursePrice: '₹${widget.courseP!}/-',
+              map: comboMap,
+              isItComboCourse: true,
+              cID: widget.cID!,
+            ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: NetworkImage("https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FbackGroundImage.jpg?alt=media&token=c7282af8-222d-4761-89b0-35fa206f0ac1"),
+                    image: NetworkImage(
+                        "https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FbackGroundImage.jpg?alt=media&token=c7282af8-222d-4761-89b0-35fa206f0ac1"),
                     fit: BoxFit.fill),
                 color: HexColor("#fef0ff"),
               ),
@@ -281,30 +280,28 @@ class _NewFeatureState extends State<NewFeature> {
                     SizedBox(
                       height: 10,
                     ),
-                      InkWell(
-                                onTap: () {
-                                GoRouter.of(context)
-                                          .pushReplacementNamed('home');
-                                },
-                                child: Container(
-                                    child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
-                                        child: Icon(Icons.arrow_back_rounded),
-                                      ),
-                                      Text(
-                                        'Back',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                            fontWeight: FontWeight.bold),
-                                      )
-                                    ],
-                                  ),
-                                )),
-                              ),
+                    InkWell(
+                      onTap: () {
+                        GoRouter.of(context).pushReplacementNamed('home');
+                      },
+                      child: Container(
+                          child: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(15.sp, 0, 0, 0),
+                            child: Icon(Icons.arrow_back_rounded),
+                          ),
+                          Text(
+                            'Back',
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      )),
+                    ),
+                    SizedBox(
+                      height: 10.sp,
+                    ),
                     RichText(
                       text: TextSpan(children: [
                         TextSpan(
@@ -333,13 +330,15 @@ class _NewFeatureState extends State<NewFeature> {
                     SizedBox(
                       height: 10,
                     ),
-             Padding(
-               padding: constraints.maxWidth>=630?
-                EdgeInsets.fromLTRB(240, 0, 240, 0):EdgeInsets.fromLTRB(0, 0, 0, 0),
-               child: Container(
+                    Padding(
+                      padding: constraints.maxWidth >= 630
+                          ? EdgeInsets.fromLTRB(240, 0, 240, 0)
+                          : EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      child: Container(
                         width: constraints.maxWidth,
                         height: MediaQuery.of(context).size.height,
                         child: ListView.builder(
+                            physics: FixedExtentScrollPhysics(),
                             itemCount: course.length,
                             itemBuilder: (BuildContext context, index) {
                               List courseList = [];
@@ -364,19 +363,18 @@ class _NewFeatureState extends State<NewFeature> {
                                     margin: EdgeInsets.only(bottom: 15),
                                     width: width < 1700
                                         ? width < 1300
-                                        ? width < 850
-                                        ? constraints.maxWidth - 20
-                                        : constraints.maxWidth - 200
-                                        : constraints.maxWidth - 400
+                                            ? width < 850
+                                                ? constraints.maxWidth - 20
+                                                : constraints.maxWidth - 200
+                                            : constraints.maxWidth - 400
                                         : constraints.maxWidth - 700,
                                     height: width > 700
                                         ? 230
                                         : width < 300
-                                        ? 190
-                                        : 210,
+                                            ? 190
+                                            : 210,
                                     decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.circular(20),
                                         color: Colors.white),
                                     child: InkWell(
                                       onTap: () {
@@ -389,64 +387,65 @@ class _NewFeatureState extends State<NewFeature> {
                                       },
                                       child: Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Expanded(
-                                            flex: width <= 630 ? 6: 2,
+                                            flex: width <= 630 ? 6 : 2,
                                             child: Padding(
                                               padding: EdgeInsets.all(3),
                                               child: ClipRRect(
                                                 // borderRadius:
                                                 // BorderRadius.circular(
                                                 //     25),
-                                                child: 
-                                                Container(
+                                                child: Container(
                                                   // width: 130,
                                                   // height: constraints.maxWidth>=630?250:190,
                                                   child: CachedNetworkImage(
-                                                    imageUrl:
-                                                    courseList[index]
+                                                    imageUrl: courseList[index]
                                                         .courseImageUrl,
-                                                        fit: BoxFit.fill,
+                                                    fit: BoxFit.fill,
                                                     placeholder: (context,
-                                                        url) =>
+                                                            url) =>
                                                         Center(
                                                             child:
-                                                            CircularProgressIndicator()),
-                                                    errorWidget: (context,
-                                                        url, error) =>
-                                                        Icon(Icons.error),
+                                                                CircularProgressIndicator()),
+                                                    errorWidget:
+                                                        (context, url, error) =>
+                                                            Icon(Icons.error),
                                                   ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                         SizedBox(width: 15,),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
                                           Expanded(
                                               flex: width < 600 ? 6 : 4,
                                               child: Column(
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                    CrossAxisAlignment.start,
                                                 // mainAxisAlignment:
                                                 // width>700?
                                                 // MainAxisAlignment
-                                                    // .spaceAround,
+                                                // .spaceAround,
                                                 // :MainAxisAlignment.start,
                                                 children: [
-                                                  SizedBox(height: width>750?0:10,),
                                                   SizedBox(
-                                                        height: 50,
-                                                      ),
+                                                    height:
+                                                        width > 750 ? 0 : 10,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 50,
+                                                  ),
                                                   Container(
                                                     // margin: EdgeInsets.only(top: 3),
-                                                    padding:
-                                                    EdgeInsets.all(5),
+                                                    padding: EdgeInsets.all(5),
                                                     decoration: BoxDecoration(
                                                         color: Colors.purple,
                                                         borderRadius:
-                                                        BorderRadius
-                                                            .circular(
-                                                            10)),
+                                                            BorderRadius
+                                                                .circular(10)),
                                                     child: Text(
                                                       "Module : $index",
                                                       style: TextStyle(
@@ -457,15 +456,14 @@ class _NewFeatureState extends State<NewFeature> {
                                                   // SizedBox(height: width>750?0:10,),
                                                   // SizedBox(height: 8,),
                                                   SizedBox(
-                                                        height: 13,
-                                                      ),
+                                                    height: 13,
+                                                  ),
                                                   Column(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .start,
+                                                        MainAxisAlignment.start,
                                                     crossAxisAlignment:
-                                                    CrossAxisAlignment
-                                                        .start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: [
                                                       Text(
                                                         courseList[index]
@@ -473,14 +471,13 @@ class _NewFeatureState extends State<NewFeature> {
                                                         style: TextStyle(
                                                             height: 1,
                                                             fontWeight:
-                                                            FontWeight
-                                                                .bold,
+                                                                FontWeight.bold,
                                                             fontSize: width >
-                                                                700
+                                                                    700
                                                                 ? 25
                                                                 : width < 540
-                                                                ? 12
-                                                                : 14),
+                                                                    ? 12
+                                                                    : 14),
                                                         overflow: TextOverflow
                                                             .ellipsis,
                                                         maxLines: 4,
@@ -490,16 +487,18 @@ class _NewFeatureState extends State<NewFeature> {
                                                       ),
                                                       Text(
                                                         "Estimated Learning Time :${courseList[index].duration}",
-                                                        style: TextStyle( fontWeight: FontWeight.w700,
-                                                                              fontSize: width < 540
-                                                                                  ? width < 420
-                                                                                  ? 11
-                                                                                  : 13
-                                                                                  : 14),
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            fontSize: width <
+                                                                    540
+                                                                ? width < 420
+                                                                    ? 11
+                                                                    : 13
+                                                                : 14),
                                                         overflow: TextOverflow
                                                             .ellipsis,
                                                         maxLines: 4,
-                                                        
                                                       ),
                                                       // SizedBox(height: width>750?0:10,),
                                                       // Row(
@@ -736,7 +735,6 @@ class _NewFeatureState extends State<NewFeature> {
                                               )),
                                           // SizedBox(width: 10,),
 
-
                                           // width > 700
                                           //     ? Expanded(
                                           //   flex: 2,
@@ -823,8 +821,6 @@ class _NewFeatureState extends State<NewFeature> {
                                           // )
                                           //     : SizedBox()
 
-
-
                                           // Column(
                                           //   mainAxisAlignment: width>700?MainAxisAlignment.center:MainAxisAlignment.end,
                                           //   children: [
@@ -857,8 +853,7 @@ class _NewFeatureState extends State<NewFeature> {
                               return Container();
                             }),
                       ),
-             ),
-
+                    ),
                   ],
                 ),
               )

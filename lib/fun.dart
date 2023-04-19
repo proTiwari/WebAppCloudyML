@@ -1,9 +1,13 @@
 import 'dart:math';
 import 'package:badges/badges.dart';
+import 'package:cloudyml_app2/screens/flutter_flow/flutter_flow_util.dart';
 import 'package:cloudyml_app2/screens/review_screen/review_screen.dart';
+import 'package:cloudyml_app2/utils/utils.dart';
 import 'package:cloudyml_app2/widgets/notification_popup.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../global_variable.dart' as globals;
 import 'package:cached_network_image/cached_network_image.dart';
@@ -21,7 +25,7 @@ import 'package:cloudyml_app2/globals.dart';
 import 'package:provider/provider.dart';
 import 'Providers/UserProvider.dart';
 import 'authentication/firebase_auth.dart';
-import 'homepage.dart';
+import 'homescreen/homescreen.dart';
 import 'my_Courses.dart';
 
 bool isLoading = false;
@@ -799,7 +803,6 @@ Widget customMenuBar(BuildContext context) {
         ),
         TextButton(
             onPressed: () {
-              // GoRouter.of(context).goNamed('reviews');
               GoRouter.of(context).pushNamed('reviews');
             },
             child: Text(
@@ -812,21 +815,170 @@ Widget customMenuBar(BuildContext context) {
         SizedBox(
           width: horizontalScale * 10,
         ),
-        // TextButton(
-        //     onPressed: () {
-        //       GoRouter.of(context).pushNamed('LiveDoubtSession');
-        //     },
-        //     child: Text(
-        //       'Live Doubt Support',
-        //       style:  buttonTextStyle.copyWith(
-        //         color:
-        //         Uri.base.path == '/LiveDoubtScreen'? HexColor('873AFF') :
-        //         Colors.white ,
-        //       ),
-        //     )),
-        // SizedBox(
-        //   width: horizontalScale * 15,
-        // ),
+        TextButton(
+            onPressed: () {
+
+              // showDialog(
+              //     context: context,
+              //     builder: (BuildContext context){
+              //       return AlertDialog(
+              //         title: Center(child: Text('Contact Support', style: TextStyle(
+              //             fontWeight: FontWeight.bold
+              //         ),)),
+              //         content: Container(
+              //           height: 35.sp,
+              //           child: Row(
+              //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //             children: [
+              //               InkWell(
+              //                 onTap: () async {
+              //                   String telephoneUrl =
+              //                       'tel:8587911971';
+              //                   if (await canLaunch(
+              //                       telephoneUrl)) {
+              //                     await launch(telephoneUrl);
+              //                   } else {
+              //                     throw 'Could not launch $telephoneUrl';
+              //                   }
+              //                 },
+              //                 child: Container(
+              //                   width: 30.sp,
+              //                   height: 30.sp,
+              //                   decoration: BoxDecoration(
+              //                       color: Colors.white,
+              //                       borderRadius: BorderRadius.circular(10.sp),
+              //                       boxShadow: [
+              //                         BoxShadow(
+              //                             blurRadius: 20.sp,
+              //                             color: Colors.black26,
+              //                             spreadRadius: 7.sp
+              //                         ),
+              //                       ]
+              //                   ),
+              //                   child: Column(
+              //                     mainAxisAlignment: MainAxisAlignment.center,
+              //                     crossAxisAlignment: CrossAxisAlignment.center,
+              //                     children: [
+              //                       Icon(
+              //                         Icons.phone,
+              //                         color: HexColor('7A62DE'),
+              //                         size: min(
+              //                             horizontalScale, verticalScale) * 40,
+              //                       ),
+              //                       SizedBox(
+              //                         height:
+              //                         10.sp,
+              //                       ),
+              //                       Text(
+              //                         'Call us',
+              //                         textScaleFactor: min(
+              //                             horizontalScale,
+              //                             verticalScale),
+              //                         style: TextStyle(
+              //                             fontWeight:
+              //                             FontWeight
+              //                                 .w400,
+              //                             fontSize: 20),
+              //                       )
+              //                     ],
+              //                   ),
+              //                 ),
+              //               ),
+              //               InkWell(
+              //                 onTap: () async {
+              //                   final Uri params = Uri(
+              //                       scheme: 'mailto',
+              //                       path: 'app.support@cloudyml.com',
+              //                       query:
+              //                       'subject=Query about App');
+              //                   var mailurl =
+              //                   params.toString();
+              //                   if (await canLaunch(
+              //                       mailurl)) {
+              //                     await launch(mailurl);
+              //                   } else {
+              //                     throw 'Could not launch $mailurl';
+              //                   }
+              //                 },
+              //                 child: Container(
+              //                   width: 30.sp,
+              //                   height: 30.sp,
+              //                   decoration: BoxDecoration(
+              //                       color: Colors.white,
+              //                       borderRadius: BorderRadius.circular(10.sp),
+              //                       boxShadow: [
+              //                         BoxShadow(
+              //                             blurRadius: 20.sp,
+              //                             color: Colors.black26,
+              //                             spreadRadius: 7.sp
+              //                         ),
+              //                       ]
+              //                   ),
+              //                   child: Column(
+              //                     mainAxisAlignment: MainAxisAlignment.center,
+              //                     crossAxisAlignment: CrossAxisAlignment.center,
+              //                     children: [
+              //                       Icon(
+              //                         Icons.mail,
+              //                         color: HexColor(
+              //                             '7A62DE'),
+              //                         size: min(
+              //                             horizontalScale,
+              //                             verticalScale) *
+              //                             40,
+              //                       ),
+              //                       SizedBox(
+              //                           height: 10.sp
+              //                       ),
+              //                       Text(
+              //                         'Mail us',
+              //                         textScaleFactor: min(
+              //                             horizontalScale,
+              //                             verticalScale),
+              //                         style: TextStyle(
+              //                             fontWeight:
+              //                             FontWeight
+              //                                 .w400,
+              //                             fontSize: 20),
+              //                       )
+              //                     ],
+              //                   ),
+              //                 ),
+              //               )
+              //             ],
+              //           ),
+              //         ),
+              //       );
+              //     });
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                return AlertDialog(
+                  backgroundColor: Colors.white,
+                  title: Center(
+                    child: Text('Contact Support'),
+                  ),
+                  content: Container(
+                    height: 30.sp,
+                    child: Column(
+                      children: [
+                        SelectableText('Please email us at app.support@cloudyml.com'),
+                        SelectableText(' or call on +91 85879 11971.'),
+                      ],
+                    ),
+                  ),
+                );
+              });
+            },
+            child: Text(
+              'Need help?',
+              style:  buttonTextStyle.copyWith(
+                color: Colors.white ,
+              ),
+            )),
+        SizedBox(
+          width: horizontalScale * 10,
+        ),
         DropdownButtonHideUnderline(
           child: DropdownButton2(
             customButton: Row(

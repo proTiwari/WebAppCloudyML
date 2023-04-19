@@ -14,6 +14,7 @@ import 'package:star_rating/star_rating.dart';
 import '../global_variable.dart' as globals;
 import 'authentication/firebase_auth.dart';
 import 'models/user_details.dart';
+
 class StoreScreen extends StatefulWidget {
   const StoreScreen({Key? key}) : super(key: key);
 
@@ -31,18 +32,17 @@ class _StoreScreenState extends State<StoreScreen> {
     fontFamily: "Semibold",
   );
 
-  var path =
-      Uri.base.path;
+  var path = Uri.base.path;
   String? currentPath;
 
   function() {
-      setState(() {
-        path;
-      });
+    setState(() {
+      path;
+    });
   }
 
   @override
-  void initState(){
+  void initState() {
     print('path is  $path');
     super.initState();
     function();
@@ -53,6 +53,7 @@ class _StoreScreenState extends State<StoreScreen> {
     void saveLoginOutState(BuildContext context) {
       Provider.of<LoginState>(context, listen: false).loggedIn = false;
     }
+
     List<CourseDetails> courseList = Provider.of<List<CourseDetails>>(context);
 
     List<CourseDetails> course = [];
@@ -125,8 +126,6 @@ class _StoreScreenState extends State<StoreScreen> {
     var verticalScale = screenHeight / mockUpHeight;
     var horizontalScale = screenWidth / mockUpWidth;
 
-
-
     return Scaffold(
       // key: _scaffoldKey,
       // drawer: customDrawer(context),
@@ -164,7 +163,7 @@ class _StoreScreenState extends State<StoreScreen> {
                             child: Text(
                               'Home',
                               style: buttonTextStyle.copyWith(
-                                color: Colors.white ,
+                                color: Colors.white,
                               ),
                             )),
                         SizedBox(
@@ -176,9 +175,8 @@ class _StoreScreenState extends State<StoreScreen> {
                             },
                             child: Text('Store',
                                 style: buttonTextStyle.copyWith(
-                                  color: HexColor('873AFF') ,
-                                )
-                            )),
+                                  color: HexColor('873AFF'),
+                                ))),
                         SizedBox(
                           width: horizontalScale * 10,
                         ),
@@ -189,9 +187,8 @@ class _StoreScreenState extends State<StoreScreen> {
                             },
                             child: Text(
                               'Reviews',
-                              style:  buttonTextStyle.copyWith(
-                                color:
-                                Colors.white ,
+                              style: buttonTextStyle.copyWith(
+                                color: Colors.white,
                               ),
                             )),
                         SizedBox(
@@ -216,14 +213,21 @@ class _StoreScreenState extends State<StoreScreen> {
                           child: DropdownButton2(
                             customButton: Row(
                               children: [
-                                Text('More',
+                                Text(
+                                  'More',
                                   style: buttonTextStyle.copyWith(
                                     color: Uri.base.path == '/myCourses'
-                                        ? HexColor('873AFF') : Colors.white,
+                                        ? HexColor('873AFF')
+                                        : Colors.white,
                                   ),
                                 ),
-                                SizedBox(width: 100,),
-                                Icon(Icons.arrow_drop_down, color: Colors.white,)
+                                SizedBox(
+                                  width: 100,
+                                ),
+                                Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.white,
+                                )
                               ],
                             ),
                             isExpanded: false,
@@ -233,63 +237,75 @@ class _StoreScreenState extends State<StoreScreen> {
                               iconDisabledColor: Colors.white,
                               iconEnabledColor: Colors.white,
                             ),
-                            dropdownStyleData:  DropdownStyleData(
+                            dropdownStyleData: DropdownStyleData(
                               decoration: BoxDecoration(
                                 color: Colors.deepPurple,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                             underline: Container(),
-                            hint: Text('More',
+                            hint: Text(
+                              'More',
                               style: buttonTextStyle.copyWith(
                                 color: Colors.white,
                               ),
                             ),
                             onChanged: (String? value) {
                               if (value != dropdownValue) {
-
                                 if (value == 'My Courses') {
-                                  GoRouter.of(context).pushReplacementNamed('myCourses');
-                                } else if(value == 'Resume Review') {
-                                  GoRouter.of(context).pushReplacementNamed('reviewResume');
-                                } else if(value == 'Admin Quiz Panel') {
-                                  GoRouter.of(context).pushReplacementNamed('quizpanel');
-                                } else if(value == 'Assignment Review') {
-                                  GoRouter.of(context).pushReplacementNamed('AssignmentScreenForMentors');
-                                } else if(value == 'My Profile') {
-                                  GoRouter.of(context).pushReplacementNamed('myAccount');
-                                } else if(value == 'Logout') {
+                                  GoRouter.of(context)
+                                      .pushReplacementNamed('myCourses');
+                                } else if (value == 'Resume Review') {
+                                  GoRouter.of(context)
+                                      .pushReplacementNamed('reviewResume');
+                                } else if (value == 'Admin Quiz Panel') {
+                                  GoRouter.of(context)
+                                      .pushReplacementNamed('quizpanel');
+                                } else if (value == 'Assignment Review') {
+                                  GoRouter.of(context).pushReplacementNamed(
+                                      'AssignmentScreenForMentors');
+                                } else if (value == 'My Profile') {
+                                  GoRouter.of(context)
+                                      .pushReplacementNamed('myAccount');
+                                } else if (value == 'Logout') {
                                   logOut(context);
                                   saveLoginOutState(context);
-                                  GoRouter.of(context).pushReplacement('/login');
+                                  GoRouter.of(context)
+                                      .pushReplacement('/login');
                                 } else {
-                                  Fluttertoast.showToast(msg: 'Please refresh the screen.');
+                                  Fluttertoast.showToast(
+                                      msg: 'Please refresh the screen.');
                                 }
                               }
                             },
-                            items: globals.role == 'mentor' ?
-                            mentorItems.map((String mentorItems) {
-                              return DropdownMenuItem(
-                                  value: mentorItems,
-                                  child: Text(mentorItems,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ));
-                            }).toList()
-                                :  items.map((String items) {
-                              return DropdownMenuItem(
-                                  value: items,
-                                  child: Text(items,
-                                    style: buttonTextStyle.copyWith(
-                                      color: Colors.white,
-                                    ),
-                                  ));
-                            }).toList(),
-                          ),),
-                        SizedBox(width: 15 * horizontalScale,),
+                            items: globals.role == 'mentor'
+                                ? mentorItems.map((String mentorItems) {
+                                    return DropdownMenuItem(
+                                        value: mentorItems,
+                                        child: Text(
+                                          mentorItems,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ));
+                                  }).toList()
+                                : items.map((String items) {
+                                    return DropdownMenuItem(
+                                        value: items,
+                                        child: Text(
+                                          items,
+                                          style: buttonTextStyle.copyWith(
+                                            color: Colors.white,
+                                          ),
+                                        ));
+                                  }).toList(),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 15 * horizontalScale,
+                        ),
                       ],
                     ),
                   ),
@@ -432,17 +448,20 @@ class _StoreScreenState extends State<StoreScreen> {
                     child: GridView.builder(
                       scrollDirection: Axis.vertical,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount:
-                        constraints.maxWidth <= 750 ? 2 :
-                        constraints.maxWidth <= 1050 ? 3 :
-                        constraints.maxWidth >= 1050 ? 4
-                        : 4,
-
-                        childAspectRatio:
-                        constraints.maxWidth <= 750 ? 1 :
-                        constraints.maxWidth <= 1050 ? 0.8 :
-                        constraints.maxWidth >= 1050 ? 0.85
-                            : 1,
+                        crossAxisCount: constraints.maxWidth <= 750
+                            ? 2
+                            : constraints.maxWidth <= 1050
+                                ? 3
+                                : constraints.maxWidth >= 1050
+                                    ? 4
+                                    : 4,
+                        childAspectRatio: constraints.maxWidth <= 750
+                            ? 1
+                            : constraints.maxWidth <= 1050
+                                ? 0.8
+                                : constraints.maxWidth >= 1050
+                                    ? 0.85
+                                    : 1,
                         crossAxisSpacing: constraints.maxWidth >= 900 ? 15 : 10,
                       ),
                       itemCount: cou.length,
@@ -470,8 +489,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                   //       'id': id,
                                   //       'coursePrice': courseP});
 
-                                  GoRouter.of(context).pushNamed(
-                                      'NewFeature',
+                                  GoRouter.of(context).pushNamed('NewFeature',
                                       queryParams: {
                                         'cID': cID,
                                         'courseName': courseName,
@@ -489,7 +507,6 @@ class _StoreScreenState extends State<StoreScreen> {
                                   //         ),
                                   //   ),
                                   // );
-
                                 } else {
                                   final id = index.toString();
                                   GoRouter.of(context)
@@ -505,14 +522,12 @@ class _StoreScreenState extends State<StoreScreen> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
                                     border: Border.all(
-                                        width: 0.5,
-                                        color: HexColor("440F87")),
+                                        width: 0.5, color: HexColor("440F87")),
                                   ),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-
                                       Container(
                                         height: constraints.maxWidth >= 900
                                             ? screenHeight / 4.5
@@ -523,10 +538,12 @@ class _StoreScreenState extends State<StoreScreen> {
                                               topLeft: Radius.circular(15),
                                               topRight: Radius.circular(15)),
                                           child: CachedNetworkImage(
-                                            placeholder: (context, url) =>
-                                                Center(child: CircularProgressIndicator()),
-                                            errorWidget: (context, url, error) =>
-                                                Icon(Icons.error),
+                                            placeholder: (context, url) => Center(
+                                                child:
+                                                    CircularProgressIndicator()),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Icon(Icons.error),
                                             imageUrl: cou[index].courseImageUrl,
                                             fit: BoxFit.fill,
                                           ),
@@ -536,42 +553,40 @@ class _StoreScreenState extends State<StoreScreen> {
                                         width: screenWidth,
                                         color: Colors.purpleAccent.shade100,
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
                                           children: [
-                                            SizedBox(width: 2 * horizontalScale,),
+                                            SizedBox(
+                                              width: 2 * horizontalScale,
+                                            ),
                                             Text(
-                                              cou[index]
-                                                  .reviews
-                                                  .isNotEmpty
-                                                  ? cou[index]
-                                                  .reviews
+                                              cou[index].reviews.isNotEmpty
+                                                  ? cou[index].reviews
                                                   : '5.0',
                                               style: TextStyle(
                                                   fontSize: 14 * verticalScale,
                                                   color: HexColor('440F87'),
-                                                  fontWeight:
-                                                  FontWeight.bold),
+                                                  fontWeight: FontWeight.bold),
                                             ),
-                                            SizedBox(width: 3 * horizontalScale,),
+                                            SizedBox(
+                                              width: 3 * horizontalScale,
+                                            ),
                                             Padding(
-                                              padding:
-                                              const EdgeInsets.only(
+                                              padding: const EdgeInsets.only(
                                                   right: 5.0),
                                               child: StarRating(
                                                 length: 5,
                                                 rating: cou[index]
-                                                    .reviews
-                                                    .isNotEmpty
+                                                        .reviews
+                                                        .isNotEmpty
                                                     ? double.parse(
-                                                    cou[index]
-                                                        .reviews)
+                                                        cou[index].reviews)
                                                     : 5.0,
                                                 color: Colors.green,
                                                 // HexColor('440F87'),
                                                 starSize: 20,
                                                 mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .start,
+                                                    MainAxisAlignment.start,
                                               ),
                                             ),
                                           ],
@@ -595,12 +610,12 @@ class _StoreScreenState extends State<StoreScreen> {
                                           ),
                                         ),
                                       ),
-
                                       Container(
                                         height: verticalScale * 50,
                                         width: screenWidth,
                                         child: Padding(
-                                          padding: const EdgeInsets.only(left: 15),
+                                          padding:
+                                              const EdgeInsets.only(left: 15),
                                           child: Column(
                                             children: [
                                               // Align(
@@ -625,9 +640,11 @@ class _StoreScreenState extends State<StoreScreen> {
                                                 child: Text(
                                                   "- ${cou[index].numOfVideos} Videos",
                                                   style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       color: Colors.black,
-                                                      fontSize: 12 * verticalScale),
+                                                      fontSize:
+                                                          12 * verticalScale),
                                                 ),
                                               ),
                                               Align(
@@ -638,7 +655,8 @@ class _StoreScreenState extends State<StoreScreen> {
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.black,
-                                                      fontSize: 12 * verticalScale),
+                                                      fontSize:
+                                                          12 * verticalScale),
                                                 ),
                                               ),
                                               SizedBox(
@@ -663,24 +681,28 @@ class _StoreScreenState extends State<StoreScreen> {
                                                 print(courseId);
                                                 if (cou[index]
                                                     .isItComboCourse) {
-                                                   final id = index.toString();
-                                  final cID = cou[index].courseDocumentId;
-                                  final courseName = cou[index].courseName;
-                                  final courseP = cou[index].coursePrice;
-                                  // GoRouter.of(context).pushNamed('comboStore',
-                                  //     queryParams: {
-                                  //       'courseName': courseName,
-                                  //       'id': id,
-                                  //       'coursePrice': courseP});
+                                                  final id = index.toString();
+                                                  final cID = cou[index]
+                                                      .courseDocumentId;
+                                                  final courseName =
+                                                      cou[index].courseName;
+                                                  final courseP =
+                                                      cou[index].coursePrice;
+                                                  // GoRouter.of(context).pushNamed('comboStore',
+                                                  //     queryParams: {
+                                                  //       'courseName': courseName,
+                                                  //       'id': id,
+                                                  //       'coursePrice': courseP});
 
-                                  GoRouter.of(context).pushNamed(
-                                      'NewFeature',
-                                      queryParams: {
-                                        'cID': cID,
-                                        'courseName': courseName,
-                                        'id': id,
-                                        'coursePrice': courseP
-                                      });
+                                                  GoRouter.of(context)
+                                                      .pushNamed('NewFeature',
+                                                          queryParams: {
+                                                        'cID': cID,
+                                                        'courseName':
+                                                            courseName,
+                                                        'id': id,
+                                                        'coursePrice': courseP
+                                                      });
 
                                                   // Navigator.push(
                                                   //   context,
@@ -692,7 +714,6 @@ class _StoreScreenState extends State<StoreScreen> {
                                                   //         ),
                                                   //   ),
                                                   // );
-
                                                 } else {
                                                   final id = index.toString();
                                                   GoRouter.of(context)

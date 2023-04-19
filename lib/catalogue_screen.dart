@@ -300,15 +300,15 @@ class _CatelogueScreenState extends State<CatelogueScreen>
                               SizedBox(
                                 height: 45,
                               ),
-                              includes(context),
+                              // includes(context),
                               Container(
                                 child: Curriculam(
                                   courseDetail: course[index],
                                 ),
                               ),
-                              Container(
-                                key: _positionKey,
-                              ),
+                              // Container(
+                              //   key: _positionKey,
+                              // ),
                               // Ribbon(
                               //   nearLength: 1,
                               //   farLength: .5,

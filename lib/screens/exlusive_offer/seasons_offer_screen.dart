@@ -13,7 +13,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../Providers/UserProvider.dart';
 import '../../globals.dart';
-import '../../homepage.dart';
 import '../../homescreen/homescreen.dart';
 import '../../models/course_details.dart';
 

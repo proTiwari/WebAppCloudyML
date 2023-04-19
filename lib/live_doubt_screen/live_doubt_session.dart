@@ -5,6 +5,7 @@ import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LiveDoubtScreen extends StatefulWidget {
@@ -44,8 +45,12 @@ class _LiveDoubtScreenState extends State<LiveDoubtScreen> {
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 20, 20, 20),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      IconButton(
+                          onPressed: (){Navigator.of(context).pop();},
+                          icon: Icon(Icons.arrow_back_rounded,
+                            size: 30,)),
+                      SizedBox(width: 40.w),
                       Icon(
                         Icons.link,
                         size: 30,
@@ -289,8 +294,12 @@ class _LiveDoubtScreenState extends State<LiveDoubtScreen> {
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0, 20, 20, 20),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        IconButton(
+                            onPressed: (){Navigator.of(context).pop();},
+                            icon: Icon(Icons.arrow_back_rounded,
+                              size: 30,)),
+                        SizedBox(width: 30.w),
                         Icon(
                           Icons.chat,
                           size: height / 35,

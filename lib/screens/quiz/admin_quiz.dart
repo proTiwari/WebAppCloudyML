@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudyml_app2/homepage.dart';
+import 'package:cloudyml_app2/homescreen/homescreen.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -105,7 +105,7 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
   var tempitemsquiz = 'One correct option';
 
   navigatefun(BuildContext context) => Navigator.pushReplacement(
-      context, MaterialPageRoute(builder: (context) => Home()));
+      context, MaterialPageRoute(builder: (context) => LandingScreen()));
 
   @override
   Widget build(BuildContext context) {
