@@ -3,9 +3,11 @@ import 'package:cloudyml_app2/screens/flutter_flow/flutter_flow_util.dart';
 import 'package:cloudyml_app2/screens/quiz/model/quiztrackmodel.dart';
 import 'package:cloudyml_app2/screens/quiz/quiz_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+// import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
+import '../../global_variable.dart' as globals;
+import 'package:toast/toast.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 
 class InstructionspageWidget extends StatefulWidget {
@@ -43,21 +45,17 @@ class _InstructionspageWidgetState extends State<InstructionspageWidget> {
               if (i!.quizname == widget.quizdata['name']) {
                 attemptingquizforthefirsttime = false;
                 print("quiz found");
+                print("quiz cleared ppppppppppppp ${i.quizCleared}");
                 if (i.quizCleared == true) {
-                  print("quiz cleared");
-                  showToast('You have already aced this quiz!',
-                      context: context,
-                      animation: StyledToastAnimation.slideFromBottom,
-                      reverseAnimation: StyledToastAnimation.slideToBottom,
-                      position: StyledToastPosition.bottom,
-                      animDuration: Duration(seconds: 1),
-                      duration: Duration(seconds: 4),
-                      curve: Curves.elasticOut,
-                      reverseCurve: Curves.fastOutSlowIn);
-                }
-
-                // condition for quiz not cleared
-                if (i.quizCleared == false) {
+                  print("quiz cleared ppppppppppppp");
+                  Toast.show('You have already aced this quiz!');
+                  globals.quizCleared = true;
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => QuizPage(widget.quizdata)));
+                } else {
+                  // condition for quiz not cleared
                   print("quiz not cleared");
                   // condition for course quiz
                   if (i.quizlevel == "courselevel") {
@@ -74,16 +72,9 @@ class _InstructionspageWidgetState extends State<InstructionspageWidget> {
                               builder: (context) => QuizPage(widget.quizdata)));
                     } else {
                       print("quiz attempt gap not over");
-                      showToast(
-                          'You can attempt this quiz after ${i.quizAttemptGapForCourseQuiz}',
-                          context: context,
-                          animation: StyledToastAnimation.slideFromBottom,
-                          reverseAnimation: StyledToastAnimation.slideToBottom,
-                          position: StyledToastPosition.bottom,
-                          animDuration: Duration(seconds: 1),
-                          duration: Duration(seconds: 4),
-                          curve: Curves.elasticOut,
-                          reverseCurve: Curves.fastOutSlowIn);
+                      Toast.show(
+                        'You can attempt this quiz after ${i.quizAttemptGapForCourseQuiz}',
+                      );
                     }
                   } else {
                     print("quiz attempt gap not over");
@@ -98,16 +89,8 @@ class _InstructionspageWidgetState extends State<InstructionspageWidget> {
                               builder: (context) => QuizPage(widget.quizdata)));
                     } else {
                       print('quiz attempt gap not over');
-                      showToast(
-                          'You can attempt this quiz after ${i.quizAttemptGapForModularQuiz}',
-                          context: context,
-                          animation: StyledToastAnimation.slideFromBottom,
-                          reverseAnimation: StyledToastAnimation.slideToBottom,
-                          position: StyledToastPosition.bottom,
-                          animDuration: Duration(seconds: 1),
-                          duration: Duration(seconds: 4),
-                          curve: Curves.elasticOut,
-                          reverseCurve: Curves.fastOutSlowIn);
+                      Toast.show(
+                          'You can attempt this quiz after ${i.quizAttemptGapForModularQuiz}');
                     }
                   }
                 }
@@ -531,7 +514,7 @@ class _InstructionspageWidgetState extends State<InstructionspageWidget> {
             ),
           ),
         ),
-     ),
-);
-}
+      ),
+    );
+  }
 }

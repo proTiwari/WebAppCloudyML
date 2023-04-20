@@ -5,7 +5,7 @@ late String payurl;
 var downloadCertificateLink = "";
 const mockUpHeight = 896;
 const mockUpWidth = 414;
-
+bool quizCleared = false;
 List quiztrack=[];
 String phone = "";
 String email = "";

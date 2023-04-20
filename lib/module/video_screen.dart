@@ -32,6 +32,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:html' as html;
+import 'dart:ui' as ui;
 import '../api/firebase_api.dart';
 import '../fun.dart';
 import '../models/course_details.dart';
@@ -59,7 +60,7 @@ class _VideoScreenState extends State<VideoScreen> {
   late List<FirebaseFile> futureSolutions;
   late List<FirebaseFile> futureDataSets;
 
-  VideoPlayerController? _videoController;
+  // VideoPlayerController? _videoController;
   late String htmltext;
   bool htmlbool = false;
   List pathwaydata = [];
@@ -119,6 +120,31 @@ class _VideoScreenState extends State<VideoScreen> {
   //   });
   // }
 
+   html.IFrameElement _iFrameElement = html.IFrameElement();
+ 
+ String elemtntId = Random().nextInt(100000).toString();
+   initPlayer(String url){
+    print('THE VID URL : $url');
+
+    videoUrl = url;
+     _iFrameElement.style.height = '100%';
+    _iFrameElement.style.width = '100%';
+  _iFrameElement.allowFullscreen = true;
+ 
+    _iFrameElement.src = url;
+    _iFrameElement.style.border = 'none';
+
+// ignore: undefined_prefixed_name
+    ui.platformViewRegistry.registerViewFactory(
+      elemtntId,
+      (int viewId) => _iFrameElement,
+    );
+    
+
+    
+  }
+  GlobalKey iFrameKey = GlobalKey();
+
   Future<void> setModuleId() async {
     await FirebaseFirestore.instance
         .collection('courses')
@@ -134,6 +160,45 @@ class _VideoScreenState extends State<VideoScreen> {
   String convertToTwoDigits(int value) {
     return value < 10 ? "0$value" : "$value";
   }
+  updateVideoProgress(dynamic listOfProgress)async{
+  int total = 0, count = 0;
+
+  await FirebaseFirestore.instance
+              .collection("courseprogress")
+              .doc(_auth.currentUser!.uid.toString()).get().then((value) {
+                   // if(value.get(CourseID.toString()))
+                   
+                 List res =  value.get(CourseID.toString());
+                 List<int> integerValues = [100];
+
+  for (var element in res) {
+    for (var dictionary in element.values) {
+      for (var value in dictionary) {
+        if (value.values.first is int) {
+          integerValues.add(value.values.first);
+        }
+      }
+    }
+  }
+
+  total = integerValues.reduce((a, b) => a + b);
+  count = integerValues.length - 1;
+  
+
+
+              });
+
+ await FirebaseFirestore.instance
+              .collection("courseprogress")
+              .doc(_auth.currentUser!.uid.toString())
+              .update({
+            CourseID.toString():
+                listOfProgress,
+                 CourseID.toString() + "percentage": ((total / (count * 100)) * 100).toInt(),
+           
+          }).catchError((err) => print("Error$err"));
+
+}
 
   // Widget timeRemainingString() {
   //   final totalDuration =
@@ -168,190 +233,190 @@ class _VideoScreenState extends State<VideoScreen> {
     );
   }
 
-  void _onVideoControllerUpdate() async {
-    print("this is video ------ $videoTitle");
-    print("----$moduleName");
-    print("------$moduleId");
-    print("-----$videoId");
-    print("---total duration $totalDuration");
-    print("----percent ${((currentPosition / totalDuration) * 100).toInt()}");
+  // void _onVideoControllerUpdate() async {
+  //   print("this is video ------ $videoTitle");
+  //   print("----$moduleName");
+  //   print("------$moduleId");
+  //   print("-----$videoId");
+  //   print("---total duration $totalDuration");
+  //   print("----percent ${((currentPosition / totalDuration) * 100).toInt()}");
 
-    print(_getVideoPercentageList);
+  //   print(_getVideoPercentageList);
 
-    if (_disposed) {
-      return;
-    }
-    final now = DateTime.now().microsecondsSinceEpoch;
-    if (_delayToInvokeonControlUpdate > now) {
-      return;
-    }
-    _delayToInvokeonControlUpdate = now + 500;
-    final controller = _videoController;
-    if (controller == null) {
-      debugPrint("The video controller is null");
-      return;
-    }
-    if (!controller.value.isInitialized) {
-      debugPrint("The video controller cannot be initialized");
-      return;
-    }
-    if (_duration == null) {
-      _duration = _videoController!.value.duration;
-    }
-    if (!(_videoController!.value.duration >
-            _videoController!.value.position) &&
-        !_videoController!.value.isPlaying) {
-      VideoScreen.currentSpeed.value = 1.0;
-      // updateCourseCompletionPercentage(videoPercentageList);
+  //   if (_disposed) {
+  //     return;
+  //   }
+  //   final now = DateTime.now().microsecondsSinceEpoch;
+  //   if (_delayToInvokeonControlUpdate > now) {
+  //     return;
+  //   }
+  //   _delayToInvokeonControlUpdate = now + 500;
+  //   final controller = _videoController;
+  //   if (controller == null) {
+  //     debugPrint("The video controller is null");
+  //     return;
+  //   }
+  //   if (!controller.value.isInitialized) {
+  //     debugPrint("The video controller cannot be initialized");
+  //     return;
+  //   }
+  //   if (_duration == null) {
+  //     _duration = _videoController!.value.duration;
+  //   }
+  //   if (!(_videoController!.value.duration >
+  //           _videoController!.value.position) &&
+  //       !_videoController!.value.isPlaying) {
+  //     VideoScreen.currentSpeed.value = 1.0;
+  //     // updateCourseCompletionPercentage(videoPercentageList);
 
-      _currentVideoIndex.value++;
-      initializeVidController(
-          _listOfVideoDetails[_currentVideoIndex.value].videoUrl,
-          _listOfVideoDetails[_currentVideoIndex.value].videoTitle,
-          "",
-          "",
-          "");
-    }
-    var duration = _duration;
-    if (duration == null) return;
-    if (_getVideoPercentageList != null) {
-      for (var i in _getVideoPercentageList!) {
-        if (i[moduleId.toString()] != null) {
-          for (var j in i[moduleId.toString()]) {
-            print("0kkkkk");
-            if(j[videoId.toString()]!=null)
-              {
-                if(j[videoId.toString()]>=100)
-                  {
-                              j[videoId.toString()] = 100;
-                  }
-                else
-                  {
-                   if(((currentPosition / totalDuration) * 100) >99.60)
-                      {
-                        j[videoId.toString()] = 100;
-                      }
-                       else
-                         {
+  //     _currentVideoIndex.value++;
+  //     initializeVidController(
+  //         _listOfVideoDetails[_currentVideoIndex.value].videoUrl,
+  //         _listOfVideoDetails[_currentVideoIndex.value].videoTitle,
+  //         "",
+  //         "",
+  //         "");
+  //   }
+  //   var duration = _duration;
+  //   if (duration == null) return;
+  //   if (_getVideoPercentageList != null) {
+  //     for (var i in _getVideoPercentageList!) {
+  //       if (i[moduleId.toString()] != null) {
+  //         for (var j in i[moduleId.toString()]) {
+  //           print("0kkkkk");
+  //           if(j[videoId.toString()]!=null)
+  //             {
+  //               if(j[videoId.toString()]>=100)
+  //                 {
+  //                             j[videoId.toString()] = 100;
+  //                 }
+  //               else
+  //                 {
+  //                  if(((currentPosition / totalDuration) * 100) >99.60)
+  //                     {
+  //                       j[videoId.toString()] = 100;
+  //                     }
+  //                      else
+  //                        {
 
-                           if(j[videoId.toString()]<
-                               ((currentPosition / totalDuration) * 100).toInt()
-                           )
-                           {
-                             j[videoId.toString()] =
-                                 ((currentPosition / totalDuration) * 100).toInt();
-                           }
-                         }
-                  }
-              }
-            // j[videoId.toString()] != null &&
-            //         j[videoId.toString()] <
-            //             ((currentPosition / totalDuration) * 100).toInt()
-            //     ? j[videoId.toString()] =
-            //         ((currentPosition / totalDuration) * 100).toInt()
-            //     : null;
-          }
-        }
-      }
-      //
-      int total = 0, count = 0;
-      try {
-        for (int i = 0; i < _getVideoPercentageList!.length; i++) {
-          for (var j in _getVideoPercentageList![i].entries) {
-            // j.value.forEach((element) {
-            //   Map<String, int> dic = element as Map<String, int>;
-            //   int t = dic.values.first;
-            //   total += t;
-            //   count += 1;
-            // });
-            try {
-              j.value.forEach((element) {
-                // Map<String, int> dic = element as Map<String, int>;
-                // int t = dic.values.first;
-                print(element.values.first);
-                total += int.parse(element.values.first.toString()).toInt();
-                count += 1;
-                // print(dic);
-              });
-            } catch (err) {
-              print("j--$j");
-              print("Errrrrrrrrrrrrrr");
-            }
-          }
-        }
-      } catch (err) {
-        print("errrororor");
-      }
-      CourseID != null
-          ? FirebaseFirestore.instance
-              .collection("courseprogress")
-              .doc(_auth.currentUser!.uid)
-              .update({
-              CourseID.toString(): _getVideoPercentageList,
-              CourseID.toString() + "percentage":
-                  ((total / (count * 100)) * 100).toInt(),
-            })
-          : null;
-    }
+  //                          if(j[videoId.toString()]<
+  //                              ((currentPosition / totalDuration) * 100).toInt()
+  //                          )
+  //                          {
+  //                            j[videoId.toString()] =
+  //                                ((currentPosition / totalDuration) * 100).toInt();
+  //                          }
+  //                        }
+  //                 }
+  //             }
+  //           // j[videoId.toString()] != null &&
+  //           //         j[videoId.toString()] <
+  //           //             ((currentPosition / totalDuration) * 100).toInt()
+  //           //     ? j[videoId.toString()] =
+  //           //         ((currentPosition / totalDuration) * 100).toInt()
+  //           //     : null;
+  //         }
+  //       }
+  //     }
+  //     //
+  //     int total = 0, count = 0;
+  //     try {
+  //       for (int i = 0; i < _getVideoPercentageList!.length; i++) {
+  //         for (var j in _getVideoPercentageList![i].entries) {
+  //           // j.value.forEach((element) {
+  //           //   Map<String, int> dic = element as Map<String, int>;
+  //           //   int t = dic.values.first;
+  //           //   total += t;
+  //           //   count += 1;
+  //           // });
+  //           try {
+  //             j.value.forEach((element) {
+  //               // Map<String, int> dic = element as Map<String, int>;
+  //               // int t = dic.values.first;
+  //               print(element.values.first);
+  //               total += int.parse(element.values.first.toString()).toInt();
+  //               count += 1;
+  //               // print(dic);
+  //             });
+  //           } catch (err) {
+  //             print("j--$j");
+  //             print("Errrrrrrrrrrrrrr");
+  //           }
+  //         }
+  //       }
+  //     } catch (err) {
+  //       print("errrororor");
+  //     }
+  //     CourseID != null
+  //         ? FirebaseFirestore.instance
+  //             .collection("courseprogress")
+  //             .doc(_auth.currentUser!.uid)
+  //             .update({
+  //             CourseID.toString(): _getVideoPercentageList,
+  //             CourseID.toString() + "percentage":
+  //                 ((total / (count * 100)) * 100).toInt(),
+  //           })
+  //         : null;
+  //   }
 
-    var position = _videoController?.value.position;
-    setState(() {
-      _position = position;
-      currentPosition = _videoController!.value.position.inSeconds.toInt();
-    });
-    final buffering = controller.value.isBuffering;
-    setState(() {
-      _isBuffering = buffering;
-    });
-    final playing = controller.value.isPlaying;
-    if (playing) {
-      if (_disposed) return;
-      setState(() {
-        _progress = position!.inMilliseconds.ceilToDouble() /
-            duration.inMilliseconds.ceilToDouble();
-      });
-    } else {
-      // updateCourseCompletionPercentage(videoPercentageList);
-    }
-    _isPlaying = playing;
-  }
+  //   var position = _videoController?.value.position;
+  //   setState(() {
+  //     _position = position;
+  //     currentPosition = _videoController!.value.position.inSeconds.toInt();
+  //   });
+  //   final buffering = controller.value.isBuffering;
+  //   setState(() {
+  //     _isBuffering = buffering;
+  //   });
+  //   final playing = controller.value.isPlaying;
+  //   if (playing) {
+  //     if (_disposed) return;
+  //     setState(() {
+  //       _progress = position!.inMilliseconds.ceilToDouble() /
+  //           duration.inMilliseconds.ceilToDouble();
+  //     });
+  //   } else {
+  //     // updateCourseCompletionPercentage(videoPercentageList);
+  //   }
+  //   _isPlaying = playing;
+  // }
 
   int totalDuration = 0;
   int currentPosition = 0;
   String? moduleName, moduleId, videoId;
-  void initializeVidController(String url, String name, String modulename,
-      String moduleID, String videoID) async {
-    print('this is -- $url ');
-    try {
-      final oldVideoController = _videoController;
-      if (oldVideoController != null) {
-        oldVideoController.removeListener(_onVideoControllerUpdate);
-        oldVideoController.pause();
-        oldVideoController.dispose();
-      }
-      final _localVideoController = await VideoPlayerController.network(url);
-      setState(() {
-        _videoController = _localVideoController;
-      });
-      playVideo = _localVideoController.initialize().then((value) {
-        setState(() {
-          print('this is -- $name ');
-          videoTitle = name.toString();
-          moduleName = modulename.toString();
-          moduleId = moduleID;
-          videoId = videoID;
-          totalDuration =
-              _localVideoController.value.duration.inSeconds.toInt();
-          selectedVideoIndexName = url.toString();
-          _localVideoController.addListener(_onVideoControllerUpdate);
-          _localVideoController.play();
-          _duration = _localVideoController.value.duration;
-        });
-      });
-    } catch (e) {
-      showToast(e.toString());
-    }
-  }
+  // void initializeVidController(String url, String name, String modulename,
+  //     String moduleID, String videoID) async {
+  //   print('this is -- $url ');
+  //   try {
+  //     final oldVideoController = _videoController;
+  //     if (oldVideoController != null) {
+  //       oldVideoController.removeListener(_onVideoControllerUpdate);
+  //       oldVideoController.pause();
+  //       oldVideoController.dispose();
+  //     }
+  //     final _localVideoController = await VideoPlayerController.network(url);
+  //     setState(() {
+  //       _videoController = _localVideoController;
+  //     });
+  //     playVideo = _localVideoController.initialize().then((value) {
+  //       setState(() {
+  //         print('this is -- $name ');
+  //         videoTitle = name.toString();
+  //         moduleName = modulename.toString();
+  //         moduleId = moduleID;
+  //         videoId = videoID;
+  //         totalDuration =
+  //             _localVideoController.value.duration.inSeconds.toInt();
+  //         selectedVideoIndexName = url.toString();
+  //         _localVideoController.addListener(_onVideoControllerUpdate);
+  //         _localVideoController.play();
+  //         _duration = _localVideoController.value.duration;
+  //       });
+  //     });
+  //   } catch (e) {
+  //     showToast(e.toString());
+  //   }
+  // }
 
   void getPermission() async {
     var status = await Permission.storage.status;
@@ -450,6 +515,7 @@ class _VideoScreenState extends State<VideoScreen> {
   String? CourseID;
 
   getProgressData() async {
+    try{
     await FirebaseFirestore.instance
         .collection("courseprogress")
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -943,7 +1009,9 @@ class _VideoScreenState extends State<VideoScreen> {
     });
     setState(() {
       _getVideoPercentageList;
-    });
+    });} catch(e){
+      print(e);
+    }
   }
 
   Future download({
@@ -1067,10 +1135,10 @@ class _VideoScreenState extends State<VideoScreen> {
   void dispose() {
     super.dispose();
     print("disposeeeee");
-    _videoController!.dispose();
+    // _videoController!.dispose();
     AutoOrientation.portraitUpMode();
     _disposed = true;
-    _videoController = null;
+    // _videoController = null;
   }
 
   String? role;
@@ -1132,13 +1200,17 @@ List videos=[];
     setState(() {
       currentPlayingVideoName = list[0]["videos"][0]["name"].toString();
     });
-    initializeVidController(
-      list[0]["videos"][0]["url"].toString(),
-      list[0]["videos"][0]["name"].toString(),
-      list[0]["modulename"].toString(),
-      list[0]["id"].toString(),
-      list[0]["videos"][0]["id"].toString(),
-    );
+    // Get First Vid 
+
+ list[0]["videos"][0]["weburl"].toString() != 'null' ?
+    initPlayer(list[0]["videos"][0]["weburl"].toString()) : null;
+    // initializeVidController(
+    //   list[0]["videos"][0]["url"].toString(),
+    //   list[0]["videos"][0]["name"].toString(),
+    //   list[0]["modulename"].toString(),
+    //   list[0]["id"].toString(),
+    //   list[0]["videos"][0]["id"].toString(),
+    // );
   }
 
 
@@ -1181,7 +1253,7 @@ List videos=[];
       }
       print("wiefjwoie$modularquizlist");
     }
-    print("hoiwejiowj${modularquizlist}");
+    print("hoiwejiowj${await modularquizlist}");
     List userquiztakenlist = [];
     bool showglobalquiz = true;
     await FirebaseFirestore.instance
@@ -1189,12 +1261,13 @@ List videos=[];
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
         .then((value) async {
-      print("fiweofw${modularquizlist}");
+      print("fiweofw${await modularquizlist}");
       try {
         print("hoiwejiiweofowowj${modularquizlist}");
         print("quiztaken iwfejo ${value.data()!['quiztrack']}");
         for (var i in value.data()!['quiztrack']) {
-          if (i['quizlevel'] == 'modulelevel') {
+          print("wjefweiwoeiw ${i['quizname']} ${i['quizlevel']}  ${i['quizlevel']}");
+          if (i['quizlevel'] == 'modulelevel' && i['courseName'] == widget.courseName) {
             userquiztakenlist.add(i['quizname']);
           }
 
@@ -1206,6 +1279,7 @@ List videos=[];
         }
         print("wefiwjeofiw${modularquizlist}");
         print("userquiijowe ${userquiztakenlist.length}");
+        print("userquiijow2e ${userquiztakenlist}");
         print("modularquis ijweo ${modularquizlist}");
         if (userquiztakenlist.length != modularquizlist.length) {
           print("yes it is not equal");
@@ -1213,21 +1287,25 @@ List videos=[];
             showglobalquiz = false;
           });
         }
-        if (showglobalquiz == true) {
-          await FirebaseFirestore.instance
-              .collection("Controllers")
-              .doc('variables')
-              .get()
-              .then((value) {
-            setState(() {
-              _switchValue = value.data()!['globalquiz'];
-            });
+
+        print("iffwoejf4${modularquizlist.length}");
+        if (modularquizlist.length == 0) {
+          print("iffwoejf${modularquizlist.length}");
+          setState(() {
+            showglobalquiz = true;
           });
         }
+        
+          setState(() {
+            _switchValue = showglobalquiz;
+          });
+         
+       
       } catch (e) {
         print("quizid: wej3434434fwio: ${e}");
    }
-});}
+});
+}
 
   @override
   void initState() {
@@ -1287,7 +1365,7 @@ List videos=[];
   int? currentIndex;
   @override
   Widget build(BuildContext context) {
-    List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
+    // List<CourseDetails> course = Provider.of<List<CourseDetails>>(context);
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     var verticalScale = screenHeight / mockUpHeight;
@@ -1314,7 +1392,7 @@ List videos=[];
                             children: [
                               InkWell(
                                 onTap: () {
-                                  _videoController!.pause();
+                                  // _videoController!.pause();
                                   widget.isDemo == null
                                       ? Navigator.pop(context)
                                       : GoRouter.of(context)
@@ -1367,86 +1445,97 @@ List videos=[];
                                   : Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    FutureBuilder(
-                                      future: playVideo,
-                                      builder: (BuildContext context,
-                                          AsyncSnapshot<dynamic> snapshot) {
-                                        if (ConnectionState.done ==
-                                            snapshot.connectionState) {
-                                          return Stack(
-                                            children: [
-                                              Container(
-                                                height: menuClicked
-                                                    ? screenHeight
-                                                    : screenHeight / 1.2,
-                                                child: Center(
-                                                  child: AspectRatio(
-                                                    aspectRatio: 16 / 9,
-                                                    child: VideoPlayer(
-                                                        _videoController!),
-                                                  ),
-                                                ),
-                                              ),
-                                              InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      enablePauseScreen =
-                                                          !enablePauseScreen;
-                                                      // print(
-                                                      //     'Container of column clicked');
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    height: menuClicked
-                                                        ? screenHeight
-                                                        : screenHeight / 1.2,
-                                                    width: screenWidth,
-                                                  )),
-                                              enablePauseScreen
-                                                  ? Container(
-                                                      height: menuClicked
-                                                          ? screenHeight
-                                                          : screenHeight / 1.2,
-                                                      child: _buildControls(
-                                                        context,
-                                                        isPortrait,
-                                                        horizontalScale,
-                                                        verticalScale,
-                                                      ),
-                                                    )
-                                                  : SizedBox(),
-                                              _isBuffering && !enablePauseScreen
-                                                  ? Center(
-                                                      heightFactor: 6.2,
-                                                      child: Container(
-                                                        width: 60,
-                                                        height: 60,
-                                                        child:
-                                                            CircularProgressIndicator(
-                                                          color: Color.fromARGB(
-                                                            114,
-                                                            255,
-                                                            255,
-                                                            255,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : Container(),
-                                            ],
-                                          );
-                                        } else {
-                                          return Container(
-                                            height: screenHeight / 1.2,
-                                            child: Center(
-                                              child: CircularProgressIndicator(
-                                                color: Color(0xFF7860DC),
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
+                                      // UI
+    
+       videoUrl  != null ?
+                                   Expanded(child: 
+                                   HtmlElementView(
+    
+    viewType: elemtntId,
+    key: iFrameKey,
+  )
+                                   
+                                   ) : SizedBox(),
+                                    // FutureBuilder(
+                                    //   future: playVideo,
+                                    //   builder: (BuildContext context,
+                                    //       AsyncSnapshot<dynamic> snapshot) {
+                                    //     if (ConnectionState.done ==
+                                    //         snapshot.connectionState) {
+                                    //       return Stack(
+                                    //         children: [
+                                    //           Container(
+                                    //             height: menuClicked
+                                    //                 ? screenHeight
+                                    //                 : screenHeight / 1.2,
+                                    //             child: Center(
+                                    //               child: AspectRatio(
+                                    //                 aspectRatio: 16 / 9,
+                                    //                 child: VideoPlayer(
+                                    //                     _videoController!),
+                                    //               ),
+                                    //             ),
+                                    //           ),
+                                    //           InkWell(
+                                    //               onTap: () {
+                                    //                 setState(() {
+                                    //                   enablePauseScreen =
+                                    //                       !enablePauseScreen;
+                                    //                   // print(
+                                    //                   //     'Container of column clicked');
+                                    //                 });
+                                    //               },
+                                    //               child: Container(
+                                    //                 height: menuClicked
+                                    //                     ? screenHeight
+                                    //                     : screenHeight / 1.2,
+                                    //                 width: screenWidth,
+                                    //               )),
+                                    //           enablePauseScreen
+                                    //               ? Container(
+                                    //                   height: menuClicked
+                                    //                       ? screenHeight
+                                    //                       : screenHeight / 1.2,
+                                    //                   child: _buildControls(
+                                    //                     context,
+                                    //                     isPortrait,
+                                    //                     horizontalScale,
+                                    //                     verticalScale,
+                                    //                   ),
+                                    //                 )
+                                    //               : SizedBox(),
+                                    //           _isBuffering && !enablePauseScreen
+                                    //               ? Center(
+                                    //                   heightFactor: 6.2,
+                                    //                   child: Container(
+                                    //                     width: 60,
+                                    //                     height: 60,
+                                    //                     child:
+                                    //                         CircularProgressIndicator(
+                                    //                       color: Color.fromARGB(
+                                    //                         114,
+                                    //                         255,
+                                    //                         255,
+                                    //                         255,
+                                    //                       ),
+                                    //                     ),
+                                    //                   ),
+                                    //                 )
+                                    //               : Container(),
+                                    //         ],
+                                    //       );
+                                    //     } else {
+                                    //       return Container(
+                                    //         height: screenHeight / 1.2,
+                                    //         child: Center(
+                                    //           child: CircularProgressIndicator(
+                                    //             color: Color(0xFF7860DC),
+                                    //           ),
+                                    //         ),
+                                    //       );
+                                    //     }
+                                    //   },
+                                    // ),
                                     menuClicked
                                         ? Container()
                                         : Padding(
@@ -1526,81 +1615,92 @@ List videos=[];
                             : Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  FutureBuilder(
-                                    future: playVideo,
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<dynamic> snapshot) {
-                                      if (ConnectionState.done ==
-                                          snapshot.connectionState) {
-                                        return Stack(
-                                          children: [
-                                            Container(
-                                              height: screenHeight / 3,
-                                              width: screenWidth,
-                                              child: Center(
-                                                child: AspectRatio(
-                                                  aspectRatio: 16 / 9,
-                                                  child: VideoPlayer(
-                                                      _videoController!),
-                                                ),
-                                              ),
-                                            ),
-                                            InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    enablePauseScreen =
-                                                        !enablePauseScreen;
-                                                    // print(
-                                                    //     'Container of column clicked');
-                                                  });
-                                                },
-                                                child: Container(
-                                                  height: screenHeight / 3,
-                                                  width: screenWidth,
-                                                )),
-                                            enablePauseScreen
-                                                ? Container(
-                                                    height: screenHeight / 3,
-                                                    child: _buildControls(
-                                                      context,
-                                                      isPortrait,
-                                                      horizontalScale,
-                                                      verticalScale,
-                                                    ),
-                                                  )
-                                                : SizedBox(),
-                                            _isBuffering && !enablePauseScreen
-                                                ? Center(
-                                                    heightFactor: 6.2,
-                                                    child: Container(
-                                                      width: 60,
-                                                      height: 60,
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                        color: Color.fromARGB(
-                                                          114,
-                                                          255,
-                                                          255,
-                                                          255,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )
-                                                : Container(),
-                                          ],
-                                        );
-                                      } else {
-                                        return Container(
-                                          height: screenHeight / 3,
-                                          child: Center(
-                                            child: CircularProgressIndicator(
-                                              color: Color(0xFF7860DC),
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  ),
+                                    // UI
+    
+       videoUrl  != null ?
+                                   Expanded(child: 
+                                   HtmlElementView(
+    
+    viewType: elemtntId,
+    key: iFrameKey,
+  )
+                                   
+                                   ) : SizedBox(),
+                                  // FutureBuilder(
+                                  //   future: playVideo,
+                                  //   builder: (BuildContext context,
+                                  //       AsyncSnapshot<dynamic> snapshot) {
+                                  //     if (ConnectionState.done ==
+                                  //         snapshot.connectionState) {
+                                  //       return Stack(
+                                  //         children: [
+                                  //           Container(
+                                  //             height: screenHeight / 3,
+                                  //             width: screenWidth,
+                                  //             child: Center(
+                                  //               child: AspectRatio(
+                                  //                 aspectRatio: 16 / 9,
+                                  //                 child: VideoPlayer(
+                                  //                     _videoController!),
+                                  //               ),
+                                  //             ),
+                                  //           ),
+                                  //           InkWell(
+                                  //               onTap: () {
+                                  //                 setState(() {
+                                  //                   enablePauseScreen =
+                                  //                       !enablePauseScreen;
+                                  //                   // print(
+                                  //                   //     'Container of column clicked');
+                                  //                 });
+                                  //               },
+                                  //               child: Container(
+                                  //                 height: screenHeight / 3,
+                                  //                 width: screenWidth,
+                                  //               )),
+                                  //           enablePauseScreen
+                                  //               ? Container(
+                                  //                   height: screenHeight / 3,
+                                  //                   child: _buildControls(
+                                  //                     context,
+                                  //                     isPortrait,
+                                  //                     horizontalScale,
+                                  //                     verticalScale,
+                                  //                   ),
+                                  //                 )
+                                  //               : SizedBox(),
+                                  //           _isBuffering && !enablePauseScreen
+                                  //               ? Center(
+                                  //                   heightFactor: 6.2,
+                                  //                   child: Container(
+                                  //                     width: 60,
+                                  //                     height: 60,
+                                  //                     child:
+                                  //                         CircularProgressIndicator(
+                                  //                       color: Color.fromARGB(
+                                  //                         114,
+                                  //                         255,
+                                  //                         255,
+                                  //                         255,
+                                  //                       ),
+                                  //                     ),
+                                  //                   ),
+                                  //                 )
+                                  //               : Container(),
+                                  //         ],
+                                  //       );
+                                  //     } else {
+                                  //       return Container(
+                                  //         height: screenHeight / 3,
+                                  //         child: Center(
+                                  //           child: CircularProgressIndicator(
+                                  //             color: Color(0xFF7860DC),
+                                  //           ),
+                                  //         ),
+                                  //       );
+                                  //     }
+                                  //   },
+                                  // ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 15.0),
                                     child: Text(
@@ -2240,206 +2340,206 @@ List videos=[];
   }
 
 
-  Widget _buildControls(
-    BuildContext context,
-    bool isPortrait,
-    double horizontalScale,
-    double verticalScale,
-  ) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    return InkWell(
-      onTap: () {
-        setState(() {
-          enablePauseScreen = !enablePauseScreen;
-        });
-      },
-      child: Container(
-        height: screenHeight / 3,
-        width: screenWidth,
-        color: Color.fromARGB(114, 0, 0, 0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ListTile(
-              title: Text(
-                videoTitle.toString() != 'null' ? videoTitle.toString() : '',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                ),
-              ),
-              trailing: InkWell(
-                onTap: () {
-                  showSettingsBottomsheet(
-                    context,
-                    horizontalScale,
-                    verticalScale,
-                    _videoController!,
-                  );
-                  // var directory = await getApplicationDocumentsDirectory();
-                  // download(
-                  //   dio: Dio(),
-                  //   fileName: data!['name'],
-                  //   url: data!['url'],
-                  //   savePath:
-                  //       "${directory.path}/${data!['name'].replaceAll(' ', '')}.mp4",
-                  //   topicName: data!['name'],
-                  // );
-                  // print(directory.path);
-                },
-                child: Icon(
-                  Icons.settings,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            ValueListenableBuilder(
-              valueListenable: _currentVideoIndex,
-              builder: (context, value, child) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _currentVideoIndex.value >= 1
-                        ? InkWell(
-                            onTap: () {
-                              VideoScreen.currentSpeed.value = 1.0;
-                              _currentVideoIndex.value--;
-                              initializeVidController(
-                                  _listOfVideoDetails[_currentVideoIndex.value]
-                                      .videoUrl,
-                                  _listOfVideoDetails[_currentVideoIndex.value]
-                                      .videoTitle,
-                                  "",
-                                  "",
-                                  "");
-                            },
-                            child: Icon(
-                              Icons.skip_previous_rounded,
-                              color: Colors.white,
-                              size: 40,
-                            ),
-                          )
-                        : SizedBox(),
-                    replay10(
-                      videoController: _videoController,
-                    ),
-                    !_isBuffering
-                        ? InkWell(
-                            onTap: () {
-                              if (_isPlaying) {
-                                setState(() {
-                                  _videoController!.pause();
-                                });
-                              } else {
-                                setState(() {
-                                  enablePauseScreen = !enablePauseScreen;
-                                  _videoController!.play();
-                                });
-                              }
-                            },
-                            child: Icon(
-                              _isPlaying ? Icons.pause : Icons.play_arrow,
-                              color: Colors.white,
-                              size: 50,
-                            ),
-                          )
-                        : CircularProgressIndicator(
-                            color: Color.fromARGB(
-                              114,
-                              255,
-                              255,
-                              255,
-                            ),
-                          ),
-                    fastForward10(
-                      videoController: _videoController,
-                    ),
-                    _currentVideoIndex.value < _listOfVideoDetails.length - 1
-                        ? InkWell(
-                            onTap: () {
-                              VideoScreen.currentSpeed.value = 1.0;
-                              _currentVideoIndex.value++;
-                              initializeVidController(
-                                  _listOfVideoDetails[_currentVideoIndex.value]
-                                      .videoUrl,
-                                  _listOfVideoDetails[_currentVideoIndex.value]
-                                      .videoTitle,
-                                  "",
-                                  "",
-                                  "");
-                            },
-                            child: Icon(
-                              Icons.skip_next_rounded,
-                              color: Colors.white,
-                              size: 40,
-                            ),
-                          )
-                        : SizedBox(),
-                  ],
-                );
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                children: [
-                  Container(
-                    height: 10,
-                    child: VideoProgressIndicator(
-                      _videoController!,
-                      allowScrubbing: true,
-                      colors: VideoProgressColors(
-                        backgroundColor: Color.fromARGB(74, 255, 255, 255),
-                        bufferedColor: Color(0xFFC0AAF5),
-                        playedColor: Color(0xFF7860DC),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          timeElapsedString(),
-                          Text(
-                            '/${_videoController!.value.duration.toString().substring(2, 7)}',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            menuClicked = !menuClicked;
-                          });
-                          if (menuClicked) {
-                            html.document.documentElement?.requestFullscreen();
-                          } else {
-                            html.document.exitFullscreen();
-                            streamVideoData();
-                          }
-                        },
-                        icon: Icon(
-                          menuClicked
-                              ? Icons.fullscreen_exit_rounded
-                              : Icons.fullscreen_rounded,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildControls(
+  //   BuildContext context,
+  //   bool isPortrait,
+  //   double horizontalScale,
+  //   double verticalScale,
+  // ) {
+  //   final screenHeight = MediaQuery.of(context).size.height;
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   return InkWell(
+  //     onTap: () {
+  //       setState(() {
+  //         enablePauseScreen = !enablePauseScreen;
+  //       });
+  //     },
+  //     child: Container(
+  //       height: screenHeight / 3,
+  //       width: screenWidth,
+  //       color: Color.fromARGB(114, 0, 0, 0),
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           ListTile(
+  //             title: Text(
+  //               videoTitle.toString() != 'null' ? videoTitle.toString() : '',
+  //               textAlign: TextAlign.center,
+  //               style: TextStyle(
+  //                 color: Colors.white,
+  //                 fontSize: 15,
+  //               ),
+  //             ),
+  //             trailing: InkWell(
+  //               onTap: () {
+  //                 showSettingsBottomsheet(
+  //                   context,
+  //                   horizontalScale,
+  //                   verticalScale,
+  //                   _videoController!,
+  //                 );
+  //                 // var directory = await getApplicationDocumentsDirectory();
+  //                 // download(
+  //                 //   dio: Dio(),
+  //                 //   fileName: data!['name'],
+  //                 //   url: data!['url'],
+  //                 //   savePath:
+  //                 //       "${directory.path}/${data!['name'].replaceAll(' ', '')}.mp4",
+  //                 //   topicName: data!['name'],
+  //                 // );
+  //                 // print(directory.path);
+  //               },
+  //               child: Icon(
+  //                 Icons.settings,
+  //                 color: Colors.white,
+  //               ),
+  //             ),
+  //           ),
+  //           ValueListenableBuilder(
+  //             valueListenable: _currentVideoIndex,
+  //             builder: (context, value, child) {
+  //               return Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //                 children: [
+  //                   _currentVideoIndex.value >= 1
+  //                       ? InkWell(
+  //                           onTap: () {
+  //                             VideoScreen.currentSpeed.value = 1.0;
+  //                             _currentVideoIndex.value--;
+  //                             initializeVidController(
+  //                                 _listOfVideoDetails[_currentVideoIndex.value]
+  //                                     .videoUrl,
+  //                                 _listOfVideoDetails[_currentVideoIndex.value]
+  //                                     .videoTitle,
+  //                                 "",
+  //                                 "",
+  //                                 "");
+  //                           },
+  //                           child: Icon(
+  //                             Icons.skip_previous_rounded,
+  //                             color: Colors.white,
+  //                             size: 40,
+  //                           ),
+  //                         )
+  //                       : SizedBox(),
+  //                   replay10(
+  //                     videoController: _videoController,
+  //                   ),
+  //                   !_isBuffering
+  //                       ? InkWell(
+  //                           onTap: () {
+  //                             if (_isPlaying) {
+  //                               setState(() {
+  //                                 _videoController!.pause();
+  //                               });
+  //                             } else {
+  //                               setState(() {
+  //                                 enablePauseScreen = !enablePauseScreen;
+  //                                 _videoController!.play();
+  //                               });
+  //                             }
+  //                           },
+  //                           child: Icon(
+  //                             _isPlaying ? Icons.pause : Icons.play_arrow,
+  //                             color: Colors.white,
+  //                             size: 50,
+  //                           ),
+  //                         )
+  //                       : CircularProgressIndicator(
+  //                           color: Color.fromARGB(
+  //                             114,
+  //                             255,
+  //                             255,
+  //                             255,
+  //                           ),
+  //                         ),
+  //                   fastForward10(
+  //                     videoController: _videoController,
+  //                   ),
+  //                   _currentVideoIndex.value < _listOfVideoDetails.length - 1
+  //                       ? InkWell(
+  //                           onTap: () {
+  //                             VideoScreen.currentSpeed.value = 1.0;
+  //                             _currentVideoIndex.value++;
+  //                             initializeVidController(
+  //                                 _listOfVideoDetails[_currentVideoIndex.value]
+  //                                     .videoUrl,
+  //                                 _listOfVideoDetails[_currentVideoIndex.value]
+  //                                     .videoTitle,
+  //                                 "",
+  //                                 "",
+  //                                 "");
+  //                           },
+  //                           child: Icon(
+  //                             Icons.skip_next_rounded,
+  //                             color: Colors.white,
+  //                             size: 40,
+  //                           ),
+  //                         )
+  //                       : SizedBox(),
+  //                 ],
+  //               );
+  //             },
+  //           ),
+  //           Padding(
+  //             padding: const EdgeInsets.symmetric(horizontal: 10),
+  //             child: Column(
+  //               children: [
+  //                 Container(
+  //                   height: 10,
+  //                   child: VideoProgressIndicator(
+  //                     _videoController!,
+  //                     allowScrubbing: true,
+  //                     colors: VideoProgressColors(
+  //                       backgroundColor: Color.fromARGB(74, 255, 255, 255),
+  //                       bufferedColor: Color(0xFFC0AAF5),
+  //                       playedColor: Color(0xFF7860DC),
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Row(
+  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                   children: [
+  //                     Row(
+  //                       children: [
+  //                         timeElapsedString(),
+  //                         Text(
+  //                           '/${_videoController!.value.duration.toString().substring(2, 7)}',
+  //                           style: TextStyle(
+  //                             color: Colors.white,
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     IconButton(
+  //                       onPressed: () {
+  //                         setState(() {
+  //                           menuClicked = !menuClicked;
+  //                         });
+  //                         if (menuClicked) {
+  //                           html.document.documentElement?.requestFullscreen();
+  //                         } else {
+  //                           html.document.exitFullscreen();
+  //                           streamVideoData();
+  //                         }
+  //                       },
+  //                       icon: Icon(
+  //                         menuClicked
+  //                             ? Icons.fullscreen_exit_rounded
+  //                             : Icons.fullscreen_rounded,
+  //                         color: Colors.white,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Column _buildPartition(
       BuildContext context, double horizontalScale, double verticalScale) {
@@ -2511,7 +2611,7 @@ List videos=[];
     return InkWell(
       onTap: () {
         setState(() {
-          _videoController!.pause();
+          // _videoController!.pause();
           showAssignmentBottomSheet(
             context,
             horizontalScale,
@@ -2689,15 +2789,19 @@ List videos=[];
 
                                                     selectedIndexOfVideo =
                                                         index1;
-                                                    VideoScreen.currentSpeed
-                                                        .value = 1.0;
+                                                        // initPlayer(valueMap['data']);
+                                                        //  iFrameKey.currentState!.setState(() {
+                                                           
+                                                        //  });;
+                                                    // VideoScreen.currentSpeed
+                                                    //     .value = 1.0;
 
-                                                    initializeVidController(
-                                                        valueMap['data'],
-                                                        valueMap['name'],
-                                                        "",
-                                                        "",
-                                                        "");
+                                                    // initializeVidController(
+                                                        // valueMap['data'],
+                                                        // valueMap['name'],
+                                                        // "",
+                                                        // "",
+                                                    //     "");
                                                   } else {
                                                     setState(() {
                                                       htmltext =
@@ -3035,28 +3139,39 @@ List videos=[];
                                                   totalDuration = 0;
                                                 });
 
-                                                VideoScreen.currentSpeed.value =
-                                                    1.0;
-                                                initializeVidController(
-                                                    listOfSectionData[widget.courseName][sectionIndex]["videos"]
-                                                                [subsectionIndex]
-                                                            ["url"]
-                                                        .toString(),
-                                                    listOfSectionData[widget.courseName][sectionIndex]
-                                                                ["videos"][subsectionIndex]
-                                                            ["name"]
-                                                        .toString(),
-                                                    listOfSectionData[widget.courseName]
-                                                                [sectionIndex]
-                                                            ["modulename"]
-                                                        .toString(),
-                                                    listOfSectionData[widget.courseName]
-                                                            [sectionIndex]["id"]
-                                                        .toString(),
-                                                    listOfSectionData[widget.courseName]
-                                                                [sectionIndex]["videos"]
-                                                            [subsectionIndex]["id"]
-                                                        .toString());
+                                                 // On Vid Change
+    
+    
+     initPlayer(listOfSectionData[widget.courseName][sectionIndex]["videos"]
+                                                                  [subsectionIndex]
+                                                              ["weburl"]
+                                                          .toString());
+                                                         iFrameKey.currentState!.setState(() {
+                                                           
+                                                         });;
+
+                                                // VideoScreen.currentSpeed.value =
+                                                //     1.0;
+                                                // initializeVidController(
+                                                //     listOfSectionData[widget.courseName][sectionIndex]["videos"]
+                                                //                 [subsectionIndex]
+                                                //             ["url"]
+                                                //         .toString(),
+                                                //     listOfSectionData[widget.courseName][sectionIndex]
+                                                //                 ["videos"][subsectionIndex]
+                                                //             ["name"]
+                                                //         .toString(),
+                                                //     listOfSectionData[widget.courseName]
+                                                //                 [sectionIndex]
+                                                //             ["modulename"]
+                                                //         .toString(),
+                                                //     listOfSectionData[widget.courseName]
+                                                //             [sectionIndex]["id"]
+                                                //         .toString(),
+                                                //     listOfSectionData[widget.courseName]
+                                                //                 [sectionIndex]["videos"]
+                                                //             [subsectionIndex]["id"]
+                                                //         .toString());
                                               } else if (listOfSectionData[widget
                                                                   .courseName]
                                                               [sectionIndex]
@@ -3258,7 +3373,7 @@ List videos=[];
                                                 print(subsectionIndex);
                                               },
                                               onTap: () {
-                                                _videoController!.pause();
+                                                // _videoController!.pause();
                                                 setState(() {
                                                   currentPlayingVideoName =
                                                       listOfSectionData[widget
@@ -3292,32 +3407,41 @@ List videos=[];
                                                         .toString();
                                                     totalDuration = 0;
                                                   });
-
-                                                  VideoScreen
-                                                      .currentSpeed.value = 1.0;
-
-                                                  initializeVidController(
-                                                      listOfSectionData[widget.courseName][sectionIndex]["videos"]
+                                                    // On Vid Change
+    
+    
+     initPlayer(listOfSectionData[widget.courseName][sectionIndex]["videos"]
                                                                   [subsectionIndex]
-                                                              ["url"]
-                                                          .toString(),
-                                                      listOfSectionData[widget.courseName]
-                                                                      [sectionIndex]["videos"]
-                                                                  [subsectionIndex]
-                                                              ["name"]
-                                                          .toString(),
-                                                      listOfSectionData[widget.courseName]
-                                                                  [sectionIndex]
-                                                              ["modulename"]
-                                                          .toString(),
-                                                      listOfSectionData[widget.courseName]
-                                                                  [sectionIndex]
-                                                              ["id"]
-                                                          .toString(),
-                                                      listOfSectionData[widget.courseName]
-                                                                  [sectionIndex]["videos"]
-                                                              [subsectionIndex]["id"]
+                                                              ["weburl"]
                                                           .toString());
+                                                         iFrameKey.currentState!.setState(() {
+                                                           
+                                                         });;
+                                                  // VideoScreen
+                                                  //     .currentSpeed.value = 1.0;
+
+                                                  // initializeVidController(
+                                                  //     listOfSectionData[widget.courseName][sectionIndex]["videos"]
+                                                  //                 [subsectionIndex]
+                                                  //             ["url"]
+                                                  //         .toString(),
+                                                  //     listOfSectionData[widget.courseName]
+                                                  //                     [sectionIndex]["videos"]
+                                                  //                 [subsectionIndex]
+                                                  //             ["name"]
+                                                  //         .toString(),
+                                                  //     listOfSectionData[widget.courseName]
+                                                  //                 [sectionIndex]
+                                                  //             ["modulename"]
+                                                  //         .toString(),
+                                                  //     listOfSectionData[widget.courseName]
+                                                  //                 [sectionIndex]
+                                                  //             ["id"]
+                                                  //         .toString(),
+                                                  //     listOfSectionData[widget.courseName]
+                                                  //                 [sectionIndex]["videos"]
+                                                  //             [subsectionIndex]["id"]
+                                                  //         .toString());
                                                 } else if (listOfSectionData[widget
                                                                     .courseName]
                                                                 [sectionIndex]
@@ -3583,13 +3707,50 @@ List videos=[];
                                                                               [
                                                                               listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] !=
                                                                           null) {
-                                                                        return Text(
-                                                                          _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()].toString() +
-                                                                              "%",
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              fontSize: 14,
-                                                                              color: _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] == 100 ? Colors.green : Colors.black),
+                                                                        return Row(
+                                                                          children: [
+
+                                                                            Text(
+                                                                              _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()].toString() +
+                                                                                  "%",
+                                                                              style: TextStyle(
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                  fontSize: 14,
+                                                                                  color: _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] == 100 ? Colors.green : Colors.black),
+                                                                            ),
+                                                                             //UI
+      
+      
+      Tooltip(
+                                                                              message: 'Mark This Viseo As Complete',
+                                                                              child: Checkbox(
+                                                                                  checkColor: _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] == 100 ? Colors.white : Colors.white,
+                                                                                  fillColor: 
+                                                                                   _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] == 100 ?
+                                                                                  
+                                                                                  MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                                                                                if (states.contains(MaterialState.disabled)) {
+                                                                                  return 
+                                                                                   Colors.green ;
+                                                                                }
+                                                                                return 
+                                                                                Colors.green ;
+                                                                              }) : null,
+                                                                              
+                                                                            
+                                                                                  
+                                                                                  value: _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] == 100 ? true : false,
+                                                                                  shape: CircleBorder(),
+                                                                                  onChanged: (bool? value) {
+                                                                                    setState(() {
+                                                                                        _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] = 100 ;
+                                                                                  
+                                                             updateVideoProgress(_getVideoPercentageList);
+                                                                                    });
+                                                                                  },
+                                                                                ),
+                                                                            )
+                                                                          ],
                                                                         );
                                                                         // ,
                                                                         // );
@@ -3846,7 +4007,7 @@ List videos=[];
                             })),
                       ),
 
-                      _switchValue?sectionIndex ==
+                      true?sectionIndex ==
                               listOfSectionData[widget.courseName].length - 1
                           ? coursequiz.runtimeType != Null
                               ? Padding(
@@ -3858,12 +4019,20 @@ List videos=[];
                                         color:
                                             Color.fromARGB(255, 255, 255, 255),
                                         child: ExpansionTile(
-                                          title: Text(
-                                            'Quizes',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                          title: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'Certificate Quiz',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                               _switchValue?Icon(Icons.lock_open):Icon(Icons.lock)
+                                            ],
                                           ),
-                                          children: List.generate(
+
+                                          children: _switchValue? List.generate(
                                             coursequiz.length,
                                             (index1) {
                                               // print("ppppp ${valueMap}");
@@ -3900,9 +4069,16 @@ List videos=[];
                                                 ],
                                               );
                                             },
-                                          ),
+                                          ):[Container(
+                                            child: Center(
+                                              child: Text("You need to clear all the quiz of this course to unlock this certificate quiz!",style: TextStyle(color: Colors.red),),
+                                            ),
+                                          )],
+                                          
                                         ),
+                                        
                                       ),
+                                     
                                     ],
                                   ),
                                 )

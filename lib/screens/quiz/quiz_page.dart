@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/MyAccount/myaccount.dart';
 import 'package:cloudyml_app2/screens/quiz/quizsolution.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import '../../global_variable.dart' as globals;
 import 'certificate_api.dart';
 import 'model/certificatemodel.dart';
 import 'model/quiztrackmodel.dart';
@@ -117,6 +117,13 @@ class _QuizPageState extends State<QuizPage> {
       print("errorid: ff93u98e9w: ${e}");
     }
 
+    if(globals.quizCleared){
+      if(total >= coursequizpassingpercentage || total >= modulequizpassingpercentage){
+        return "Congratulations!";
+      }else{
+        return "Sorry, you didn't clear the quiz but it won't affect your result";
+      }
+    }
     // course quiz cleared condition
     try {
       if (total >= coursequizpassingpercentage &&
@@ -347,21 +354,25 @@ class _QuizPageState extends State<QuizPage> {
       print("****************");
       print(widget.quizdata['courseName']);
       print("the course id is-----lklklkl$courseid");
-
-      var resultString =
+      
+     
+var resultString =
           await handlingCasesAccoridingToTotal(total, quizdata, courseid);
-
-      if (resultString == "Congratulations!") {
-        CertificateModel Model = CertificateModel(
-            uid: FirebaseAuth.instance.currentUser!.uid,
-            name: userName,
-            course: courseid,
-            finishdate: DateTime.now().day.toString() +
-                "-" +
-                DateTime.now().month.toString() +
-                "-" +
-                DateTime.now().year.toString());
-        await certificateApi.getCertificate(Model);
+      
+      
+      if (widget.quizdata['quizlevel'] == "courselevel") {
+        if (resultString == "Congratulations!") {
+          CertificateModel Model = CertificateModel(
+              uid: FirebaseAuth.instance.currentUser!.uid,
+              name: userName,
+              course: courseid,
+              finishdate: DateTime.now().day.toString() +
+                  "-" +
+                  DateTime.now().month.toString() +
+                  "-" +
+                  DateTime.now().year.toString());
+          await certificateApi.getCertificate(Model);
+        }
       }
 
       await FirebaseFirestore.instance.collection("quizTaken").add({
@@ -384,7 +395,12 @@ class _QuizPageState extends State<QuizPage> {
         context,
         MaterialPageRoute(
             builder: (context) => CongratulationsWidget(
-                quizdata, total, unanswered, wronganswered, correctint, widget.quizdata,
+                quizdata,
+                total,
+                unanswered,
+                wronganswered,
+                correctint,
+                widget.quizdata,
                 resultString)),
       );
       // Navigator.push(

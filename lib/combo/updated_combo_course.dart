@@ -455,7 +455,7 @@ class _NewScreenState extends State<NewScreen> {
                                                                                       courseId = courseList[index].courseDocumentId;
                                                                                     });
                                                                                     GoRouter.of(context).pushNamed('comboVideoScreen', queryParams: {
-                                                                                      'courseName': courseList[index].courseName,
+                                                                                      'courseName': courseList[index].curriculum.keys.toList().first.toString(),
                                                                                       'cID': courseList[index].courseDocumentId,
                                                                                     });
                                                                                   },
@@ -499,7 +499,8 @@ class _NewScreenState extends State<NewScreen> {
                                                                                           courseId = courseList[index].courseDocumentId;
                                                                                         });
                                                                                         GoRouter.of(context).pushNamed('comboVideoScreen', queryParams: {
-                                                                                          'courseName': courseList[index].courseName,
+                                                                                          'courseName': courseList[index]
+                                                          .curriculum.keys.toList().first.toString(),
                                                                                           'cID': courseList[index].courseDocumentId,
                                                                                         });
                                                                                       },
@@ -585,7 +586,8 @@ class _NewScreenState extends State<NewScreen> {
                                                                                       courseId = courseList[index].courseDocumentId;
                                                                                     });
                                                                                     GoRouter.of(context).pushNamed('comboVideoScreen', queryParams: {
-                                                                                      'courseName': courseList[index].courseName,
+                                                                                      'courseName': courseList[index]
+                                                          .curriculum.keys.toList().first.toString(),
                                                                                       'cID': courseList[index].courseDocumentId,
                                                                                     });
                                                                                   },
@@ -630,7 +632,7 @@ class _NewScreenState extends State<NewScreen> {
                                                                                           courseId = courseList[index].courseDocumentId;
                                                                                         });
                                                                                         GoRouter.of(context).pushNamed('comboVideoScreen', queryParams: {
-                                                                                          'courseName': courseList[index].courseName,
+                                                                                          'courseName': courseList[index].curriculum.keys.toList().first.toString(),
                                                                                           'cID': courseList[index].courseDocumentId,
                                                                                         });
                                                                                       },
