@@ -248,6 +248,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> _pickFilePhoto() async {
+    print("good");
     final html.FileUploadInputElement uploadInput =
         html.FileUploadInputElement();
     uploadInput.accept =
@@ -446,7 +447,7 @@ class _ChatPageState extends State<ChatPage> {
     if (!notificationShown && html.Notification.supported) {
       html.Notification.requestPermission().then((permission) {
         if (permission == 'granted') {
-         html.Notification(title, body: body, icon: icon);
+          html.Notification(title, body: body, icon: icon);
           notificationShown = true;
         }
       });
@@ -581,7 +582,7 @@ class _ChatPageState extends State<ChatPage> {
                         "${change.doc["student_name"]} has a new message",
                         "assets/icon.jpeg");
                   }
-                    notificationShown = true;
+                  notificationShown = true;
                 } else {
                   _updatedDocuments.add(change.doc.id);
                   print(_updatedDocuments);
@@ -1296,10 +1297,8 @@ class _MessageBubbleState extends State<MessageBubble> {
   // bool _isPlaying = false; // <-- track whether the audio is playing
   // AudioPlayer _audioPlayer =
   //     AudioPlayer(); // <-- create an instance of AudioPlayer
-  void copyText(String text) async{
-
-    FlutterClipboard.copy(text).then(( value ) =>
-                              print('copied'));
+  void copyText(String text) async {
+    FlutterClipboard.copy(text).then((value) => print('copied'));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Text copied to clipboard')),
     );
@@ -1620,7 +1619,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
 
   void _initializeAudioPlayer() async {
-    await _audioPlayer.open(Audio.network(widget.audioUrl),autoStart: false);
+    await _audioPlayer.open(Audio.network(widget.audioUrl), autoStart: false);
 
     _audioPlayer.current.listen((Playing playing) {
       setState(() {
