@@ -1,14 +1,16 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'dart:html' as html;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:audioplayers/audioplayers.dart';
+
 import 'package:wave/wave.dart';
 import 'package:wave/config.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:clipboard_manager/clipboard_manager.dart';
+//import 'package:clipboard_manager/clipboard_manager.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
@@ -438,11 +440,14 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
+  bool notificationShown = false;
+
   void displayWebNotification(String title, String body, String icon) {
-    if (html.Notification.supported) {
+    if (!notificationShown && html.Notification.supported) {
       html.Notification.requestPermission().then((permission) {
         if (permission == 'granted') {
-          final notification = html.Notification(title, body: body, icon: icon);
+         html.Notification(title, body: body, icon: icon);
+          notificationShown = true;
         }
       });
     }
@@ -526,71 +531,69 @@ class _ChatPageState extends State<ChatPage> {
     //  _filteredStream = _collectionStream;
     namecurrent = data!["name"].split(" ")[0];
     ;
-   
+
     _updatedDocuments = Set<String>();
-  role=="student"?_collectionStream1.listen((snapshot) async {
-      snapshot.docChanges.forEach((change) {
-        if (change.type == DocumentChangeType.modified
-            ) {
-          DocumentSnapshot changedDoc = change.doc;
-          Map<String, dynamic> changedData =
-              changedDoc.data() as Map<String, dynamic>;
-          if (changedData.containsKey("last")) {
-            if (change.doc["last"].toString() ==
-                FirebaseAuth.instance.currentUser!.uid.toString()) {
-            } else {
-              _updatedDocuments.add(change.doc.id);
-              print(_updatedDocuments);
-              displayWebNotification(
-                  "New Message",
-                  "${change.doc["student_name"]} has a new message",
-                  "assets/icon.jpeg");
+    role == "student"
+        ? _collectionStream1.listen((snapshot) async {
+            snapshot.docChanges.forEach((change) {
+              if (change.type == DocumentChangeType.modified) {
+                DocumentSnapshot changedDoc = change.doc;
+                Map<String, dynamic> changedData =
+                    changedDoc.data() as Map<String, dynamic>;
+                if (changedData.containsKey("last")) {
+                  if (change.doc["last"].toString() ==
+                      FirebaseAuth.instance.currentUser!.uid.toString()) {
+                  } else {
+                    _updatedDocuments.add(change.doc.id);
+                    print(_updatedDocuments);
+                    displayWebNotification(
+                        "New Message",
+                        "${change.doc["student_name"]} has a new message",
+                        "assets/icon.jpeg");
+                  }
+                  notificationShown = true;
+                } else {
+                  _updatedDocuments.add(change.doc.id);
+                  print(_updatedDocuments);
+                }
+              } else if (change.type == DocumentChangeType.added) {
+                newdocuments.add(change.doc.id);
+              }
+            });
+            if (_updatedDocuments.isNotEmpty) {
+              await unread.saveunread(_updatedDocuments);
             }
-          } else {
-            _updatedDocuments.add(change.doc.id);
-            print(_updatedDocuments);
-          
-          }
-        } else if (change.type == DocumentChangeType.added) {
-          newdocuments.add(change.doc.id);
-        }
-      });
-      if (_updatedDocuments.isNotEmpty) {
-          await unread.saveunread(_updatedDocuments);
-        
-      }
-    }):_collectionStream.listen((snapshot) async {
-      snapshot.docChanges.forEach((change) {
-        if (change.type == DocumentChangeType.modified
-            ) {
-          DocumentSnapshot changedDoc = change.doc;
-          Map<String, dynamic> changedData =
-              changedDoc.data() as Map<String, dynamic>;
-          if (changedData.containsKey("last")) {
-            if (change.doc["last"].toString() ==
-                FirebaseAuth.instance.currentUser!.uid.toString()) {
-            } else {
-              _updatedDocuments.add(change.doc.id);
-              print(_updatedDocuments);
-              displayWebNotification(
-                  "New Message",
-                  "${change.doc["student_name"]} has a new message",
-                  "assets/icon.jpeg");
+          })
+        : _collectionStream.listen((snapshot) async {
+            snapshot.docChanges.forEach((change) {
+              if (change.type == DocumentChangeType.modified) {
+                DocumentSnapshot changedDoc = change.doc;
+                Map<String, dynamic> changedData =
+                    changedDoc.data() as Map<String, dynamic>;
+                if (changedData.containsKey("last")) {
+                  if (change.doc["last"].toString() ==
+                      FirebaseAuth.instance.currentUser!.uid.toString()) {
+                  } else {
+                    _updatedDocuments.add(change.doc.id);
+                    print(_updatedDocuments);
+                    displayWebNotification(
+                        "New Message",
+                        "${change.doc["student_name"]} has a new message",
+                        "assets/icon.jpeg");
+                  }
+                    notificationShown = true;
+                } else {
+                  _updatedDocuments.add(change.doc.id);
+                  print(_updatedDocuments);
+                }
+              } else if (change.type == DocumentChangeType.added) {
+                newdocuments.add(change.doc.id);
+              }
+            });
+            if (_updatedDocuments.isNotEmpty) {
+              await unread.saveunread(_updatedDocuments);
             }
-          } else {
-            _updatedDocuments.add(change.doc.id);
-            print(_updatedDocuments);
-          
-          }
-        } else if (change.type == DocumentChangeType.added) {
-          newdocuments.add(change.doc.id);
-        }
-      });
-      if (_updatedDocuments.isNotEmpty) {
-          await unread.saveunread(_updatedDocuments);
-        
-      }
-    });
+          });
 
     setState(() {
       isLoading = false;
@@ -644,17 +647,19 @@ class _ChatPageState extends State<ChatPage> {
       },
     );
   }
- Future readunread()  async{
+
+  Future readunread() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
 
     if (_prefs.containsKey("myList")) {
       var myList = _prefs.getStringList('myList');
       //return cache;
     } else {
-     // return null;
+      // return null;
     }
   }
-    Future<String> loadrole() async {
+
+  Future<String> loadrole() async {
     final snapshot = await _firestore
         .collection("Users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -667,6 +672,7 @@ class _ChatPageState extends State<ChatPage> {
     // print(name);
     return role;
   }
+
   List<String>? myList;
   @override
   void initState() {
@@ -674,12 +680,12 @@ class _ChatPageState extends State<ChatPage> {
     loadrole();
     //Configuration.docid = "";
     print("iwejoiweofwoiefwf");
- readunread() ;
-      if (myList != null) {
-        _updatedDocuments = myList!.toSet();
-      } else {
-        _updatedDocuments = Set<String>();
-      }
+    readunread();
+    if (myList != null) {
+      _updatedDocuments = myList!.toSet();
+    } else {
+      _updatedDocuments = Set<String>();
+    }
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       listenToFirestoreChanges();
     });
@@ -792,7 +798,9 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                   Expanded(
                       child: StreamBuilder<QuerySnapshot>(
-                    stream: role=="student"?_collectionStream1:_collectionStream,
+                    stream: role == "student"
+                        ? _collectionStream1
+                        : _collectionStream,
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (snapshot.hasError) {
@@ -1288,8 +1296,10 @@ class _MessageBubbleState extends State<MessageBubble> {
   // bool _isPlaying = false; // <-- track whether the audio is playing
   // AudioPlayer _audioPlayer =
   //     AudioPlayer(); // <-- create an instance of AudioPlayer
-  void copyText(String text) {
-    Clipboard.setData(ClipboardData(text: text));
+  void copyText(String text) async{
+
+    FlutterClipboard.copy(text).then(( value ) =>
+                              print('copied'));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Text copied to clipboard')),
     );
@@ -1522,7 +1532,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                             )
                           : widget.type == 'audio'
                               ? Container(
-                                  width: 100,
+                                  width: 300,
                                   child:
                                       AudioPlayerWidget(audioUrl: widget.link),
                                 )
@@ -1610,7 +1620,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
 
   void _initializeAudioPlayer() async {
-    await _audioPlayer.open(Audio.network(widget.audioUrl));
+    await _audioPlayer.open(Audio.network(widget.audioUrl),autoStart: false);
 
     _audioPlayer.current.listen((Playing playing) {
       setState(() {
@@ -1659,43 +1669,53 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: LinearProgressIndicator(
-            value: _totalDuration != Duration.zero
-                ? _currentPosition.inMilliseconds /
-                    _totalDuration.inMilliseconds
-                : 0.0,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-            backgroundColor: Colors.grey[300],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
+                    onPressed: _togglePlayback,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.stop),
+                    onPressed: _stop,
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(_formatDuration(_currentPosition)),
+                  SizedBox(width: 10),
+                  Text('/'),
+                  SizedBox(width: 10),
+                  Text(_formatDuration(_totalDuration)),
+                ],
+              ),
+            ],
           ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
-              onPressed: _togglePlayback,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: SizedBox(
+              width: 200,
+              child: LinearProgressIndicator(
+                value: _totalDuration != Duration.zero
+                    ? _currentPosition.inMilliseconds /
+                        _totalDuration.inMilliseconds
+                    : 0.0,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                backgroundColor: Colors.grey[300],
+              ),
             ),
-            IconButton(
-              icon: Icon(Icons.stop),
-              onPressed: _stop,
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(_formatDuration(_currentPosition)),
-            SizedBox(width: 10),
-            Text('/'),
-            SizedBox(width: 10),
-            Text(_formatDuration(_totalDuration)),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 }
