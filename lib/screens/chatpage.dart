@@ -597,7 +597,8 @@ class _ChatPageState extends State<ChatPage> {
                             itemBuilder: (BuildContext context, int index) {
                               DocumentSnapshot document =
                                   snapshot.data!.docs[index];
-
+                                   Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                                   
                               return GestureDetector(
                                 onTap: () {
                                   setState(() {
@@ -626,7 +627,9 @@ class _ChatPageState extends State<ChatPage> {
                                     width: 30.w,
                                     padding: EdgeInsets.fromLTRB(
                                         1.w, 0.2.h, 0.w, 0.2.h),
-                                    color: _updatedDocuments
+                                    color:
+                                 
+                                    _updatedDocuments
                                             .contains(document.id)
                                         ? Color.fromARGB(255, 157, 239, 159)
                                         : selectedTileIndex == document.id
@@ -734,6 +737,15 @@ class _ChatPageState extends State<ChatPage> {
                                                     ),
                                                   ),
                                                   Spacer(),
+                                                  !(data.containsKey('last'))?  Text(
+                                                    "NEW!!!",
+                                                    style: TextStyle(
+                                                      fontFamily: 'Inter',
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Color.fromARGB(255, 144, 5, 149),
+                                                    ),
+                                                  ):Spacer(),
                                                 ],
                                               ),
                                             ],
