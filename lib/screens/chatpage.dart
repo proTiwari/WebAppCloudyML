@@ -627,9 +627,7 @@ class _ChatPageState extends State<ChatPage> {
                                     width: 30.w,
                                     padding: EdgeInsets.fromLTRB(
                                         1.w, 0.2.h, 0.w, 0.2.h),
-                                    color:
-                                 
-                                    _updatedDocuments
+                                    color:_updatedDocuments
                                             .contains(document.id)
                                         ? Color.fromARGB(255, 157, 239, 159)
                                         : selectedTileIndex == document.id
