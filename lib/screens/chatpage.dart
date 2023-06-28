@@ -5,57 +5,21 @@ import 'package:flutter/material.dart';
 import 'dart:html' as html;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:audioplayers/audioplayers.dart';
-
-import 'package:wave/wave.dart';
-import 'package:wave/config.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-//import 'package:clipboard_manager/clipboard_manager.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-import '../Services/local_notificationservice.dart';
 import 'getunread.dart';
 import 'utils.dart';
 import 'dart:io';
-import 'dart:js' as js;
-import 'dart:typed_data';
-import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:html' as html;
-import 'package:webview_flutter/webview_flutter.dart';
-//import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:record/record.dart';
-import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
-import 'package:sizer/sizer.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'dart:io';
-import 'package:flutter/services.dart';
-import 'package:flutter/material.dart';
-//import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:open_filex/open_filex.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:video_player/video_player.dart';
-import 'package:chewie/chewie.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:dio/dio.dart';
-import 'package:path_provider/path_provider.dart';
 
 class ChatPage extends StatefulWidget {
 //  const ChatPage({Key key}) : super(key: key);
@@ -67,7 +31,7 @@ class ChatPage extends StatefulWidget {
 final List<String> items = List.generate(20, (index) => 'Item ${index + 1}');
 Future<void> handlePasteEvent() async {
   final data = await html.window.navigator.clipboard!.read();
-  if (data != null && data.files != null && data.files!.isNotEmpty) {
+  if (data.files != null && data.files!.isNotEmpty) {
     for (final file in data.files!) {
       if (file.type.startsWith('image/')) {
         final reader = html.FileReader();
@@ -81,7 +45,7 @@ Future<void> handlePasteEvent() async {
             firebase_storage.FirebaseStorage.instance.ref().child(
                   'chats/${DateTime.now().millisecondsSinceEpoch}.png',
                 );
-        final uploadTask = imageReference.putFile(File(pickedImage.path!));
+        final uploadTask = imageReference.putFile(File(pickedImage.path));
         final snapshot = await uploadTask;
         final imageUrl = await snapshot.ref.getDownloadURL();
 
@@ -101,9 +65,7 @@ class _ChatPageState extends State<ChatPage> {
   bool _isRecording = false;
   final FocusNode _focusNode = FocusNode();
   String id = FirebaseAuth.instance.currentUser!.uid;
-  ScrollController _scrollController = ScrollController();
   String? idcurr;
-  TextEditingController _searchController = TextEditingController();
   String namecurrent =
       FirebaseAuth.instance.currentUser!.displayName.toString().split(" ")[0];
   String selectedTileIndex = "";
@@ -111,18 +73,13 @@ class _ChatPageState extends State<ChatPage> {
   String time = "";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  File? _selectedFile;
-  String? _downloadUrl;
   //FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  FirebaseAuth _auth = FirebaseAuth.instance;
   //final _textController = TextEditingController();
   //late IO.Socket _socket;
   Record record = Record();
   Directory? appStorage;
   // bool _isRecording = false;
   //FlutterSoundRecorder _audioRecorder = FlutterSoundRecorder();
-  String _audioPath = 'path/to/audio/file.mp3';
-  final _firebaseStorage = FirebaseStorage.instance;
 
   File? pickedFile;
 
@@ -138,41 +95,6 @@ class _ChatPageState extends State<ChatPage> {
   Set<String> newdocuments = {};
 
   //String? pickedFileName;
-  void _getAppStorageDir() async {
-    appStorage = await getApplicationDocumentsDirectory();
-  }
-
-  Future<void> _startRecording() async {
-    _getAppStorageDir();
-    print("REcording....");
-    if (await Record().hasPermission()) {
-      setState(() {
-        _isRecording = true;
-      });
-
-      await record.start(
-        path: appStorage!.path.toString() +
-            "/audio_${DateTime.now().millisecondsSinceEpoch}.m4a",
-        encoder: AudioEncoder.aacLc,
-        bitRate: 128000,
-        samplingRate: 44100,
-      );
-    }
-  }
-
-  void _stopRecording() async {
-    if (_isRecording) {
-      var filePath = await Record().stop();
-      print("The audio file path is $filePath");
-      pickedFile = File(filePath!);
-      pickedFileName = filePath.split("/").last;
-      setState(() {
-        _isRecording = false;
-      });
-
-      _uploadRecording(pickedFile!);
-    }
-  }
 
   void _cancelRecording() async {
     if (_isRecording) {
@@ -185,13 +107,6 @@ class _ChatPageState extends State<ChatPage> {
         _isRecording = false;
       });
     }
-  }
-
-  Widget _buildMicButton() {
-    return IconButton(
-      icon: Icon(Icons.mic_none_rounded, color: Colors.purple),
-      onPressed: _startRecording,
-    );
   }
 
   void _onSearchTextChanged(String searchText) {
@@ -225,24 +140,11 @@ class _ChatPageState extends State<ChatPage> {
   //FirebaseFirestore _firestore = FirebaseFirestore.instance;
   void _sendMessage() async {
     if (_textController.text.isNotEmpty) {
-      String data = _textController.text;
-
       _focusNode.unfocus();
 
       final time = DateTime.now();
       updatelast();
       updatetime(time);
-      final post = await _firestore
-          .collection("groups")
-          .doc(idcurr)
-          .collection("chats")
-          .add({
-        'message': _textController.text,
-        'role': "mentor",
-        'sendBy': namecurrent,
-        'time': time,
-        'type': 'text'
-      });
     }
     _textController.clear();
   }
@@ -303,37 +205,6 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  Future<void> _pickFileRecord() async {
-    final imagePicker = ImagePicker();
-
-    final pickedFile = await imagePicker.getVideo(source: ImageSource.camera);
-    if (pickedFile != null) {
-      setState(() {
-        _selectedFile = File(pickedFile.path);
-      });
-
-      // Upload the file to Firebase Storage
-      Reference ref =
-          FirebaseStorage.instance.ref().child('files/${_selectedFile!.path}');
-      UploadTask uploadTask = ref.putFile(_selectedFile!);
-      TaskSnapshot snapshot = await uploadTask;
-      _downloadUrl = await snapshot.ref.getDownloadURL();
-      final time = DateTime.now();
-      // Add message to Firestore
-      updatelast();
-      updatetime(time);
-
-      _firestore.collection("groups").doc(idcurr).collection("chats").add({
-        'message': _selectedFile!.path.split('/').last,
-        'role': "mentor",
-        'sendBy': namecurrent,
-        'link': _downloadUrl,
-        'time': time,
-        'type': 'video'
-      });
-    }
-  }
-
   Future<void> _pickFilevideo() async {
     final html.FileUploadInputElement uploadInput =
         html.FileUploadInputElement();
@@ -389,7 +260,6 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  html.File? _selectedFile1;
   Future<void> _pickFileany() async {
     html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
     uploadInput.multiple = false;
@@ -419,10 +289,8 @@ class _ChatPageState extends State<ChatPage> {
             final TaskSnapshot snapshot = await uploadTask;
             final downloadUrl = await snapshot.ref.getDownloadURL();
             final time = DateTime.now();
-            // Add message to Firestore
             updatelast();
             updatetime(time);
-
             _firestore
                 .collection("groups")
                 .doc(idcurr)
@@ -454,33 +322,6 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  Future<String> _uploadRecording(File recording) async {
-    final storageRef =
-        _firebaseStorage.ref().child('audio/${DateTime.now()}.mp3');
-
-    try {
-      await storageRef.putFile(recording);
-      final downloadUrl = await storageRef.getDownloadURL();
-      print('File uploaded: $downloadUrl');
-      final time = DateTime.now();
-      updatelast();
-      updatetime(time);
-      _firestore.collection("groups").doc(idcurr).collection("chats").add({
-        'message': '${DateTime.now()}.mp3',
-        'role': "mentor",
-        'sendBy': namecurrent,
-        'link': downloadUrl,
-        'time': time,
-        'type': 'audio'
-      });
-
-      return downloadUrl;
-    } catch (e) {
-      print('Error uploading file: $e');
-      throw 'Failed to upload recording';
-    }
-  }
-
   void updatetime(DateTime time) {
     _firestore.collection("groups").doc(idcurr).update({'time': time});
   }
@@ -490,13 +331,6 @@ class _ChatPageState extends State<ChatPage> {
         .collection("groups")
         .doc(idcurr)
         .update({'last': FirebaseAuth.instance.currentUser!.uid.toString()});
-  }
-
-  Widget _buildStopRecordingButton() {
-    return IconButton(
-      icon: Icon(Icons.stop_rounded, color: Colors.red),
-      onPressed: _stopRecording,
-    );
   }
 
   Widget _buildCancelButton() {
@@ -519,20 +353,14 @@ class _ChatPageState extends State<ChatPage> {
       .snapshots();
   Stream<QuerySnapshot>? _messageStream;
   void listenToFirestoreChanges() async {
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-// savedTime = prefs.getInt('savedTime') ?? 0;
-
     final snapshot = await _firestore
         .collection("Users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get();
     final data = snapshot.data();
     role = data!["role"];
-    //   if (role != "student") {
-    //  _filteredStream = _collectionStream;
-    namecurrent = data!["name"].split(" ")[0];
+    namecurrent = data["name"].split(" ")[0];
     ;
-
     _updatedDocuments = Set<String>();
     role == "student"
         ? _collectionStream1.listen((snapshot) async {
@@ -610,22 +438,6 @@ class _ChatPageState extends State<ChatPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              //   ListTile(
-              //   leading: Icon(Icons.image),
-              //   title: Text('Click Photo'),
-              //   onTap: () {
-              //     Navigator.pop(context);
-              //     _pickFilePhoto();
-              //   },
-              // ),
-              //   ListTile(
-              //   leading: Icon(Icons.image),
-              //   title: Text('Record Video'),
-              //   onTap: () {
-              //     Navigator.pop(context);
-              //     _pickFileRecord();
-              //   },
-              // ),
               ListTile(
                 leading: Icon(Icons.image),
                 title: Text('Select Image'),
@@ -653,11 +465,7 @@ class _ChatPageState extends State<ChatPage> {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
 
     if (_prefs.containsKey("myList")) {
-      var myList = _prefs.getStringList('myList');
-      //return cache;
-    } else {
-      // return null;
-    }
+    } else {}
   }
 
   Future<String> loadrole() async {
@@ -687,40 +495,9 @@ class _ChatPageState extends State<ChatPage> {
     } else {
       _updatedDocuments = Set<String>();
     }
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       listenToFirestoreChanges();
     });
-  }
-
-  Future<void> _pickFile() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(type: FileType.image);
-
-    if (result != null) {
-      setState(() {
-        _selectedFile = File(result.files.single.path!);
-      });
-
-      // Upload the file to Firebase Storage
-      Reference ref =
-          FirebaseStorage.instance.ref().child('files/${_selectedFile!.path}');
-      UploadTask uploadTask = ref.putFile(_selectedFile!);
-      TaskSnapshot snapshot = await uploadTask;
-      _downloadUrl = await snapshot.ref.getDownloadURL();
-      final time = DateTime.now();
-      // Add message to Firestore
-      updatelast();
-      updatetime(time);
-
-      _firestore.collection("groups").doc(idcurr).collection("chats").add({
-        'message': _selectedFile!.path.split('/').last,
-        'role': "mentor",
-        'sendBy': namecurrent,
-        'link': _downloadUrl,
-        'time': time,
-        'type': 'image'
-      });
-    }
   }
 
   @override
@@ -1116,8 +893,8 @@ class _ChatPageState extends State<ChatPage> {
                               Container(
                                 width: 70.w,
                                 height: 75.h,
-                                child: Expanded(
-                                  child: StreamBuilder<QuerySnapshot>(
+                                child: 
+                                  StreamBuilder<QuerySnapshot>(
                                     stream: _messageStream,
                                     builder: (context, snapshot) {
                                       if (snapshot.hasError) {
@@ -1141,7 +918,6 @@ class _ChatPageState extends State<ChatPage> {
                                         final messageSender = message['sendBy'];
                                         final messageType = message['type'];
                                         final messagetime = message['time'];
-                                        final currentUser = id;
                                         final link = messageType == "image" ||
                                                 messageType == "audio" ||
                                                 messageType == "video" ||
@@ -1177,7 +953,7 @@ class _ChatPageState extends State<ChatPage> {
                                       );
                                     },
                                   ),
-                                ),
+                                
                               ),
                               Divider(),
                               Padding(
@@ -1190,25 +966,11 @@ class _ChatPageState extends State<ChatPage> {
                                       SizedBox(
                                         width: 1.w,
                                       ),
-                                      // _isRecording
-                                      //     ? _buildStopRecordingButton()
-                                      //     : _buildMicButton(),
+                                   
                                       _isRecording
                                           ? _buildCancelButton()
                                           : Expanded(
-                                              // child: RawKeyboardListener(
-                                              //   focusNode: FocusNode(),
-                                              //   onKey: (RawKeyEvent event) {
-                                              //     if (event.isKeyPressed(
-                                              //             LogicalKeyboardKey
-                                              //                 .controlLeft) &&
-                                              //         event.isKeyPressed(
-                                              //             LogicalKeyboardKey
-                                              //                 .keyV)) {
-                                              //       uploadImageFromClipboard();
-                                              //     }
-                                              //   },
-                                              //   child:
+                                           
                                               child: TextField(
                                                 maxLines: 1,
                                                 controller: _textController,
@@ -1310,14 +1072,6 @@ class _MessageBubbleState extends State<MessageBubble> {
         string.contains('www') ||
         string.contains('https', 0) ||
         string.contains('.com'));
-  }
-
-  void _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 
   @override
@@ -1596,20 +1350,17 @@ class AudioPlayerWidget extends StatefulWidget {
 }
 
 class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
-  Timer? _positionTimer;
-  final AssetsAudioPlayer _audioPlayer = AssetsAudioPlayer();
+  late AudioPlayer _audioPlayer;
   Duration _totalDuration = Duration.zero;
   Duration _currentPosition = Duration.zero;
   bool _isPlaying = false;
-  bool _isCompleted = false;
-  StreamSubscription<Duration>? _positionSubscription;
+  bool first = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _initializeAudioPlayer();
-    });
+    _audioPlayer = AudioPlayer();
+    _initializeAudioPlayer();
   }
 
   @override
@@ -1619,44 +1370,44 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
 
   void _initializeAudioPlayer() async {
-    await _audioPlayer.open(Audio.network(widget.audioUrl), autoStart: false);
+    await _audioPlayer.setSourceUrl(widget.audioUrl);
 
-    _audioPlayer.current.listen((Playing playing) {
+    _audioPlayer.onPositionChanged.listen((event) {
       setState(() {
-        _totalDuration = playing.audio.duration ?? Duration.zero;
-        _positionSubscription?.cancel(); // Cancel any existing subscription
-        _positionSubscription = _audioPlayer.currentPosition.listen((position) {
-          setState(() {
-            _currentPosition = position;
-          });
-        });
-      });
-    } as void Function(Playing? event)?);
-
-    _audioPlayer.isPlaying.listen((isPlaying) {
-      setState(() {
-        _isPlaying = isPlaying;
-        if (_isPlaying && _isCompleted) {
-          _isCompleted = false;
-          _audioPlayer.seek(Duration.zero);
-        }
+        _currentPosition = event;
       });
     });
+
+    _totalDuration = (await _audioPlayer.getDuration())!;
+
+    // _audioPlayer.onPlayerStateChanged.listen((event) {
+    //   setState(() {
+    //     _isPlaying = event == PlayerState.PLAYING;
+    //   });
+    // });
   }
 
   Future<void> _togglePlayback() async {
-    if (_isPlaying) {
-      await _audioPlayer.pause();
+    if (first) {
+      if (_isPlaying) {
+        await _audioPlayer.pause();
+        _isPlaying = !_isPlaying;
+      } else {
+        await _audioPlayer.resume();
+        _isPlaying = !_isPlaying;
+      }
     } else {
-      await _audioPlayer.play();
+      _audioPlayer.play(UrlSource(widget.audioUrl));
+      first = true;
+      _isPlaying = true;
     }
   }
 
   Future<void> _stop() async {
     await _audioPlayer.stop();
     setState(() {
-      _isCompleted = true;
       _currentPosition = Duration.zero;
+      first = false;
     });
   }
 
