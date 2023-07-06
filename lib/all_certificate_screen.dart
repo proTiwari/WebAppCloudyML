@@ -1,0 +1,135 @@
+import 'dart:typed_data';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloudyml_app2/screens/quiz/quiz_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:image_downloader_web/image_downloader_web.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart'
+    as PermissionHandler;
+import 'package:share_extend/share_extend.dart';
+
+class AllCertificateScreen extends StatefulWidget {
+  const AllCertificateScreen({Key? key}) : super(key: key);
+
+  @override
+  State<AllCertificateScreen> createState() => _AllCertificateScreenState();
+}
+
+class _AllCertificateScreenState extends State<AllCertificateScreen> {
+  String urlPDFPath = "";
+  bool exists = true;
+  int _totalPages = 0;
+  int _currentPage = 0;
+  bool pdfReady = false;
+  late PDFViewController _pdfViewController;
+  bool loaded = false;
+
+  Future<File> getFileFromUrl(String url, {name}) async {
+    setState(() {
+      loaded = true;
+    });
+    var fileName = 'testonline';
+    if (name != null) {
+      fileName = name;
+    }
+    try {
+      var data = await http.get(Uri.parse(url));
+      var bytes = data.bodyBytes;
+      var dir = await getApplicationDocumentsDirectory();
+      File file = File("${dir.path}/" + fileName + ".pdf");
+      print(dir.path);
+      File urlFile = await file.writeAsBytes(bytes);
+      return urlFile;
+    } catch (e) {
+      throw Exception("Error opening url file");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<Uint8List> downloadImageFromUrl(String imageUrl) async {
+    http.Response response = await http.get(Uri.parse(imageUrl));
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else {
+      throw Exception('Failed to download image: ${response.statusCode}');
+    }
+  }
+
+  List<dynamic> certificates = [];
+  List<String> paths = [];
+  List<String> pathurl = [];
+
+  Future<void> _downloadImage(image) async {
+    try {
+      print(image.replaceAll('"', ""));
+      await WebImageDownloader.downloadImageFromWeb(image);
+      // url.replaceAll('"', '');
+    } catch (e) {
+      print("the cer error is$e");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        body: Center(
+          child: StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("Users")
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .snapshots(), // Replace with your actual stream
+              builder: (BuildContext context, snapshot) {
+                print("snapshot : ssds ${snapshot.data}");
+                return ListView.builder(
+                  itemCount: snapshot.data!['certificates'].length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return snapshot.data!['certificates'][index]
+                            .contains('http')
+                        ? Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  height: 600,
+                                  width: 1000,
+                                  child: Image.network(
+                                      snapshot.data!['certificates'][index]),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    GestureDetector(
+                                        onTap: () {
+                                          print("aaaaaaaaaaaaaaaaaaaaaa");
+                                          _downloadImage(snapshot
+                                              .data!['certificates'][index]);
+                                        },
+                                        child: Icon(Icons.download_sharp)),
+                                  ],
+                                ),
+                              )
+                            ],
+                          )
+                        : Container();
+                  },
+                );
+              }),
+        ),
+      ),
+    );
+  }
+}
