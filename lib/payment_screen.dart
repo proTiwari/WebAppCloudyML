@@ -3,8 +3,6 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/globals.dart';
-import 'package:cloudyml_app2/models/course_details.dart';
-import 'package:cloudyml_app2/screens/chat_group.dart';
 import 'package:cloudyml_app2/screens/flutter_flow/flutter_flow_util.dart';
 import 'package:cloudyml_app2/widgets/coupon_code.dart';
 import 'package:cloudyml_app2/widgets/inter_payment_portal.dart';
