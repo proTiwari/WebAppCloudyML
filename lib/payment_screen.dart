@@ -1095,6 +1095,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                   borderSide: BorderSide.none),
                                               disabledBorder:
                                                   OutlineInputBorder(
+                                                  
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               5),
