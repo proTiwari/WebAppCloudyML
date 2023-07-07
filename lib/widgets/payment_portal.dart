@@ -289,7 +289,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   @override
   void initState() {
     // loadGroup();
-    print(widget.courseId);
+    print("ifjweoifjwojefowjoeifoi:oiwejfojiwoe:eofj: ${widget.courseId}");
     print(widget.courseName);
 
     getrzpkey();
@@ -482,7 +482,8 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
       var data = {
         "couponCode": "${widget.couponCode}",
         "uid": "${FirebaseAuth.instance.currentUser!.uid}",
-        "courseName": "${widget.courseName}"
+        "courseName": "${widget.courseName}",
+        "courseId": widget.courseId
       };
       var body = json.encode({"data": data});
       print(body);
