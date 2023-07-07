@@ -139,7 +139,8 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
         "sname": userData["name"],
         "sid": _auth.currentUser!.uid,
         "cname": widget.courseName,
-        "image": widget.courseImageUrl
+        "image": widget.courseImageUrl,
+        "cid" : widget.courseId
       }
       
       );
@@ -469,26 +470,26 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     pushToHome();
   }
 
-  void addCoursetoUser(String id) async {
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .update({
-      "paidCourseNames": FieldValue.arrayUnion([id]),
-      "paid": "true",
-    });
+  // void addCoursetoUser(String id) async {
+  //   await FirebaseFirestore.instance
+  //       .collection('Users')
+  //       .doc(FirebaseAuth.instance.currentUser!.uid)
+  //       .update({
+  //     "paidCourseNames": FieldValue.arrayUnion([id]),
+  //     "paid": "true",
+  //   });
 
-    print("course added");
+  //   print("course added");
 
 
-  }
+  // }
 
    Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
     await loadCourses();
     await redeemmoneyreward();
 
     Toast.show("Payment successful.");
-    addCoursetoUser(widget.courseId);
+    // addCoursetoUser(widget.courseId);
     
     pushToHome();
 
