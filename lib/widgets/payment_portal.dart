@@ -37,7 +37,8 @@ class PaymentButton extends StatefulWidget {
   final String outStandingAmountString;
   bool isItComboCourse;
   int coursePriceMoneyRef;
-
+  String couponCode;
+  bool couponcodeused;
   String courseId;
 
   // String courseFetchedId;
@@ -60,7 +61,9 @@ class PaymentButton extends StatefulWidget {
       required this.couponCodeText,
       required this.isItComboCourse,
       required this.whichCouponCode,
-      required this.coursePriceMoneyRef})
+      required this.coursePriceMoneyRef,
+      required this.couponcodeused,
+      required this.couponCode})
       : super(key: key);
 
   @override
@@ -106,13 +109,8 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   var key_id;
   var key_secret;
 
-
-  
-
-   loadCourses() async {
-
-
-     dynamic userData = {};
+  loadCourses() async {
+    dynamic userData = {};
     await _firestore
         .collection("Users")
         .doc(_auth.currentUser!.uid)
@@ -125,41 +123,33 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     });
     print("user data is==${userData["paidCourseNames"][0]}");
     print(courseId);
-    
 
     var url = Uri.parse(
-          'https://us-central1-cloudyml-app.cloudfunctions.net/adduser/addgroup');
+        'https://us-central1-cloudyml-app.cloudfunctions.net/adduser/addgroup');
 
- 
-    await  http.post(url, headers: {
-        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-        "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
-      },
-       body: {
-        "sname": userData["name"],
-        "sid": _auth.currentUser!.uid,
-        "cname": widget.courseName,
-        "image": widget.courseImageUrl
-      }
-      
-      );
+    await http.post(url, headers: {
+      "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+      "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
+    }, body: {
+      "sname": userData["name"],
+      "sid": _auth.currentUser!.uid,
+      "cname": widget.courseName,
+      "image": widget.courseImageUrl
+    });
 
+    var mailurl = Uri.parse(
+        'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/coursemail');
+    // final response =
+    await http.post(mailurl, headers: {
+      "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+      "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
+    }, body: {
+      "uid": _auth.currentUser!.uid,
+      "cname": widget.courseName,
+    });
 
-          var mailurl = Uri.parse(
-          'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/coursemail');
-      // final response =
-     await http.post(mailurl, headers: {
-        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-        "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
-      }, body: {
-        "uid": _auth.currentUser!.uid,
-        "cname": widget.courseName,
-      });
-
-      print("Mail Sent");
-  
+    print("Mail Sent");
   }
-
 
   // void loadCourses() async {
   //   setState(() {
@@ -300,7 +290,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   void initState() {
     // loadGroup();
     print(widget.courseId);
-        print(widget.courseName);
+    print(widget.courseName);
 
     getrzpkey();
     super.initState();
@@ -479,17 +469,55 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     });
 
     print("course added");
-
-
   }
 
-   Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
+  apicalltoupdatecouponinuser() async {
+    print('ytugggvyuuuuuuiiiiiiiiiiiiii');
+    try {
+      // get firebase id token for authentication
+      String? token = await FirebaseAuth.instance.currentUser!.getIdToken();
+      print("token: :${token}:");
+      var url = Uri.parse(
+          'https://us-central1-cloudyml-app.cloudfunctions.net/updateCouponsArrayWhenCourseIsPurchased');
+      var data = {
+        "couponCode": "${widget.couponCode}",
+        "uid": "${FirebaseAuth.instance.currentUser!.uid}",
+        "courseName": "${widget.courseName}"
+      };
+      var body = json.encode({"data": data});
+      print(body);
+      var response = await http.post(url, body: body, headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json"
+      });
+      print("iowefjwefwefwowe");
+
+      if (response.statusCode == 200) {
+        print('if success ${response.body}');
+      } else {
+        print("if unsuccessful ${response.body}");
+      }
+    } catch (e) {
+      print(e);
+      return "Failed to get coupon!";
+    }
+  }
+
+  Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
     await loadCourses();
     await redeemmoneyreward();
 
+    try {
+      if (widget.couponcodeused == true) {
+        await apicalltoupdatecouponinuser();
+      }
+    } catch (e) {
+      print("error id woiejiowie: ${e.toString()}");
+    }
+
     Toast.show("Payment successful.");
     addCoursetoUser(widget.courseId);
-    
+
     pushToHome();
 
     updateCouponDetailsToUser(
@@ -558,26 +586,23 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   void pushToHome() async {
     print('i am after payment1');
 
-    
-        // GoRouter.of(context).pushReplacementNamed('myCourses');
+    // GoRouter.of(context).pushReplacementNamed('myCourses');
 
-        final url;
-        if (widget.courseId == 'DEPAP1') {
-          // url = 'https://de.cloudyml.com/enrolled';
-          html.window.open('https://de.cloudyml.com/enrolled',"_self");
-        } else {
-          // url = 'https://ds.cloudyml.com/enrolled';
-          html.window.open('https://ds.cloudyml.com/enrolled',"_self");
-        }
+    final url;
+    if (widget.courseId == 'DEPAP1') {
+      // url = 'https://de.cloudyml.com/enrolled';
+      html.window.open('https://de.cloudyml.com/enrolled', "_self");
+    } else {
+      // url = 'https://ds.cloudyml.com/enrolled';
+      html.window.open('https://ds.cloudyml.com/enrolled', "_self");
+    }
 
-        // final uri = Uri.parse(url);
-        // // html.WindowBase _popup = 
-        // html.window.open(url,"_self");
-        // if (_popup.closed!) {
-        //   throw ("Popups blocked");
-        // }
-      
-    
+    // final uri = Uri.parse(url);
+    // // html.WindowBase _popup =
+    // html.window.open(url,"_self");
+    // if (_popup.closed!) {
+    //   throw ("Popups blocked");
+    // }
 
     // GoRouter.of(context).pushReplacementNamed('myCourses');
     // const url = 'https://www.cloudyml.com/tnkyu/';
@@ -777,7 +802,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                                   fontWeight: FontWeight.bold,
                                   height: 1),
                             ),
-                             Text(
+                            Text(
                               // widget.NoCouponApplied
                               //     ? widget.buttonText
                               //     : widget.buttonTextForCode,
