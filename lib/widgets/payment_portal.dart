@@ -465,7 +465,8 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   // }
 
    void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-     loadCourses();
+
+     await loadCourses();
      pushToHome();
 
     await redeemmoneyreward();
