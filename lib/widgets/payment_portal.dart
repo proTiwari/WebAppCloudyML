@@ -110,28 +110,9 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   
 
    loadCourses() async {
-
-
-     dynamic userData = {};
-    await _firestore
-        .collection("Users")
-        .doc(_auth.currentUser!.uid)
-        .get()
-        .then((value) {
-      // print("user data-- ${value.data()}");
-      setState(() {
-        userData = value.data();
-      });
-    });
-    print("user data is==${userData["paidCourseNames"][0]}");
-    print(courseId);
-    
-
     var url = Uri.parse(
           'https://us-central1-cloudyml-app.cloudfunctions.net/adduser/addgroup');
-
- 
-    await  http.post(url, headers: {
+  await  http.post(url, headers: {
         "Access-Control-Allow-Origin": "*", // Required for CORS support to work
         "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
       },
@@ -144,7 +125,6 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
       }
       
       );
-
 
           var mailurl = Uri.parse(
           'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/coursemail');
@@ -484,14 +464,16 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
 
   // }
 
-   Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    await loadCourses();
+   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+     loadCourses();
+     pushToHome();
+
     await redeemmoneyreward();
 
     Toast.show("Payment successful.");
     // addCoursetoUser(widget.courseId);
     
-    pushToHome();
+    
 
     updateCouponDetailsToUser(
       couponCodeText: widget.couponCodeText,
