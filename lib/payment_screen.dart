@@ -1280,6 +1280,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                       
                                                       RazorPayInternationalBtn(
                                                         courseDescription: courseMap['description'],
+                                                        international: false,
                                                         coursePriceMoneyRef:
                                                             int.parse(
                                                                 courseprice),
@@ -2384,6 +2385,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                       
                                                       RazorPayInternationalBtn(
                                                         courseDescription: courseMap['description'],
+                                                        international: false,
                                                         coursePriceMoneyRef:
                                                             int.parse(
                                                                 courseprice),
