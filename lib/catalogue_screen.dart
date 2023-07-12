@@ -132,6 +132,7 @@ class _CatelogueScreenState extends State<CatelogueScreen>
     } catch (e) {}
   }
 
+  var international;
   Map<String, dynamic> courseMap = {};
   void getCourseName() async {
     try {
@@ -143,6 +144,7 @@ class _CatelogueScreenState extends State<CatelogueScreen>
         setState(() {
           courseMap = value.data()!;
           coursePrice = value.data()!['Course Price'];
+          international = value.data()!['international'];
         });
       });
     } catch (e) {
@@ -172,12 +174,14 @@ class _CatelogueScreenState extends State<CatelogueScreen>
                   map: courseMap,
                   isItComboCourse: true,
                   cID: widget.cID!,
+                  international: international,
                   // id: widget.id!,
                   usermap: userMap as Map<String, dynamic>)
               : NonTrialCourseBottomSheet(
                   coursePrice: '₹${coursePrice}/-',
                   map: courseMap,
                   isItComboCourse: true,
+                  international: international,
                   cID: widget.cID!,
                 ),
       backgroundColor: Colors.white,

@@ -26,10 +26,21 @@ class RazorPayInternationalBtn extends StatefulWidget {
    final bool NoCouponApplied;
      final String courseImageUrl;
      final String courseDescription;
+     final international;
      
       
   String courseId;
-   RazorPayInternationalBtn({Key? key, required this.coursePriceMoneyRef,required this.courseId, required this.couponCodeText, required this.NoCouponApplied, required this.amountString, required this.courseName, required this.courseImageUrl, required this.courseDescription}) : super(key: key);
+   RazorPayInternationalBtn({Key? key,
+     required this.coursePriceMoneyRef,
+     required this.courseId,
+     required this.couponCodeText,
+     required this.NoCouponApplied,
+     required this.amountString,
+     required this.courseName,
+     required this.courseImageUrl,
+     required this.courseDescription,
+     this.international
+   }) : super(key: key);
 
   @override
   State<RazorPayInternationalBtn> createState() => _RazorPayInternationalBtnState();
@@ -43,7 +54,6 @@ class _RazorPayInternationalBtnState extends State<RazorPayInternationalBtn> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
   Map userData = Map<String, dynamic>();
-
  String selectedCurrency = '';
  String selectedCurrencySymbol = '';
  String currencyRate = '';
@@ -358,89 +368,36 @@ void pushToHome() async {
   }
 
 
-  void loadCourses() async {
-    dynamic userData = {};
-    await _firestore
-        .collection("Users")
-        .doc(_auth.currentUser!.uid)
-        .get()
-        .then((value) {
-      // print("user data-- ${value.data()}");
-      setState(() {
-        userData = value.data();
-      });
+  loadCourses() async {
+    var url = Uri.parse(
+        'https://us-central1-cloudyml-app.cloudfunctions.net/adduser/addgroup');
+    await  http.post(url, headers: {
+      "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+      "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
+    },
+        body: {
+          "sname": userData["name"],
+          "sid": _auth.currentUser!.uid,
+          "cname": widget.courseName,
+          "image": widget.courseImageUrl,
+          "cid" : widget.courseId
+        }
+
+    );
+
+    var mailurl = Uri.parse(
+        'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/coursemail');
+    // final response =
+    await http.post(mailurl, headers: {
+      "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+      "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
+    }, body: {
+      "uid": _auth.currentUser!.uid,
+      "cname": widget.courseName,
     });
-    print("user data is==${userData["paidCourseNames"][0]}");
-    print(courseId);
-    await _firestore.collection("courses").where("id", isEqualTo:widget.courseId ).get().then((value) {
-      print(value.docs.first.data()['name']);
-      var url = Uri.parse(
-          'https://us-central1-cloudyml-app.cloudfunctions.net/adduser/addgroup');
-      // final response =
-      http.post(url, headers: {
-        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-        "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
-      }, body: {
-        "sname": userData["name"],
-        "sid": _auth.currentUser!.uid,
-        "cname": value.docs.first.data()['name'],
-        "image": value.docs.first.data()["image_url"]
-      });
 
-      print("Group Added");
+    print("Mail Sent");
 
-      var mailurl = Uri.parse(
-          'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/coursemail');
-      // final response =
-      http.post(mailurl, headers: {
-        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-        "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
-      }, body: {
-        "uid": _auth.currentUser!.uid,
-        "cname": value.docs.first.data()['name'],
-      });
-
-      print("Mail Sent");
-
-      //     print(response.statusCode);
-
-      // if (response.statusCode == 200) {
-      //   // If server returns an OK response, parse the JSON.
-      //   print(response.body);
-      //     // );
-      // } else {
-      //   // If that response was not OK, throw an error.
-      //   throw Exception('Failed to load post');
-      // }
-
-      //   Map<String, dynamic> groupData = {
-      //     "name": value.data()!['name'],
-      //     "icon": value.data()!["image_url"],
-      //     "mentors": value.data()!["mentors"],
-      //     "student_id": _auth.currentUser!.uid,
-      //     "student_name": _auth.currentUser!.displayName,
-      //     'groupChatCount': {
-      //       'jbG4j36JiihVuZmpoLov2lhrWF02': 0,
-      //       'QVtxxzHyc6az2LPpvH210lUOeXl1': 0,
-      //       "2AS3AK7WVQaAMY999D3xf5ycG3h1": 0,
-      //       'a2WWgtY2ikS8xjCxra0GEfRft5N2': 0,
-      //       'BX9662ZGi4MfO4C9CvJm4u2JFo63': 0,
-      //       '6RsvdRETWmXf1pyVGqCUl0qEDmF2': 0,
-      //       'jeYDhaZCRWW4EC9qZ0YTHKz4PH63': 0,
-      //       'I6uXWtzpimTYxtGqEXcM9AXcoAi2': 0,
-      //       'Kr4pX5EZ6CfigOd5C1xjdIYzMml2': 0,
-      //       'XhcpQzd6cjXF43gCmna1agAfS2A2': 0,
-      //       'fKHHbDBbbySVJZu2NMAVVIYZZpu2': 0,
-      //       'oQQ9CrJ8FkP06OoGdrtcwSwY89q1': 0,
-      //       'rR0oKFMCaOYIlblKzrjYoYMW3Vl1': 0,
-      //       'v66PnlwqWERgcCDA6ZZLbI0mHPF2': 0,
-      //       'TOV5h3ezQhWGTb5cCVvBPca1Iqh1': 0,
-      //       [_auth.currentUser!.uid]: 0
-      //     },
-      //   };
-      //   print(groupData);
-      //  _firestore.collection("groups").add(groupData);
-    });
   }
 
 //    void loadCourses() async {
@@ -721,16 +678,17 @@ void _purchasedCourses() async {
 
    countFinalAmount(){
     print('Indian Price :: ${int.parse(widget.amountString) / 100}');
- finalAmount = (((int.parse(widget.amountString) /100 )/ double.parse(currencyRate))+ int.parse(additionToPayment)) .toString();
-print('Final Price :: $finalAmount');
-setState(() {
-  
-});
+      finalAmount = widget.international
+          ? (int.parse(widget.amountString)).toString()
+          : (((int.parse(widget.amountString) /100 )/ double.parse(currencyRate))+ int.parse(additionToPayment)) .toString();
+      print('Final Price :: $finalAmount');
+  setState(() {});
  }
 
 
  doPayment(UserProvider userprovider)async{
-   var od =  await  generateOrderId(key_id, key_secret, ((double.parse(finalAmount)* 100).round()).toString());
+   var od =  await  generateOrderId(key_id, key_secret,
+       ((double.parse(finalAmount) * 100).round()).toString());
 
               var options = {
   'key': key_id,

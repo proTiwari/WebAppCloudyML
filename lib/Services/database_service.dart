@@ -53,6 +53,7 @@ class DatabaseServices {
                   duration: documentSnapshot.data()['duration'],
                   findex: documentSnapshot.data()['fIndex'],
                   multiCombo: documentSnapshot.data()['multiCombo'],
+                  international: documentSnapshot.data()['international'],
                 ),
               )
               .toList(),

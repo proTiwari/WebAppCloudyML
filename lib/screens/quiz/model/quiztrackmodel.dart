@@ -23,6 +23,9 @@ class QuizTrackModel {
     this.quizAttemptGapForCourseQuiz,
     this.quizname,
     this.quizScore,
+    this.quizMark,
+    this.quizTakenTime
+
   });
 
   List<dynamic>? quizdata;
@@ -35,37 +38,43 @@ class QuizTrackModel {
   DateTime? quizAttemptGapForCourseQuiz;
   String? quizname;
   num? quizScore;
+  String? quizTakenTime;
+  String? quizMark;
 
   factory QuizTrackModel.fromJson(Map<String, dynamic> json) => QuizTrackModel(
-        quizdata: json["quizdata"] == null
-            ? []
-            : List<dynamic>.from(json["quizdata"]!.map((x) => x)),
-        date: (json["date"] as Timestamp).toDate(),
-        quizlevel: json["quizlevel"],
-        courseName: json["courseName"],
-        courseId: json["courseId"],
-        quizCleared: json["quizCleared"],
-        quizAttemptGapForModularQuiz:
-            (json["quizAttemptGapForModularQuiz"] as Timestamp).toDate(),
-        quizAttemptGapForCourseQuiz:
-            (json["quizAttemptGapForCourseQuiz"] as Timestamp).toDate(),
-        quizname: json["quizname"],
-        quizScore: json["quizScore"],
-      );
+    quizdata: json["quizdata"] == null
+        ? []
+        : List<dynamic>.from(json["quizdata"]!.map((x) => x)),
+    date: (json["date"] as Timestamp).toDate(),
+    quizlevel: json["quizlevel"],
+    courseName: json["courseName"],
+    courseId: json["courseId"],
+    quizCleared: json["quizCleared"],
+    quizAttemptGapForModularQuiz:
+    (json["quizAttemptGapForModularQuiz"] as Timestamp).toDate(),
+    quizAttemptGapForCourseQuiz:
+    (json["quizAttemptGapForCourseQuiz"] as Timestamp).toDate(),
+    quizname: json["quizname"],
+    quizScore: json["quizScore"],
+    quizTakenTime: json["quizTakenTime"],
+    quizMark: json["quizMark"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "quizdata":
-            quizdata == null ? [] : List<dynamic>.from(quizdata!.map((x) => x)),
-        "date": date,
-        "quizlevel": quizlevel,
-        "courseName": courseName,
-        "courseId": courseId,
-        "quizCleared": quizCleared,
-        "quizAttemptGapForModularQuiz": quizAttemptGapForModularQuiz,
-        "quizAttemptGapForCourseQuiz": quizAttemptGapForCourseQuiz,
-        "quizname": quizname,
-        "quizScore": quizScore,
-      };
+    "quizdata":
+    quizdata == null ? [] : List<dynamic>.from(quizdata!.map((x) => x)),
+    "date": date,
+    "quizlevel": quizlevel,
+    "courseName": courseName,
+    "courseId": courseId,
+    "quizCleared": quizCleared,
+    "quizAttemptGapForModularQuiz": quizAttemptGapForModularQuiz,
+    "quizAttemptGapForCourseQuiz": quizAttemptGapForCourseQuiz,
+    "quizname": quizname,
+    "quizScore": quizScore,
+    "quizTakenTime": quizTakenTime,
+    "quizMark": quizMark
+  };
 
   toMap() {}
 }

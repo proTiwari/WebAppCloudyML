@@ -23,6 +23,7 @@ class CourseDetails {
   String? duration;
   String? findex;
   bool? multiCombo;
+  bool? international;
 
   CourseDetails({
     required this.courseName,
@@ -48,6 +49,7 @@ class CourseDetails {
     required this.trialDays,
     this.duration,
     this.findex,
-    this.multiCombo
+    this.multiCombo,
+    this.international
   });
 }

@@ -124,6 +124,14 @@ class _InstructionspageWidgetState extends State<InstructionspageWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        },
+            icon: Icon(Icons.arrow_back_outlined, color: Colors.black,)),
+      ),
       key: scaffoldKey,
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
       body: SafeArea(
