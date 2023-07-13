@@ -268,7 +268,7 @@ class _NewFeatureState extends State<NewFeature> {
       bottomSheet:
       comboMap['trialCourse']! != null && comboMap['trialCourse']!
           ? PayNowBottomSheetfeature(
-        coursePrice: international != null && international == true ? '\$${(double.parse(widget.courseP!)+5).round().toString()}/-' : '₹${widget.courseP!}/-',
+        coursePrice: international != null && international == true ? '\$${((double.parse(widget.courseP!)/82)+5).round().toString()}/-' : '₹${widget.courseP!}/-',
         international: international == null ||  international == false ? false : international,
         map: comboMap,
         isItComboCourse: true,
@@ -277,7 +277,7 @@ class _NewFeatureState extends State<NewFeature> {
         usermap:userMap as Map<String, dynamic>
       )
           : NonTrialCourseBottomSheet(
-        coursePrice: international != null && international == true ? '\$${(double.parse(widget.courseP!)+5).round().toString()}/-' : '₹${widget.courseP!}/-',
+        coursePrice: international != null && international == true ? '\$${((double.parse(widget.courseP!)/82)+5).round().toString()}/-' : '₹${widget.courseP!}/-',
         map: comboMap,
         international: international == null ||  international == false ? false : international,
         isItComboCourse: true,
