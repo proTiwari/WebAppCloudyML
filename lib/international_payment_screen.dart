@@ -147,10 +147,7 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
               int.parse('${courseMap['Course Price']}');
           print('this is gst ${gstAmount.round()}');
 
-          totalAmount = (int.parse('${courseMap['gst']}') *
-                  0.01 *
-                  int.parse('${courseMap['Course Price']}')) +
-              int.parse('${courseMap['Course Price']}');
+          totalAmount = int.parse('${courseMap['Course Price']}');
           print('this is totalAmount ${totalAmount.round()}');
           totalAmountAfterCoupon = totalAmount;
         } else {
@@ -193,10 +190,25 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
     }
   }
 
+  String currencyRate = '';
+  getCurrencyRate(){
+    try {
+      FirebaseFirestore.instance.collection('CurrencyRates').doc('usd').get().then((value) {
+
+        print('rate rate :: ${value.get('rate')}');
+        currencyRate = value.get('rate');
+      });
+    } catch (e) {
+      print('Error in getting currency rates');
+    }
+  }
+
   @override
   void initState() {
-    super.initState();
+
     getCourseName();
+    getCurrencyRate();
+    super.initState();
   }
 
   void setcoursevalue() async {
@@ -560,7 +572,7 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                       style: textStyle,
                                     ),
                                     Text(
-                                      '\$${(double.parse(courseMap['Course Price']) + 5).round().toString()}/-',
+                                      '\$${((double.parse(courseMap['Course Price'])/double.parse(currencyRate)) + 5).round().toString()}/-',
                                       style: textStyle,
                                     ),
                                   ],
@@ -714,7 +726,7 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                                         int.parse(value['result']['couponValue']['value']) *
                                                                             0.01;
                                                                     print(
-                                                                        'this is value in $percentageValue');
+                                                                        'this is value in percentage web $percentageValue');
                                                                     discountvalue =
                                                                         (totalAmount *
                                                                                 percentageValue)
@@ -760,7 +772,7 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                                             [
                                                                             'value']);
                                                                     print(
-                                                                        'this is value in $numberValue');
+                                                                        'this is value in number web $numberValue');
                                                                     discountvalue =
                                                                         numberValue
                                                                             .toString();
@@ -860,9 +872,7 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                                         false;
                                                                   });
                                                                 } else {
-                                                                  if (value['result']
-                                                                              [
-                                                                              'couponValue']
+                                                                  if (value['result']['couponValue']
                                                                           [
                                                                           'type'] ==
                                                                       'percentage') {
@@ -871,7 +881,7 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                                         int.parse(value['result']['couponValue']['value']) *
                                                                             0.01;
                                                                     print(
-                                                                        'this is value in $percentageValue');
+                                                                        'this is value in per web $percentageValue');
                                                                     discountvalue =
                                                                         (totalAmount *
                                                                                 percentageValue)
@@ -916,7 +926,7 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                                             [
                                                                             'value']);
                                                                     print(
-                                                                        'this is value in $numberValue');
+                                                                        'this is value in number $numberValue');
                                                                     discountvalue =
                                                                         numberValue
                                                                             .toString();
@@ -1135,8 +1145,8 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                         alignment: Alignment.centerRight,
                                         child: Text(
                                             typeOfCouponExpired
-                                                ? 'Yay! You have got an extra discount of \$${double.parse(discountvalue).round().toString()}. This code will expire on $expiredDate.'
-                                                : 'Yay! You have got an extra discount of \$${double.parse(discountvalue).round().toString()}. This code will expire at $expiredDate.',
+                                                ? 'Yay! You have got an extra discount of \$${(double.parse(discountvalue)/double.parse(currencyRate)).round().toString()}. This code will expire on $expiredDate.'
+                                                : 'Yay! You have got an extra discount of \$${(double.parse(discountvalue)/double.parse(currencyRate)).round().toString()}. This code will expire at $expiredDate.',
                                             style: TextStyle(
                                               color: Colors.deepPurpleAccent,
                                               fontSize: 11.sp,
@@ -1161,8 +1171,8 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                       ),
                                       Text(
                                         couponCodeApplied
-                                            ? '\$${((double.parse(courseMap['Course Price']) + 5).round() - double.parse(discountvalue).round()).round().toString()}/-'
-                                            : '\$${(double.parse(courseMap['Course Price']) + 5).round().toString()}/-',
+                                            ? '\$${(((double.parse(courseMap['Course Price'])/double.parse(currencyRate)) + 5).round() - (double.parse(discountvalue)/double.parse(currencyRate))).round().toString()}/-'
+                                            : '\$${((double.parse(courseMap['Course Price'])/double.parse(currencyRate)) + 5).round().toString()}/-',
                                         style: textStyle,
                                       ),
                                     ],
@@ -1208,12 +1218,12 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                       int.parse(courseprice),
                                                   courseId: courseMap['id'],
                                                   NoCouponApplied:
-                                                      NoCouponApplied,
+                                                  NoCouponApplied,
                                                   couponCodeText:
                                                       couponCodeController.text,
                                                   amountString: couponCodeApplied
-                                                      ? '${((double.parse(courseMap['Course Price']) + 5) - int.parse(discountvalue)).round().toString()}'
-                                                      : '${(double.parse(courseMap['Course Price']) + 5).round().toString()}',
+                                                      ? '${((totalAmount*100).round() - double.parse(discountvalue).round()).toString()}'
+                                                      : '${((totalAmount*100).round().toString())}',
                                                   courseName: courseMap['name'],
                                                   courseImageUrl:
                                                       courseMap['image_url'],
@@ -1573,7 +1583,7 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                     FittedBox(
                                       fit: BoxFit.fitWidth,
                                       child: Text(
-                                        '\$${(double.parse(courseMap['Course Price']) + 5).round().toString()}/-',
+                                        '\$${((double.parse(courseMap['Course Price'])/double.parse(currencyRate)) + 5).round().toString()}/-',
                                         style: textStyle,
                                       ),
                                     ),
@@ -1711,7 +1721,7 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                                               'value']) *
                                                                           0.01;
                                                                   print(
-                                                                      'this is value in $percentageValue');
+                                                                      'this is value in percerntage $percentageValue');
                                                                   discountvalue =
                                                                       (totalAmount *
                                                                               percentageValue)
@@ -2118,8 +2128,8 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                         alignment: Alignment.centerRight,
                                         child: Text(
                                             typeOfCouponExpired
-                                                ? 'Yay! You have got an extra discount of \$${double.parse(discountvalue).round().toString()}. This code will expire on $expiredDate.'
-                                                : 'Yay! You have got an extra discount of \$${double.parse(discountvalue).round().toString()}. This code valid till $expiredDate.',
+                                                ? 'Yay! You have got an extra discount of \$${(double.parse(discountvalue)/double.parse(currencyRate)).round().toString()}. This code will expire on $expiredDate.'
+                                                : 'Yay! You have got an extra discount of \$${(double.parse(discountvalue)/double.parse(currencyRate)).round().toString()}. This code valid till $expiredDate.',
                                             style: TextStyle(
                                               color: Colors.deepPurpleAccent,
                                               fontSize: 13.sp,
@@ -2148,8 +2158,8 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                         fit: BoxFit.fitWidth,
                                         child: Text(
                                           couponCodeApplied
-                                              ? '\$${((double.parse(courseMap['Course Price']) + 5).round() - double.parse(discountvalue).round()).round().toString()}/-'
-                                              : '\$${(double.parse(courseMap['Course Price']) + 5).round().toString()}/-',
+                                              ? '\$${(((double.parse(courseMap['Course Price'])/double.parse(currencyRate)) + 5).round() - (double.parse(discountvalue)/double.parse(currencyRate))).round().toString()}/-'
+                                              : '\$${((double.parse(courseMap['Course Price'])/double.parse(currencyRate)) + 5).round().toString()}/-',
                                           style: textStyle,
                                         ),
                                       ),
@@ -2199,8 +2209,8 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                   couponCodeText:
                                                       couponCodeController.text,
                                                   amountString: couponCodeApplied
-                                                      ? '${((double.parse(courseMap['Course Price']) + 5) - int.parse(discountvalue)).round().toString()}'
-                                                      : '${(double.parse(courseMap['Course Price']) + 5).round().toString()}',
+                                                      ? '${((totalAmount*100).round() - double.parse(discountvalue).round()).toString()}'
+                                                      : '${((totalAmount*100).round().toString())}',
                                                   courseName: courseMap['name'],
                                                   courseImageUrl:
                                                       courseMap['image_url'],

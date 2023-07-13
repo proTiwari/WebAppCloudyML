@@ -16,64 +16,60 @@ import 'package:razorpay_web/razorpay_web.dart';
 import 'package:http/http.dart' as http;
 import 'package:toast/toast.dart';
 
-
-
 class RazorPayInternationalBtn extends StatefulWidget {
-   int coursePriceMoneyRef;
+  int coursePriceMoneyRef;
   final String couponCodeText;
-   final String amountString;
+  final String amountString;
   final String courseName;
-   final bool NoCouponApplied;
-     final String courseImageUrl;
-     final String courseDescription;
-     final international;
-     
-      
+  final bool NoCouponApplied;
+  final String courseImageUrl;
+  final String courseDescription;
+  final international;
+
   String courseId;
-   RazorPayInternationalBtn({Key? key,
-     required this.coursePriceMoneyRef,
-     required this.courseId,
-     required this.couponCodeText,
-     required this.NoCouponApplied,
-     required this.amountString,
-     required this.courseName,
-     required this.courseImageUrl,
-     required this.courseDescription,
-     this.international
-   }) : super(key: key);
+  RazorPayInternationalBtn(
+      {Key? key,
+      required this.coursePriceMoneyRef,
+      required this.courseId,
+      required this.couponCodeText,
+      required this.NoCouponApplied,
+      required this.amountString,
+      required this.courseName,
+      required this.courseImageUrl,
+      required this.courseDescription,
+      this.international})
+      : super(key: key);
 
   @override
-  State<RazorPayInternationalBtn> createState() => _RazorPayInternationalBtnState();
+  State<RazorPayInternationalBtn> createState() =>
+      _RazorPayInternationalBtnState();
 }
 
 class _RazorPayInternationalBtnState extends State<RazorPayInternationalBtn> {
-
-
   var _razorpay = Razorpay();
   var order_id;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
   Map userData = Map<String, dynamic>();
- String selectedCurrency = '';
- String selectedCurrencySymbol = '';
- String currencyRate = '';
- String additionToPayment = '';
+  String selectedCurrency = '';
+  String selectedCurrencySymbol = '';
+  String currencyRate = '';
+  String additionToPayment = '';
 
- String finalAmount = '';
- bool isLoading = false;
-   var key_id;
+  String finalAmount = '';
+  bool isLoading = false;
+  var key_id;
   var key_secret;
-
 
   @override
   void initState() {
-getrzpkey();
+    getrzpkey();
 
-     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     getPayInPartsDetails();
-    
+
     super.initState();
   }
 
@@ -82,73 +78,75 @@ getrzpkey();
     _razorpay.clear(); // Removes all listeners
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-     final userprovider = Provider.of<UserProvider>(context);
+    final userprovider = Provider.of<UserProvider>(context);
     return Column(
       children: [
-    
         InkWell(
-          onTap: (){
+          onTap: () {
             selectCurrency();
           },
           child: Container(
-            
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: Colors.lightBlueAccent,
-        
             ),
-            child:
-    
-            selectedCurrency.isNotEmpty ?
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Selected Currency', style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),),
-                     Text(selectedCurrency, style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),)
-              ],
-            ) :
-            
-            
-             Center(child: Text('Select Currency', style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),),),
+            child: selectedCurrency.isNotEmpty
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Selected Currency',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        selectedCurrency,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  )
+                : Center(
+                    child: Text(
+                      'Select Currency',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Poppins',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
           ),
         ),
-        SizedBox(height: 20,),
+        SizedBox(
+          height: 20,
+        ),
         InkWell(
-          onTap: ()async {
+          onTap: () async {
             setState(() {
               isLoading = true;
-    
-            if(selectedCurrency.isEmpty && finalAmount.isEmpty){
-              isLoading = false;
-              Toast.show('Please select currency');
-            }else{
-             doPayment(userprovider);
-            }
-          
+
+              if (selectedCurrency.isEmpty && finalAmount.isEmpty) {
+                isLoading = false;
+                print('Final Price :: $finalAmount');
+                Toast.show('Please select currency');
+              } else {
+                doPayment(userprovider);
+              }
             });
-    
-    
-        
-    
-         
           },
           child: Container(
             width: double.infinity,
@@ -157,36 +155,33 @@ getrzpkey();
               borderRadius: BorderRadius.circular(10),
               color: Colors.deepPurpleAccent,
             ),
-            child:  Center(
-              child: 
-              
-              isLoading ?
-    
-              CircularProgressIndicator(color: Colors.white,) :
-              Text(
-    
-                finalAmount.isEmpty ?
-                    'Pay Now' : 'Pay  $selectedCurrencySymbol ${(double.parse(finalAmount)).toStringAsFixed(2)}',
-                    style: TextStyle(
+            child: Center(
+              child: isLoading
+                  ? CircularProgressIndicator(
                       color: Colors.white,
-                      fontFamily: 'Poppins',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                    )
+                  : Text(
+                      finalAmount.isEmpty
+                          ? 'Pay Now'
+                          : 'Pay  $selectedCurrencySymbol ${(double.parse(finalAmount)).round().toString()}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Poppins',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
             ),
           ),
         ),
       ],
     );
- 
   }
 
-
-  void _handlePaymentSuccess(PaymentSuccessResponse response)async {
-   Toast.show("Payment successful.");
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    Toast.show("Payment successful.");
     await redeemmoneyreward();
-   
+
     addCoursetoUser(widget.courseId);
     loadCourses();
     pushToHome();
@@ -203,8 +198,8 @@ getrzpkey();
     // );
 
     print("Payment Done");
-      _purchasedCourses();
-       await AwesomeNotifications().createNotification(
+    _purchasedCourses();
+    await AwesomeNotifications().createNotification(
         content: NotificationContent(
             id: 12345,
             channelKey: 'image',
@@ -222,18 +217,16 @@ getrzpkey();
       NDate: DateFormat('dd-MM-yyyy | h:mm a').format(DateTime.now()),
       //index:
     );
-}
+  }
 
-void _handlePaymentError(PaymentFailureResponse response) {
-
-    
-  Toast.show("Payment Failed");
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Toast.show("Payment Failed");
     print("International Payment Fail ${response.message}");
-}
+  }
 
-void _handleExternalWallet(ExternalWalletResponse response) {
-  // Do something when an external wallet is selected
-}
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    // Do something when an external wallet is selected
+  }
 
   redeemmoneyreward() async {
     var sendermoneyrefuid;
@@ -279,7 +272,7 @@ void _handleExternalWallet(ExternalWalletResponse response) {
     cuponcodeentries();
   }
 
-    cuponcodeentries() async {
+  cuponcodeentries() async {
     try {
       if (globals.cuponcode == 'applied') {
         await FirebaseFirestore.instance
@@ -313,77 +306,66 @@ void _handleExternalWallet(ExternalWalletResponse response) {
     pushToHome();
   }
 
-
-void pushToHome() async {
-   try {
+  void pushToHome() async {
+    try {
       print('i am after payment1');
 
-    await _firestore.collection("courses").doc(courseId).get().then((value) {
-
-      var iscombo=value.data()!['combo'];
-      if(iscombo==true){
-         
-       GoRouter.of(context).pushNamed('NewComboCourseScreen', queryParams: {
-        'courseId': value.data()!['id'],
-        'courseName': value.data()!['name'],
+      await _firestore.collection("courses").doc(courseId).get().then((value) {
+        var iscombo = value.data()!['combo'];
+        if (iscombo == true) {
+          GoRouter.of(context).pushNamed('NewComboCourseScreen', queryParams: {
+            'courseId': value.data()!['id'],
+            'courseName': value.data()!['name'],
+          });
+        } else {
+          GoRouter.of(context).pushReplacementNamed('myCourses');
+        }
       });
 
-      }else{
- 
-        GoRouter.of(context).pushReplacementNamed('myCourses');
+      final url;
+      if (widget.courseId == 'F9gxnjW9nf5Lxg5A6758') {
+        url = 'https://de.cloudyml.com/enrolled';
+      } else {
+        url = 'https://ds.cloudyml.com/enrolled';
       }
-      
-    });
 
-    final url;
-    if (widget.courseId == 'F9gxnjW9nf5Lxg5A6758') {
-      url = 'https://de.cloudyml.com/enrolled';
-    } else {
-      url = 'https://ds.cloudyml.com/enrolled';
+      final uri = Uri.parse(url);
+      html.WindowBase _popup = html.window.open(url, 'Thank you');
+      if (_popup.closed!) {
+        throw ("Popups blocked");
+      }
+    } catch (e) {
+      print('Error in push to home : $e');
     }
-
-    final uri = Uri.parse(url);
-    html.WindowBase _popup = html.window.open(url, 'Thank you');
-    if (_popup.closed!) {
-      throw ("Popups blocked");
-    }
-   } catch (e) {
-     print('Error in push to home : $e');
-   }
   }
 
   void addCoursetoUser(String id) async {
     print('Statt AddCoursetoUser');
     try {
       await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .update({
-      'paidCourseNames': FieldValue.arrayUnion([id])
-    });
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'paidCourseNames': FieldValue.arrayUnion([id])
+      });
     } catch (e) {
-          print('AddCoursetoUser Error : $e');
-
+      print('AddCoursetoUser Error : $e');
     }
   }
-
 
   loadCourses() async {
     var url = Uri.parse(
         'https://us-central1-cloudyml-app.cloudfunctions.net/adduser/addgroup');
-    await  http.post(url, headers: {
+    await http.post(url, headers: {
       "Access-Control-Allow-Origin": "*", // Required for CORS support to work
       "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
-    },
-        body: {
-          "sname": userData["name"],
-          "sid": _auth.currentUser!.uid,
-          "cname": widget.courseName,
-          "image": widget.courseImageUrl,
-          "cid" : widget.courseId
-        }
-
-    );
+    }, body: {
+      "sname": userData["name"],
+      "sid": _auth.currentUser!.uid,
+      "cname": widget.courseName,
+      "image": widget.courseImageUrl,
+      "cid": widget.courseId
+    });
 
     var mailurl = Uri.parse(
         'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/coursemail');
@@ -397,12 +379,11 @@ void pushToHome() async {
     });
 
     print("Mail Sent");
-
   }
 
 //    void loadCourses() async {
 //  var groupData;
-//    try { 
+//    try {
 //     await _firestore.collection('courses').where('id',isEqualTo: widget.courseId).get().then((value) {
 //  print('AAAAAAAAAA:: ${value.docs[0].data()['name']}');
 //  groupData = {
@@ -430,22 +411,20 @@ void pushToHome() async {
 //           [_auth.currentUser!.uid]: 0
 //         },
 //       };
-     
+
 //     }).whenComplete(() {
 //       _firestore.collection("groups").add(groupData);
 //     });
-   
-    
+
 //    } catch (e) {
 //      print('Errrrorrrrrrrr:::; $e');
 //    }
 // }
 
   void updateCouponDetailsToUser(
-      { required String courseBaughtId,
-        required String couponCodeText,
-        required bool NoCouponApplied}
-      ) async {
+      {required String courseBaughtId,
+      required String couponCodeText,
+      required bool NoCouponApplied}) async {
     bool couponCodeDetailsExists = await checkIfCouponDetailsExist();
 
     print(couponCodeDetailsExists);
@@ -472,8 +451,8 @@ void pushToHome() async {
       }
     }
   }
-   Future<bool> checkIfCouponDetailsExist() async {
 
+  Future<bool> checkIfCouponDetailsExist() async {
     bool couponCodeDetailsExists;
 
     DocumentSnapshot userDs = await FirebaseFirestore.instance
@@ -490,7 +469,8 @@ void pushToHome() async {
     }
     return couponCodeDetailsExists;
   }
-void _purchasedCourses() async {
+
+  void _purchasedCourses() async {
     print(userData["Email"]);
     var data = await FirebaseFirestore.instance
         .collection("AppPurchasedCourse")
@@ -558,7 +538,7 @@ void _purchasedCourses() async {
     }
   }
 
-   void getPayInPartsDetails() async {
+  void getPayInPartsDetails() async {
     DocumentSnapshot userDs = await FirebaseFirestore.instance
         .collection('Users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -569,8 +549,7 @@ void _purchasedCourses() async {
     });
   }
 
-
- void getrzpkey() async {
+  void getrzpkey() async {
     key_id = await FirebaseFirestore.instance
         .collection('Notice')
         .doc('razorpay_international_key')
@@ -590,8 +569,7 @@ void _purchasedCourses() async {
     print("key_secret is====$key_secret");
   }
 
-
- Future<String> generateOrderId(
+  Future<String> generateOrderId(
       String key, String secret, String amount) async {
     var authn = 'Basic ' + base64Encode(utf8.encode('$key:$secret'));
 
@@ -609,7 +587,6 @@ void _purchasedCourses() async {
         headers: headers,
         body: data);
     if (res.statusCode != 200)
-   
       throw Exception('http.post error: statusCode= ${res.statusCode}');
     print('ORDER ID response => ${res.body}');
 
@@ -624,46 +601,42 @@ void _purchasedCourses() async {
     return json.decode(res.body)['order']['id'].toString();
   }
 
-
-    selectCurrency() {
+  selectCurrency() {
     showCurrencyPicker(
       context: context,
       showFlag: true,
       showCurrencyName: true,
       showCurrencyCode: true,
-      
       theme: CurrencyPickerThemeData(
           bottomSheetHeight: MediaQuery.of(context).size.height / 1.5),
       currencyFilter: [
-     
         'USD',
         'AUD',
         'CAD',
         'EUR',
         'GBP',
         'SAR',
-        
-       
       ],
       onSelect: (Currency currency) {
         setState(() {
           selectedCurrency = currency.code;
           selectedCurrencySymbol = currency.symbol;
           print('Selected currency: $selectedCurrency');
-          if(selectedCurrency.isNotEmpty){
+          if (selectedCurrency.isNotEmpty) {
             getCurrencyRate(currency: selectedCurrency);
-           
           }
         });
       },
     );
   }
 
-
-   getCurrencyRate({required String currency}){
+  getCurrencyRate({required String currency}) {
     try {
-      FirebaseFirestore.instance.collection('CurrencyRates').doc(currency.toLowerCase()).get().then((value) {
-
+      FirebaseFirestore.instance
+          .collection('CurrencyRates')
+          .doc(currency.toLowerCase())
+          .get()
+          .then((value) {
         print('$currency rate :: ${value.get('rate')}');
         currencyRate = value.get('rate');
         additionToPayment = value.get('addition');
@@ -675,47 +648,42 @@ void _purchasedCourses() async {
     }
   }
 
-
-   countFinalAmount(){
+  countFinalAmount() {
     print('Indian Price :: ${int.parse(widget.amountString) / 100}');
-      finalAmount = widget.international
-          ? (int.parse(widget.amountString)).toString()
-          : (((int.parse(widget.amountString) /100 )/ double.parse(currencyRate))+ int.parse(additionToPayment)) .toString();
-      print('Final Price :: $finalAmount');
-  setState(() {});
- }
+    finalAmount =
+        (((int.parse(widget.amountString) / 100) / double.parse(currencyRate)) +
+                int.parse(additionToPayment)).round()
+            .toString();
+    print('Final Price :: $finalAmount');
+    setState(() {});
+  }
 
+  doPayment(UserProvider userprovider) async {
+    var od = await generateOrderId(key_id, key_secret,
+        ((double.parse(finalAmount) * 100).round()).toString());
 
- doPayment(UserProvider userprovider)async{
-   var od =  await  generateOrderId(key_id, key_secret,
-       ((double.parse(finalAmount) * 100).round()).toString());
+    print('Final Price :: $finalAmount');
 
-              var options = {
-  'key': key_id,
-  //'amount': '10000', //in the smallest currency sub-unit.
-  'name': widget.courseName,
-  'order_id': od, // Generate order_id using Orders API
-   //'description': widget.courseDescription,
-  'timeout': 300, // in seconds
-  'prefill': {
+    var options = {
+      'key': key_id,
+      //'amount': '10000', //in the smallest currency sub-unit.
+      'name': widget.courseName,
+      'order_id': od, // Generate order_id using Orders API
+      //'description': widget.courseDescription,
+      'timeout': 300, // in seconds
+      'prefill': {
         'contact': userprovider.userModel!.mobile,
-                               
-                                  'email': userprovider.userModel!.email,
-                                  
-                                  'name': userprovider.userModel!.name
-  },
-   'notes': {
-                                  'contact': userprovider.userModel!.mobile,
-                                  'email': userprovider.userModel!.email,
-                                  'name': userprovider.userModel!.name
-                                }
-};
-_razorpay.open(options);
-isLoading = false;
-setState(() {
-  
-});
- }
-
-
+        'email': userprovider.userModel!.email,
+        'name': userprovider.userModel!.name
+      },
+      'notes': {
+        'contact': userprovider.userModel!.mobile,
+        'email': userprovider.userModel!.email,
+        'name': userprovider.userModel!.name
+      }
+    };
+    _razorpay.open(options);
+    isLoading = false;
+    setState(() {});
+  }
 }
