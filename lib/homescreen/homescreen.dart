@@ -2737,7 +2737,7 @@ userData() async {
                                             'cID': cID,
                                             'courseName': courseName,
                                             'id': id,
-                                            'coursePrice': courseP
+                                            'coursePrice': featuredCourse[index].international != null && featuredCourse[index].international == true ?  ((double.parse(courseP) / 82)+5).toString() : courseP
                                           });
 
                                       // Navigator.push(
@@ -2973,7 +2973,7 @@ userData() async {
                                                                       courseName,
                                                                   'id': id,
                                                                   'coursePrice':
-                                                                      courseP
+                                                                  featuredCourse[index].international != null && featuredCourse[index].international == true ?  ((double.parse(courseP) / 82)+5).toString() : courseP
                                                                 });
 
                                                             // Navigator.push(
@@ -4948,7 +4948,7 @@ userData() async {
                                                     'cID': cID,
                                                     'courseName': courseName,
                                                     'id': id,
-                                                    'coursePrice': courseP
+                                                    'coursePrice': featuredCourse[index].international != null && featuredCourse[index].international == true ?  ((double.parse(courseP) / 82)+5).toString() : courseP
                                                   });
 
                                               // GoRouter.of(context).pushNamed(
@@ -5213,7 +5213,7 @@ userData() async {
                                                                           courseName,
                                                                       'id': id,
                                                                       'coursePrice':
-                                                                          courseP
+                                                                      featuredCourse[index].international != null && featuredCourse[index].international == true ?  ((double.parse(courseP) / 82)+5).toString() : courseP
                                                                     });
 
                                                                 // Navigator.push(
