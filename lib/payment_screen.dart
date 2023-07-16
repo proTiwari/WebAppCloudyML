@@ -109,15 +109,14 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         print('pay Deleted');
       });
 
-        FirebaseFirestore.instance.collection('Notice')
+    FirebaseFirestore.instance.collection('Notice')
       ..doc("o1Hw1CebDH9I4VfpKuiC_sup_pay")
           .update({'url': ""}).whenComplete(() {
         print('sup pay Deleted');
       });
 
-      FirebaseFirestore.instance.collection('Notice')
-      ..doc("M2jEwYyiWdzYWE9gJd8s_de_pay")
-          .update({'url': ""}).whenComplete(() {
+    FirebaseFirestore.instance.collection('Notice')
+      ..doc("M2jEwYyiWdzYWE9gJd8s_de_pay").update({'url': ""}).whenComplete(() {
         print('Data engineering pay Deleted');
       });
   }
@@ -1247,128 +1246,117 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   ),
                                 ),
                                 SizedBox(height: 7.5.sp),
-                                 InkWell(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                           
-                                            builder: (context) {
-                                              return Dialog(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                ),
-                                                child: Container(
-                                                  width: screenWidth /2.5,
-                                                  padding: EdgeInsets.all(20),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Text(
-                                                        'Payment',
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontFamily: 'Poppins',
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 20),
-                                                 
-                                                      
-                                                      RazorPayInternationalBtn(
-                                                        courseDescription: courseMap['description'],
-                                                        international: false,
-                                                        coursePriceMoneyRef:
-                                                            int.parse(
-                                                                courseprice),
-                                                        courseId:
-                                                            courseMap['id'],
-                                                        NoCouponApplied:
-                                                            NoCouponApplied,
-                                                        couponCodeText:
-                                                            couponCodeController
-                                                                .text,
-                                                        amountString: (double.parse(NoCouponApplied
-                                                                    ? courseMap['gst'] != null
-                                                                        ? '${totalAmount.round().toString()}'
-                                                                        : "${int.parse(courseprice) - int.parse(discountvalue)}"
-                                                                    : finalAmountToPay) * //courseMap['Amount_Payablepay']
-                                                                100)
-                                                            .toString(),
-                                                        courseName:
-                                                            courseMap['name'],
-                                                        courseImageUrl:
-                                                            courseMap[
-                                                                'image_url'],
-                                                        
-                                                      )
-
-                                                      // PaymentButtonn(
-                                                      //   label: 'Razorpay',
-                                                      //   icon: Icons.attach_money,
-                                                      //   color: Colors.green,
-                                                      //   onTap: () {
-                                                      //     // Handle Razorpay payment
-                                                      //   },
-                                                      // ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Center(
+                                InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
                                           child: Container(
-                                            width: screenWidth,
-                                            height: Device.screenType ==
-                                                    ScreenType.mobile
-                                                ? 30.sp
-                                                : 20.sp,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              color: Colors.deepPurple.shade600,
-                                            ),
-                                            child: Center(
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                    'Pay Now',
-                                                    style: TextStyle(
-                                                        color: Color.fromRGBO(
-                                                            255, 255, 255, 1),
-                                                        fontFamily: 'Poppins',
-                                                        fontSize:
-                                                            20 * verticalScale,
-                                                        letterSpacing:
-                                                            0 /*percentages not used in flutter. defaulting to zero*/,
-                                                        fontWeight: FontWeight.bold,
-                                                        height: 1),
+                                            width: screenWidth / 2.5,
+                                            padding: EdgeInsets.all(20),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  'Payment',
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily: 'Poppins',
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
-                                                   Text(
-                                                    '(For International Students)',
-                                                    style: TextStyle(
-                                                        color: Color.fromRGBO(
-                                                            255, 255, 255, 1),
-                                                        fontFamily: 'Poppins',
-                                                        fontSize:
-                                                            15 * verticalScale,
-                                                        letterSpacing:
-                                                            0 /*percentages not used in flutter. defaulting to zero*/,
-                                                        fontWeight: FontWeight.bold,
-                                                        height: 1),
-                                                  ),
-                                                ],
-                                              ),
+                                                ),
+                                                SizedBox(height: 20),
+
+                                                RazorPayInternationalBtn(
+                                                  courseDescription:
+                                                      courseMap['description'],
+                                                  international: false,
+                                                  coursePriceMoneyRef:
+                                                      int.parse(courseprice),
+                                                  courseId: courseMap['id'],
+                                                  NoCouponApplied:
+                                                      NoCouponApplied,
+                                                  couponCodeText:
+                                                      couponCodeController.text,
+                                                  amountString: (double.parse(
+                                                              NoCouponApplied
+                                                                  ? courseMap['gst'] !=
+                                                                          null
+                                                                      ? '${totalAmount.round().toString()}'
+                                                                      : "${int.parse(courseprice) - int.parse(discountvalue)}"
+                                                                  : finalAmountToPay) * //courseMap['Amount_Payablepay']
+                                                          100)
+                                                      .toString(),
+                                                  courseName: courseMap['name'],
+                                                  courseImageUrl:
+                                                      courseMap['image_url'],
+                                                )
+
+                                                // PaymentButtonn(
+                                                //   label: 'Razorpay',
+                                                //   icon: Icons.attach_money,
+                                                //   color: Colors.green,
+                                                //   onTap: () {
+                                                //     // Handle Razorpay payment
+                                                //   },
+                                                // ),
+                                              ],
                                             ),
                                           ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Center(
+                                    child: Container(
+                                      width: screenWidth,
+                                      height:
+                                          Device.screenType == ScreenType.mobile
+                                              ? 30.sp
+                                              : 20.sp,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: Colors.deepPurple.shade600,
+                                      ),
+                                      child: Center(
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              'Pay Now',
+                                              style: TextStyle(
+                                                  color: Color.fromRGBO(
+                                                      255, 255, 255, 1),
+                                                  fontFamily: 'Poppins',
+                                                  fontSize: 20 * verticalScale,
+                                                  letterSpacing:
+                                                      0 /*percentages not used in flutter. defaulting to zero*/,
+                                                  fontWeight: FontWeight.bold,
+                                                  height: 1),
+                                            ),
+                                            Text(
+                                              '(For International Students)',
+                                              style: TextStyle(
+                                                  color: Color.fromRGBO(
+                                                      255, 255, 255, 1),
+                                                  fontFamily: 'Poppins',
+                                                  fontSize: 15 * verticalScale,
+                                                  letterSpacing:
+                                                      0 /*percentages not used in flutter. defaulting to zero*/,
+                                                  fontWeight: FontWeight.bold,
+                                                  height: 1),
+                                            ),
+                                          ],
                                         ),
                                       ),
-             
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -1381,7 +1369,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
             ),
           );
         } else {
-          // moble screen
+          // mobile screen
           return SingleChildScrollView(
             child: Column(
               children: [
@@ -1471,46 +1459,6 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     ),
                                   ),
                                 ),
-                                // Container(
-                                //   width: screenWidth/3,
-                                //   padding: EdgeInsets.only(left: 5.0),
-                                //   decoration: BoxDecoration(
-                                //     color: Colors.deepPurple.shade100,
-                                //   ),
-                                //   child: Row(
-                                //     mainAxisAlignment: MainAxisAlignment.start,
-                                //     children: [
-                                //       Padding(
-                                //         padding: const EdgeInsets.only(right: 5.0),
-                                //         child: Container(
-                                //           height: 20,
-                                //           width: 25,
-                                //           decoration: BoxDecoration(
-                                //             borderRadius: BorderRadius.circular(3.0),
-                                //             color: HexColor('440F87'),
-                                //           ),
-                                //           child: Center(
-                                //             child: Text(courseMap['reviews'] != null ? courseMap['reviews'] : '5.0',
-                                //               style: TextStyle(fontSize: 12, color: Colors.white,
-                                //                   fontWeight: FontWeight.normal),),
-                                //           ),
-                                //         ),
-                                //       ),
-                                //       Padding(
-                                //         padding:
-                                //         const EdgeInsets.only(right: 5.0),
-                                //         child: StarRating(
-                                //           length: 5,
-                                //           rating: courseMap['reviews'] != null ? double.parse(courseMap['reviews']) : 5.0,
-                                //           color: HexColor('440F87'),
-                                //           starSize: 25,
-                                //           mainAxisAlignment: MainAxisAlignment.start,
-                                //         ),
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
-                                // SizedBox(height: 20,),
                                 Container(
                                   width: screenWidth / 2.5,
                                   padding: EdgeInsets.only(left: 5, right: 5),
@@ -2351,129 +2299,120 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     whichCouponCode: couponCodeController.text,
                                   ),
                                 ),
-                                SizedBox(height: 15,),
-                                 InkWell(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                           
-                                            builder: (context) {
-                                              return Dialog(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                ),
-                                                child: Container(
-                                                  width: screenWidth /2.5,
-                                                  padding: EdgeInsets.all(20),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Text(
-                                                        'Payment',
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontFamily: 'Poppins',
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 20),
-                                                 
-                                                      
-                                                      RazorPayInternationalBtn(
-                                                        courseDescription: courseMap['description'],
-                                                        international: false,
-                                                        coursePriceMoneyRef:
-                                                            int.parse(
-                                                                courseprice),
-                                                        courseId:
-                                                            courseMap['id'],
-                                                        NoCouponApplied:
-                                                            NoCouponApplied,
-                                                        couponCodeText:
-                                                            couponCodeController
-                                                                .text,
-                                                        amountString: (double.parse(NoCouponApplied
-                                                                    ? courseMap['gst'] != null
-                                                                        ? '${totalAmount.round().toString()}'
-                                                                        : "${int.parse(courseprice) - int.parse(discountvalue)}"
-                                                                    : finalAmountToPay) * //courseMap['Amount_Payablepay']
-                                                                100)
-                                                            .toString(),
-                                                        courseName:
-                                                            courseMap['name'],
-                                                        courseImageUrl:
-                                                            courseMap[
-                                                                'image_url'],
-                                                        
-                                                      )
-
-                                                      // PaymentButtonn(
-                                                      //   label: 'Razorpay',
-                                                      //   icon: Icons.attach_money,
-                                                      //   color: Colors.green,
-                                                      //   onTap: () {
-                                                      //     // Handle Razorpay payment
-                                                      //   },
-                                                      // ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Center(
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
                                           child: Container(
-                                            width: screenWidth,
-                                            height: Device.screenType ==
-                                                    ScreenType.mobile
-                                                ? 30.sp
-                                                : 20.sp,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              color: Colors.deepPurple.shade600,
-                                            ),
-                                            child: Center(
-                                              child: Column(
-                                                children: [
-                                                 Text(
-                                                    'Pay Now',
-                                                    style: TextStyle(
-                                                        color: Color.fromRGBO(
-                                                            255, 255, 255, 1),
-                                                        fontFamily: 'Poppins',
-                                                        fontSize:
-                                                            20 * verticalScale,
-                                                        letterSpacing:
-                                                            0 /*percentages not used in flutter. defaulting to zero*/,
-                                                        fontWeight: FontWeight.bold,
-                                                        height: 1),
+                                            width: screenWidth / 2.5,
+                                            padding: EdgeInsets.all(20),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  'Payment',
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily: 'Poppins',
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
-                                                   Text(
-                                                    '(For International Students)',
-                                                    style: TextStyle(
-                                                        color: Color.fromRGBO(
-                                                            255, 255, 255, 1),
-                                                        fontFamily: 'Poppins',
-                                                        fontSize:
-                                                            15 * verticalScale,
-                                                        letterSpacing:
-                                                            0 /*percentages not used in flutter. defaulting to zero*/,
-                                                        fontWeight: FontWeight.bold,
-                                                        height: 1),
-                                                  ),
-                                                ],
-                                              ),
+                                                ),
+                                                SizedBox(height: 20),
+
+                                                RazorPayInternationalBtn(
+                                                  courseDescription:
+                                                      courseMap['description'],
+                                                  international: false,
+                                                  coursePriceMoneyRef:
+                                                      int.parse(courseprice),
+                                                  courseId: courseMap['id'],
+                                                  NoCouponApplied:
+                                                      NoCouponApplied,
+                                                  couponCodeText:
+                                                      couponCodeController.text,
+                                                  amountString: (double.parse(
+                                                              NoCouponApplied
+                                                                  ? courseMap['gst'] !=
+                                                                          null
+                                                                      ? '${totalAmount.round().toString()}'
+                                                                      : "${int.parse(courseprice) - int.parse(discountvalue)}"
+                                                                  : finalAmountToPay) * //courseMap['Amount_Payablepay']
+                                                          100)
+                                                      .toString(),
+                                                  courseName: courseMap['name'],
+                                                  courseImageUrl:
+                                                      courseMap['image_url'],
+                                                )
+
+                                                // PaymentButtonn(
+                                                //   label: 'Razorpay',
+                                                //   icon: Icons.attach_money,
+                                                //   color: Colors.green,
+                                                //   onTap: () {
+                                                //     // Handle Razorpay payment
+                                                //   },
+                                                // ),
+                                              ],
                                             ),
                                           ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Center(
+                                    child: Container(
+                                      width: screenWidth,
+                                      height:
+                                          Device.screenType == ScreenType.mobile
+                                              ? 30.sp
+                                              : 20.sp,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: Colors.deepPurple.shade600,
+                                      ),
+                                      child: Center(
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              'Pay Now',
+                                              style: TextStyle(
+                                                  color: Color.fromRGBO(
+                                                      255, 255, 255, 1),
+                                                  fontFamily: 'Poppins',
+                                                  fontSize: 20 * verticalScale,
+                                                  letterSpacing:
+                                                      0 /*percentages not used in flutter. defaulting to zero*/,
+                                                  fontWeight: FontWeight.bold,
+                                                  height: 1),
+                                            ),
+                                            Text(
+                                              '(For International Students)',
+                                              style: TextStyle(
+                                                  color: Color.fromRGBO(
+                                                      255, 255, 255, 1),
+                                                  fontFamily: 'Poppins',
+                                                  fontSize: 15 * verticalScale,
+                                                  letterSpacing:
+                                                      0 /*percentages not used in flutter. defaulting to zero*/,
+                                                  fontWeight: FontWeight.bold,
+                                                  height: 1),
+                                            ),
+                                          ],
                                         ),
                                       ),
-             
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
