@@ -57,6 +57,7 @@ class _OtpPageState extends State<OtpPage> {
   late String feaurl;
     late String deurl;
   late String supurl;
+  late String interntnl;
 
 
   void _onKeyboardTap(String value) {
@@ -112,6 +113,17 @@ class _OtpPageState extends State<OtpPage> {
     });
 
     print("url is=====$diurl");
+
+     interntnl = await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("7A85zuoLi4YQpbXlbOAh_redirect")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
+
+    print("url is=====$interntnl");
 
     payurl = await FirebaseFirestore.instance
         .collection("Notice")
@@ -774,6 +786,29 @@ class _OtpPageState extends State<OtpPage> {
                     'id': id,
                     'coursePrice': courseP
                   });
+                }
+                else if (interntnl == 'mPqg2Z2BdNHvwaqAEfA0') {
+                  final id = "0";
+                  final cID = "mPqg2Z2BdNHvwaqAEfA0";
+                  final courseName =
+                      "Data Superstar(International)";
+                  final courseP = "399";
+                  GoRouter.of(context).goNamed('NewFeature', queryParams: {
+                    'cID': cID,
+                    'courseName': courseName,
+                    'id': id,
+                    'coursePrice': courseP
+                  });
+                }
+                else if (diurl == '/InternationalPaymentScreen') {
+                  print("i am in otp else");
+                  final cID = "aEGX6kMfHzQrVgP3WCwU";
+                  GoRouter.of(context).go(
+                    '/InternationalPaymentScreen?cID=mPqg2Z2BdNHvwaqAEfA0',
+                    // queryParams: {
+                    //   'cID': cID,
+                    //   }
+                  );
                 }
                 else if (payurl == 'aEGX6kMfHzQrVgP3WCwU') {
                   final cID = "aEGX6kMfHzQrVgP3WCwU";

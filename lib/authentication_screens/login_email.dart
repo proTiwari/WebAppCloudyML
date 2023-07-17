@@ -44,6 +44,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
   late String supurl;
   late String depayurl;
   late String suppayurl;
+  late String interntnl;
 
   void url() async {
     diurl = await FirebaseFirestore.instance
@@ -56,6 +57,17 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
     });
 
     print("url is=====$diurl");
+
+    interntnl = await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("7A85zuoLi4YQpbXlbOAh_redirect")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
+
+    print("url is=====$interntnl");
 
     payurl = await FirebaseFirestore.instance
         .collection("Notice")
@@ -746,6 +758,26 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                   'coursePrice':
                                                                       courseP
                                                                 });
+                                                          } else if (interntnl ==
+                                                              'mPqg2Z2BdNHvwaqAEfA0') {
+                                                            final id = "0";
+                                                            final cID =
+                                                                "mPqg2Z2BdNHvwaqAEfA0";
+                                                            final courseName =
+                                                                "Data Superstar(International)";
+                                                            final courseP =
+                                                                "399";
+                                                            GoRouter.of(context)
+                                                                .goNamed(
+                                                                    'NewFeature',
+                                                                    queryParams: {
+                                                                  'cID': cID,
+                                                                  'courseName':
+                                                                      courseName,
+                                                                  'id': id,
+                                                                  'coursePrice':
+                                                                      courseP
+                                                                });
                                                           } else if (supurl ==
                                                               'XSNqt0oNpuY7i2kb7zsW') {
                                                             final id = "0";
@@ -1043,26 +1075,15 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                     //   ),
                                                     // );
                                                     if (diurl ==
-                                                        '/featuredCourses') {
-                                                      print("i am in otp if");
-
-                                                      final id = "0";
+                                                        '/InternationalPaymentScreen') {
                                                       final cID =
                                                           "aEGX6kMfHzQrVgP3WCwU";
-                                                      final courseName =
-                                                          "Data Science & Analytics Placement Assurance Program";
-                                                      final courseP = "11999";
-                                                      GoRouter.of(context)
-                                                          .goNamed(
-                                                              'featuredCourses',
-                                                              queryParams: {
-                                                            'cID': cID,
-                                                            'courseName':
-                                                                courseName,
-                                                            'id': id,
-                                                            'coursePrice':
-                                                                courseP
-                                                          });
+                                                      GoRouter.of(context).go(
+                                                        '/InternationalPaymentScreen?cID=mPqg2Z2BdNHvwaqAEfA0',
+                                                        // queryParams: {
+                                                        //   'cID': cID,
+                                                        //   }
+                                                      );
                                                     } else if (deurl ==
                                                         'F9gxnjW9nf5Lxg5A6758') {
                                                       final id = "0";
@@ -1071,6 +1092,24 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                       final courseName =
                                                           "Data Engineering Placement Assurance Program";
                                                       final courseP = "12000";
+                                                      GoRouter.of(context)
+                                                          .goNamed('NewFeature',
+                                                              queryParams: {
+                                                            'cID': cID,
+                                                            'courseName':
+                                                                courseName,
+                                                            'id': id,
+                                                            'coursePrice':
+                                                                courseP
+                                                          });
+                                                    } else if (interntnl ==
+                                                        'mPqg2Z2BdNHvwaqAEfA0') {
+                                                      final id = "0";
+                                                      final cID =
+                                                          "mPqg2Z2BdNHvwaqAEfA0";
+                                                      final courseName =
+                                                          "Data Superstar(International)";
+                                                      final courseP = "399";
                                                       GoRouter.of(context)
                                                           .goNamed('NewFeature',
                                                               queryParams: {
@@ -1657,25 +1696,15 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                     const Duration(seconds: 2),
                                                     () {
                                                   if (diurl ==
-                                                      '/featuredCourses') {
-                                                    print("i am in otp if");
-
-                                                    final id = "0";
+                                                      '/InternationalPaymentScreen') {
                                                     final cID =
                                                         "aEGX6kMfHzQrVgP3WCwU";
-                                                    final courseName =
-                                                        "Data Science & Analytics Placement Assurance Program";
-                                                    final courseP = "9999";
-                                                    GoRouter.of(context)
-                                                        .goNamed(
-                                                            'featuredCourses',
-                                                            queryParams: {
-                                                          'cID': cID,
-                                                          'courseName':
-                                                              courseName,
-                                                          'id': id,
-                                                          'coursePrice': courseP
-                                                        });
+                                                    GoRouter.of(context).go(
+                                                      '/InternationalPaymentScreen?cID=mPqg2Z2BdNHvwaqAEfA0',
+                                                      // queryParams: {
+                                                      //   'cID': cID,
+                                                      //   }
+                                                    );
                                                   } else if (payurl ==
                                                       'aEGX6kMfHzQrVgP3WCwU') {
                                                     final cID =
@@ -1969,23 +1998,16 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                             //     builder: (_) => HomePage(),
                                             //   ),
                                             // );
-                                            if (diurl == '/featuredCourses') {
-                                              print("i am in otp if");
-
-                                              final id = "0";
+                                            if (diurl ==
+                                                '/InternationalPaymentScreen') {
                                               final cID =
                                                   "aEGX6kMfHzQrVgP3WCwU";
-                                              final courseName =
-                                                  "Data Science & Analytics Placement Assurance Program";
-                                              final courseP = "9999";
-                                              GoRouter.of(context).goNamed(
-                                                  'featuredCourses',
-                                                  queryParams: {
-                                                    'cID': cID,
-                                                    'courseName': courseName,
-                                                    'id': id,
-                                                    'coursePrice': courseP
-                                                  });
+                                              GoRouter.of(context).go(
+                                                '/InternationalPaymentScreen?cID=mPqg2Z2BdNHvwaqAEfA0',
+                                                // queryParams: {
+                                                //   'cID': cID,
+                                                //   }
+                                              );
                                             } else if (payurl ==
                                                 'aEGX6kMfHzQrVgP3WCwU') {
                                               final cID =

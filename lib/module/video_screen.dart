@@ -10,6 +10,7 @@ import 'package:cloudyml_app2/offline/db.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/models/offline_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloudyml_app2/screens/quiz/quizinstructions.dart';
 import 'package:cloudyml_app2/widgets/assignment_bottomsheet.dart';
 import 'package:cloudyml_app2/widgets/settings_bottomsheet.dart';
 import 'package:dio/dio.dart';
@@ -1702,6 +1703,18 @@ getAssignmentDescription() async {
                                 quizdata,
                                 quizScore: quizScore,
                                 quizNameExistsInList: quizNameExistsInList,
+                                ontap: (){
+                                   Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            InstructionspageWidget(
+                                                quizdata)),
+                                  ).then((value) {
+
+                                   getScoreOfAllQuiz();
+                                  });
+                                },
                               ))
                           : Expanded(
                               flex: 2,
@@ -1797,6 +1810,18 @@ getAssignmentDescription() async {
                                 quizdata,
                                 quizScore: quizScore,
                                 quizNameExistsInList: quizNameExistsInList,
+                                ontap: (){
+                                   Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            InstructionspageWidget(
+                                                quizdata)),
+                                  ).then((value) {
+
+                                   getScoreOfAllQuiz();
+                                  });
+                                },
                               )
                             : Align(
                                 alignment: Alignment.topCenter,
