@@ -65,7 +65,7 @@ class LocalNotificationService{
       // return {};
     }
   }
-  static void createanddisplaynotificationmessage(String message) async {
+  static void createanddisplaynotificationmessage(String name,String message) async {
     try {
       FirebaseFirestore _firestore = FirebaseFirestore.instance;
       final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
@@ -84,8 +84,9 @@ class LocalNotificationService{
 
       await _notificationsPlugin.show(
         id,
-        "New Message recieved",
-        message,
+        "$name sent a new message",
+      
+        "message : $message",
         notificationDetails,
         //payload: message.data['_id'],
       );
