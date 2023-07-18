@@ -64,6 +64,7 @@ Future<void> handlePasteEvent() async {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  late RawKeyboard _keyboard;
   final GetUnread unread = GetUnread();
   final _textController = TextEditingController();
   bool _isRecording = false;
@@ -156,10 +157,10 @@ class _ChatPageState extends State<ChatPage> {
   void _sendMessage() async {
     if (_textController.text.isNotEmpty) {
       _focusNode.unfocus();
-      String data = _textController.text.toString();
-       _textController.clear();
+      String data = await _textController.text.toString();
+      _textController.clear();
       DateTime time1 = await fetchTimeInIndia();
-      
+
       print(time);
       print(time1.toString());
       updatelast();
@@ -172,12 +173,11 @@ class _ChatPageState extends State<ChatPage> {
         'message': data,
         'role': "mentor",
         'sendBy': namecurrent,
-        'time': time,
+        'time': time1,
         'studentid': id,
         'type': 'text'
       });
     }
-   
   }
 
   Future<void> _pickFilePhoto() async {
@@ -215,12 +215,12 @@ class _ChatPageState extends State<ChatPage> {
               final time = DateTime.now();
               // Add message to Firestore
               updatelast();
-                DateTime time1 = await fetchTimeInIndia();
-      
-      print(time);
-      print(time1.toString());
-      updatelast();
-      updatetime(time1, "image");
+              DateTime time1 = await fetchTimeInIndia();
+
+              print(time);
+              print(time1.toString());
+              updatelast();
+              updatetime(time1, "image");
               _firestore
                   .collection("groups")
                   .doc(idcurr)
@@ -230,7 +230,7 @@ class _ChatPageState extends State<ChatPage> {
                 'role': "mentor",
                 'sendBy': namecurrent,
                 'link': downloadUrl,
-                'time': time,
+                'time': time1,
                 'studentid': id,
                 'type': 'image'
               });
@@ -274,12 +274,12 @@ class _ChatPageState extends State<ChatPage> {
               final downloadUrl = await snapshot.ref.getDownloadURL();
               final time = DateTime.now();
               // Add message to Firestore
-                 DateTime time1 = await fetchTimeInIndia();
-      
-      print(time);
-      print(time1.toString());
-      updatelast();
-      updatetime(time1, "video");
+              DateTime time1 = await fetchTimeInIndia();
+
+              print(time);
+              print(time1.toString());
+              updatelast();
+              updatetime(time1, "video");
 
               _firestore
                   .collection("groups")
@@ -290,7 +290,7 @@ class _ChatPageState extends State<ChatPage> {
                 'role': "mentor",
                 'sendBy': namecurrent,
                 'link': downloadUrl,
-                'time': time,
+                'time': time1,
                 'studentid': id,
                 'type': 'video'
               });
@@ -330,12 +330,12 @@ class _ChatPageState extends State<ChatPage> {
             final TaskSnapshot snapshot = await uploadTask;
             final downloadUrl = await snapshot.ref.getDownloadURL();
             final time = DateTime.now();
-              DateTime time1 = await fetchTimeInIndia();
-      
-      print(time);
-      print(time1.toString());
-      updatelast();
-      updatetime(time1, "file");
+            DateTime time1 = await fetchTimeInIndia();
+
+            print(time);
+            print(time1.toString());
+            updatelast();
+            updatetime(time1, "file");
             _firestore
                 .collection("groups")
                 .doc(idcurr)
@@ -345,7 +345,7 @@ class _ChatPageState extends State<ChatPage> {
               'role': "mentor",
               'sendBy': namecurrent,
               'link': downloadUrl,
-              'time': time,
+              'time': time1,
               'studentid': id,
               'type': 'file'
             });
@@ -403,6 +403,7 @@ class _ChatPageState extends State<ChatPage> {
   void _stopRecording() async {
     if (_isRecording) {
       await _recorder!.stop();
+      endtime = DateTime.now();
 
       setState(() {
         _isRecording = false;
@@ -411,34 +412,41 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  Duration _calculateDuration() {
+    final duration = endtime!.difference(starttime!);
+    return duration;
+  }
+
 //  void _getAppStorageDir() {
 //   final appStorage = html.window.localStorage;
 //   // Use appStorage as needed
 // }
   Future<String> _uploadRecording() async {
     final storageRef =
-        FirebaseStorage.instance.ref().child('audio/${DateTime.now()}.aac');
+        FirebaseStorage.instance.ref().child('audio/${DateTime.now()}.mp3');
 //  final fb.UploadTaskSnapshot uploadTaskSnapshot = await storageRef.put(filePath).future;
     try {
       await storageRef.putData(await _recorder!.toBytes());
       final downloadUrl = await storageRef.getDownloadURL();
       print('File uploaded: $downloadUrl');
-      final time = DateTime.now();
+      // final time = DateTime.now();
       // Add message to Firestore
 
       DateTime time1 = await fetchTimeInIndia();
-
-      print(time);
+      Duration tt = await _calculateDuration();
+      //  print(time);
       print(time1.toString());
       updatelast();
       updatetime(time1, "audio note");
       _firestore.collection("groups").doc(idcurr).collection("chats").add({
         'message': '${DateTime.now()}.mp3',
-        'role': "",
+        'role': "mentor",
         'sendBy': namecurrent,
         'link': downloadUrl,
-        'time': time,
+        'time': time1,
         'studentid': id,
+        'duration':
+            '${tt.inHours}:${tt.inMinutes.remainder(60)}:${tt.inSeconds.remainder(60)}',
         'type': 'audio'
       });
 
@@ -449,16 +457,22 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
- // FlutterSoundRecorder _soundRecorder = FlutterSoundRecorder();
+  DateTime? starttime;
+  DateTime? endtime;
+  // FlutterSoundRecorder _soundRecorder = FlutterSoundRecorder();
   void _startRecording() async {
     _initRecorder();
+    // starttime=DateTime.
     print("Recording....");
     if (await Record().hasPermission()) {
       setState(() {
         _isRecording = true;
       });
+
       // await _initRecorder();
+
       _recorder!.start();
+      starttime = DateTime.now();
       //   await _soundRecorder.openAudioSession();
       //   await _soundRecorder.startRecorder(
       //     // toFile: '${appStorage!.path}/audio_${DateTime.now().millisecondsSinceEpoch}.m4a',
@@ -527,7 +541,9 @@ class _ChatPageState extends State<ChatPage> {
                     print(_updatedDocuments);
                     displayWebNotification(
                         "${change.doc["student_name"]} has a new message",
-                        changedData.containsKey('lastmessage')?"message: ${change.doc["lastmessage"]}":"message: new feature is working",
+                        changedData.containsKey('lastmessage')
+                            ? "message: ${change.doc["lastmessage"]}"
+                            : "message: new feature is working",
                         "assets/icon.jpeg");
                   }
                   notificationShown = true;
@@ -636,7 +652,10 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
+    _keyboard = RawKeyboard.instance;
+    _keyboard.addListener(_handleKeyPress);
     loadrole();
+
     // _initRecorder();
     //Configuration.docid = "";
     print("iwejoiweofwoiefwf");
@@ -649,6 +668,20 @@ class _ChatPageState extends State<ChatPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       listenToFirestoreChanges();
     });
+  }
+
+  void _handleKeyPress(RawKeyEvent event) {
+    if (event is RawKeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.enter) {
+      // Trigger your function here
+      _sendMessage();
+    }
+  }
+
+  @override
+  void dispose() {
+    _keyboard.removeListener(_handleKeyPress);
+    super.dispose();
   }
 
   @override
@@ -1082,10 +1115,24 @@ class _ChatPageState extends State<ChatPage> {
                                         'Number of documents: ${messages.length}');
                                     List<MessageBubble> messageBubbles = [];
                                     for (var message in messages) {
+                                      final data = message.data()
+                                          as Map<String, dynamic>;
                                       final messageText = message['message'];
                                       final messageSender = message['sendBy'];
                                       final messageType = message['type'];
                                       final messagetime = message['time'];
+//                                       Duration recording =
+//                                           data.containsKey('duration')
+//                                               ? Duration(
+//   hours: int.parse(message['duration'][0]),
+//   minutes: int.parse(message['duration'][1]),
+//   seconds: int.parse(message['duration'][2]),
+// )
+//                                               : Duration.zero;
+                                      final messageid =
+                                          data.containsKey('studentid')
+                                              ? message['studentid']
+                                              : "old message";
                                       final link = messageType == "image" ||
                                               messageType == "audio" ||
                                               messageType == "video" ||
@@ -1099,6 +1146,7 @@ class _ChatPageState extends State<ChatPage> {
                                         timestamp: messagetime,
                                         isMe: messageSender == namecurrent,
                                         link: link,
+                                        //  recording: recording,
                                         type: messageType,
                                         isURL: isURL(messageText),
                                       );
@@ -1202,6 +1250,7 @@ class MessageBubble extends StatefulWidget {
   final String type;
   final Timestamp timestamp;
   final String link;
+  //final Duration recording;
   final bool isURL;
 
   MessageBubble(
@@ -1210,6 +1259,7 @@ class MessageBubble extends StatefulWidget {
       required this.isMe,
       required this.type,
       required this.link,
+      //  required this.recording,
       required this.timestamp,
       required this.isURL});
 
@@ -1451,8 +1501,10 @@ class _MessageBubbleState extends State<MessageBubble> {
                           : widget.type == 'audio'
                               ? Container(
                                   width: 300,
-                                  child:
-                                      AudioPlayerWidget(audioUrl: widget.link),
+                                  child: AudioPlayerWidget(
+                                    audioUrl: widget.link,
+                                    //     recording: widget.recording
+                                  ),
                                 )
                               : widget.type == 'video'
                                   ? Container(
@@ -1527,8 +1579,12 @@ class _MessageBubbleState extends State<MessageBubble> {
 
 class AudioPlayerWidget extends StatefulWidget {
   final String audioUrl;
-
-  const AudioPlayerWidget({Key? key, required this.audioUrl}) : super(key: key);
+  //final Duration recording;
+  const AudioPlayerWidget({
+    Key? key,
+    required this.audioUrl,
+    //required this.recording
+  }) : super(key: key);
 
   @override
   _AudioPlayerWidgetState createState() => _AudioPlayerWidgetState();
@@ -1562,9 +1618,18 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         _currentPosition = event;
       });
     });
-
-    _totalDuration = (await _audioPlayer.getDuration())!;
-
+    _audioPlayer.onPlayerComplete.listen((event) {
+      setState(() {
+        first = false;
+        _isPlaying = false;
+      });
+    });
+    _totalDuration =
+            // widget.recording==Duration.zero?
+            (await _audioPlayer.getDuration())!
+        // !:widget.recording
+        ;
+    print(_totalDuration);
     // _audioPlayer.onPlayerStateChanged.listen((event) {
     //   setState(() {
     //     _isPlaying = event == PlayerState.PLAYING;

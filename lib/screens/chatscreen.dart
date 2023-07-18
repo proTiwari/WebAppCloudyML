@@ -865,10 +865,11 @@ class _ChatScreenState extends State<ChatScreen> {
                               ),
                         _isRecording
                             ? SizedBox()
-                            : IconButton(
-                                icon: Icon(Icons.send, color: Colors.purple),
-                                onPressed: _sendMessage,
-                              ),
+                            :   IconButton(
+            icon: Icon(Icons.send, color: Colors.purple),
+            onPressed: containsSingleURL(_textController.text)
+                ? _sendMessage
+                : error()),
                       ],
                     ),
                   ),
