@@ -30,6 +30,7 @@ import '../authentication_screens/phone_auth.dart';
 import '../catalogue_screen.dart';
 import '../combo/feature_courses.dart';
 import '../combo/trialfeatutr.dart';
+import '../international_payment_screen.dart';
 import '../models/course_details.dart';
 import '../my_Courses.dart';
 import '../screens/coupon/create_coupon.dart';
@@ -417,6 +418,21 @@ class MyRouter {
                 ),
               );
             }),
+        GoRoute(
+            name: 'InternationalPaymentScreen',
+            path: '/InternationalPaymentScreen',
+            pageBuilder: (context, state) {
+              String cID = state.queryParams['cID']!;
+              // Map<String, dynamic> courseMap =
+              // state.queryParams['courseMap']! as Map<String, dynamic>;
+              return MaterialPage(
+                child: InternationalPaymentScreen(
+                    cID: cID,
+                    // map: courseMap,
+                    isItComboCourse: false),
+              );
+            }),
+
         GoRoute(
             name: 'paymentPortal',
             path: '/paymentPortal',

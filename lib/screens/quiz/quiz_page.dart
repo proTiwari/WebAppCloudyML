@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -51,7 +52,7 @@ class _QuizPageState extends State<QuizPage> {
   var userName = '';
 
   Future<String> handlingCasesAccoridingToTotal(
-      double total, List quizdata, String courseid) async {
+      double total, List quizdata, String courseid,   var correctint) async {
     print("total is $total");
     // coursequizwindowindays
     int coursequizwindowindays = 0;
@@ -62,6 +63,7 @@ class _QuizPageState extends State<QuizPage> {
     String returningString = "";
     int coursequizwindowindaysmorethan50percent = 0;
 
+    if (globals.quizCleared) {
     if (globals.quizCleared) {
       if (total >= coursequizpassingpercentage ||
           total >= modulequizpassingpercentage) {
@@ -118,16 +120,17 @@ class _QuizPageState extends State<QuizPage> {
         print("coursequizwindowindays: $coursequizwindowindays");
         modulerquizwindowinhours = value.data()!['modulerquizwindowinhours'];
         coursequizpassingpercentage =
-            value.data()!['coursequizpassingpercentage'];
+        value.data()!['coursequizpassingpercentage'];
         coursequizwindowindaysmorethan50percent =
-            value.data()!['coursequizwindowindaysmorethan50percent'];
+        value.data()!['coursequizwindowindaysmorethan50percent'];
         modulequizpassingpercentage =
-            value.data()!['modulequizpassingpercentage'];
+        value.data()!['modulequizpassingpercentage'];
       });
     } catch (e) {
       print("errorid: ff93u98e9w: ${e}");
     }
 
+  
     // course quiz cleared condition
     try {
       if (total >= coursequizpassingpercentage &&
@@ -138,24 +141,26 @@ class _QuizPageState extends State<QuizPage> {
             .doc(FirebaseAuth.instance.currentUser!.uid)
             .get()
             .then(
-          (value) {
+              (value) {
             userName = value.data()!['name'];
           },
         );
         // track this quiz in user's doc
         quizTrackModel = QuizTrackModel(
-          quizname: widget.quizdata['name'],
-          quizdata: quizdata,
-          quizScore: total,
-          date: DateTime.now(),
-          quizlevel: widget.quizdata['quizlevel'],
-          courseName: widget.quizdata['courseName'],
-          courseId: courseid,
-          quizCleared: true,
-          quizAttemptGapForModularQuiz:
-              DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
-          quizAttemptGapForCourseQuiz:
-              DateTime.now().add(Duration(days: coursequizwindowindays)),
+            quizname: widget.quizdata['name'],
+            quizdata: quizdata,
+            quizScore: total,
+            date: DateTime.now(),
+            quizlevel: widget.quizdata['quizlevel'],
+            courseName: widget.quizdata['courseName'],
+            courseId: courseid,
+            quizCleared: true,
+            quizAttemptGapForModularQuiz:
+            DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+            quizAttemptGapForCourseQuiz:
+            DateTime.now().add(Duration(days: coursequizwindowindays)),
+            quizTakenTime: countUsedTime(),
+            quizMark: correctint.toString()
         );
         returningString = "Congratulations!";
       }
@@ -171,21 +176,24 @@ class _QuizPageState extends State<QuizPage> {
         print("course quiz not cleared");
         // open this quiz after 3 days
         quizTrackModel = QuizTrackModel(
-          quizname: widget.quizdata['name'],
-          quizdata: quizdata,
-          quizScore: total,
-          date: DateTime.now(),
-          quizlevel: widget.quizdata['quizlevel'],
-          courseName: widget.quizdata['courseName'],
-          courseId: courseid,
-          quizCleared: false,
-          quizAttemptGapForModularQuiz:
-              DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
-          quizAttemptGapForCourseQuiz:
-              DateTime.now().add(Duration(days: coursequizwindowindays)),
+            quizname: widget.quizdata['name'],
+            quizdata: quizdata,
+            quizScore: total,
+            date: DateTime.now(),
+            quizlevel: widget.quizdata['quizlevel'],
+            courseName: widget.quizdata['courseName'],
+            courseId: courseid,
+            quizCleared: false,
+
+            quizAttemptGapForModularQuiz:
+            DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+            quizAttemptGapForCourseQuiz:
+            DateTime.now().add(Duration(days: coursequizwindowindays)),
+            quizTakenTime: countUsedTime(),
+            quizMark: correctint.toString()
         );
         returningString =
-            "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${coursequizwindowindaysmorethan50percent} days";
+        "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${coursequizwindowindaysmorethan50percent} days";
       }
     } catch (e) {
       print("errorid: r82u93r9fw3: ${e}");
@@ -197,21 +205,23 @@ class _QuizPageState extends State<QuizPage> {
         print("course quiz not cleared with less than 50%");
         // open this quiz after 7 days
         quizTrackModel = QuizTrackModel(
-          quizname: widget.quizdata['name'],
-          quizdata: quizdata,
-          quizScore: total,
-          date: DateTime.now(),
-          quizlevel: widget.quizdata['quizlevel'],
-          courseName: widget.quizdata['courseName'],
-          courseId: courseid,
-          quizCleared: false,
-          quizAttemptGapForModularQuiz:
-              DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
-          quizAttemptGapForCourseQuiz: DateTime.now()
-              .add(Duration(days: coursequizwindowindaysmorethan50percent)),
+            quizname: widget.quizdata['name'],
+            quizdata: quizdata,
+            quizScore: total,
+            date: DateTime.now(),
+            quizlevel: widget.quizdata['quizlevel'],
+            courseName: widget.quizdata['courseName'],
+            courseId: courseid,
+            quizCleared: false,
+            quizAttemptGapForModularQuiz:
+            DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+            quizAttemptGapForCourseQuiz: DateTime.now()
+                .add(Duration(days: coursequizwindowindaysmorethan50percent)),
+            quizTakenTime: countUsedTime(),
+            quizMark:  correctint.toString()
         );
         returningString =
-            "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${coursequizwindowindays} days";
+        "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${coursequizwindowindays} days";
       }
     } catch (e) {
       print("errorid: i23rjo23jio2: ${e}");
@@ -232,9 +242,9 @@ class _QuizPageState extends State<QuizPage> {
           courseId: courseid,
           quizCleared: true,
           quizAttemptGapForModularQuiz:
-              DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+          DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
           quizAttemptGapForCourseQuiz:
-              DateTime.now().add(Duration(days: coursequizwindowindays)),
+          DateTime.now().add(Duration(days: coursequizwindowindays)),
         );
         returningString = "Congratulations!";
       }
@@ -258,12 +268,12 @@ class _QuizPageState extends State<QuizPage> {
           courseId: courseid,
           quizCleared: false,
           quizAttemptGapForModularQuiz:
-              DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+          DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
           quizAttemptGapForCourseQuiz:
-              DateTime.now().add(Duration(days: coursequizwindowindays)),
+          DateTime.now().add(Duration(days: coursequizwindowindays)),
         );
         returningString =
-            "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${modulerquizwindowinhours} hours";
+        "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${modulerquizwindowinhours} hours";
       }
     } catch (e) {
       print("errorid: fif3sdwf: ${e}");
@@ -286,7 +296,8 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   countDownTimer(quiztiming) async {
-    int timerCount = int.parse("$quiztiming") * 60;
+    try{
+      int timerCount = int.parse("$quiztiming") * 60;
 
     for (int x = timerCount; x > 0; x--) {
       await Future.delayed(Duration(seconds: 1)).then((_) {
@@ -301,7 +312,7 @@ class _QuizPageState extends State<QuizPage> {
         setState(() {
           timer = _printDuration(now);
         });
-        // print("${_printDuration(now)}");
+        print("${_printDuration(now)}");
       });
     }
   }
@@ -433,7 +444,7 @@ class _QuizPageState extends State<QuizPage> {
       print("the course id is-----lklklkl$courseid");
 
       var resultString =
-          await handlingCasesAccoridingToTotal(total, quizdata, courseid);
+      await handlingCasesAccoridingToTotal(total, quizdata, courseid, correctint);
       // await FirebaseFirestore.instance
       //     .collection("Users")
       //     .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -476,6 +487,7 @@ class _QuizPageState extends State<QuizPage> {
       print("lll6");
       print("isfojsoiefj${total} ${unanswered} ${wronganswered} ${correctint}");
       print("lll7");
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -486,7 +498,10 @@ class _QuizPageState extends State<QuizPage> {
                 wronganswered,
                 correctint,
                 widget.quizdata,
-                resultString)),
+                resultString,
+                countUsedTime(),
+                quizdata.length.toString()
+            )),
       );
       // Navigator.push(
       //   context,
@@ -925,6 +940,26 @@ class _QuizPageState extends State<QuizPage> {
     } catch (e) {
       print("jjoijoijo: ${e}");
     }
+  }
+
+  String countUsedTime(){
+    String totalTime = "${int.parse(widget.quizdata['quiztiming']) ~/ 60}:${int.parse(widget.quizdata['quiztiming']) % 60}:00";
+    String remainingTime =timer;
+
+
+    List<int> totalParts = totalTime.split(':').map(int.parse).toList();
+    List<int> remainingParts = remainingTime.split(':').map(int.parse).toList();
+
+    int totalSeconds = totalParts[0] * 3600 + totalParts[1] * 60 + totalParts[2];
+    int remainingSeconds = remainingParts[0] * 3600 + remainingParts[1] * 60 + remainingParts[2];
+    int usedSeconds = totalSeconds - remainingSeconds;
+
+    int usedHours = usedSeconds ~/ 3600;
+    int usedMinutes = (usedSeconds % 3600) ~/ 60;
+    int usedSecondsRemaining = usedSeconds % 60;
+
+    return "${usedHours.toString().padLeft(2, '0')}:${usedMinutes.toString().padLeft(2, '0')}:${usedSecondsRemaining.toString().padLeft(2, '0')}";
+
   }
 
   @override
@@ -4557,13 +4592,13 @@ class _QuizPageState extends State<QuizPage> {
             : Container(),
         submitvalue
             ? Center(
-                child: Container(
-                  width: 700,
-                  height: 400,
-                  color: Color.fromARGB(26, 195, 64, 64),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              )
+          child: Container(
+            width: 700,
+            height: 400,
+            color: Color.fromARGB(26, 195, 64, 64),
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        )
             : Container()
       ]),
     );

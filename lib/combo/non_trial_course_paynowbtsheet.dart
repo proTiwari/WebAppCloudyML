@@ -10,13 +10,14 @@ class NonTrialCourseBottomSheet extends StatelessWidget {
   Map<String, dynamic> map;
   bool isItComboCourse;
   String cID;
+  final international;
   // double closeBottomSheetAt;
 
   NonTrialCourseBottomSheet({
     // required this.currentPosition,
     required this.coursePrice,
     required this.map,
-
+    this.international,
     // required this.popBottomSheetAt,
     required this.isItComboCourse,
     required this.cID,
@@ -63,12 +64,17 @@ class NonTrialCourseBottomSheet extends StatelessWidget {
                   child: InkWell(
                     onTap: () {
 
-                      GoRouter.of(context)
-                          .pushNamed('comboPaymentPortal',
-                          queryParams: {
-                            'cID': cID,
-                          }
-                      );
+                      if(international != null && international == true) {
+                        GoRouter.of(context)
+                            .pushNamed('InternationalPaymentScreen', queryParams: {
+                          'cID': cID,
+                        });
+                      } else {
+                        GoRouter.of(context)
+                            .pushNamed('comboPaymentPortal', queryParams: {
+                          'cID': cID,
+                        });
+                      }
 
                       // Navigator.push(
                       //   context,

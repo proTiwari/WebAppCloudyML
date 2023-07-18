@@ -22,6 +22,7 @@ class PayNowBottomSheetfeature extends StatefulWidget {
   Map<String, dynamic> map;
   Map<String, dynamic> usermap;
   bool isItComboCourse;
+  bool international;
   String cID;
   PayNowBottomSheetfeature({
     Key? key,
@@ -29,7 +30,7 @@ class PayNowBottomSheetfeature extends StatefulWidget {
     required this.coursePrice,
     required this.map,
     required this.usermap,
-
+    required this.international,
     // required this.popBottomSheetAt,
     required this.isItComboCourse,
     required this.cID,
@@ -503,10 +504,18 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                     ),
                     InkWell(
                       onTap: () {
-                        GoRouter.of(context)
-                            .pushNamed('comboPaymentPortal', queryParams: {
-                          'cID': widget.cID,
-                        });
+
+                        if(widget.international != null && widget.international == true) {
+                          GoRouter.of(context)
+                              .pushNamed('InternationalPaymentScreen', queryParams: {
+                            'cID': widget.cID,
+                          });
+                        } else {
+                          GoRouter.of(context)
+                              .pushNamed('comboPaymentPortal', queryParams: {
+                            'cID': widget.cID,
+                          });
+                        }
                       },
                       child: Container(
                         height: screenHeight * .08,

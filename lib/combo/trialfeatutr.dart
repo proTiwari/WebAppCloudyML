@@ -159,7 +159,7 @@ class _NewFeatureState extends State<NewFeature> {
   }
   Map<String, dynamic> comboMap = {};
 
-
+ var international;
   void getCourseName() async {
     print('this idd ${widget.cID}');
     await FirebaseFirestore.instance
@@ -170,6 +170,7 @@ class _NewFeatureState extends State<NewFeature> {
       comboMap = value.data()!;
       setState(() {
         comboMap = value.data()!;
+        international = value.data()!['international'];
         print('this is $comboMap');
         print('cid is ${comboMap['trialCourse']} ${int.parse(widget.id!)}');
 
@@ -267,7 +268,8 @@ class _NewFeatureState extends State<NewFeature> {
       bottomSheet:
       comboMap['trialCourse']! != null && comboMap['trialCourse']!
           ? PayNowBottomSheetfeature(
-        coursePrice: '₹${widget.courseP!}/-',
+        coursePrice: international != null && international == true ? '\$${((double.parse(comboMap['Course Price'])/82)+5).round().toString()}/-' : '₹${widget.courseP!}/-',
+        international: international == null ||  international == false ? false : international,
         map: comboMap,
         isItComboCourse: true,
         cID: widget.cID!,
@@ -275,8 +277,9 @@ class _NewFeatureState extends State<NewFeature> {
         usermap:userMap as Map<String, dynamic>
       )
           : NonTrialCourseBottomSheet(
-        coursePrice: '₹${widget.courseP!}/-',
+        coursePrice: international != null && international == true ? '\$${((double.parse(comboMap['Course Price'])/82)+5).round().toString()}/-' : '₹${widget.courseP!}/-',
         map: comboMap,
+        international: international == null ||  international == false ? false : international,
         isItComboCourse: true,
         cID: widget.cID!,
       ),

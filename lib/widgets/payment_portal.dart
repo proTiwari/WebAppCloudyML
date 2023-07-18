@@ -147,6 +147,16 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
       "uid": _auth.currentUser!.uid,
       "cname": widget.courseName,
     });
+    var mailurl = Uri.parse(
+        'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/coursemail');
+    // final response =
+    await http.post(mailurl, headers: {
+      "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+      "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
+    }, body: {
+      "uid": _auth.currentUser!.uid,
+      "cname": widget.courseName,
+    });
 
     print("Mail Sent");
   }
@@ -459,17 +469,51 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     pushToHome();
   }
 
-  void addCoursetoUser(String id) async {
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .update({
-      "paidCourseNames": FieldValue.arrayUnion([id]),
-      "paid": "true",
-    });
+  // void addCoursetoUser(String id) async {
+  //   await FirebaseFirestore.instance
+  //       .collection('Users')
+  //       .doc(FirebaseAuth.instance.currentUser!.uid)
+  //       .update({
+  //     "paidCourseNames": FieldValue.arrayUnion([id]),
+  //     "paid": "true",
+  //   });
 
     print("course added");
-  }
+
+  apicalltoupdatecouponinuser() async {
+    print('ytugggvyuuuuuuiiiiiiiiiiiiii');
+    print(widget.couponCode);
+    print(FirebaseAuth.instance.currentUser!.uid);
+    print(widget.courseName);
+    print(widget.courseId);
+    try {
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((value) {
+        var coupon = value.data()!["Coupons"];
+        for (var i in coupon) {
+          try {
+            if (i["couponCode"] == widget.couponCode) {
+              i['courseName'] = widget.courseName;
+              i['courseId'] = widget.courseId;
+              i['couponStatus'] = "purchased";
+              i['purchasedDate'] = DateTime.now();
+              FirebaseFirestore.instance
+                  .collection("Users")
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .update({
+                "Coupons": coupon,
+              });
+            }
+          } catch (e) {
+            print(e);
+          }
+        }
+      });
+
+    print("course added");
 
   apicalltoupdatecouponinuser() async {
     print('ytugggvyuuuuuuiiiiiiiiiiiiii');
