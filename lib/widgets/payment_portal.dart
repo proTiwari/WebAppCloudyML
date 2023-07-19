@@ -2,6 +2,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -110,23 +111,8 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   var key_secret;
 
   loadCourses() async {
-    dynamic userData = {};
-    await _firestore
-        .collection("Users")
-        .doc(_auth.currentUser!.uid)
-        .get()
-        .then((value) {
-      // print("user data-- ${value.data()}");
-      setState(() {
-        userData = value.data();
-      });
-    });
-    print("user data is==${userData["paidCourseNames"][0]}");
-    print(courseId);
-
     var url = Uri.parse(
         'https://us-central1-cloudyml-app.cloudfunctions.net/adduser/addgroup');
-
     await http.post(url, headers: {
       "Access-Control-Allow-Origin": "*", // Required for CORS support to work
       "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
@@ -134,19 +120,10 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
       "sname": userData["name"],
       "sid": _auth.currentUser!.uid,
       "cname": widget.courseName,
-      "image": widget.courseImageUrl
+      "image": widget.courseImageUrl,
+      "cid": widget.courseId
     });
 
-    var mailurl = Uri.parse(
-        'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/coursemail');
-    // final response =
-    await http.post(mailurl, headers: {
-      "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-      "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
-    }, body: {
-      "uid": _auth.currentUser!.uid,
-      "cname": widget.courseName,
-    });
     var mailurl = Uri.parse(
         'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/coursemail');
     // final response =
@@ -160,47 +137,6 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
 
     print("Mail Sent");
   }
-
-  // void loadCourses() async {
-  //   setState(() {
-  //     isLoading = true;
-  //   });
-  //   await _firestore
-  //       .collection("courses")
-  //       .where('id', isEqualTo: widget.courseId)
-  //       .get()
-  //       .then((value) {
-  //     print(value.docs);
-  //     final courses = value.docs
-  //         .map((doc) => {
-  //               "id": doc.id,
-  //               "data": doc.data(),
-  //             })
-  //         .toList();
-  //     setState(() {
-  //       courseList = courses;
-  //     });
-  //     print('the list is---$courseList');
-  //   });
-  //   setState(() {
-  //     isLoading = false;
-  //   });
-
-  //   Map<String, dynamic> groupData = {
-  //     "name": courseList![0]["data"]["name"],
-  //     "icon": courseList![0]["data"]["image_url"],
-  //     "mentors": courseList![0]["data"]["mentors"],
-  //     "student_id": _auth.currentUser!.uid,
-  //     "student_name": _auth.currentUser!.displayName,
-  //   };
-
-  //   // Fluttertoast.showToast(msg: "Creating group...");
-
-  //   await _firestore.collection("groups").add(groupData);
-  //   print('group data=$groupData');
-
-  //   // Fluttertoast.showToast(msg: "Group Created");
-  // }
 
   void updateAmoutStringForUPI(bool isPayInPartsPressed,
       bool isMinAmountCheckerPressed, bool isOutStandingAmountCheckerPressed) {
@@ -299,7 +235,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   @override
   void initState() {
     // loadGroup();
-    print("ifjweoifjwojefowjoeifoi:oiwejfojiwoe:eofj: ${widget.courseId}");
+    print(widget.courseId);
     print(widget.courseName);
 
     getrzpkey();
@@ -478,122 +414,71 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   //     "paid": "true",
   //   });
 
-    print("course added");
+  //   print("course added");
 
-  apicalltoupdatecouponinuser() async {
-    print('ytugggvyuuuuuuiiiiiiiiiiiiii');
-    print(widget.couponCode);
-    print(FirebaseAuth.instance.currentUser!.uid);
-    print(widget.courseName);
-    print(widget.courseId);
+  // }
+
+  calltoupdatecouponinuser() async {
+    var couponbool = false;
+    var couponList;
     try {
+      print('1');
+
       await FirebaseFirestore.instance
-          .collection("Users")
+          .collection('Users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get()
           .then((value) {
-        var coupon = value.data()!["Coupons"];
-        for (var i in coupon) {
-          try {
-            if (i["couponCode"] == widget.couponCode) {
-              i['courseName'] = widget.courseName;
-              i['courseId'] = widget.courseId;
-              i['couponStatus'] = "purchased";
-              i['purchasedDate'] = DateTime.now();
-              FirebaseFirestore.instance
-                  .collection("Users")
-                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                  .update({
-                "Coupons": coupon,
-              });
-            }
-          } catch (e) {
-            print(e);
+        print('2');
+        couponList = value.data()!['Coupons'];
+        print('3');
+        for (var i = 0; i < couponList.length; i++) {
+          print('4');
+          print(couponList[i]['couponCode']);
+          print(widget.couponCode);
+          if (couponList[i]['couponCode'] == widget.couponCode) {
+            print('5');
+            couponList[i]['couponStatus'] = 'purchased';
+            couponList[i]['purchasedDate'] = DateTime.now();
+            couponList[i]['courseName'] = widget.courseName;
+            couponList[i]['courseId'] = widget.courseId;
+            print('6');
+            break;
           }
         }
+        print('7');
+        couponbool = true;
       });
-
-    print("course added");
-
-  apicalltoupdatecouponinuser() async {
-    print('ytugggvyuuuuuuiiiiiiiiiiiiii');
-    print(widget.couponCode);
-    print(FirebaseAuth.instance.currentUser!.uid);
-    print(widget.courseName);
-    print(widget.courseId);
-    try {
-      await FirebaseFirestore.instance
-          .collection("Users")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get()
-          .then((value) {
-        var coupon = value.data()!["Coupons"];
-        for (var i in coupon) {
-          try {
-            if (i["couponCode"] == widget.couponCode) {
-              i['courseName'] = widget.courseName;
-              i['courseId'] = widget.courseId;
-              i['couponStatus'] = "purchased";
-              i['purchasedDate'] = DateTime.now();
-              FirebaseFirestore.instance
-                  .collection("Users")
-                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                  .update({
-                "Coupons": coupon,
-              });
-            }
-          } catch (e) {
-            print(e);
-          }
-        }
-      });
-
-      // get firebase id token for authentication
-      // String? token = await FirebaseAuth.instance.currentUser!.getIdToken();
-      // print("token: :${token}:");
-      // var url = Uri.parse(
-      //     'https://us-central1-cloudyml-app.cloudfunctions.net/updateCouponsArrayWhenCourseIsPurchased');
-      // var data = {
-      //   "couponCode": "${widget.couponCode}",
-      //   "uid": "${FirebaseAuth.instance.currentUser!.uid}",
-      //   "courseName": "${widget.courseName}",
-      //   "courseId": widget.courseId
-      // };
-      // var body = json.encode({"data": data});
-      // print(body);
-      // var response = await http.post(url, body: body, headers: {
-      //   "Authorization": "Bearer $token",
-      //   "Content-Type": "application/json"
-      // });
-      // print("iowefjwefwefwowe");
-
-      // if (response.statusCode == 200) {
-      //   print('if success ${response.body}');
-      // } else {
-      //   print("if unsuccessful ${response.body}");
-      // }
     } catch (e) {
-      print(e);
-      return "Failed to get coupon!";
+      print("error id woiejiowie: ${e.toString()}");
+    }
+    if (couponbool) {
+      print('8');
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'Coupons': couponList}).whenComplete(() {
+        print('complete we are here');
+      });
     }
   }
 
-  Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     await loadCourses();
+    pushToHome();
+
     await redeemmoneyreward();
-    print("wejwej9w ${widget.couponcodeused}");
     try {
+      print("couponcodeused1");
+      print(widget.couponcodeused);
       if (widget.couponcodeused == true) {
-        await apicalltoupdatecouponinuser();
+        await calltoupdatecouponinuser();
       }
     } catch (e) {
       print("error id woiejiowie: ${e.toString()}");
     }
-
     Toast.show("Payment successful.");
-    addCoursetoUser(widget.courseId);
-
-    pushToHome();
+    // addCoursetoUser(widget.courseId);
 
     updateCouponDetailsToUser(
       couponCodeText: widget.couponCodeText,

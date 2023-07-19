@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/globals.dart';
+import 'package:cloudyml_app2/models/course_details.dart';
+import 'package:cloudyml_app2/screens/chat_group.dart';
 import 'package:cloudyml_app2/screens/flutter_flow/flutter_flow_util.dart';
 import 'package:cloudyml_app2/widgets/coupon_code.dart';
 import 'package:cloudyml_app2/widgets/inter_payment_portal.dart';
@@ -1093,7 +1095,6 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                   borderSide: BorderSide.none),
                                               disabledBorder:
                                                   OutlineInputBorder(
-                                                  
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               5),
@@ -1255,64 +1256,57 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                   ),
                                 ),
                                 SizedBox(height: 7.5.sp),
-                                 InkWell(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                           
-                                            builder: (context) {
-                                              return Dialog(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
+                                InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: Container(
+                                            width: screenWidth / 2.5,
+                                            padding: EdgeInsets.all(20),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  'Payment',
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily: 'Poppins',
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
-                                                child: Container(
-                                                  width: screenWidth /2.5,
-                                                  padding: EdgeInsets.all(20),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Text(
-                                                        'Payment',
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontFamily: 'Poppins',
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 20),
-                                                 
-                                                      
-                                                      RazorPayInternationalBtn(
-                                                        courseDescription: courseMap['description'],
-                                                        international: false,
-                                                        coursePriceMoneyRef:
-                                                            int.parse(
-                                                                courseprice),
-                                                        courseId:
-                                                            courseMap['id'],
-                                                        NoCouponApplied:
-                                                            NoCouponApplied,
-                                                        couponCodeText:
-                                                            couponCodeController
-                                                                .text,
-                                                        amountString: (double.parse(NoCouponApplied
-                                                                    ? courseMap['gst'] != null
-                                                                        ? '${totalAmount.round().toString()}'
-                                                                        : "${int.parse(courseprice) - int.parse(discountvalue)}"
-                                                                    : finalAmountToPay) * //courseMap['Amount_Payablepay']
-                                                                100)
-                                                            .toString(),
-                                                        courseName:
-                                                            courseMap['name'],
-                                                        courseImageUrl:
-                                                            courseMap[
-                                                                'image_url'],
-                                                        
-                                                      )
+                                                SizedBox(height: 20),
+
+                                                RazorPayInternationalBtn(
+                                                  courseDescription:
+                                                      courseMap['description'],
+                                                  international: false,
+                                                  coursePriceMoneyRef:
+                                                      int.parse(courseprice),
+                                                  courseId: courseMap['id'],
+                                                  NoCouponApplied:
+                                                      NoCouponApplied,
+                                                  couponCodeText:
+                                                      couponCodeController.text,
+                                                  amountString: (double.parse(
+                                                              NoCouponApplied
+                                                                  ? courseMap['gst'] !=
+                                                                          null
+                                                                      ? '${totalAmount.round().toString()}'
+                                                                      : "${int.parse(courseprice) - int.parse(discountvalue)}"
+                                                                  : finalAmountToPay) * //courseMap['Amount_Payablepay']
+                                                          100)
+                                                      .toString(),
+                                                  courseName: courseMap['name'],
+                                                  courseImageUrl:
+                                                      courseMap['image_url'],
+                                                )
 
                                                 // PaymentButtonn(
                                                 //   label: 'Razorpay',
@@ -2363,65 +2357,60 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     whichCouponCode: couponCodeController.text,
                                   ),
                                 ),
-                                SizedBox(height: 15,),
-                                 InkWell(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                           
-                                            builder: (context) {
-                                              return Dialog(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: Container(
+                                            width: screenWidth / 2.5,
+                                            padding: EdgeInsets.all(20),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  'Payment',
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily: 'Poppins',
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
-                                                child: Container(
-                                                  width: screenWidth /2.5,
-                                                  padding: EdgeInsets.all(20),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Text(
-                                                        'Payment',
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontFamily: 'Poppins',
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 20),
-                                                 
-                                                      
-                                                      RazorPayInternationalBtn(
-                                                        courseDescription: courseMap['description'],
-                                                        international: false,
-                                                        coursePriceMoneyRef:
-                                                            int.parse(
-                                                                courseprice),
-                                                        courseId:
-                                                            courseMap['id'],
-                                                        NoCouponApplied:
-                                                            NoCouponApplied,
-                                                        couponCodeText:
-                                                            couponCodeController
-                                                                .text,
-                                                        amountString: (double.parse(NoCouponApplied
-                                                                    ? courseMap['gst'] != null
-                                                                        ? '${totalAmount.round().toString()}'
-                                                                        : "${int.parse(courseprice) - int.parse(discountvalue)}"
-                                                                    : finalAmountToPay) * //courseMap['Amount_Payablepay']
-                                                                100)
-                                                            .toString(),
-                                                        courseName:
-                                                            courseMap['name'],
-                                                        courseImageUrl:
-                                                            courseMap[
-                                                                'image_url'],
-                                                        
-                                                      )
+                                                SizedBox(height: 20),
+
+                                                RazorPayInternationalBtn(
+                                                  courseDescription:
+                                                      courseMap['description'],
+                                                  international: false,
+                                                  coursePriceMoneyRef:
+                                                      int.parse(courseprice),
+                                                  courseId: courseMap['id'],
+                                                  NoCouponApplied:
+                                                      NoCouponApplied,
+                                                  couponCodeText:
+                                                      couponCodeController.text,
+                                                  amountString: (double.parse(
+                                                              NoCouponApplied
+                                                                  ? courseMap['gst'] !=
+                                                                          null
+                                                                      ? '${totalAmount.round().toString()}'
+                                                                      : "${int.parse(courseprice) - int.parse(discountvalue)}"
+                                                                  : finalAmountToPay) * //courseMap['Amount_Payablepay']
+                                                          100)
+                                                      .toString(),
+                                                  courseName: courseMap['name'],
+                                                  courseImageUrl:
+                                                      courseMap['image_url'],
+                                                )
 
                                                 // PaymentButtonn(
                                                 //   label: 'Razorpay',

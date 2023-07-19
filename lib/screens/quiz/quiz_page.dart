@@ -31,7 +31,7 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   final _unfocusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  bool ismultipleoptions = false;
+  bool showquestion = false;
 
   @override
   void dispose() {
@@ -52,7 +52,7 @@ class _QuizPageState extends State<QuizPage> {
   var userName = '';
 
   Future<String> handlingCasesAccoridingToTotal(
-      double total, List quizdata, String courseid,   var correctint) async {
+      double total, List quizdata, String courseid, var correctint) async {
     print("total is $total");
     // coursequizwindowindays
     int coursequizwindowindays = 0;
@@ -64,7 +64,6 @@ class _QuizPageState extends State<QuizPage> {
     int coursequizwindowindaysmorethan50percent = 0;
 
     if (globals.quizCleared) {
-    if (globals.quizCleared) {
       if (total >= coursequizpassingpercentage ||
           total >= modulequizpassingpercentage) {
         return "Congratulations!";
@@ -74,7 +73,6 @@ class _QuizPageState extends State<QuizPage> {
     }
 
     // removing the quiz from the quiztrack list
-
     try {
       await FirebaseFirestore.instance
           .collection("Users")
@@ -120,17 +118,16 @@ class _QuizPageState extends State<QuizPage> {
         print("coursequizwindowindays: $coursequizwindowindays");
         modulerquizwindowinhours = value.data()!['modulerquizwindowinhours'];
         coursequizpassingpercentage =
-        value.data()!['coursequizpassingpercentage'];
+            value.data()!['coursequizpassingpercentage'];
         coursequizwindowindaysmorethan50percent =
-        value.data()!['coursequizwindowindaysmorethan50percent'];
+            value.data()!['coursequizwindowindaysmorethan50percent'];
         modulequizpassingpercentage =
-        value.data()!['modulequizpassingpercentage'];
+            value.data()!['modulequizpassingpercentage'];
       });
     } catch (e) {
       print("errorid: ff93u98e9w: ${e}");
     }
 
-  
     // course quiz cleared condition
     try {
       if (total >= coursequizpassingpercentage &&
@@ -141,7 +138,7 @@ class _QuizPageState extends State<QuizPage> {
             .doc(FirebaseAuth.instance.currentUser!.uid)
             .get()
             .then(
-              (value) {
+          (value) {
             userName = value.data()!['name'];
           },
         );
@@ -156,12 +153,11 @@ class _QuizPageState extends State<QuizPage> {
             courseId: courseid,
             quizCleared: true,
             quizAttemptGapForModularQuiz:
-            DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+                DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
             quizAttemptGapForCourseQuiz:
-            DateTime.now().add(Duration(days: coursequizwindowindays)),
+                DateTime.now().add(Duration(days: coursequizwindowindays)),
             quizTakenTime: countUsedTime(),
-            quizMark: correctint.toString()
-        );
+            quizMark: correctint.toString());
         returningString = "Congratulations!";
       }
     } catch (e) {
@@ -184,16 +180,14 @@ class _QuizPageState extends State<QuizPage> {
             courseName: widget.quizdata['courseName'],
             courseId: courseid,
             quizCleared: false,
-
             quizAttemptGapForModularQuiz:
-            DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+                DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
             quizAttemptGapForCourseQuiz:
-            DateTime.now().add(Duration(days: coursequizwindowindays)),
+                DateTime.now().add(Duration(days: coursequizwindowindays)),
             quizTakenTime: countUsedTime(),
-            quizMark: correctint.toString()
-        );
+            quizMark: correctint.toString());
         returningString =
-        "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${coursequizwindowindaysmorethan50percent} days";
+            "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${coursequizwindowindaysmorethan50percent} days";
       }
     } catch (e) {
       print("errorid: r82u93r9fw3: ${e}");
@@ -214,14 +208,13 @@ class _QuizPageState extends State<QuizPage> {
             courseId: courseid,
             quizCleared: false,
             quizAttemptGapForModularQuiz:
-            DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+                DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
             quizAttemptGapForCourseQuiz: DateTime.now()
                 .add(Duration(days: coursequizwindowindaysmorethan50percent)),
             quizTakenTime: countUsedTime(),
-            quizMark:  correctint.toString()
-        );
+            quizMark: correctint.toString());
         returningString =
-        "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${coursequizwindowindays} days";
+            "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${coursequizwindowindays} days";
       }
     } catch (e) {
       print("errorid: i23rjo23jio2: ${e}");
@@ -242,9 +235,9 @@ class _QuizPageState extends State<QuizPage> {
           courseId: courseid,
           quizCleared: true,
           quizAttemptGapForModularQuiz:
-          DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+              DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
           quizAttemptGapForCourseQuiz:
-          DateTime.now().add(Duration(days: coursequizwindowindays)),
+              DateTime.now().add(Duration(days: coursequizwindowindays)),
         );
         returningString = "Congratulations!";
       }
@@ -268,12 +261,12 @@ class _QuizPageState extends State<QuizPage> {
           courseId: courseid,
           quizCleared: false,
           quizAttemptGapForModularQuiz:
-          DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
+              DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
           quizAttemptGapForCourseQuiz:
-          DateTime.now().add(Duration(days: coursequizwindowindays)),
+              DateTime.now().add(Duration(days: coursequizwindowindays)),
         );
         returningString =
-        "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${modulerquizwindowinhours} hours";
+            "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${modulerquizwindowinhours} hours";
       }
     } catch (e) {
       print("errorid: fif3sdwf: ${e}");
@@ -296,45 +289,29 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   countDownTimer(quiztiming) async {
-    try{
+    try {
       int timerCount = int.parse("$quiztiming") * 60;
 
-    for (int x = timerCount; x > 0; x--) {
-      await Future.delayed(Duration(seconds: 1)).then((_) {
-        if (timerCount == 1) {
-          submit();
-          print("stop timing now");
-        }
-        setState(() {
-          timerCount -= 1;
+      for (int x = timerCount; x > 0; x--) {
+        await Future.delayed(Duration(seconds: 1)).then((_) {
+          if (timerCount == 1) {
+            submit();
+            print("stop timing now");
+          }
+          setState(() {
+            timerCount -= 1;
+          });
+          final now = Duration(seconds: timerCount);
+          setState(() {
+            timer = _printDuration(now);
+          });
+          print("${_printDuration(now)}");
         });
-        final now = Duration(seconds: timerCount);
-        setState(() {
-          timer = _printDuration(now);
-        });
-        print("${_printDuration(now)}");
-      });
-    }
+      }
+    } catch (e) {}
   }
 
   bool submitvalue = false;
-
-  bool listsHaveSameElements(List<dynamic> list1, List<dynamic> list2) {
-    if (list1.length != list2.length) {
-      return false;
-    }
-
-    list1.sort();
-    list2.sort();
-
-    for (var i = 0; i < list1.length; i++) {
-      if (list1[i] != list2[i]) {
-        return false;
-      }
-    }
-
-    return true;
-  }
 
   submit() async {
     print("lll1");
@@ -345,7 +322,6 @@ class _QuizPageState extends State<QuizPage> {
         submitvalue = true;
       });
       // upload quiz data
-
       var correctint = 0;
       print("lll002: $quizdata");
 
@@ -353,23 +329,12 @@ class _QuizPageState extends State<QuizPage> {
         print(i['question']);
         print(i['answeredValue']);
         print(i['answerIndex']);
-        if (i['answer'].length > 1) {
-          try {
-            if (listsHaveSameElements(
-                i['answeredValueList'], i['answerIndex'])) {
-              correctint += 1;
-            }
-          } catch (e) {
-            print("errorid: 2r3r23r23r: ${e}");
+        try {
+          if (i['answeredValue'] == i['answerIndex'][0]) {
+            correctint += 1;
           }
-        } else {
-          try {
-            if (i['answeredValue'] == i['answerIndex'][0]) {
-              correctint += 1;
-            }
-          } catch (e) {
-            print("errorid: 2r3r23r23r: ${e}");
-          }
+        } catch (e) {
+          print("errorid: 2r3r23r23r: ${e}");
         }
       }
       print("lll2");
@@ -378,20 +343,9 @@ class _QuizPageState extends State<QuizPage> {
       for (var i in quizdata) {
         print(i['question']);
         print(i['answeredValue']);
-
         try {
-          if (i['answer'].length > 1) {
-            try {
-              if (i['answeredValueList'].length == 0) {
-                unanswered += 1;
-              }
-            } catch (e) {
-              print("errorid: 2r3r23r23r: ${e}");
-            }
-          } else {
-            if (i['answeredValue'] == null) {
-              unanswered += 1;
-            }
+          if (i['answeredValue'] == null) {
+            unanswered += 1;
           }
         } catch (e) {
           print("errorid: 2r3r23r23rffffff: ${e}");
@@ -403,24 +357,12 @@ class _QuizPageState extends State<QuizPage> {
         print(i['question']);
         var answeredvaluelist = [i['answeredValue']];
         try {
-          if (i['answer'].length > 1) {
-            try {
-              if (listsHaveSameElements(
-                      i['answeredValueList'], i['answerIndex']) ==
-                  false) {
-                wronganswered += 1;
-              }
-            } catch (e) {
-              print("errorid: 2r3r23r23r: ${e}");
-            }
-          } else {
-            if (answeredvaluelist[0] != null) {
-              print("lllpp");
-              print(i['answerIndex']);
-              if (answeredvaluelist[0] != i['answerIndex'][0]) {
-                print("equallleeii");
-                wronganswered += 1;
-              }
+          if (answeredvaluelist[0] != null) {
+            print("lllpp");
+            print(i['answerIndex']);
+            if (answeredvaluelist[0] != i['answerIndex'][0]) {
+              print("equallleeii");
+              wronganswered += 1;
             }
           }
         } catch (e) {
@@ -443,8 +385,8 @@ class _QuizPageState extends State<QuizPage> {
       print(widget.quizdata['courseName']);
       print("the course id is-----lklklkl$courseid");
 
-      var resultString =
-      await handlingCasesAccoridingToTotal(total, quizdata, courseid, correctint);
+      var resultString = await handlingCasesAccoridingToTotal(
+          total, quizdata, courseid, correctint);
       // await FirebaseFirestore.instance
       //     .collection("Users")
       //     .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -479,7 +421,6 @@ class _QuizPageState extends State<QuizPage> {
             "-" +
             DateTime.now().year.toString(),
         "course": courseid,
-        "quizScore": total,
         "name": userName,
         "quizlevel": widget.quizdata['quizlevel'],
       });
@@ -500,8 +441,7 @@ class _QuizPageState extends State<QuizPage> {
                 widget.quizdata,
                 resultString,
                 countUsedTime(),
-                quizdata.length.toString()
-            )),
+                quizdata.length.toString())),
       );
       // Navigator.push(
       //   context,
@@ -629,6 +569,12 @@ class _QuizPageState extends State<QuizPage> {
           setState(() {
             showimagea = true;
           });
+          if (quizdata[questionindex]["OptionsImage"]['A'] == '' ||
+              quizdata[questionindex]["OptionsImage"]['A'] == null) {
+            setState(() {
+              showimagea = false;
+            });
+          }
         } catch (e) {
           setState(() {
             showimagea = false;
@@ -641,6 +587,12 @@ class _QuizPageState extends State<QuizPage> {
           setState(() {
             showimageb = true;
           });
+          if (quizdata[questionindex]["OptionsImage"]['B'] == '' ||
+              quizdata[questionindex]["OptionsImage"]['B'] == null) {
+            setState(() {
+              showimageb = false;
+            });
+          }
         } catch (e) {
           setState(() {
             showimageb = false;
@@ -653,6 +605,12 @@ class _QuizPageState extends State<QuizPage> {
           setState(() {
             showimagec = true;
           });
+          if (quizdata[questionindex]["OptionsImage"]['C'] == '' ||
+              quizdata[questionindex]["OptionsImage"]['C'] == null) {
+            setState(() {
+              showimagec = false;
+            });
+          }
         } catch (e) {
           setState(() {
             showimagec = false;
@@ -662,9 +620,29 @@ class _QuizPageState extends State<QuizPage> {
 
         try {
           quizdata[questionindex]["OptionsImage"]['D'];
+          try {
+            print(
+                "tghrthrt  ${quizdata[questionindex]["question"].toString().split("(--image--)")[1]}");
+            setState(() {
+              showquestion = true;
+            });
+          } catch (e) {
+            setState(() {
+              showquestion = false;
+            });
+            print("eifjwgvygvu $e");
+          }
+          print("eifjweoj ${quizdata[questionindex]["OptionsImage"]['D']}");
           setState(() {
             showimaged = true;
           });
+
+          if (quizdata[questionindex]["OptionsImage"]['D'] == '' ||
+              quizdata[questionindex]["OptionsImage"]['D'] == null) {
+            setState(() {
+              showimaged = false;
+            });
+          }
         } catch (e) {
           setState(() {
             showimaged = false;
@@ -754,11 +732,12 @@ class _QuizPageState extends State<QuizPage> {
     if (fun == 'saveNext') {
       notVisitedM = lengthofquizquestion;
     }
-
+    print('ijoejioe');
     MFR_M = 0;
     AMFR_M = 0;
     // counting answeredM
     for (var i in quizdata) {
+      print('ijoejioe1');
       try {
         if (i["Answered"] == true) {
           setState(() {
@@ -769,6 +748,7 @@ class _QuizPageState extends State<QuizPage> {
         print("answeredM error: $e");
       }
     }
+    print("ijoejioe001");
     // counting notAnsweredM
     for (var j in quizdata) {
       try {
@@ -781,6 +761,7 @@ class _QuizPageState extends State<QuizPage> {
         print("notAnsweredM error: $e");
       }
     }
+    print("ijoejioe002");
     // counting notVisitedM
     if (fun == 'saveNext') {
       for (var k in quizdata) {
@@ -797,6 +778,7 @@ class _QuizPageState extends State<QuizPage> {
       }
     }
 
+    print('ijoejioe2');
     // counting MFR_M
     for (var l in quizdata) {
       try {
@@ -809,6 +791,7 @@ class _QuizPageState extends State<QuizPage> {
         print("MFR_M error: $e");
       }
     }
+    print('ijoejioe3');
     // counting AMFR_M
     for (var m in quizdata) {
       try {
@@ -821,36 +804,54 @@ class _QuizPageState extends State<QuizPage> {
         print("AMFR_M error: $e");
       }
     }
-
+    print('ijoejioe4');
     try {
       quizdata[questionindex]["OptionsImage"]['A'];
       setState(() {
         showimagea = true;
       });
+      if (quizdata[questionindex]["OptionsImage"]['A'] == '' ||
+          quizdata[questionindex]["OptionsImage"]['A'] == null) {
+        setState(() {
+          showimagea = false;
+        });
+      }
     } catch (e) {
       setState(() {
         showimagea = false;
       });
       print("error: $e");
     }
-
+    print('ijoejioe5');
     try {
       quizdata[questionindex]["OptionsImage"]['B'];
       setState(() {
         showimageb = true;
       });
+      if (quizdata[questionindex]["OptionsImage"]['B'] == '' ||
+          quizdata[questionindex]["OptionsImage"]['B'] == null) {
+        setState(() {
+          showimageb = false;
+        });
+      }
     } catch (e) {
       setState(() {
         showimageb = false;
       });
       print("error: $e");
     }
-
+    print('ijoejioe6');
     try {
       quizdata[questionindex]["OptionsImage"]['C'];
       setState(() {
         showimagec = true;
       });
+      if (quizdata[questionindex]["OptionsImage"]['C'] == '' ||
+          quizdata[questionindex]["OptionsImage"]['C'] == null) {
+        setState(() {
+          showimagec = false;
+        });
+      }
     } catch (e) {
       setState(() {
         showimagec = false;
@@ -863,12 +864,19 @@ class _QuizPageState extends State<QuizPage> {
       setState(() {
         showimaged = true;
       });
+      if (quizdata[questionindex]["OptionsImage"]['D'] == '' ||
+          quizdata[questionindex]["OptionsImage"]['D'] == null) {
+        setState(() {
+          showimaged = false;
+        });
+      }
     } catch (e) {
       setState(() {
         showimaged = false;
       });
       print("error: $e");
     }
+    print('ijoejioe7');
   }
 
   getQuiz() async {
@@ -895,6 +903,12 @@ class _QuizPageState extends State<QuizPage> {
         setState(() {
           showimagea = true;
         });
+        if (quizdata[questionindex]["OptionsImage"]['A'] == '' ||
+            quizdata[questionindex]["OptionsImage"]['A'] == null) {
+          setState(() {
+            showimagea = false;
+          });
+        }
       } catch (e) {
         setState(() {
           showimagea = false;
@@ -907,6 +921,12 @@ class _QuizPageState extends State<QuizPage> {
         setState(() {
           showimageb = true;
         });
+        if (quizdata[questionindex]["OptionsImage"]['B'] == '' ||
+            quizdata[questionindex]["OptionsImage"]['B'] == null) {
+          setState(() {
+            showimageb = false;
+          });
+        }
       } catch (e) {
         setState(() {
           showimageb = false;
@@ -919,6 +939,12 @@ class _QuizPageState extends State<QuizPage> {
         setState(() {
           showimagec = true;
         });
+        if (quizdata[questionindex]["OptionsImage"]['C'] == '' ||
+            quizdata[questionindex]["OptionsImage"]['C'] == null) {
+          setState(() {
+            showimagec = false;
+          });
+        }
       } catch (e) {
         setState(() {
           showimagec = false;
@@ -931,6 +957,12 @@ class _QuizPageState extends State<QuizPage> {
         setState(() {
           showimaged = true;
         });
+        if (quizdata[questionindex]["OptionsImage"]['D'] == '' ||
+            quizdata[questionindex]["OptionsImage"]['D'] == null) {
+          setState(() {
+            showimaged = false;
+          });
+        }
       } catch (e) {
         setState(() {
           showimaged = false;
@@ -942,16 +974,18 @@ class _QuizPageState extends State<QuizPage> {
     }
   }
 
-  String countUsedTime(){
-    String totalTime = "${int.parse(widget.quizdata['quiztiming']) ~/ 60}:${int.parse(widget.quizdata['quiztiming']) % 60}:00";
-    String remainingTime =timer;
-
+  String countUsedTime() {
+    String totalTime =
+        "${int.parse(widget.quizdata['quiztiming']) ~/ 60}:${int.parse(widget.quizdata['quiztiming']) % 60}:00";
+    String remainingTime = timer;
 
     List<int> totalParts = totalTime.split(':').map(int.parse).toList();
     List<int> remainingParts = remainingTime.split(':').map(int.parse).toList();
 
-    int totalSeconds = totalParts[0] * 3600 + totalParts[1] * 60 + totalParts[2];
-    int remainingSeconds = remainingParts[0] * 3600 + remainingParts[1] * 60 + remainingParts[2];
+    int totalSeconds =
+        totalParts[0] * 3600 + totalParts[1] * 60 + totalParts[2];
+    int remainingSeconds =
+        remainingParts[0] * 3600 + remainingParts[1] * 60 + remainingParts[2];
     int usedSeconds = totalSeconds - remainingSeconds;
 
     int usedHours = usedSeconds ~/ 3600;
@@ -959,7 +993,6 @@ class _QuizPageState extends State<QuizPage> {
     int usedSecondsRemaining = usedSeconds % 60;
 
     return "${usedHours.toString().padLeft(2, '0')}:${usedMinutes.toString().padLeft(2, '0')}:${usedSecondsRemaining.toString().padLeft(2, '0')}";
-
   }
 
   @override
@@ -2091,24 +2124,25 @@ class _QuizPageState extends State<QuizPage> {
                                                                                 ? Container()
                                                                                 : Padding(
                                                                                     padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 30),
-                                                                                    // child: Image.network("${quizdata[questionindex]["questionImage"]}"),
                                                                                     child: SizedBox(child: Image.network('${quizdata[questionindex]["questionImage"]}', fit: BoxFit.cover)),
                                                                                   ),
-                                                                            Align(
-                                                                              alignment: AlignmentDirectional(-1, 0),
-                                                                              child: Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 30),
-                                                                                child: Text(
-                                                                                  '${quizdata[questionindex]["question"].toString().split("(--image--)")[1]}',
-                                                                                  textAlign: TextAlign.start,
-                                                                                  style: FlutterFlowTheme.of(context).bodyText1.override(
-                                                                                        fontFamily: 'Poppins',
-                                                                                        fontSize: 17,
-                                                                                        fontWeight: FontWeight.normal,
+                                                                            showquestion
+                                                                                ? Align(
+                                                                                    alignment: AlignmentDirectional(-1, 0),
+                                                                                    child: Padding(
+                                                                                      padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 30),
+                                                                                      child: Text(
+                                                                                        '${quizdata[questionindex]["question"].toString().split("(--image--)")[1]}',
+                                                                                        textAlign: TextAlign.start,
+                                                                                        style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                              fontFamily: 'Poppins',
+                                                                                              fontSize: 17,
+                                                                                              fontWeight: FontWeight.normal,
+                                                                                            ),
                                                                                       ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
+                                                                                    ),
+                                                                                  )
+                                                                                : Container(),
                                                                           ],
                                                                         ),
                                                                       ),
@@ -2543,21 +2577,23 @@ class _QuizPageState extends State<QuizPage> {
                                                                                       child: Image.network('${quizdata[questionindex]["questionImage"]}', fit: BoxFit.cover),
                                                                                     ),
                                                                                   ),
-                                                                            Align(
-                                                                              alignment: AlignmentDirectional(-1, 0),
-                                                                              child: Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 30),
-                                                                                child: Text(
-                                                                                  '${quizdata[questionindex]["question"].toString().split("(--image--)")[1]}',
-                                                                                  textAlign: TextAlign.start,
-                                                                                  style: FlutterFlowTheme.of(context).bodyText1.override(
-                                                                                        fontFamily: 'Poppins',
-                                                                                        fontSize: 17,
-                                                                                        fontWeight: FontWeight.normal,
+                                                                            showquestion
+                                                                                ? Align(
+                                                                                    alignment: AlignmentDirectional(-1, 0),
+                                                                                    child: Padding(
+                                                                                      padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 30),
+                                                                                      child: Text(
+                                                                                        '${quizdata[questionindex]["question"].toString().split("(--image--)")[1]}',
+                                                                                        textAlign: TextAlign.start,
+                                                                                        style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                              fontFamily: 'Poppins',
+                                                                                              fontSize: 17,
+                                                                                              fontWeight: FontWeight.normal,
+                                                                                            ),
                                                                                       ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
+                                                                                    ),
+                                                                                  )
+                                                                                : Container(),
                                                                           ],
                                                                         ),
                                                                       ),
@@ -4592,13 +4628,13 @@ class _QuizPageState extends State<QuizPage> {
             : Container(),
         submitvalue
             ? Center(
-          child: Container(
-            width: 700,
-            height: 400,
-            color: Color.fromARGB(26, 195, 64, 64),
-            child: Center(child: CircularProgressIndicator()),
-          ),
-        )
+                child: Container(
+                  width: 700,
+                  height: 400,
+                  color: Color.fromARGB(26, 195, 64, 64),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              )
             : Container()
       ]),
     );
