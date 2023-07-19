@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:sizer/sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -74,6 +75,17 @@ class _ChatScreenState extends State<ChatScreen> {
     appStorage = await getApplicationDocumentsDirectory();
   }
 
+  bool containsSingleURL(String input) {
+    final regex = RegExp(
+        r"(https?://(?:www\.)?[^\s]+)", // Regular expression to match URLs
+        caseSensitive: false);
+
+    final matches = regex.allMatches(input);
+    final urls = matches.map((match) => match.group(0)!).toList();
+
+    return urls.length == 1;
+  }
+
   Future<void> _startRecording() async {
     _getAppStorageDir();
     print("REcording....");
@@ -119,8 +131,12 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void updatetime(DateTime time) {
+  void updatetime(DateTime time, String message) {
     _firestore.collection("groups").doc(widget.groupId).update({'time': time});
+    _firestore
+        .collection("groups")
+        .doc(widget.groupId)
+        .update({'lastmessage': message});
   }
 
   void updatelast() {
@@ -139,8 +155,14 @@ class _ChatScreenState extends State<ChatScreen> {
       final downloadUrl = await storageRef.getDownloadURL();
       print('File uploaded: $downloadUrl');
       final time = DateTime.now();
+      // Add message to Firestore
+
+      DateTime time1 = await fetchTimeInIndia();
+
+      print(time);
+      print(time1.toString());
       updatelast();
-      updatetime(time);
+      updatetime(time1, _textController.text);
       _firestore
           .collection("groups")
           .doc(widget.groupId)
@@ -150,7 +172,8 @@ class _ChatScreenState extends State<ChatScreen> {
         'role': widget.role,
         'sendBy': widget.name,
         'link': downloadUrl,
-        'time': time,
+        'studentid': widget.id,
+        'time': time1,
         'type': 'audio'
       });
 
@@ -168,10 +191,47 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  bool checktext(String string) {
+    final links = ['http://', 'https://', 'www.', 'http:// ', 'https:// '];
+    int count = 0;
+
+    for (final link in links) {
+      int index = string.indexOf(link);
+      while (index != -1) {
+        count++;
+        index = string.indexOf(link, index + link.length);
+      }
+    }
+    print(count);
+    return count == 1 || count == 0;
+
+//  final regex = RegExp(r'(http[s]?:\/\/)?(www\.)?[^\s(["<,>]*\.[^\s[",><]*)');
+//   final matches = regex.allMatches(string);
+//  // return matches.length;
+//     return matches.length == 1 || matches.length == 0;
+    // RegExp urlRegex = RegExp(r'(https?://\S+)');
+    // List<String> urls =
+    //     urlRegex.allMatches(string).map((match) => match.group(0)!).toList();
+    // return (urls.length == 1 || urls.length == 0);
+  }
+
   bool isURL(String string) {
-    // Regular expression pattern to match a URL
-    // Regular expression pattern to match a URL
-      return (string.contains('http',0) ||string.contains('www')||string.contains('https',0) ||string.contains('.com'));
+    bool containsURL = string.contains('http', 0) ||
+        string.contains('www') ||
+        string.contains('https', 0) ||
+        string.contains('.com');
+
+    return containsURL;
+  }
+
+  Future<DateTime> fetchTimeInIndia() async {
+    final response = await http
+        .get(Uri.parse('http://worldtimeapi.org/api/timezone/Asia/Kolkata'));
+    final jsonData = json.decode(response.body);
+    final datetime = jsonData['datetime'];
+    final offset = jsonData['utc_offset'];
+    final parsedDateTime = DateTime.parse(datetime).toUtc();
+    return parsedDateTime;
   }
 
   Widget _buildStopRecordingButton() {
@@ -188,6 +248,12 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  error() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Text copied to clipboard')),
+    );
+  }
+
   Widget _buildAudioPlayer() {
     return Row(
       children: [
@@ -198,9 +264,10 @@ class _ChatScreenState extends State<ChatScreen> {
           },
         ),
         IconButton(
-          icon: Icon(Icons.send, color: Colors.purple),
-          onPressed: _sendMessage,
-        ),
+            icon: Icon(Icons.send, color: Colors.purple),
+            onPressed: containsSingleURL(_textController.text)
+                ? _sendMessage
+                : error()),
       ],
     );
   }
@@ -222,8 +289,13 @@ class _ChatScreenState extends State<ChatScreen> {
       _downloadUrl = await snapshot.ref.getDownloadURL();
       final time = DateTime.now();
       // Add message to Firestore
+
+      DateTime time1 = await fetchTimeInIndia();
+
+      print(time);
+      print(time1.toString());
       updatelast();
-      updatetime(time);
+      updatetime(time1, _textController.text);
 
       _firestore
           .collection("groups")
@@ -234,69 +306,95 @@ class _ChatScreenState extends State<ChatScreen> {
         'role': widget.role,
         'sendBy': widget.name,
         'link': _downloadUrl,
-        'time': time,
+        'studentid': widget.id,
+        'time': time1,
         'type': 'image'
       });
     }
   }
-Future<void> _pickFilePhoto() async {
-  final imagePicker = ImagePicker();
 
-  final pickedFile = await imagePicker.getImage(source: ImageSource.camera);
-  if (pickedFile != null) {
-    setState(() {
-      _selectedFile = File(pickedFile.path);
-    });
+  Future<void> _pickFilePhoto() async {
+    final imagePicker = ImagePicker();
 
-    // Upload the file to Firebase Storage
-    Reference ref = FirebaseStorage.instance.ref().child('files/${_selectedFile!.path}');
-    UploadTask uploadTask = ref.putFile(_selectedFile!);
-    TaskSnapshot snapshot = await uploadTask;
-    _downloadUrl = await snapshot.ref.getDownloadURL();
-    final time = DateTime.now();
-    // Add message to Firestore
-    updatelast();
-    updatetime(time);
+    final pickedFile = await imagePicker.getImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedFile = File(pickedFile.path);
+      });
 
-    _firestore.collection("groups").doc(widget.groupId).collection("chats").add({
-      'message': _selectedFile!.path.split('/').last,
-      'role': widget.role,
-      'sendBy': widget.name,
-      'link': _downloadUrl,
-      'time': time,
-      'type': 'image'
-    });
+      // Upload the file to Firebase Storage
+      Reference ref =
+          FirebaseStorage.instance.ref().child('files/${_selectedFile!.path}');
+      UploadTask uploadTask = ref.putFile(_selectedFile!);
+      TaskSnapshot snapshot = await uploadTask;
+      _downloadUrl = await snapshot.ref.getDownloadURL();
+      final time = DateTime.now();
+      // Add message to Firestore
+
+      DateTime time1 = await fetchTimeInIndia();
+
+      print(time);
+      print(time1.toString());
+      updatelast();
+      updatetime(time1, _textController.text);
+
+      _firestore
+          .collection("groups")
+          .doc(widget.groupId)
+          .collection("chats")
+          .add({
+        'message': _selectedFile!.path.split('/').last,
+        'role': widget.role,
+        'sendBy': widget.name,
+        'link': _downloadUrl,
+        'studentid': widget.id,
+        'time': time1,
+        'type': 'image'
+      });
+    }
   }
-}
-Future<void> _pickFileRecord() async {
-  final imagePicker = ImagePicker();
 
-  final pickedFile = await imagePicker.getVideo(source: ImageSource.camera);
-  if (pickedFile != null) {
-    setState(() {
-      _selectedFile = File(pickedFile.path);
-    });
+  Future<void> _pickFileRecord() async {
+    final imagePicker = ImagePicker();
 
-    // Upload the file to Firebase Storage
-    Reference ref = FirebaseStorage.instance.ref().child('files/${_selectedFile!.path}');
-    UploadTask uploadTask = ref.putFile(_selectedFile!);
-    TaskSnapshot snapshot = await uploadTask;
-    _downloadUrl = await snapshot.ref.getDownloadURL();
-    final time = DateTime.now();
-    // Add message to Firestore
-    updatelast();
-    updatetime(time);
+    final pickedFile = await imagePicker.getVideo(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedFile = File(pickedFile.path);
+      });
 
-    _firestore.collection("groups").doc(widget.groupId).collection("chats").add({
-      'message': _selectedFile!.path.split('/').last,
-      'role': widget.role,
-      'sendBy': widget.name,
-      'link': _downloadUrl,
-      'time': time,
-      'type': 'video'
-    });
+      // Upload the file to Firebase Storage
+      Reference ref =
+          FirebaseStorage.instance.ref().child('files/${_selectedFile!.path}');
+      UploadTask uploadTask = ref.putFile(_selectedFile!);
+      TaskSnapshot snapshot = await uploadTask;
+      _downloadUrl = await snapshot.ref.getDownloadURL();
+      final time = DateTime.now();
+      // Add message to Firestore
+
+      DateTime time1 = await fetchTimeInIndia();
+
+      print(time);
+      print(time1.toString());
+      updatelast();
+      updatetime(time1, _textController.text);
+
+      _firestore
+          .collection("groups")
+          .doc(widget.groupId)
+          .collection("chats")
+          .add({
+        'message': _selectedFile!.path.split('/').last,
+        'role': widget.role,
+        'sendBy': widget.name,
+        'link': _downloadUrl,
+        'studentid': widget.id,
+        'time': time1,
+        'type': 'video'
+      });
+    }
   }
-}
+
   Future<void> _pickFilevideo() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(type: FileType.video);
@@ -314,8 +412,13 @@ Future<void> _pickFileRecord() async {
       _downloadUrl = await snapshot.ref.getDownloadURL();
       final time = DateTime.now();
       // Add message to Firestore
+
+      DateTime time1 = await fetchTimeInIndia();
+
+      print(time);
+      print(time1.toString());
       updatelast();
-      updatetime(time);
+      updatetime(time1, _textController.text);
 
       _firestore
           .collection("groups")
@@ -326,115 +429,126 @@ Future<void> _pickFileRecord() async {
         'role': widget.role,
         'sendBy': widget.name,
         'link': _downloadUrl,
-        'time': time,
+        'studentid': widget.id,
+        'time': time1,
         'type': 'video'
       });
     }
   }
 
   Future<void> _pickFileany() async {
-   FilePickerResult? result = await FilePicker.platform.pickFiles(
-  type: FileType.custom,
-  allowedExtensions: [
-    'doc',
-    'docx',
-    'pdf',
-    'txt',
-    'ppt',
-    'pptx',
-    'xls',
-    'xlsx',
-    'csv',
-    'tsv',
-    'json',
-    'xml',
-    'yaml',
-    'sql',
-    'r',
-    'py',
-    'ipynb',
-    'mp3',
-    'wav',
-    'flac',
-    'ogg',
-    'aac',
-    'wma',
-    'm4a',
-    'opus',
-    'mid',
-    'amr',
-    'aiff',
-    'ape',
-    'caf',
-    'mka',
-    'pcm',
-    'ac3',
-    'alac',
-    'au',
-    'dts',
-    'eac3',
-    'gsm',
-    'mp1',
-    'mp2',
-    'mpa',
-    'ra',
-    'tta',
-    'wv',
-    'webm',
-    '3ga',
-    '3gpa',
-    '3gp',
-    'aif',
-    'oga',
-    'oma',
-    'spx',
-    'xmf',
-    'mogg',
-    'mod',
-    'mo3',
-    'mtm',
-    'umx',
-    'it',
-    's3m',
-    'xm',
-    'sid',
-  ],
-);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: [
+        'doc',
+        'docx',
+        'pdf',
+        'txt',
+        'ppt',
+        'pptx',
+        'xls',
+        'xlsx',
+        'csv',
+        'tsv',
+        'json',
+        'xml',
+        'yaml',
+        'sql',
+        'r',
+        'py',
+        'ipynb',
+        'mp3',
+        'wav',
+        'flac',
+        'ogg',
+        'aac',
+        'wma',
+        'm4a',
+        'opus',
+        'mid',
+        'amr',
+        'aiff',
+        'ape',
+        'caf',
+        'mka',
+        'pcm',
+        'ac3',
+        'alac',
+        'au',
+        'dts',
+        'eac3',
+        'gsm',
+        'mp1',
+        'mp2',
+        'mpa',
+        'ra',
+        'tta',
+        'wv',
+        'webm',
+        '3ga',
+        '3gpa',
+        '3gp',
+        'aif',
+        'oga',
+        'oma',
+        'spx',
+        'xmf',
+        'mogg',
+        'mod',
+        'mo3',
+        'mtm',
+        'umx',
+        'it',
+        's3m',
+        'xm',
+        'sid',
+      ],
+    );
 
     if (result != null) {
-      setState(() {
-        _selectedFile = File(result.files.single.path!);
-      });
+      for (var file in result.files) {
+        setState(() {
+          _selectedFile = File(file.path!);
+        });
 
-      // Upload the file to Firebase Storage
-      Reference ref =
-          FirebaseStorage.instance.ref().child('files/${_selectedFile!.path}');
-      UploadTask uploadTask = ref.putFile(_selectedFile!);
-      TaskSnapshot snapshot = await uploadTask;
-      _downloadUrl = await snapshot.ref.getDownloadURL();
-      final time = DateTime.now();
-      // Add message to Firestore
-      updatelast();
-      updatetime(time);
+        // Upload the file to Firebase Storage
+        Reference ref = FirebaseStorage.instance
+            .ref()
+            .child('files/${_selectedFile!.path}');
+        UploadTask uploadTask = ref.putFile(_selectedFile!);
+        TaskSnapshot snapshot = await uploadTask;
+        _downloadUrl = await snapshot.ref.getDownloadURL();
+        final time = DateTime.now();
+        // Add message to Firestore
 
-      _firestore
-          .collection("groups")
-          .doc(widget.groupId)
-          .collection("chats")
-          .add({
-        'message': _selectedFile!.path.split('/').last,
-        'role': widget.role,
-        'sendBy': widget.name,
-        'link': _downloadUrl,
-        'time': time,
-        'type': 'file'
-      });
+        DateTime time1 = await fetchTimeInIndia();
+
+        print(time);
+        print(time1.toString());
+        updatelast();
+        updatetime(time1, _textController.text);
+        _firestore
+            .collection("groups")
+            .doc(widget.groupId)
+            .collection("chats")
+            .add({
+          'message': _selectedFile!.path.split('/').last,
+          'role': widget.role,
+          'sendBy': widget.name,
+          'link': _downloadUrl,
+          'studentid': widget.id,
+          'time': time1,
+          'type': 'file'
+        });
+      }
     }
   }
 
   @override
   void initState() {
     super.initState();
+    // _socket = IO.io('http://3.110.108.153:8000/');
     _connectToServer();
     print(loadata());
   }
@@ -448,57 +562,66 @@ Future<void> _pickFileRecord() async {
   }
 
   void _connectToServer() {
-    // _socket = IO.io(
-    //   'https://13.233.244.122:3000/${widget.role}-namespace',
-    //   IO.OptionBuilder().setTransports(['websocket']).build(),
-    // );
-    // _socket.onConnect((_) {
-    //   print('Connected to server');
-    //   _socket.emit('join', {
-    //     'id': widget.id,
-    //     'groupId': widget.groupId,
-    //   });
-    // });
-    // _socket.on('messageFromClient', _handleNewMessage);
-    //   _socket.onDisconnect((_) => print('Disconnected from server'));
+    _socket =
+        IO.io("http://3.110.108.153:8000/student-namespace", <String, dynamic>{
+      "transports": ["websocket"],
+      "autoConnect": false,
+    });
+    _socket.connect();
+    var userData = {'userId': widget.id, 'groupId': widget.groupId};
+    //_socket.emit("signin", widget.sourchat.id);
+    _socket.emit('join', userData);
+    _socket.on('join', (data) {
+      print(
+          "socket sucessfully connected and socket id is ${data['socketID']}");
+    });
   }
 
   void sendtext() {}
   void _handleNewMessage(data) {
-    print('New Message Received: $data');
+    var userDatawithmessage = {
+      "userID": widget.id,
+      "groupID": widget.groupId,
+      "message": data
+    };
+    _socket.emit('sendMessage', userDatawithmessage);
   }
 
   void _sendMessage() async {
-    if (_textController.text.isNotEmpty) {
+    String message =
+        _textController.text.trim(); // Trim leading and trailing spaces
+    if (!checktext(_textController.text.toString())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please send one link at a time')),
+      );
+    } else if (message.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Message cannot be empty')),
+      );
+    } else {
       String data = _textController.text;
-      // _socket = await IO.io(
-      //   'http://13.233.244.122:3000/${widget.role}-namespace',
-      //   IO.OptionBuilder().setTransports(['websocket']).build(),
-      // );
-      // _socket.onConnect((_) {
-      //   print('Connected to server');
-      //   _socket.emit('join', {
-      //     'id': widget.id,
-      //     'groupId': widget.groupId,
-      //   });
-      // });
+
       _focusNode.unfocus();
       String id = widget.groupId; // mentor Id
       String student_id = widget.id;
+      _textController.clear();
       // here student_id will come from frontEnd  socket.handshake.auth.student_id4
-
+      DateTime time1 = await fetchTimeInIndia();
       final time = DateTime.now();
+      print(time);
+      print(time1.toString());
       updatelast();
-      updatetime(time);
+      updatetime(time1, _textController.text);
       final post = await _firestore
           .collection("groups")
           .doc(id)
           .collection("chats")
           .add({
-        'message': _textController.text,
+        'message': data,
         'role': widget.role,
         'sendBy': widget.name,
-        'time': time,
+        'studentid': widget.id,
+        'time': time1,
         'type': 'text'
       });
 
@@ -509,7 +632,6 @@ Future<void> _pickFileRecord() async {
       //   'sender': widget.id,
       //   'groupId': widget.groupId,
       // });
-      _textController.clear();
     }
   }
 
@@ -561,7 +683,7 @@ Future<void> _pickFileRecord() async {
                   ),
                 ),
                 CircleAvatar(
-                  radius:22.sp,
+                  radius: 22.sp,
                   backgroundColor: Colors.black,
                   child: CircleAvatar(
                     radius: 20.sp,
@@ -571,7 +693,7 @@ Future<void> _pickFileRecord() async {
                 Padding(
                   padding: EdgeInsets.only(left: 5.w),
                   child: SizedBox(
-                    width:55.w,
+                    width: 55.w,
                     child: Text(
                       "${widget.title}",
                       overflow: TextOverflow.ellipsis,
@@ -632,14 +754,17 @@ Future<void> _pickFileRecord() async {
                           );
                         }
                         final messages = snapshot.data!.docs;
+                       
                         print('Number of documents: ${messages.length}');
                         List<MessageBubble> messageBubbles = [];
                         for (var message in messages) {
+                           final data =message.data() as Map<String,dynamic>;
                           final messageText = message['message'];
                           final messageSender = message['sendBy'];
                           final messageType = message['type'];
                           final messagetime = message['time'];
                           final currentUser = widget.id;
+                          final messageid = data.containsKey('studentid')?message['studentid']:"old message";
                           final link = messageType == "image" ||
                                   messageType == "audio" ||
                                   messageType == "video" ||
@@ -651,7 +776,7 @@ Future<void> _pickFileRecord() async {
                               message: messageText,
                               sender: messageSender,
                               timestamp: messagetime,
-                              isMe: messageSender == widget.name,
+                              isMe: (messageSender == widget.name)&&(messageid=="old message"?true:messageid==currentUser?true:false),
                               link: link,
                               type: messageType,
                               isURL: isURL(messageText));
@@ -695,12 +820,12 @@ Future<void> _pickFileRecord() async {
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        // _isRecording
-                        //     ? _buildStopRecordingButton()
-                        //     : _buildMicButton(),
-                        
-                        
-                             Expanded(
+                        _isRecording
+                            ? _buildStopRecordingButton()
+                            : _buildMicButton(),
+                        _isRecording
+                            ? _buildCancelButton()
+                            : Expanded(
                                 child: LimitedBox(
                                   maxHeight: 4 *
                                           TextField().maxLines!.toInt() *
@@ -722,7 +847,9 @@ Future<void> _pickFileRecord() async {
                                   ),
                                 ),
                               ),
-                             Row(
+                        _isRecording
+                            ? SizedBox()
+                            : Row(
                                 children: [
                                   IconButton(
                                     icon: Icon(Icons.attachment_outlined,
@@ -736,10 +863,13 @@ Future<void> _pickFileRecord() async {
                                   ),
                                 ],
                               ),
-                        IconButton(
-                                icon: Icon(Icons.send, color: Colors.purple),
-                                onPressed: _sendMessage,
-                              ),
+                        _isRecording
+                            ? SizedBox()
+                            :   IconButton(
+            icon: Icon(Icons.send, color: Colors.purple),
+            onPressed: containsSingleURL(_textController.text)
+                ? _sendMessage
+                : error()),
                       ],
                     ),
                   ),
@@ -761,7 +891,7 @@ Future<void> _pickFileRecord() async {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-                ListTile(
+              ListTile(
                 leading: Icon(Icons.image),
                 title: Text('Click Photo'),
                 onTap: () {
@@ -769,7 +899,7 @@ Future<void> _pickFileRecord() async {
                   _pickFilePhoto();
                 },
               ),
-                ListTile(
+              ListTile(
                 leading: Icon(Icons.image),
                 title: Text('Record Video'),
                 onTap: () {
@@ -824,9 +954,6 @@ class MessageBubble extends StatefulWidget {
 }
 
 class _MessageBubbleState extends State<MessageBubble> {
-  late VideoPlayerController _videoPlayerController;
-  late ChewieController _chewieController;
-
   bool _isPlaying = false; // <-- track whether the audio is playing
   AudioPlayer _audioPlayer =
       AudioPlayer(); // <-- create an instance of AudioPlayer
@@ -841,7 +968,10 @@ class _MessageBubbleState extends State<MessageBubble> {
   bool isURL(String string) {
     // Regular expression pattern to match a URL
     // Regular expression pattern to match a URL
-    return (string.contains('http',0) ||string.contains('www')||string.contains('https',0) ||string.contains('.com'));
+    return (string.contains('http', 0) ||
+        string.contains('www') ||
+        string.contains('https', 0) ||
+        string.contains('.com'));
   }
 
   void _launchURL(String url) async {
@@ -853,29 +983,9 @@ class _MessageBubbleState extends State<MessageBubble> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    _audioPlayer.dispose();
-    if (widget.type == "video") {
-      _chewieController.dispose();
-      _videoPlayerController.dispose();
-    }
-// <-- dispose the AudioPlayer when the widget is removed from the tree
-  }
-
-  @override
   void initState() {
     super.initState();
     isURL(widget.message);
-    if (widget.type == "video") {
-      _videoPlayerController = VideoPlayerController.network(widget.link);
-      _chewieController = ChewieController(
-        videoPlayerController: _videoPlayerController,
-        autoInitialize: true,
-        looping: false,
-        autoPlay: false,
-      );
-    }
   }
 
   Future<void> _downloadAndOpenVideo(String url) async {
@@ -925,6 +1035,18 @@ class _MessageBubbleState extends State<MessageBubble> {
           //  _isMaximized = false;
         });
       });
+    }
+
+    String extractURL(String input) {
+      final words = input.split(' ');
+      for (final word in words) {
+        if (word.startsWith('http://') ||
+            word.startsWith('https://') ||
+            word.startsWith('www.')) {
+          return word;
+        }
+      }
+      return words[0];
     }
 
     return Column(
@@ -978,13 +1100,14 @@ class _MessageBubbleState extends State<MessageBubble> {
                   widget.type == 'text'
                       ? widget.isURL
                           ? Container(
-                            width:300,
-                            child: Column(children: [
+                              width: 300,
+                              child: Column(children: [
                                 Container(
                                   height: 300,
                                   child: InAppWebView(
                                     initialUrlRequest: URLRequest(
-                                      url: Uri.parse(widget.message),
+                                      url:
+                                          Uri.parse(extractURL(widget.message)),
                                     ),
                                     initialOptions: InAppWebViewGroupOptions(
                                       crossPlatform: InAppWebViewOptions(
@@ -1001,12 +1124,10 @@ class _MessageBubbleState extends State<MessageBubble> {
                                         onTap: () {
                                           launch(widget.message);
                                         },
-                                        child: Text(
-                                          widget.message,
-                                          style: TextStyle(
-                                            color: Colors.blue,
-                                          ),
-                                        ),
+                                        child: HighlightedText(
+                                            text: widget.message,
+                                            highlight:
+                                                extractURL(widget.message)),
                                       ),
                                     ),
                                     IconButton(
@@ -1018,11 +1139,12 @@ class _MessageBubbleState extends State<MessageBubble> {
                                   ],
                                 ),
                               ]),
-                          )
+                            )
                           : Container(
-                            constraints: BoxConstraints(maxWidth: 300,minWidth: 0),
-                          //  width: 300,
-                            child: Row(
+                              constraints:
+                                  BoxConstraints(maxWidth: 300, minWidth: 0),
+                              //  width: 300,
+                              child: Row(
                                 children: [
                                   Flexible(
                                     child: Text(
@@ -1041,21 +1163,20 @@ class _MessageBubbleState extends State<MessageBubble> {
                                   ),
                                 ],
                               ),
-                          )
+                            )
                       : widget.type == 'image'
                           ? Container(
-                          width: 300,
-                         
-                            child: Column(
-                              children: [
-                                GestureDetector(
+                              width: 300,
+                              child: Column(
+                                children: [
+                                  GestureDetector(
                                     onTap: () async {
                                       setState(() {
                                         _showMaximizedImage(widget.link);
                                       });
                                     },
                                     child: CachedNetworkImage(
-                                      width: 300,                        
+                                      width: 300,
                                       height: 300,
                                       imageUrl: widget.link,
                                       placeholder: (context, url) =>
@@ -1065,72 +1186,42 @@ class _MessageBubbleState extends State<MessageBubble> {
                                       fit: BoxFit.fitWidth,
                                     ),
                                   ),
-                                   SizedBox(height: 8.0),
-                                          TextButton(
-                                            child: Text('View in Gallery'),
-                                            onPressed: () {
-                                                downloadAndOpenFile(
-                                                widget.link, widget.message);
-                                          
-                                            },
-                                          ),
-                              ],
-                            ),
-                          )
-                          : widget.type == 'audio'
-                              ? Container(
-                                  width: 100,
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        icon: _isPlaying
-                                            ? Icon(Icons.pause)
-                                            : Icon(Icons.play_arrow),
-                                        onPressed: () {
-                                          if (_isPlaying) {
-                                            _audioPlayer.pause();
-                                          } else {
-                                            print(widget.link);
-                                             _audioPlayer.play(UrlSource(widget.link));
-                                          }
-                                          setState(() {
-                                            _isPlaying = !_isPlaying;
-                                          });
-                                        },
-                                      ),
-                                      Text(
-                                        _isPlaying ? 'Playing' : 'Paused',
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 10,
-                                        ),
-                                      ),
-                                    ],
+                                  SizedBox(height: 8.0),
+                                  TextButton(
+                                    child: Text('View in Gallery'),
+                                    onPressed: () {
+                                      downloadAndOpenFile(
+                                          widget.link, widget.message);
+                                    },
                                   ),
-                                )
+                                ],
+                              ),
+                            )
+                          : widget.type == 'audio'
+                              ? AudioPlayerWidget(audioUrl: widget.link)
                               : widget.type == 'video'
                                   ? Container(
-                                    width: 300,
-                                    child: Column(
+                                      width: 300,
+                                      child: Column(
                                         children: [
                                           SizedBox(
-                                            height: 300,
-                                            child: Chewie(
-                                              controller: _chewieController,
-                                            ),
-                                          ),
+                                              height: 300,
+                                              child: VideoPlayerWidget(
+                                                link: widget.link,
+                                              )),
                                           SizedBox(height: 8.0),
                                           TextButton(
                                             child: Text('View in Gallery'),
                                             onPressed: () {
-                                              _downloadAndOpenVideo(widget.link);
+                                              _downloadAndOpenVideo(
+                                                  widget.link);
                                             },
                                           ),
                                         ],
                                       ),
-                                  )
+                                    )
                                   : SizedBox(
-                                    width:300,
+                                      width: 300,
                                       // height: 20,
                                       //  width: 50,
                                       child: TextButton(
@@ -1158,6 +1249,221 @@ class _MessageBubbleState extends State<MessageBubble> {
           ],
         ),
       ],
+    );
+  }
+}
+
+class AudioPlayerWidget extends StatefulWidget {
+  final String audioUrl;
+
+  const AudioPlayerWidget({Key? key, required this.audioUrl}) : super(key: key);
+
+  @override
+  _AudioPlayerWidgetState createState() => _AudioPlayerWidgetState();
+}
+
+class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
+  late AudioPlayer _audioPlayer;
+  Duration _totalDuration = Duration.zero;
+  Duration _currentPosition = Duration.zero;
+  bool _isPlaying = false;
+  bool first = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _audioPlayer = AudioPlayer();
+    _initializeAudioPlayer();
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  void _initializeAudioPlayer() async {
+    await _audioPlayer.setSourceUrl(widget.audioUrl);
+
+    _audioPlayer.onPositionChanged.listen((event) {
+      setState(() {
+        _currentPosition = event;
+      });
+    });
+
+    _totalDuration = (await _audioPlayer.getDuration())!;
+
+    // _audioPlayer.onPlayerStateChanged.listen((event) {
+    //   setState(() {
+    //     _isPlaying = event == PlayerState.PLAYING;
+    //   });
+    // });
+  }
+
+  Future<void> _togglePlayback() async {
+    if (first) {
+      if (_isPlaying) {
+        await _audioPlayer.pause();
+        _isPlaying = !_isPlaying;
+      } else {
+        await _audioPlayer.resume();
+        _isPlaying = !_isPlaying;
+      }
+    } else {
+      _audioPlayer.play(UrlSource(widget.audioUrl));
+      first = true;
+      _isPlaying = true;
+    }
+  }
+
+  Future<void> _stop() async {
+    await _audioPlayer.stop();
+    setState(() {
+      _currentPosition = Duration.zero;
+      first = false;
+    });
+  }
+
+  String _formatDuration(Duration duration) {
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds.remainder(60);
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
+                    onPressed: _togglePlayback,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.stop),
+                    onPressed: _stop,
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(_formatDuration(_currentPosition)),
+                  SizedBox(width: 10),
+                  Text('/'),
+                  SizedBox(width: 10),
+                  Text(_formatDuration(_totalDuration)),
+                ],
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: SizedBox(
+              width: 200,
+              child: LinearProgressIndicator(
+                value: _totalDuration != Duration.zero
+                    ? _currentPosition.inMilliseconds /
+                        _totalDuration.inMilliseconds
+                    : 0.0,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                backgroundColor: Colors.grey[300],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class VideoPlayerWidget extends StatefulWidget {
+  final String link;
+  const VideoPlayerWidget({Key? key, required this.link}) : super(key: key);
+
+  @override
+  State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
+}
+
+class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
+  late VideoPlayerController _videoPlayerController;
+  late ChewieController _chewieController;
+
+  @override
+  void initState() {
+    _videoPlayerController = VideoPlayerController.network(widget.link);
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      autoInitialize: true,
+      looping: false,
+      autoPlay: false,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _chewieController.dispose();
+    _videoPlayerController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Chewie(controller: _chewieController);
+  }
+}
+
+class HighlightedText extends StatefulWidget {
+  final String text;
+  final String highlight;
+
+  const HighlightedText({required this.text, required this.highlight});
+
+  @override
+  State<HighlightedText> createState() => _HighlightedTextState();
+}
+
+class _HighlightedTextState extends State<HighlightedText> {
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle highlightedStyle = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 18,
+      color: Colors.blue, // Customize the highlighting color
+    );
+
+    final List<TextSpan> textSpans = [];
+
+    final List<String> words = widget.text.split(' ');
+
+    for (String word in words) {
+      if (word.contains(widget.highlight)) {
+        textSpans.add(
+          TextSpan(
+            text: word,
+            style: highlightedStyle,
+          ),
+        );
+      } else {
+        textSpans.add(
+          TextSpan(
+              text: word, style: TextStyle(color: Colors.black, fontSize: 17)),
+        );
+      }
+      textSpans.add(TextSpan(text: ' '));
+    }
+
+    return RichText(
+      text: TextSpan(
+        children: textSpans,
+      ),
     );
   }
 }

@@ -12,11 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class GroupPage extends StatefulWidget {
-  // const GroupPage({super.key});
+class GroupPage extends StatefulWidget { 
   Map<String, dynamic>? groupData;
   Map? userData;
-
   GroupPage({this.groupData, this.userData});
   @override
   State<GroupPage> createState() => _GroupPageState();
@@ -164,14 +162,14 @@ class _GroupPageState extends State<GroupPage> {
                 _updatedDocuments.add(change.doc.id);
                 print(_updatedDocuments);
                 LocalNotificationService.createanddisplaynotificationmessage(
-                    "${change.doc["student_name"]} has a new message");
+                    "${change.doc["student_name"]} has a new message",changedData.containsKey("lastmessage")?(change.doc['lastmessage']):"new feature included");
               }
             } else {
               _updatedDocuments.add(change.doc.id);
               print(_updatedDocuments);
-              LocalNotificationService.createanddisplaynotificationmessage(
-                  "${change.doc["student_name"]} has a new message");
-            }
+               LocalNotificationService.createanddisplaynotificationmessage(
+                    "${change.doc["student_name"]} has a new message",changedData.containsKey("lastmessage")?(change.doc['lastmessage']):"new feature included");
+              }
           } else if (change.type == DocumentChangeType.added) {
             newdocuments.add(change.doc.id);
           }
@@ -221,14 +219,14 @@ class _GroupPageState extends State<GroupPage> {
                 _updatedDocuments.add(change.doc.id);
                 print(_updatedDocuments);
                 LocalNotificationService.createanddisplaynotificationmessage(
-                    "${change.doc["name"]} recieved a new message");
+                    "${change.doc["student_name"]} has a new message",changedData.containsKey("lastmessage")?(change.doc['lastmessage']):"new feature included");
               }
             } else {
               _updatedDocuments.add(change.doc.id);
               print(_updatedDocuments);
-              LocalNotificationService.createanddisplaynotificationmessage(
-                  "${change.doc["student_name"]} has a new message");
-            }
+                LocalNotificationService.createanddisplaynotificationmessage(
+                    "${change.doc["student_name"]} has a new message",changedData.containsKey("lastmessage")?(change.doc['lastmessage']):"new feature included");
+              }
           }
         });
         if (_updatedDocuments.isNotEmpty) {
@@ -408,39 +406,7 @@ class _GroupPageState extends State<GroupPage> {
                             ),
                           ),
                         ),
-                        //   Padding(
-                        //   padding: EdgeInsets.only(
-                        //       left: 4.w, right: 4.w, bottom: 1.h),
-                        //   child: GestureDetector(
-                        //     onTap: () {
-                        //     showPopup(context, 'This is a message in the popup.');
-
-                        //     },
-                        //     child: Row(
-                        //       children: [
-                        //         Text(
-                        //           "More info and details ",
-                        //           style: TextStyle(
-                          
-                        //             shadows: <Shadow>[
-                        //               Shadow(
-                        //                 offset: Offset(2.0, 2.0),
-                        //                 blurRadius: 6.0,
-                        //                 color: Color.fromARGB(100, 0, 0, 0),
-                        //               ),
-                        //             ],
-                        //             fontFamily: 'Inter',
-                        //             fontSize: 8.sp,
-                        //             color: Colors.white,
-                        //             fontWeight: FontWeight.w400,
-                        //              decoration: TextDecoration.underline,
-                        //           ),
-                        //         ),
-                        //         Icon( Icons.info,color: Colors.white,)
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
+                  
                       ],
                     ),
                     Padding(
