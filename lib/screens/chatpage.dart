@@ -385,7 +385,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<DateTime> fetchTimeInIndia() async {
     final response = await http
-        .get(Uri.parse('http://worldtimeapi.org/api/timezone/Asia/Kolkata'));
+        .get(Uri.parse('https://worldtimeapi.org/api/timezone/Asia/Kolkata'));
     final jsonData = json.decode(response.body);
     final datetime = jsonData['datetime'];
     final offset = jsonData['utc_offset'];

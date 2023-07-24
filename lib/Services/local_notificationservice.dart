@@ -122,14 +122,7 @@ class LocalNotificationService{
         message.notification!.title,
         message.notification!.body,
         notificationDetails,
-        //payload: message.data['_id'],
       );
-      // _firestore.collection('Notifications')
-      //     .add({
-      //       'title':message.notification!.title,
-      //       'description':message.notification!.body,
-      //       'icon':imageUrl
-      // });
     } on Exception catch (e) {
       print(e);
     }
@@ -146,12 +139,6 @@ class LocalNotificationService{
         payload: payload
     );
   }
-
-  // static Future init({bool initSchedule=false}) async{
-  //   await _notificationsPlugin.initialize(initializationSettings,onSelectNotification: (payload)async{
-  //
-  //   });
-  // }
 
   static Future notificationDetailslocal() async{
     var bigPicture=BigPictureStyleInformation(
