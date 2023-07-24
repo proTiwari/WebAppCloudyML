@@ -972,6 +972,19 @@ class _QuizPageState extends State<QuizPage> {
     } catch (e) {
       print("jjoijoijo: ${e}");
     }
+
+    try {
+      print(
+          "tghrthrt  ${quizdata[questionindex]["question"].toString().split("(--image--)")[1]}");
+      setState(() {
+        showquestion = true;
+      });
+    } catch (e) {
+      setState(() {
+        showquestion = false;
+      });
+      print("eifjwgvygvu $e");
+    }
   }
 
   String countUsedTime() {
