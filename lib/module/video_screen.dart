@@ -115,32 +115,6 @@ class _VideoScreenState extends State<VideoScreen> {
   ValueNotifier<int> _currentVideoIndex2 = ValueNotifier(0);
   ValueNotifier<double> _downloadProgress = ValueNotifier(0);
 
-  // void getData() async {
-  //   await setModuleId();
-  //   await FirebaseFirestore.instance
-  //       .collection('courses')
-  //       .doc(courseId)
-  //       .collection('Modules')
-  //       .doc(moduleId)
-  //       .collection('Topics')
-  //       .orderBy('sr')
-  //       .get()
-  //       .then((value) {
-  //     for (var video in value.docs) {
-  //       _listOfVideoDetails.add(
-  //         VideoDetails(
-  //           videoId: video.data()['id'] ?? '',
-  //           type: video.data()['type'] ?? '',
-  //           canSaveOffline: video.data()['Offline'] ?? true,
-  //           serialNo: video.data()['sr'].toString(),
-  //           videoTitle: video.data()['name'] ?? '',
-  //           videoUrl: video.data()['url'] ?? '',
-  //         ),
-  //       );
-  //     }
-  //   });
-  // }
-
   html.IFrameElement _iFrameElement = html.IFrameElement();
 
   String elemtntId = Random().nextInt(100000).toString();
@@ -217,24 +191,6 @@ class _VideoScreenState extends State<VideoScreen> {
     }).catchError((err) => print("Error$err"));
   }
 
-  // Widget timeRemainingString() {
-  //   final totalDuration =
-  //       _videoController!.value.duration.toString().substring(2, 7);
-  //   final duration = _duration?.inSeconds ?? 0;
-  //   final currentPosition = _position?.inSeconds ?? 0;
-  //   final timeRemained = max(0, duration - currentPosition);
-  //   final mins = convertToTwoDigits(timeRemained ~/ 60);
-  //   final seconds = convertToTwoDigits(timeRemained % 60);
-  //   // timeRemaining = '$mins:$seconds';
-  //   return Text(
-  //     totalDuration,
-  //     style: TextStyle(
-  //       color: Colors.white,
-  //       fontWeight: FontWeight.bold,
-  //     ),
-  //   );
-  // }
-
   Widget timeElapsedString() {
     var timeElapsedString = "00.00";
     final currentPosition = _position?.inSeconds ?? 0;
@@ -250,190 +206,11 @@ class _VideoScreenState extends State<VideoScreen> {
     );
   }
 
-  // void _onVideoControllerUpdate() async {
-  //   print("this is video ------ $videoTitle");
-  //   print("----$moduleName");
-  //   print("------$moduleId");
-  //   print("-----$videoId");
-  //   print("---total duration $totalDuration");
-  //   print("----percent ${((currentPosition / totalDuration) * 100).toInt()}");
 
-  //   print(_getVideoPercentageList);
-
-  //   if (_disposed) {
-  //     return;
-  //   }
-  //   final now = DateTime.now().microsecondsSinceEpoch;
-  //   if (_delayToInvokeonControlUpdate > now) {
-  //     return;
-  //   }
-  //   _delayToInvokeonControlUpdate = now + 500;
-  //   final controller = _videoController;
-  //   if (controller == null) {
-  //     debugPrint("The video controller is null");
-  //     return;
-  //   }
-  //   if (!controller.value.isInitialized) {
-  //     debugPrint("The video controller cannot be initialized");
-  //     return;
-  //   }
-  //   if (_duration == null) {
-  //     _duration = _videoController!.value.duration;
-  //   }
-  //   if (!(_videoController!.value.duration >
-  //           _videoController!.value.position) &&
-  //       !_videoController!.value.isPlaying) {
-  //     VideoScreen.currentSpeed.value = 1.0;
-  //     // updateCourseCompletionPercentage(videoPercentageList);
-
-  //     _currentVideoIndex.value++;
-  //     initializeVidController(
-  //         _listOfVideoDetails[_currentVideoIndex.value].videoUrl,
-  //         _listOfVideoDetails[_currentVideoIndex.value].videoTitle,
-  //         "",
-  //         "",
-  //         "");
-  //   }
-  //   var duration = _duration;
-  //   if (duration == null) return;
-  //   if (_getVideoPercentageList != null) {
-  //     for (var i in _getVideoPercentageList!) {
-  //       if (i[moduleId.toString()] != null) {
-  //         for (var j in i[moduleId.toString()]) {
-  //           print("0kkkkk");
-  //           if(j[videoId.toString()]!=null)
-  //             {
-  //               if(j[videoId.toString()]>=100)
-  //                 {
-  //                             j[videoId.toString()] = 100;
-  //                 }
-  //               else
-  //                 {
-  //                  if(((currentPosition / totalDuration) * 100) >99.60)
-  //                     {
-  //                       j[videoId.toString()] = 100;
-  //                     }
-  //                      else
-  //                        {
-
-  //                          if(j[videoId.toString()]<
-  //                              ((currentPosition / totalDuration) * 100).toInt()
-  //                          )
-  //                          {
-  //                            j[videoId.toString()] =
-  //                                ((currentPosition / totalDuration) * 100).toInt();
-  //                          }
-  //                        }
-  //                 }
-  //             }
-  //           // j[videoId.toString()] != null &&
-  //           //         j[videoId.toString()] <
-  //           //             ((currentPosition / totalDuration) * 100).toInt()
-  //           //     ? j[videoId.toString()] =
-  //           //         ((currentPosition / totalDuration) * 100).toInt()
-  //           //     : null;
-  //         }
-  //       }
-  //     }
-  //     //
-  //     int total = 0, count = 0;
-  //     try {
-  //       for (int i = 0; i < _getVideoPercentageList!.length; i++) {
-  //         for (var j in _getVideoPercentageList![i].entries) {
-  //           // j.value.forEach((element) {
-  //           //   Map<String, int> dic = element as Map<String, int>;
-  //           //   int t = dic.values.first;
-  //           //   total += t;
-  //           //   count += 1;
-  //           // });
-  //           try {
-  //             j.value.forEach((element) {
-  //               // Map<String, int> dic = element as Map<String, int>;
-  //               // int t = dic.values.first;
-  //               print(element.values.first);
-  //               total += int.parse(element.values.first.toString()).toInt();
-  //               count += 1;
-  //               // print(dic);
-  //             });
-  //           } catch (err) {
-  //             print("j--$j");
-  //             print("Errrrrrrrrrrrrrr");
-  //           }
-  //         }
-  //       }
-  //     } catch (err) {
-  //       print("errrororor");
-  //     }
-  //     CourseID != null
-  //         ? FirebaseFirestore.instance
-  //             .collection("courseprogress")
-  //             .doc(_auth.currentUser!.uid)
-  //             .update({
-  //             CourseID.toString(): _getVideoPercentageList,
-  //             CourseID.toString() + "percentage":
-  //                 ((total / (count * 100)) * 100).toInt(),
-  //           })
-  //         : null;
-  //   }
-
-  //   var position = _videoController?.value.position;
-  //   setState(() {
-  //     _position = position;
-  //     currentPosition = _videoController!.value.position.inSeconds.toInt();
-  //   });
-  //   final buffering = controller.value.isBuffering;
-  //   setState(() {
-  //     _isBuffering = buffering;
-  //   });
-  //   final playing = controller.value.isPlaying;
-  //   if (playing) {
-  //     if (_disposed) return;
-  //     setState(() {
-  //       _progress = position!.inMilliseconds.ceilToDouble() /
-  //           duration.inMilliseconds.ceilToDouble();
-  //     });
-  //   } else {
-  //     // updateCourseCompletionPercentage(videoPercentageList);
-  //   }
-  //   _isPlaying = playing;
-  // }
 
   int totalDuration = 0;
   int currentPosition = 0;
   String? moduleName, moduleId, videoId;
-  // void initializeVidController(String url, String name, String modulename,
-  //     String moduleID, String videoID) async {
-  //   print('this is -- $url ');
-  //   try {
-  //     final oldVideoController = _videoController;
-  //     if (oldVideoController != null) {
-  //       oldVideoController.removeListener(_onVideoControllerUpdate);
-  //       oldVideoController.pause();
-  //       oldVideoController.dispose();
-  //     }
-  //     final _localVideoController = await VideoPlayerController.network(url);
-  //     setState(() {
-  //       _videoController = _localVideoController;
-  //     });
-  //     playVideo = _localVideoController.initialize().then((value) {
-  //       setState(() {
-  //         print('this is -- $name ');
-  //         videoTitle = name.toString();
-  //         moduleName = modulename.toString();
-  //         moduleId = moduleID;
-  //         videoId = videoID;
-  //         totalDuration =
-  //             _localVideoController.value.duration.inSeconds.toInt();
-  //         selectedVideoIndexName = url.toString();
-  //         _localVideoController.addListener(_onVideoControllerUpdate);
-  //         _localVideoController.play();
-  //         _duration = _localVideoController.value.duration;
-  //       });
-  //     });
-  //   } catch (e) {
-  //     showToast(e.toString());
-  //   }
-  // }
 
   void getPermission() async {
     var status = await Permission.storage.status;
@@ -456,71 +233,6 @@ class _VideoScreenState extends State<VideoScreen> {
   var videoPercentageList = [];
   var totalPercentageList = {};
 
-  // Future<Map<String, dynamic>> getDataFrom(sectionName, curriculumdata) async {
-  //   var data = {};
-  //   await sectionName.entries.forEach((element) async {
-  //     curriculumdata.entries.forEach((entry) {
-  //       if (element.key.toString() == entry.key) {
-  //         entry.value.forEach((name) {
-  //           listOfVideo.add(name);
-  //         });
-  //         data[element] = listOfVideo.toList();
-  //         dataList.add({element: listOfVideo.toList()});
-  //         listOfVideo = [];
-  //       }
-  //     });
-  //   });
-  //   Map<String, dynamic> done = {};
-  //
-  //   for (var t in data.entries) {
-  //     print("t = ${t.key}");
-  //     for (var name in t.value) {
-  //       print("Name = == = ${name}");
-  //       await FirebaseFirestore.instance
-  //           .collection('courses')
-  //           .doc(courseId)
-  //           .collection('Modules')
-  //           .doc(moduleId)
-  //           .collection('Topics')
-  //           .where("name", isEqualTo: "${name.toString()}")
-  //           .get()
-  //           .then((value) {
-  //         print("YY");
-  //         print(value.docs.length);
-  //         for (var video in value.docs) {
-  //           listOfVideo.add(VideoDetails(
-  //             videoId: video.data()['id'] ?? '',
-  //             type: video.data()['type'] ?? '',
-  //             canSaveOffline: video.data()['Offline'] ?? true,
-  //             serialNo: video.data()['sr'].toString(),
-  //             videoTitle: video.data()['name'] ?? '',
-  //             videoUrl: video.data()['url'] ?? '',
-  //           ));
-  //           print("oo");
-  //           String str = t.key.toString();
-  //           str = str.replaceRange(0, 9, "");
-  //           var st = "";
-  //           for (int i = 0; i < str.length; i++) {
-  //             if (str[i] == ":") {
-  //               break;
-  //             }
-  //             st += str[i];
-  //           }
-  //           done[st] = listOfVideo.toList();
-  //           print("oopp");
-  //         }
-  //         // print(value.docs.length);
-  //       });
-  //     }
-  //     listOfVideo = [];
-  //   }
-  //   print("done = $done");
-  //   print("length= = ${dataList.length}");
-  //
-  //   print("yes");
-  //   print(listOfVideo.length);
-  //   return done;
-  // }
 
   var dataa;
   var curriculum1;
@@ -638,220 +350,7 @@ getAssignmentDescription() async {
 
         var list = await res.get("curriculum1")[widget.courseName];
 
-        // if (value.exists && value.data()![CourseID]!=null)
-        // {
-        //
-        //   print("List-----$list");
-        //   for(int i=0;i<list.length;i++)
-        //   {
-        //     for(int j=0;j<list[i]["videos"].length;j++)
-        //     {
-        //       list[i]["videos"][j]["type"]=="video"?null:list[i]["videos"].removeAt(j);
-        //     }
-        //   }
-        //   list.sort((a, b) {
-        //     if (a["sr"] > b["sr"]) {
-        //       return 1;
-        //     }
-        //     return -1;
-        //   });
-        //
-        //   /* check */
-        //   var finalProgressData = [];
-        //   var progressData = value.data()![CourseID];
-        //
-        //   for(int i=0;i<list.length;i++)
-        //   {
-        //     for(int k=0;k<progressData.length;k++)
-        //       {
-        //         if(progressData[k][list[i]["id"]]!=null)
-        //           {
-        //             print("((((((( ${progressData[k]}");
-        //             finalProgressData.add(progressData[k]);
-        //           }
-        //       }
-        //   }
-        //
-        //   print("UUUUUUUUU $finalProgressData");
-        //
-        //
-        //   await FirebaseFirestore.instance.collection("courseprogress").doc(_auth.currentUser!.uid).update({CourseID.toString():finalProgressData});
-        //
-        //
-        //   print("yyyyyyy $list");
-        //   value.data()![CourseID][0][list[0]["id"]];
-        //
-        //   for(int k=0;k<list.length;k++)
-        //     {
-        //       if(finalProgressData[k][list[k]["id"]]!=null){
-        //
-        //       }
-        //       else{
-        //
-        //       }
-        //     }
-        //   // print("&&&&&&&& ${_initialVideoPercentageList[widget.courseName]}");
-        //
-        //
-        //
-        //   print("data((--- ${finalProgressData}");
-        //   var data = finalProgressData;
-        //   print("oooo ${list.length}");
-        //   if(list.length==finalProgressData.length)
-        //   {
-        //     for(int k=0;k<list.length;k++)
-        //     {
-        //       if(list[k]["videos"].length==finalProgressData[k][list[k]["id"]].length)
-        //       {
-        //
-        //       }
-        //       else
-        //       {
-        //         if(list[k]["videos"].length>finalProgressData[k][list[k]["id"]].length)
-        //         {
-        //           for(int g=0;g<list[k]["videos"].length;g++)
-        //           {
-        //             int count = 0;
-        //             finalProgressData[k][list[k]["id"]].forEach((ele)=>{
-        //               if(ele.containsKey(list[k]["videos"][g]["id"]))
-        //                 {
-        //                   // print("True")
-        //                   count =1
-        //                 }
-        //               else{
-        //                 print("false")
-        //                 // data[k][list[k]["id"]].add(ele)
-        //               }
-        //             });
-        //             count==1?null:data[k][list[k]["id"]].add({list[k]["videos"][g]["id"].toString():0});
-        //           }
-        //         }
-        //         else
-        //         {
-        //           for(int g=0;g<data[k][list[k]["id"]].length;g++)
-        //           {
-        //             int count = 0;
-        //             print("====${data[k][list[k]["id"]][g]}");
-        //             list[k]["videos"].forEach((ele)=>{
-        //               if(data[k][list[k]["id"]][g].containsKey(ele["id"]))
-        //                 {
-        //                   count =1
-        //                 }
-        //               else{
-        //                 print("false ${ele["id"]}")
-        //               }
-        //             });
-        //             count==0?data[k][list[k]["id"]].removeAt(g):null;
-        //           }
-        //         }
-        //       }
-        //     }
-        //   }
-        //   else
-        //   {
-        //     if(list.length>finalProgressData.length)
-        //     {
-        //       for(int i=0;i<list.length;i++)
-        //       {
-        //         int count = 0;
-        //         finalProgressData.forEach((ele)=>{
-        //           // print("tyypypypyp $ele")
-        //           if(ele.containsKey(list[i]["id"]))
-        //             {
-        //               // print("True")
-        //               count =1
-        //             }
-        //           else{
-        //             print("false")
-        //             // data[k][list[k]["id"]].add(ele)
-        //           }
-        //         });
-        //         var listOfID = [];
-        //         for(int j=0;j<list[i]["videos"].length;j++)
-        //         {
-        //           listOfID.add({list[i]["videos"][j]["id"]:0});
-        //         }
-        //         print("iddddddd");
-        //         print(listOfID);
-        //         count==1?null:data.add({list[i]["id"].toString():listOfID});
-        //       }
-        //     }
-        //     else
-        //     {
-        //       for(int j=0;j<data.length;j++)
-        //       {
-        //         int count =0;
-        //         list.forEach((ele){
-        //           if(data[j].containsKey(ele["id"]))
-        //           {
-        //             count =1;
-        //           }
-        //         });
-        //         count==1?null:data.removeAt(j);
-        //       }
-        //     }
-        //   }
-        //
-        //   await FirebaseFirestore.instance.collection("courseprogress").doc(_auth.currentUser!.uid).update({CourseID.toString():data});
-        //   print("finally  $data");
-        //   _getVideoPercentageList = data;
-        // }
-        // else if(value.data()![CourseID]!=null){
-        //   var list = await res.get("curriculum1")[widget.courseName];
-        //   _initialVideoPercentageList[widget.courseName.toString()] = [];
-        //   for (int i = 0; i < list.length; i++) {
-        //     print(_initialVideoPercentageList[widget.courseName.toString()]
-        //         .runtimeType);
-        //     _initialVideoPercentageList[widget.courseName.toString()]
-        //         .add({list[i]["id"].toString(): []});
-        //     for (int j = 0; j < list[i]["videos"].length; j++) {
-        //       list[i]["videos"][j]["type"]=="video"?_initialVideoPercentageList[widget.courseName][i]
-        //       [list[i]["id"]]
-        //           .add({list[i]["videos"][j]["id"]: 0}):null;
-        //     }
-        //   }
-        //   print("**** $_initialVideoPercentageList");
-        //   await getUserRole();
-        //   await FirebaseFirestore.instance
-        //       .collection("courseprogress")
-        //       .doc(_auth.currentUser!.uid.toString())
-        //       .update({
-        //     CourseID.toString():
-        //     _initialVideoPercentageList[widget.courseName.toString()],
-        //     "email": userEmail,
-        //   }).catchError((err)=>print("Error$err"));
-        //   print("done----");
-        //   _getVideoPercentageList =
-        //   _initialVideoPercentageList[widget.courseName.toString()];
-        // }
-        // else{
-        //   var list = await res.get("curriculum1")[widget.courseName];
-        //   _initialVideoPercentageList[widget.courseName.toString()] = [];
-        //   for (int i = 0; i < list.length; i++) {
-        //     print(_initialVideoPercentageList[widget.courseName.toString()]
-        //         .runtimeType);
-        //     _initialVideoPercentageList[widget.courseName.toString()]
-        //         .add({list[i]["id"].toString(): []});
-        //     for (int j = 0; j < list[i]["videos"].length; j++) {
-        //       list[i]["videos"][j]["type"]=="video"?_initialVideoPercentageList[widget.courseName][i]
-        //       [list[i]["id"]]
-        //           .add({list[i]["videos"][j]["id"]: 0}):null;
-        //     }
-        //   }
-        //   print("**** $_initialVideoPercentageList");
-        //   await getUserRole();
-        //   await FirebaseFirestore.instance
-        //       .collection("courseprogress")
-        //       .doc(_auth.currentUser!.uid.toString())
-        //       .set({
-        //     CourseID.toString():
-        //     _initialVideoPercentageList[widget.courseName.toString()],
-        //     "email": userEmail,
-        //   }).catchError((err)=>print("Error$err"));
-        //   print("done----");
-        //   _getVideoPercentageList =
-        //   _initialVideoPercentageList[widget.courseName.toString()];
-        // }
+
 
         if (value.exists) {
           if (value.data()![CourseID] != null) {
@@ -1172,71 +671,7 @@ getAssignmentDescription() async {
 
   FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // updateCourseCompletionPercentage(videoPercentageListUpdate) async {
-  //   // await FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid).update({
-  //   //   courseName : videoPercentageListUpdate,
-  //   // }).then((value) => print(videoPercentageListUpdate)).catchError((error) => print('dipen = $error'));
-  //   // print('I am uid = ${FirebaseAuth.instance.currentUser!.uid}');
-  //   print("Videosssssssssssss ${videoPercentageList.length}");
-  //   int total = 0;
-  //   int count = 0;
-  //   if (videoPercentageListUpdate.length != 0) {
-  //     print("ppop = ${videoPercentageListUpdate}");
-  //     for (int i = 0; i < videoPercentageListUpdate.length; i++) {
-  //       print("999999999999");
-  //       print("dddddddddd ${videoPercentageListUpdate[i].toString()}");
-  //       for (int j = 0;
-  //           j < videoPercentageListUpdate[i][sectionName[i]]!.length;
-  //           j++) {
-  //         print("lllllllllllllllllllllllll");
-  //         for (var kv
-  //             in videoPercentageListUpdate[i][sectionName[i]]![j].entries) {
-  //           print("ppppppppppppppppppppppppppp");
-  //           print(kv.value);
-  //           total += int.parse(kv.value.toString());
-  //           count += 1;
-  //         }
-  //       }
-  //     }
-  //   }
-  //
-  //   videoPercentageListUpdate != null
-  //       ? await FirebaseFirestore.instance
-  //           .collection('courseprogress')
-  //           .doc(FirebaseAuth.instance.currentUser!.uid)
-  //           .get()
-  //           .then((value) async {
-  //           print('srinivas ${value.data().toString()}');
-  //           if (value.exists && videoPercentageListUpdate.length != 0) {
-  //             await FirebaseFirestore.instance
-  //                 .collection('courseprogress')
-  //                 .doc(_auth.currentUser!.uid)
-  //                 .update({
-  //               courseName: videoPercentageListUpdate,
-  //               'email': _auth.currentUser!.email,
-  //               courseName.toString() + "percentage":
-  //                   total != 0 && count != 0 ? total / count : 0
-  //             }).catchError((onError) {
-  //               print('srinnn = $onError');
-  //             });
-  //           } else {
-  //             videoPercentageListUpdate.length != 0
-  //                 ? await FirebaseFirestore.instance
-  //                     .collection('courseprogress')
-  //                     .doc(_auth.currentUser!.uid)
-  //                     .set({
-  //                     courseName: videoPercentageListUpdate,
-  //                     'email': FirebaseAuth.instance.currentUser!.email,
-  //                     courseName.toString() + "percentage":
-  //                         total != 0 && count != 0 ? (total / count).toInt() : 0
-  //                   })
-  //                 : null;
-  //           }
-  //         }).catchError((onError) {
-  //           print('srinu $onError');
-  //         })
-  //       : null;
-  // }
+
 
   @override
   void dispose() {
@@ -1428,14 +863,10 @@ getAssignmentDescription() async {
 
   @override
   void initState() {
-    
     getAssignmentDescription();
     getScoreOfAllQuiz();
     globalquizstatus();
-    // html.window.document.onContextMenu.listen((evt) => evt.preventDefault());
     VideoScreen.currentSpeed.value = 1.0;
-    // getData();
-    // getCourseData();
     streamVideoData();
     getCourseQuiz();
     getUserRole();
@@ -2789,7 +2220,8 @@ getAssignmentDescription() async {
 
             listOfSectionData = snapshot.data["curriculum1"];
             id = snapshot.data["id"];
-            // print(widget.courseName);
+            // print('cName ${widget.courseName}');
+            // print('courseName ${listOfSectionData[widget.courseName]}');
             // print(snapshot.data);
             try {
               listOfSectionData[widget.courseName].sort((a, b) {

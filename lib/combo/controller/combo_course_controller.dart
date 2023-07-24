@@ -8,14 +8,12 @@ class ComboCourseController extends GetxController {
 
   @override
   void onInit() {
- getCourseIds().whenComplete(() {
-  print('CCCC: : ${courses}');
-    getCourses();
-    getPercentageOfCourse();
+    getCourseIds().whenComplete(() {
+      print('CCCC: : ${courses}');
+      getCourses();
+      getPercentageOfCourse();
+    });
 
- });
-
-  
     super.onInit();
   }
 
@@ -26,21 +24,15 @@ class ComboCourseController extends GetxController {
 
   var courses = [].obs;
 
-
- Future getCourseIds()async{
-  await FirebaseFirestore
-            .instance
-            .collection("courses")
-            .where('id', isEqualTo: courseId)
-            .get().then((value){
- courses.value = value.docs.first.get('courses');
-            });
-
-           
-      
+  Future getCourseIds() async {
+    await FirebaseFirestore.instance
+        .collection("courses")
+        .where('id', isEqualTo: courseId)
+        .get()
+        .then((value) {
+      courses.value = value.docs.first.get('courses');
+    });
   }
-
-
 
   getCourses() async {
     await {
@@ -52,20 +44,22 @@ class ComboCourseController extends GetxController {
             .get();
         data.then((value) {
           courseList.add(value.docs.first.data());
+          print('courseList: $courseList');
           courseList.sort((a, b) =>
               courses.indexOf(a["id"]).compareTo(courses.indexOf(b["id"])));
-             
         });
+
+        print('courseList: $courseList');
       })
     };
   }
 
   getPercentageOfCourse() async {
-    try{
-       var data = await FirebaseFirestore.instance
-        .collection("courseprogress")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
+    try {
+      var data = await FirebaseFirestore.instance
+          .collection("courseprogress")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
 
       // tmp.clear();
       // for (var i = 0; i < data.data()!.length; i++) {
@@ -81,15 +75,9 @@ class ComboCourseController extends GetxController {
       //   }
       // }
 
-
-
-
- courseData.value = data.data() as Map;
-    }catch(e){
+      courseData.value = data.data() as Map;
+    } catch (e) {
       print('the progress exception is$e');
     }
-   
-
   }
-
 }

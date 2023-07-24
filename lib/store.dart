@@ -146,14 +146,23 @@ class _StoreScreenState extends State<StoreScreen> {
                         SizedBox(
                           width: horizontalScale * 10,
                         ),
-                        Image.asset(
-                          "assets/logo2.png",
-                          width: 75,
-                          height: 55,
-                        ),
-                        Text(
-                          "CloudyML",
-                          style: textStyle,
+                        InkWell(
+                          onTap: () {
+                            GoRouter.of(context).pushNamed('home');
+                          },
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                "assets/logo2.png",
+                                width: 75,
+                                height: 55,
+                              ),
+                              Text(
+                                "CloudyML",
+                                style: textStyle,
+                              ),
+                            ],
+                          ),
                         ),
                         Spacer(),
                         TextButton(
@@ -428,7 +437,12 @@ class _StoreScreenState extends State<StoreScreen> {
                                     'cID': cID,
                                     'courseName': courseName,
                                     'id': id,
-                                    'coursePrice': cou[index].international != null && cou[index].international == true ?  ((double.parse(courseP) / 82)+5).toString() : courseP
+                                    'coursePrice':
+                                        cou[index].international != null &&
+                                                cou[index].international == true
+                                            ? ((double.parse(courseP) / 82) + 5)
+                                                .toString()
+                                            : courseP
                                   });
 
                                   // Navigator.push(
@@ -644,7 +658,18 @@ class _StoreScreenState extends State<StoreScreen> {
                                                         'courseName':
                                                             courseName,
                                                         'id': id,
-                                                        'coursePrice': cou[index].international != null && cou[index].international == true ?  ((double.parse(courseP) / 82)+5).toString() : courseP
+                                                        'coursePrice': cou[index]
+                                                                        .international !=
+                                                                    null &&
+                                                                cou[index]
+                                                                        .international ==
+                                                                    true
+                                                            ? ((double.parse(
+                                                                            courseP) /
+                                                                        82) +
+                                                                    5)
+                                                                .toString()
+                                                            : courseP
                                                       });
 
                                                   // Navigator.push(
