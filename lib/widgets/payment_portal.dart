@@ -136,6 +136,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     });
 
     print("Mail Sent");
+    pushToHome();
   }
 
   void updateAmoutStringForUPI(bool isPayInPartsPressed,
@@ -400,8 +401,10 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
         });
       }
     } catch (e) {
+      print("from iwoeifwo");
       pushToHome();
     }
+    print('from wowief');
     pushToHome();
   }
 
@@ -465,9 +468,11 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     await loadCourses();
-    pushToHome();
+    print("from wjrjwoeo");
 
-    await redeemmoneyreward();
+    print("woiejwoeoi");
+
+    print("iojwioenwenfw");
     try {
       print("couponcodeused1");
       print(widget.couponcodeused);
@@ -477,6 +482,8 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     } catch (e) {
       print("error id woiejiowie: ${e.toString()}");
     }
+    await redeemmoneyreward();
+    // pushToHome();
     Toast.show("Payment successful.");
     // addCoursetoUser(widget.courseId);
 

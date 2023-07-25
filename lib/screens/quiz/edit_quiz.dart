@@ -1,4 +1,4 @@
-import 'dart:js_interop';
+// import 'dart:js_interop';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/homepage.dart';

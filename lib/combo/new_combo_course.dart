@@ -94,16 +94,39 @@ class NewComboCourse extends StatelessWidget {
                 GetX<ComboCourseController>(
                     init: ComboCourseController(courseId: courseIdd),
                     builder: (controller) {
-                      return controller.courseList.isEmpty
-                          ? Center(
+                      return 
+                    
+
+                      !controller.paidCourse.contains(courseIdd) ?
+
+                     Center(
                               child: SizedBox(
                                 child: CircularProgressIndicator(
                                     color: Colors.deepPurpleAccent,
                                     strokeWidth: 3),
                               ),
                             )
-                          : Obx(
-                              () => SizedBox(
+                     :
+                      controller.courseList.isEmpty
+                          ? Center(
+                              child: SizedBox(
+                                child: CircularProgressIndicator(
+                                    color: Colors.deepPurpleAccent,
+                                    strokeWidth: 3),
+                              ),
+                            ) :
+                        
+
+                  
+
+                          
+                          
+                          Obx(
+                              () => 
+
+                           
+                             
+                            SizedBox(
                                 child: ListView.builder(
                                     itemCount: controller.courseList.length,
                                     shrinkWrap: true,

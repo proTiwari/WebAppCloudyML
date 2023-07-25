@@ -15,6 +15,7 @@ import '../Services/deeplink_service.dart';
 import '../catalogue_screen.dart';
 import '../combo/combo_course.dart';
 import '../combo/combo_store.dart';
+import '../global_variable.dart';
 import '../models/referal_model.dart';
 import '../module/pdf_course.dart';
 import '../module/video_screen.dart';
@@ -1514,6 +1515,8 @@ userData() async {
 
                                                   ComboCourse.comboId.value =
                                                       course[index].courseId;
+                                                       mainCourseId = course[index].courseId;
+                                            print('MAINCC ::: $mainCourseId');
                                                   final id = index.toString();
                                                   final courseName =
                                                       course[index].courseName;
@@ -1860,6 +1863,8 @@ userData() async {
 
                                                                                 final id = index.toString();
                                                                                 final courseName = course[index].courseName;
+                                                                                 mainCourseId = course[index].courseId;
+                                            print('MAINCC ::: $mainCourseId');
 
                                                                                 GoRouter.of(context).pushNamed('NewComboCourseScreen', queryParams: {
                                                                                   'courseId': course[index].courseId,
@@ -3633,6 +3638,8 @@ userData() async {
                                                 ComboCourse.comboId.value =
                                                     course[index].courseId;
                                                 final id = index.toString();
+                                                 mainCourseId = course[index].courseId;
+                                            print('MAINCC ::: $mainCourseId');
                                                 final courseName =
                                                     course[index].courseName;
 

@@ -32,6 +32,7 @@ import 'Services/deeplink_service.dart';
 import 'catalogue_screen.dart';
 import 'combo/combo_course.dart';
 import 'combo/combo_store.dart';
+import 'global_variable.dart';
 import 'models/referal_model.dart';
 import 'module/pdf_course.dart';
 // import 'package:showcaseview/src/showcase.dart';
@@ -980,6 +981,8 @@ class _HomeState extends State<Home> {
                                                     ComboCourse.comboId.value =
                                                         course[index].courseId;
 
+                                                        mainCourseId = course[index].courseId;
+
                                                     final id = index.toString();
                                                     final courseName = course[index].courseName;
 
@@ -989,7 +992,8 @@ class _HomeState extends State<Home> {
                                                                             'NewComboCourseScreen',
                                                                             queryParams: {
                                                                               'courseId':  course[index].courseId,
-                                                                              'courseName': courseName
+                                                                              'courseName': courseName,
+                                                                              
                                                                             });
                                                     // Navigator.push(
                                                     //   context,
@@ -2459,6 +2463,7 @@ class _HomeState extends State<Home> {
                                     } else {
                                       ComboCourse.comboId.value =
                                           course[index].courseId;
+                                           mainCourseId = course[index].courseId;
                                   final id = index.toString();
                                       final courseName = course[index].courseName;
 

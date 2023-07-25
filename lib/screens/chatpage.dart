@@ -705,17 +705,17 @@ class _ChatPageState extends State<ChatPage> {
                     height: 10.h,
                     child: Row(
                       children: [
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(top: 0, left: 1, right: 1),
-                          child: Container(
-                            child: Image.asset(
-                              'assets/page-1/images/vector.png',
-                              height: 5.h,
-                              width: 3.h,
-                            ),
-                          ),
-                        ),
+                        // Padding(
+                        //   padding:
+                        //       const EdgeInsets.only(top: 0, left: 1, right: 1),
+                        //   child: Container(
+                        //     child: Image.asset(
+                        //       'assets/page-1/images/vector.png',
+                        //       height: 5.h,
+                        //       width: 3.h,
+                        //     ),
+                        //   ),
+                        // ),
                         Padding(
                           padding: EdgeInsets.only(left: 2.w, right: 0.5.w),
                           child: Container(
