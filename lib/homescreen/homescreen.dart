@@ -15,6 +15,7 @@ import '../Services/deeplink_service.dart';
 import '../catalogue_screen.dart';
 import '../combo/combo_course.dart';
 import '../combo/combo_store.dart';
+import '../global_variable.dart';
 import '../models/referal_model.dart';
 import '../module/pdf_course.dart';
 import '../module/video_screen.dart';
@@ -162,6 +163,18 @@ class _LandingScreenState extends State<LandingScreen> {
 
   late ScrollController _controller;
   final notificationBox = Hive.box('NotificationBox');
+
+  // showNotification() async {
+  //   final provider = Provider.of<UserProvider>(context, listen: false);
+  //   if (notificationBox.isEmpty) {
+  //     notificationBox.put(1, {"count": 0});
+  //     provider
+  //         .showNotificationHomeScreen(notificationBox.values.first["count"]);
+  //   } else {
+  //     provider
+  //         .showNotificationHomeScreen(notificationBox.values.first["count"]);
+  //   }
+  // }
 
   List<CourseDetails> featuredCourse = [];
 
@@ -440,7 +453,8 @@ class _LandingScreenState extends State<LandingScreen> {
     final deepLinkRepo = await DeepLinkService.instance;
     var referralCode = await deepLinkRepo?.referrerCode.value;
 
-    print(" $referralCode ddd");
+    print(
+        "sddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd $referralCode ddd");
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -610,6 +624,38 @@ class _LandingScreenState extends State<LandingScreen> {
 
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
+
+  void loadCourses(String fID) async {
+    await _firestore.collection("courses").doc(fID).get().then((value) {
+      print(_auth.currentUser!.displayName);
+      Map<String, dynamic> groupData = {
+        "name": value.data()!['name'],
+        "icon": value.data()!["image_url"],
+        "mentors": value.data()!["mentors"],
+        "student_id": _auth.currentUser!.uid,
+        "student_name": _auth.currentUser!.displayName,
+        'groupChatCountNew': {
+          'jbG4j36JiihVuZmpoLov2lhrWF02': 0,
+          'QVtxxzHyc6az2LPpvH210lUOeXl1': 0,
+          "2AS3AK7WVQaAMY999D3xf5ycG3h1": 0,
+          'a2WWgtY2ikS8xjCxra0GEfRft5N2': 0,
+          'BX9662ZGi4MfO4C9CvJm4u2JFo63': 0,
+          '6RsvdRETWmXf1pyVGqCUl0qEDmF2': 0,
+          'jeYDhaZCRWW4EC9qZ0YTHKz4PH63': 0,
+          'I6uXWtzpimTYxtGqEXcM9AXcoAi2': 0,
+          'Kr4pX5EZ6CfigOd5C1xjdIYzMml2': 0,
+          'XhcpQzd6cjXF43gCmna1agAfS2A2': 0,
+          'fKHHbDBbbySVJZu2NMAVVIYZZpu2': 0,
+          'oQQ9CrJ8FkP06OoGdrtcwSwY89q1': 0,
+          'rR0oKFMCaOYIlblKzrjYoYMW3Vl1': 0,
+          'v66PnlwqWERgcCDA6ZZLbI0mHPF2': 0,
+          'TOV5h3ezQhWGTb5cCVvBPca1Iqh1': 0,
+          [_auth.currentUser!.uid]: 0
+        },
+      };
+      _firestore.collection("groups").add(groupData);
+    });
+  }
 
   // void startTimer() {
   //   countDownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -998,6 +1044,26 @@ class _LandingScreenState extends State<LandingScreen> {
                       backgroundColor: Colors.purple,
                       onPressed: () {
                         GoRouter.of(context).push('/mychat');
+                        // showDialog(
+                        //     context: context,
+                        //     builder: (BuildContext context) {
+                        //       return AlertDialog(
+                        //         backgroundColor: Colors.white,
+                        //         title: Center(
+                        //           child: Text('Contact Support'),
+                        //         ),
+                        //         content: Container(
+                        //           height: 30.sp,
+                        //           child: Column(
+                        //             children: [
+                        //               SelectableText(
+                        //                   'Please email us at app.support@cloudyml.com'),
+                        //               SelectableText(' or call on +91 85879 11971.'),
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       );
+                        //     });
                       },
                       child: Container(
                           child: Row(
@@ -2755,17 +2821,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                             'cID': cID,
                                             'courseName': courseName,
                                             'id': id,
-                                            'coursePrice': featuredCourse[index]
-                                                            .international !=
-                                                        null &&
-                                                    featuredCourse[index]
-                                                            .international ==
-                                                        true
-                                                ? ((double.parse(courseP) /
-                                                            82) +
-                                                        5)
-                                                    .toString()
-                                                : courseP
+                                            'coursePrice': courseP
                                           });
 
                                       // Navigator.push(
@@ -3000,14 +3056,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                   'courseName':
                                                                       courseName,
                                                                   'id': id,
-                                                                  'coursePrice': featuredCourse[index].international !=
-                                                                              null &&
-                                                                          featuredCourse[index].international ==
-                                                                              true
-                                                                      ? ((double.parse(courseP) / 82) +
-                                                                              5)
-                                                                          .toString()
-                                                                      : courseP
+                                                                  'coursePrice':
+                                                                      courseP
                                                                 });
 
                                                             // Navigator.push(
@@ -4982,20 +5032,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                     'cID': cID,
                                                     'courseName': courseName,
                                                     'id': id,
-                                                    'coursePrice': featuredCourse[
-                                                                        index]
-                                                                    .international !=
-                                                                null &&
-                                                            featuredCourse[
-                                                                        index]
-                                                                    .international ==
-                                                                true
-                                                        ? ((double.parse(
-                                                                        courseP) /
-                                                                    82) +
-                                                                5)
-                                                            .toString()
-                                                        : courseP
+                                                    'coursePrice': courseP
                                                   });
 
                                               // GoRouter.of(context).pushNamed(
@@ -5259,12 +5296,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                       'courseName':
                                                                           courseName,
                                                                       'id': id,
-                                                                      'coursePrice': featuredCourse[index].international != null &&
-                                                                              featuredCourse[index].international ==
-                                                                                  true
-                                                                          ? ((double.parse(courseP) / 82) + 5)
-                                                                              .toString()
-                                                                          : courseP
+                                                                      'coursePrice':
+                                                                          courseP
                                                                     });
 
                                                                 // Navigator.push(

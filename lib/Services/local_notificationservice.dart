@@ -65,7 +65,7 @@ class LocalNotificationService{
       // return {};
     }
   }
-  static void createanddisplaynotificationmessage(String message) async {
+  static void createanddisplaynotificationmessage(String name,String message) async {
     try {
       FirebaseFirestore _firestore = FirebaseFirestore.instance;
       final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
@@ -84,8 +84,9 @@ class LocalNotificationService{
 
       await _notificationsPlugin.show(
         id,
-        "New Message recieved",
-        message,
+        "$name sent a new message",
+      
+        "message : $message",
         notificationDetails,
         //payload: message.data['_id'],
       );
@@ -121,14 +122,7 @@ class LocalNotificationService{
         message.notification!.title,
         message.notification!.body,
         notificationDetails,
-        //payload: message.data['_id'],
       );
-      // _firestore.collection('Notifications')
-      //     .add({
-      //       'title':message.notification!.title,
-      //       'description':message.notification!.body,
-      //       'icon':imageUrl
-      // });
     } on Exception catch (e) {
       print(e);
     }
@@ -145,12 +139,6 @@ class LocalNotificationService{
         payload: payload
     );
   }
-
-  // static Future init({bool initSchedule=false}) async{
-  //   await _notificationsPlugin.initialize(initializationSettings,onSelectNotification: (payload)async{
-  //
-  //   });
-  // }
 
   static Future notificationDetailslocal() async{
     var bigPicture=BigPictureStyleInformation(

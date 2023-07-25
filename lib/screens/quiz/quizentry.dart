@@ -10,8 +10,9 @@ class QuizentrypageWidget extends StatefulWidget {
   var quizdata;
   final quizScore;
   final quizNameExistsInList;
+  final ontap;
   QuizentrypageWidget(this.quizdata,
-      {Key? key, this.quizScore, this.quizNameExistsInList})
+      {Key? key, this.quizScore, this.quizNameExistsInList,this.ontap})
       : super(key: key);
 
   @override
@@ -209,17 +210,19 @@ class _QuizentrypageWidgetState extends State<QuizentrypageWidget> {
                             child: Align(
                               alignment: AlignmentDirectional(0, 0.35),
                               child: GestureDetector(
-                                onTap: () {
-                                  print("dlksl");
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            InstructionspageWidget(
-                                                widget.quizdata)),
-                                  );
-                                  // GoRouter.of(context).pushNamed('/quizpage', queryParams: "${widget.quizdata}");
-                                },
+
+                                  onTap: widget.ontap,
+                                // onTap: () {
+                                //   print("dlksl");
+                                //   Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (context) =>
+                                //             InstructionspageWidget(
+                                //                 widget.quizdata)),
+                                //   );
+                                //   // GoRouter.of(context).pushNamed('/quizpage', queryParams: "${widget.quizdata}");
+                                // },
                                 child: Container(
                                   width: 150,
                                   height: 50,

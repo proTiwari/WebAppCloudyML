@@ -318,6 +318,66 @@ class _StoreScreenState extends State<StoreScreen> {
                       ],
                     ),
                   ),
+
+                  // Row(
+                  //   children: [
+                  //     IconButton(
+                  //         onPressed: () {
+                  //           Scaffold.of(context).openDrawer();
+                  //         },
+                  //         icon: Icon(
+                  //           Icons.menu,
+                  //           color: Colors.white,
+                  //         )),
+                  //     SizedBox(
+                  //       width: horizontalScale * 15,
+                  //     ),
+                  //     Image.asset(
+                  //       "assets/logo2.png",
+                  //       width: 30,
+                  //       height: 30,
+                  //     ),
+                  //     Text(
+                  //       "CloudyML",
+                  //       style: textStyle,
+                  //     ),
+                  //     SizedBox(
+                  //       width: horizontalScale * 25,
+                  //     ),
+                  //     // SizedBox(
+                  //     //   height: 30,
+                  //     //   width: screenWidth / 3,
+                  //     //   child: TextField(
+                  //     //     style: TextStyle(
+                  //     //         color: HexColor("A7A7A7"), fontSize: 12),
+                  //     //     decoration: InputDecoration(
+                  //     //         contentPadding: EdgeInsets.all(5.0),
+                  //     //         hintText: "Search Courses",
+                  //     //         focusedBorder: OutlineInputBorder(
+                  //     //             borderSide: BorderSide(
+                  //     //                 color: Colors.white, width: 1)),
+                  //     //         disabledBorder: OutlineInputBorder(
+                  //     //             borderSide: BorderSide(
+                  //     //                 color: Colors.white, width: 1)),
+                  //     //         hintStyle: TextStyle(
+                  //     //             color: HexColor("A7A7A7"), fontSize: 12),
+                  //     //         border: OutlineInputBorder(
+                  //     //             borderSide: BorderSide(
+                  //     //                 color: Colors.white, width: 1)),
+                  //     //         enabledBorder: OutlineInputBorder(
+                  //     //             borderSide: BorderSide(
+                  //     //                 color: Colors.white, width: 1)),
+                  //     //         prefixIcon: IconButton(
+                  //     //             onPressed: () {},
+                  //     //             icon: Icon(
+                  //     //               Icons.search_outlined,
+                  //     //               size: 14,
+                  //     //               color: Colors.white,
+                  //     //             ))),
+                  //     //   ),
+                  //     // )
+                  //   ],
+                  // ),
                 ),
                 Container(
                   width: screenWidth,
@@ -432,18 +492,19 @@ class _StoreScreenState extends State<StoreScreen> {
                                   final cID = cou[index].courseDocumentId;
                                   final courseName = cou[index].courseName;
                                   final courseP = cou[index].coursePrice;
-                                  GoRouter.of(context)
-                                      .pushNamed('NewFeature', queryParams: {
-                                    'cID': cID,
-                                    'courseName': courseName,
-                                    'id': id,
-                                    'coursePrice':
-                                        cou[index].international != null &&
-                                                cou[index].international == true
-                                            ? ((double.parse(courseP) / 82) + 5)
-                                                .toString()
-                                            : courseP
-                                  });
+                                  // GoRouter.of(context).pushNamed('comboStore',
+                                  //     queryParams: {
+                                  //       'courseName': courseName,
+                                  //       'id': id,
+                                  //       'coursePrice': courseP});
+
+                                  GoRouter.of(context).pushNamed('NewFeature',
+                                      queryParams: {
+                                        'cID': cID,
+                                        'courseName': courseName,
+                                        'id': id,
+                                        'coursePrice': courseP
+                                      });
 
                                   // Navigator.push(
                                   //   context,
@@ -658,18 +719,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                                         'courseName':
                                                             courseName,
                                                         'id': id,
-                                                        'coursePrice': cou[index]
-                                                                        .international !=
-                                                                    null &&
-                                                                cou[index]
-                                                                        .international ==
-                                                                    true
-                                                            ? ((double.parse(
-                                                                            courseP) /
-                                                                        82) +
-                                                                    5)
-                                                                .toString()
-                                                            : courseP
+                                                        'coursePrice': courseP
                                                       });
 
                                                   // Navigator.push(

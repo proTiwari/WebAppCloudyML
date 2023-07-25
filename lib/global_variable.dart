@@ -1,10 +1,12 @@
 library globals;
 
+
+String? mainCourseId;
 late String diurl;
 late String payurl;
 var downloadCertificateLink = "";
-const mockUpHeight = 896;
-const mockUpWidth = 414;
+// const mockUpHeight = 896;
+// const mockUpWidth = 414;
 bool quizCleared = false;
 List quiztrack=[];
 String phone = "";

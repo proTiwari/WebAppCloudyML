@@ -49,6 +49,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
 
   String couponAppliedResponse = "";
 
+  var coupontext = "Apply Coupon";
+
   //If it is false amountpayble showed will be the amount fetched from db
   //If it is true which will be set to true if when right coupon code is
   //applied and the amountpayble will be set using appludiscount to the finalamountpayble variable
@@ -1099,6 +1101,12 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                       borderSide:
                                                           BorderSide.none),
                                             ),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                coupontext = value;
+                                                print(coupontext);
+                                              });
+                                            },
                                           ),
                                         ),
                                       )
@@ -1196,6 +1204,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                 SizedBox(height: 15 * verticalScale),
                                 Center(
                                   child: PaymentButton(
+                                    couponCode: coupontext,
+                                    couponcodeused: !errorOnCoupon,
                                     coursePriceMoneyRef: int.parse(courseprice),
                                     amountString: (double.parse(NoCouponApplied
                                                 ? courseMap['gst'] != null
@@ -2148,6 +2158,12 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                     BorderRadius.circular(5),
                                                 borderSide: BorderSide.none),
                                           ),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              coupontext = value;
+                                              print(coupontext);
+                                            });
+                                          },
                                         ),
                                       )
                                     : InkWell(
@@ -2249,6 +2265,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                 Container(
                                   width: screenWidth,
                                   child: PaymentButton(
+                                    couponCode: coupontext,
+                                    couponcodeused: !errorOnCoupon,
                                     coursePriceMoneyRef: int.parse(courseprice),
                                     amountString: (double.parse(NoCouponApplied
                                                 ? courseMap['gst'] != null

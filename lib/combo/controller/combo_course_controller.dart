@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -10,7 +12,9 @@ class ComboCourseController extends GetxController {
   void onInit() {
     getCourseIds().whenComplete(() {
       print('CCCC: : ${courses}');
+      checkCourseExist();
       getCourses();
+
       getPercentageOfCourse();
     });
 
@@ -23,6 +27,10 @@ class ComboCourseController extends GetxController {
   var oldModuleProgress = false.obs;
 
   var courses = [].obs;
+
+  var paidCourse = [].obs;
+
+//var isLoading = true.obs;
 
   Future getCourseIds() async {
     await FirebaseFirestore.instance
@@ -42,16 +50,40 @@ class ComboCourseController extends GetxController {
             .collection("courses")
             .where('id', isEqualTo: element)
             .get();
-        data.then((value) {
+        data.then((value) async {
           courseList.add(value.docs.first.data());
-          print('courseList: $courseList');
           courseList.sort((a, b) =>
               courses.indexOf(a["id"]).compareTo(courses.indexOf(b["id"])));
         });
-
-        print('courseList: $courseList');
       })
     };
+    // isLoading.value = false;
+  }
+
+  checkCourseExist() async {
+    FirebaseFirestore.instance
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((value) {
+      List temPaid = value.get('paidCourseNames');
+      temPaid.forEach((element) {
+        FirebaseFirestore.instance
+            .collection("courses")
+            .where('id', isEqualTo: element)
+            .get()
+            .then((value) {
+          if (value.docs[0].data()['multiCombo'] != null) {
+            paidCourse.value = value.docs[0].data()['courses'];
+
+            print(' Paid :: ${paidCourse}');
+          } else {
+            paidCourse.value = temPaid;
+            print(' Paid :: ${paidCourse}');
+          }
+        });
+      });
+    });
   }
 
   getPercentageOfCourse() async {
@@ -76,7 +108,9 @@ class ComboCourseController extends GetxController {
       // }
 
       courseData.value = data.data() as Map;
+// isLoading.value = false;
     } catch (e) {
+      // isLoading.value = false;
       print('the progress exception is$e');
     }
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloudyml_app2/global_variable.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/payment_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -170,6 +171,7 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
 
                                   // if(featuredCourse[0].findex=='40')
                                   // {
+                                  mainCourseId = featuredCourse[0].courseId;
                                   GoRouter.of(context).pushNamed(
                                       'NewComboCourseScreen',
                                       queryParams: {
@@ -407,6 +409,8 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                   () => {
                                                                         // if(featuredCourse[0].findex=='40')
                                                                         // {
+                                                                        mainCourseId =
+                                                                            featuredCourse[0].courseId,
                                                                         GoRouter.of(context).pushNamed(
                                                                             'NewComboCourseScreen',
                                                                             queryParams: {
@@ -573,6 +577,7 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                     onTap: () {
                                       // if(featuredCourse[0].findex=='40')
                                       // {
+                                      mainCourseId = featuredCourse[0].courseId;
                                       GoRouter.of(context).pushNamed(
                                           'NewComboCourseScreen',
                                           queryParams: {
@@ -826,6 +831,8 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
 
                                                                             // if(featuredCourse[0].findex=='40')
                                                                             // {
+                                                                            mainCourseId =
+                                                                                featuredCourse[0].courseId,
                                                                             GoRouter.of(context).pushNamed('NewComboCourseScreen', queryParams: {
                                                                               'courseName': featuredCourse[0].courseName,
                                                                               'courseId': featuredCourse[0].courseId,
@@ -903,19 +910,10 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                       flex: 1,
                       child: InkWell(
                         onTap: () {
-                          if (widget.international != null &&
-                              widget.international == true) {
-                            GoRouter.of(context).pushNamed(
-                                'InternationalPaymentScreen',
-                                queryParams: {
-                                  'cID': widget.cID,
-                                });
-                          } else {
-                            GoRouter.of(context)
-                                .pushNamed('comboPaymentPortal', queryParams: {
-                              'cID': widget.cID,
-                            });
-                          }
+                          GoRouter.of(context)
+                              .pushNamed('comboPaymentPortal', queryParams: {
+                            'cID': widget.cID,
+                          });
                         },
                         child: Container(
                           height: screenHeight * .06,

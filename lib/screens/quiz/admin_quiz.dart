@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/homepage.dart';
+import 'package:cloudyml_app2/screens/quiz/state.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toast/toast.dart';
@@ -147,75 +150,6 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    10, 30, 10, 10),
-                                child: TextFormField(
-                                  controller: quiznameController,
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    labelStyle: FlutterFlowTheme.of(context)
-                                        .bodyText1
-                                        .override(
-                                          fontFamily: 'Lexend Deca',
-                                          color: Color(0xFF57636C),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                    hintText: 'Quiz Name',
-                                    hintStyle: FlutterFlowTheme.of(context)
-                                        .bodyText1
-                                        .override(
-                                          fontFamily: 'Lexend Deca',
-                                          color: Color(0xFF57636C),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0xFFDBE2E7),
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0xFFDBE2E7),
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    contentPadding:
-                                        EdgeInsetsDirectional.fromSTEB(
-                                            24, 24, 20, 24),
-                                  ),
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyText1
-                                      .override(
-                                        fontFamily: 'Lexend Deca',
-                                        color: Color(0xFF1D2429),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                  maxLines: null,
-                                ),
-                              ),
                               Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -258,24 +192,9 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                             int index) {
                                                       // return Container();
                                                       return GestureDetector(
-                                                        //                 print("yhbuyjbyhbjhb$questionslist");
-                                                        // questionslist.add({
-                                                        //   'questionNumber':
-                                                        //       questionNumber?.text,
-                                                        //   'question': questioncontroller?.text,
-                                                        //   'options': {
-                                                        //     'A': Option1?.text,
-                                                        //     'B': Option2?.text,
-                                                        //     'C': Option3?.text,
-                                                        //     'D': Option4?.text,
-                                                        //   },
-                                                        //   'solution': SolutionController?.text,
-                                                        //   'answer': AnswerController?.text,
-                                                        //   'answerIndex':
-                                                        //       AnswerIndexCon
                                                         onTap: () {
                                                           print(
-                                                              "hhhhhhhhh: ${questionslist}");
+                                                              "hhhhhhhhh:index $index.. ${questionslist}");
                                                           try {
                                                             tempquiz = index;
                                                             print(
@@ -285,6 +204,182 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                                 questionslist[
                                                                         index][
                                                                     'question'];
+                                                            print('1..');
+                                                            try {
+                                                              if (questionslist[
+                                                                          index]
+                                                                      [
+                                                                      'questionImage'] !=
+                                                                  '') {
+                                                                print('2..');
+                                                                FFAppState()
+                                                                        .editImage =
+                                                                    questionslist[
+                                                                            index]
+                                                                        [
+                                                                        'questionImage'];
+                                                                print('3..');
+                                                              } else {
+                                                                FFAppState()
+                                                                    .editImage = '';
+                                                                print('4..');
+                                                              }
+                                                            } catch (e) {
+                                                              print(e);
+                                                              FFAppState()
+                                                                  .editImage = '';
+                                                            }
+                                                            try {
+                                                              print(
+                                                                  "iwjoiwjoeij/");
+                                                              print(FFAppState()
+                                                                  .optionaimage);
+                                                              print('4..');
+                                                              print(questionslist[
+                                                                          index]
+                                                                      [
+                                                                      'OptionsImage']
+                                                                  ['A']);
+                                                              print('5..');
+                                                              if (questionslist[
+                                                                          index]
+                                                                      [
+                                                                      'OptionsImage']['A'] !=
+                                                                  '') {
+                                                                print('6..');
+                                                                FFAppState()
+                                                                        .optionaimage =
+                                                                    questionslist[
+                                                                            index]
+                                                                        [
+                                                                        'OptionsImage']['A'];
+                                                                print('7..');
+                                                              } else {
+                                                                setState(() {
+                                                                  FFAppState()
+                                                                      .optionaimage = '';
+                                                                  print('8..');
+                                                                });
+                                                              }
+                                                            } catch (e) {
+                                                              setState(() {
+                                                                FFAppState()
+                                                                    .optionaimage = '';
+                                                                print('9..');
+                                                              });
+                                                              print(
+                                                                  "oiejfow id iojow $e");
+                                                            }
+
+                                                            try {
+                                                              print(
+                                                                  "iwjoiwjoeij/");
+                                                              print(FFAppState()
+                                                                  .optionbimage);
+                                                              print('11..');
+                                                              print(questionslist[
+                                                                          index]
+                                                                      [
+                                                                      'OptionsImage']
+                                                                  ['B']);
+                                                              print('12..');
+                                                              if (questionslist[
+                                                                          index]
+                                                                      [
+                                                                      'OptionsImage']['B'] !=
+                                                                  '') {
+                                                                FFAppState()
+                                                                        .optionbimage =
+                                                                    questionslist[
+                                                                            index]
+                                                                        [
+                                                                        'OptionsImage']['B'];
+                                                              } else {
+                                                                setState(() {
+                                                                  FFAppState()
+                                                                      .optionbimage = '';
+                                                                });
+                                                              }
+                                                            } catch (e) {
+                                                              setState(() {
+                                                                FFAppState()
+                                                                    .optionbimage = '';
+                                                              });
+                                                              print(
+                                                                  "oiejfow id iojow $e");
+                                                            }
+
+                                                            try {
+                                                              print(
+                                                                  "iwjoiwjoeij/");
+                                                              print(FFAppState()
+                                                                  .optioncimage);
+                                                              print(questionslist[
+                                                                          index]
+                                                                      [
+                                                                      'OptionsImage']
+                                                                  ['C']);
+                                                              if (questionslist[
+                                                                          index]
+                                                                      [
+                                                                      'OptionsImage']['C'] !=
+                                                                  '') {
+                                                                FFAppState()
+                                                                        .optioncimage =
+                                                                    questionslist[
+                                                                            index]
+                                                                        [
+                                                                        'OptionsImage']['C'];
+                                                              } else {
+                                                                setState(() {
+                                                                  FFAppState()
+                                                                      .optioncimage = '';
+                                                                });
+                                                              }
+                                                            } catch (e) {
+                                                              setState(() {
+                                                                FFAppState()
+                                                                    .optioncimage = '';
+                                                              });
+                                                              print(
+                                                                  "oiejfow id iojow $e");
+                                                            }
+
+                                                            try {
+                                                              print(
+                                                                  "iwjoiwjoeij/");
+                                                              print(FFAppState()
+                                                                  .optiondimage);
+                                                              print(questionslist[
+                                                                          index]
+                                                                      [
+                                                                      'OptionsImage']
+                                                                  ['D']);
+                                                              if (questionslist[
+                                                                          index]
+                                                                      [
+                                                                      'OptionsImage']['D'] !=
+                                                                  '') {
+                                                                FFAppState()
+                                                                        .optiondimage =
+                                                                    questionslist[
+                                                                            index]
+                                                                        [
+                                                                        'OptionsImage']['D'];
+                                                              } else {
+                                                                setState(() {
+                                                                  FFAppState()
+                                                                      .optiondimage = '';
+                                                                });
+                                                              }
+                                                            } catch (e) {
+                                                              setState(() {
+                                                                FFAppState()
+                                                                    .optiondimage = '';
+                                                              });
+                                                              print(
+                                                                  "oiejfow id iojow $e");
+                                                            }
 
                                                             Option1?.text =
                                                                 questionslist[
@@ -307,6 +402,12 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                                 questionslist[
                                                                         index][
                                                                     'solution'];
+
+                                                            print(questionslist[
+                                                                index]);
+                                                            print(questionslist[
+                                                                    index]
+                                                                ['solution']);
                                                             print(
                                                                 "hhhhhhhhh:2");
                                                             print(
@@ -342,12 +443,20 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                             height: 180,
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: Color
-                                                                  .fromARGB(
-                                                                      255,
-                                                                      238,
-                                                                      232,
-                                                                      232),
+                                                              color: tempquiz ==
+                                                                      index
+                                                                  ? Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          109,
+                                                                          189,
+                                                                          235)
+                                                                  : Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          238,
+                                                                          232,
+                                                                          232),
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
@@ -409,17 +518,98 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                           ),
                         ),
                       ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        height: 550,
-                        decoration: BoxDecoration(
-                          color:
-                              FlutterFlowTheme.of(context).secondaryBackground,
-                        ),
+                      Card(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisSize: MainAxisSize.max,
                           children: [
+                            FFAppState().editImage == ''
+                                ? Container()
+                                : SizedBox(
+                                    height: 400,
+                                    width: 600,
+                                    child:
+                                        Image.network(FFAppState().editImage),
+                                  ),
+                            Center(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  ElevatedButton(
+                                    child: Text('UPLOAD FILE'),
+                                    onPressed: () async {
+                                      var picked =
+                                          await FilePicker.platform.pickFiles();
+                                      // upload picked image to firebase storage
+                                      FirebaseStorage storage =
+                                          FirebaseStorage.instance;
+                                      Reference ref = storage.ref().child(
+                                          'questionimage/${DateTime.now().microsecond}${picked!.files.first.name}.jpg');
+                                      UploadTask uploadTask = ref
+                                          .putData(picked.files.first.bytes!);
+                                      uploadTask.then((res) {
+                                        res.ref.getDownloadURL().then((value) {
+                                          print("Done: $value");
+                                          setState(() {
+                                            FFAppState().editImage = value;
+                                          });
+                                        });
+                                      });
+
+                                      if (picked != null) {
+                                        print(picked.files.first.name);
+                                      }
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  ElevatedButton(
+                                    child: Text('Delete Image'),
+                                    onPressed: () async {
+                                      setState(() {
+                                        FFAppState().editImage = '';
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            //
+                            // QuillHtmlEditor(
+                            //     height: 300,
+                            //     isEnabled: false,
+                            //     editorKey: keyEditor),
+                            // GestureDetector(
+                            //     onTap: () async{
+                            //       print(await keyEditor.currentState!.isEnabled);
+                            //     },
+                            //     child:
+                            // //         Text('Answer ${keyEditor.currentState}')),
+                            // Container(
+                            //   height: 500,
+                            //   child: HtmlEditor(
+                            //     controller: htmlcontroller, //required
+                            //     htmlEditorOptions: HtmlEditorOptions(
+                            //       autoAdjustHeight: false,
+                            //       hint: "Your text here...",
+                            //       //initalText: "text content initial, if any",
+                            //     ),
+                            //     otherOptions: OtherOptions(
+                            //       height: 800,
+                            //       decoration: BoxDecoration(
+                            //         color: FlutterFlowTheme.of(context)
+                            //             .secondaryBackground,
+                            //         borderRadius: BorderRadius.circular(8),
+
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                             Center(
                               child: Row(
                                 mainAxisAlignment:
@@ -552,131 +742,231 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                                           125),
                                                                     )),
                                                     ),
-                                                    Container(
-                                                      width: 300,
-                                                      height: 162.5,
-                                                      decoration: BoxDecoration(
-                                                        color: FlutterFlowTheme
-                                                                .of(context)
-                                                            .secondaryBackground,
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(10,
-                                                                    10, 35, 0),
-                                                        child: Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.8,
-                                                          child: TextFormField(
-                                                            controller: Option1,
-                                                            obscureText: false,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              hintText: 'A',
-                                                              hintStyle:
-                                                                  FlutterFlowTheme.of(
+                                                    Column(
+                                                      children: [
+                                                        Container(
+                                                          width: 300,
+                                                          height: 162.5,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondaryBackground,
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        10,
+                                                                        10,
+                                                                        35,
+                                                                        0),
+                                                            child: Container(
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.8,
+                                                              child:
+                                                                  TextFormField(
+                                                                controller:
+                                                                    Option1,
+                                                                obscureText:
+                                                                    false,
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  hintText: 'A',
+                                                                  hintStyle: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyText2,
-                                                              enabledBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: enabledList
-                                                                          .contains(
-                                                                              "A")
-                                                                      ? Color.fromARGB(
-                                                                          255,
-                                                                          45,
-                                                                          212,
-                                                                          114)
-                                                                      : Color(
-                                                                          0xFFDBE2E7),
-                                                                  width: 2,
+                                                                  enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: enabledList.contains("A")
+                                                                          ? Color.fromARGB(
+                                                                              255,
+                                                                              45,
+                                                                              212,
+                                                                              114)
+                                                                          : Color(
+                                                                              0xFFDBE2E7),
+                                                                      width: 2,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ),
+                                                                  focusedBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color
+                                                                          .fromARGB(
+                                                                              0,
+                                                                              0,
+                                                                              0,
+                                                                              0),
+                                                                      width: 1,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  errorBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color(
+                                                                          0x00000000),
+                                                                      width: 1,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  focusedErrorBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color(
+                                                                          0x00000000),
+                                                                      width: 1,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  filled: true,
+                                                                  fillColor:
+                                                                      Colors
+                                                                          .white,
                                                                 ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8),
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyText1,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                                maxLines: 30,
+                                                                minLines: 15,
                                                               ),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Color
-                                                                      .fromARGB(
-                                                                          0,
-                                                                          0,
-                                                                          0,
-                                                                          0),
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                ),
-                                                              ),
-                                                              errorBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Color(
-                                                                      0x00000000),
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                ),
-                                                              ),
-                                                              focusedErrorBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Color(
-                                                                      0x00000000),
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                ),
-                                                              ),
-                                                              filled: true,
-                                                              fillColor:
-                                                                  Colors.white,
                                                             ),
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyText1,
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                            maxLines: 30,
-                                                            minLines: 15,
                                                           ),
                                                         ),
-                                                      ),
+                                                        FFAppState().optionaimage ==
+                                                                ''
+                                                            ? Container()
+                                                            : SizedBox(
+                                                                height: 400,
+                                                                width: 600,
+                                                                child: Image.network(
+                                                                    FFAppState()
+                                                                        .optionaimage),
+                                                              ),
+                                                        Center(
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              ElevatedButton(
+                                                                child: Text(
+                                                                    'UPLOAD FILE'),
+                                                                onPressed:
+                                                                    () async {
+                                                                  var picked =
+                                                                      await FilePicker
+                                                                          .platform
+                                                                          .pickFiles();
+                                                                  // upload picked image to firebase storage
+                                                                  FirebaseStorage
+                                                                      storage =
+                                                                      FirebaseStorage
+                                                                          .instance;
+                                                                  Reference
+                                                                      ref =
+                                                                      storage
+                                                                          .ref()
+                                                                          .child(
+                                                                              'optionSimage/${DateTime.now().microsecond}${picked!.files.first.name}.jpg');
+                                                                  UploadTask
+                                                                      uploadTask =
+                                                                      ref.putData(picked
+                                                                          .files
+                                                                          .first
+                                                                          .bytes!);
+                                                                  uploadTask
+                                                                      .then(
+                                                                          (res) {
+                                                                    res.ref
+                                                                        .getDownloadURL()
+                                                                        .then(
+                                                                            (value) {
+                                                                      print(
+                                                                          "Done: $value");
+                                                                      setState(
+                                                                          () {
+                                                                        FFAppState().optionaimage =
+                                                                            value;
+                                                                      });
+                                                                    });
+                                                                  });
+
+                                                                  if (picked !=
+                                                                      null) {
+                                                                    print(picked
+                                                                        .files
+                                                                        .first
+                                                                        .name);
+                                                                  }
+                                                                },
+                                                              ),
+                                                              SizedBox(
+                                                                width: 20,
+                                                              ),
+                                                              ElevatedButton(
+                                                                child: Text(
+                                                                    'Delete Image'),
+                                                                onPressed:
+                                                                    () async {
+                                                                  setState(() {
+                                                                    FFAppState()
+                                                                        .optionaimage = '';
+                                                                  });
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ],
                                                 ),
@@ -719,131 +1009,232 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                                           125),
                                                                     )),
                                                     ),
-                                                    Container(
-                                                      width: 300,
-                                                      height: 162.5,
-                                                      decoration: BoxDecoration(
-                                                        color: FlutterFlowTheme
-                                                                .of(context)
-                                                            .secondaryBackground,
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(10,
-                                                                    20, 35, 0),
-                                                        child: Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.8,
-                                                          child: TextFormField(
-                                                            controller: Option2,
-                                                            obscureText: false,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              hintText: 'B',
-                                                              hintStyle:
-                                                                  FlutterFlowTheme.of(
+                                                    Column(
+                                                      children: [
+                                                        Container(
+                                                          width: 300,
+                                                          height: 162.5,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondaryBackground,
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        10,
+                                                                        20,
+                                                                        35,
+                                                                        0),
+                                                            child: Container(
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.8,
+                                                              child:
+                                                                  TextFormField(
+                                                                controller:
+                                                                    Option2,
+                                                                obscureText:
+                                                                    false,
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  hintText: 'B',
+                                                                  hintStyle: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyText2,
-                                                              enabledBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: enabledList
-                                                                          .contains(
-                                                                              "B")
-                                                                      ? Color.fromARGB(
-                                                                          255,
-                                                                          45,
-                                                                          212,
-                                                                          114)
-                                                                      : Color(
-                                                                          0xFFDBE2E7),
-                                                                  width: 2,
+                                                                  enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: enabledList.contains("B")
+                                                                          ? Color.fromARGB(
+                                                                              255,
+                                                                              45,
+                                                                              212,
+                                                                              114)
+                                                                          : Color(
+                                                                              0xFFDBE2E7),
+                                                                      width: 2,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ),
+                                                                  focusedBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color
+                                                                          .fromARGB(
+                                                                              0,
+                                                                              0,
+                                                                              0,
+                                                                              0),
+                                                                      width: 1,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  errorBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color(
+                                                                          0x00000000),
+                                                                      width: 1,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  focusedErrorBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color(
+                                                                          0x00000000),
+                                                                      width: 1,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  filled: true,
+                                                                  fillColor:
+                                                                      Colors
+                                                                          .white,
                                                                 ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8),
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyText1,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                                maxLines: 30,
+                                                                minLines: 15,
                                                               ),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Color
-                                                                      .fromARGB(
-                                                                          0,
-                                                                          0,
-                                                                          0,
-                                                                          0),
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                ),
-                                                              ),
-                                                              errorBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Color(
-                                                                      0x00000000),
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                ),
-                                                              ),
-                                                              focusedErrorBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Color(
-                                                                      0x00000000),
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                ),
-                                                              ),
-                                                              filled: true,
-                                                              fillColor:
-                                                                  Colors.white,
                                                             ),
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyText1,
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                            maxLines: 30,
-                                                            minLines: 15,
                                                           ),
                                                         ),
-                                                      ),
+                                                        //
+                                                        FFAppState().optionbimage ==
+                                                                ''
+                                                            ? Container()
+                                                            : SizedBox(
+                                                                height: 400,
+                                                                width: 600,
+                                                                child: Image.network(
+                                                                    FFAppState()
+                                                                        .optionbimage),
+                                                              ),
+                                                        Center(
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              ElevatedButton(
+                                                                child: Text(
+                                                                    'UPLOAD FILE'),
+                                                                onPressed:
+                                                                    () async {
+                                                                  var picked =
+                                                                      await FilePicker
+                                                                          .platform
+                                                                          .pickFiles();
+                                                                  // upload picked image to firebase storage
+                                                                  FirebaseStorage
+                                                                      storage =
+                                                                      FirebaseStorage
+                                                                          .instance;
+                                                                  Reference
+                                                                      ref =
+                                                                      storage
+                                                                          .ref()
+                                                                          .child(
+                                                                              'optionSimage/${DateTime.now().microsecond}${picked!.files.first.name}.jpg');
+                                                                  UploadTask
+                                                                      uploadTask =
+                                                                      ref.putData(picked
+                                                                          .files
+                                                                          .first
+                                                                          .bytes!);
+                                                                  uploadTask
+                                                                      .then(
+                                                                          (res) {
+                                                                    res.ref
+                                                                        .getDownloadURL()
+                                                                        .then(
+                                                                            (value) {
+                                                                      print(
+                                                                          "Done: $value");
+                                                                      setState(
+                                                                          () {
+                                                                        FFAppState().optionbimage =
+                                                                            value;
+                                                                      });
+                                                                    });
+                                                                  });
+
+                                                                  if (picked !=
+                                                                      null) {
+                                                                    print(picked
+                                                                        .files
+                                                                        .first
+                                                                        .name);
+                                                                  }
+                                                                },
+                                                              ),
+                                                              SizedBox(
+                                                                width: 20,
+                                                              ),
+                                                              ElevatedButton(
+                                                                child: Text(
+                                                                    'Delete Image'),
+                                                                onPressed:
+                                                                    () async {
+                                                                  setState(() {
+                                                                    FFAppState()
+                                                                        .optionbimage = '';
+                                                                  });
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ], //
                                                     ),
                                                   ],
                                                 )
@@ -890,131 +1281,231 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                                           125),
                                                                     )),
                                                     ),
-                                                    Container(
-                                                      width: 300,
-                                                      height: 162.5,
-                                                      decoration: BoxDecoration(
-                                                        color: FlutterFlowTheme
-                                                                .of(context)
-                                                            .secondaryBackground,
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(10,
-                                                                    10, 35, 0),
-                                                        child: Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.8,
-                                                          child: TextFormField(
-                                                            controller: Option3,
-                                                            obscureText: false,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              hintText: 'C',
-                                                              hintStyle:
-                                                                  FlutterFlowTheme.of(
+                                                    Column(
+                                                      children: [
+                                                        Container(
+                                                          width: 300,
+                                                          height: 162.5,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondaryBackground,
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        10,
+                                                                        10,
+                                                                        35,
+                                                                        0),
+                                                            child: Container(
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.8,
+                                                              child:
+                                                                  TextFormField(
+                                                                controller:
+                                                                    Option3,
+                                                                obscureText:
+                                                                    false,
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  hintText: 'C',
+                                                                  hintStyle: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyText2,
-                                                              enabledBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: enabledList
-                                                                          .contains(
-                                                                              "C")
-                                                                      ? Color.fromARGB(
-                                                                          255,
-                                                                          45,
-                                                                          212,
-                                                                          114)
-                                                                      : Color(
-                                                                          0xFFDBE2E7),
-                                                                  width: 2,
+                                                                  enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: enabledList.contains("C")
+                                                                          ? Color.fromARGB(
+                                                                              255,
+                                                                              45,
+                                                                              212,
+                                                                              114)
+                                                                          : Color(
+                                                                              0xFFDBE2E7),
+                                                                      width: 2,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ),
+                                                                  focusedBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color
+                                                                          .fromARGB(
+                                                                              0,
+                                                                              0,
+                                                                              0,
+                                                                              0),
+                                                                      width: 1,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  errorBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color(
+                                                                          0x00000000),
+                                                                      width: 1,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  focusedErrorBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color(
+                                                                          0x00000000),
+                                                                      width: 1,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  filled: true,
+                                                                  fillColor:
+                                                                      Colors
+                                                                          .white,
                                                                 ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8),
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyText1,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                                maxLines: 30,
+                                                                minLines: 15,
                                                               ),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Color
-                                                                      .fromARGB(
-                                                                          0,
-                                                                          0,
-                                                                          0,
-                                                                          0),
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                ),
-                                                              ),
-                                                              errorBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Color(
-                                                                      0x00000000),
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                ),
-                                                              ),
-                                                              focusedErrorBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Color(
-                                                                      0x00000000),
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                ),
-                                                              ),
-                                                              filled: true,
-                                                              fillColor:
-                                                                  Colors.white,
                                                             ),
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyText1,
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                            maxLines: 30,
-                                                            minLines: 15,
                                                           ),
                                                         ),
-                                                      ),
+                                                        FFAppState().optioncimage ==
+                                                                ''
+                                                            ? Container()
+                                                            : SizedBox(
+                                                                height: 400,
+                                                                width: 600,
+                                                                child: Image.network(
+                                                                    FFAppState()
+                                                                        .optioncimage),
+                                                              ),
+                                                        Center(
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              ElevatedButton(
+                                                                child: Text(
+                                                                    'UPLOAD FILE'),
+                                                                onPressed:
+                                                                    () async {
+                                                                  var picked =
+                                                                      await FilePicker
+                                                                          .platform
+                                                                          .pickFiles();
+                                                                  // upload picked image to firebase storage
+                                                                  FirebaseStorage
+                                                                      storage =
+                                                                      FirebaseStorage
+                                                                          .instance;
+                                                                  Reference
+                                                                      ref =
+                                                                      storage
+                                                                          .ref()
+                                                                          .child(
+                                                                              'optionSimage/${DateTime.now().microsecond}${picked!.files.first.name}.jpg');
+                                                                  UploadTask
+                                                                      uploadTask =
+                                                                      ref.putData(picked
+                                                                          .files
+                                                                          .first
+                                                                          .bytes!);
+                                                                  uploadTask
+                                                                      .then(
+                                                                          (res) {
+                                                                    res.ref
+                                                                        .getDownloadURL()
+                                                                        .then(
+                                                                            (value) {
+                                                                      print(
+                                                                          "Done: $value");
+                                                                      setState(
+                                                                          () {
+                                                                        FFAppState().optioncimage =
+                                                                            value;
+                                                                      });
+                                                                    });
+                                                                  });
+
+                                                                  if (picked !=
+                                                                      null) {
+                                                                    print(picked
+                                                                        .files
+                                                                        .first
+                                                                        .name);
+                                                                  }
+                                                                },
+                                                              ),
+                                                              SizedBox(
+                                                                width: 20,
+                                                              ),
+                                                              ElevatedButton(
+                                                                child: Text(
+                                                                    'Delete Image'),
+                                                                onPressed:
+                                                                    () async {
+                                                                  setState(() {
+                                                                    FFAppState()
+                                                                        .optioncimage = '';
+                                                                  });
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ],
                                                 ),
@@ -1057,131 +1548,231 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                                           125),
                                                                     )),
                                                     ),
-                                                    Container(
-                                                      width: 300,
-                                                      height: 162.5,
-                                                      decoration: BoxDecoration(
-                                                        color: FlutterFlowTheme
-                                                                .of(context)
-                                                            .secondaryBackground,
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(10,
-                                                                    20, 35, 0),
-                                                        child: Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.8,
-                                                          child: TextFormField(
-                                                            controller: Option4,
-                                                            obscureText: false,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              hintText: 'D',
-                                                              hintStyle:
-                                                                  FlutterFlowTheme.of(
+                                                    Column(
+                                                      children: [
+                                                        Container(
+                                                          width: 300,
+                                                          height: 162.5,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondaryBackground,
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        10,
+                                                                        20,
+                                                                        35,
+                                                                        0),
+                                                            child: Container(
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.8,
+                                                              child:
+                                                                  TextFormField(
+                                                                controller:
+                                                                    Option4,
+                                                                obscureText:
+                                                                    false,
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  hintText: 'D',
+                                                                  hintStyle: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyText2,
-                                                              enabledBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: enabledList
-                                                                          .contains(
-                                                                              "D")
-                                                                      ? Color.fromARGB(
-                                                                          255,
-                                                                          45,
-                                                                          212,
-                                                                          114)
-                                                                      : Color(
-                                                                          0xFFDBE2E7),
-                                                                  width: 2,
+                                                                  enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: enabledList.contains("D")
+                                                                          ? Color.fromARGB(
+                                                                              255,
+                                                                              45,
+                                                                              212,
+                                                                              114)
+                                                                          : Color(
+                                                                              0xFFDBE2E7),
+                                                                      width: 2,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ),
+                                                                  focusedBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color
+                                                                          .fromARGB(
+                                                                              0,
+                                                                              0,
+                                                                              0,
+                                                                              0),
+                                                                      width: 1,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  errorBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color(
+                                                                          0x00000000),
+                                                                      width: 1,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  focusedErrorBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color(
+                                                                          0x00000000),
+                                                                      width: 1,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  filled: true,
+                                                                  fillColor:
+                                                                      Colors
+                                                                          .white,
                                                                 ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8),
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyText1,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                                maxLines: 30,
+                                                                minLines: 15,
                                                               ),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Color
-                                                                      .fromARGB(
-                                                                          0,
-                                                                          0,
-                                                                          0,
-                                                                          0),
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                ),
-                                                              ),
-                                                              errorBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Color(
-                                                                      0x00000000),
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                ),
-                                                              ),
-                                                              focusedErrorBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Color(
-                                                                      0x00000000),
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          4.0),
-                                                                ),
-                                                              ),
-                                                              filled: true,
-                                                              fillColor:
-                                                                  Colors.white,
                                                             ),
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyText1,
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                            maxLines: 30,
-                                                            minLines: 15,
                                                           ),
                                                         ),
-                                                      ),
+                                                        FFAppState().optiondimage ==
+                                                                ''
+                                                            ? Container()
+                                                            : SizedBox(
+                                                                height: 400,
+                                                                width: 600,
+                                                                child: Image.network(
+                                                                    FFAppState()
+                                                                        .optiondimage),
+                                                              ),
+                                                        Center(
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              ElevatedButton(
+                                                                child: Text(
+                                                                    'UPLOAD FILE'),
+                                                                onPressed:
+                                                                    () async {
+                                                                  var picked =
+                                                                      await FilePicker
+                                                                          .platform
+                                                                          .pickFiles();
+                                                                  // upload picked image to firebase storage
+                                                                  FirebaseStorage
+                                                                      storage =
+                                                                      FirebaseStorage
+                                                                          .instance;
+                                                                  Reference
+                                                                      ref =
+                                                                      storage
+                                                                          .ref()
+                                                                          .child(
+                                                                              'optionSimage/${DateTime.now().microsecond}${picked!.files.first.name}.jpg');
+                                                                  UploadTask
+                                                                      uploadTask =
+                                                                      ref.putData(picked
+                                                                          .files
+                                                                          .first
+                                                                          .bytes!);
+                                                                  uploadTask
+                                                                      .then(
+                                                                          (res) {
+                                                                    res.ref
+                                                                        .getDownloadURL()
+                                                                        .then(
+                                                                            (value) {
+                                                                      print(
+                                                                          "Done: $value");
+                                                                      setState(
+                                                                          () {
+                                                                        FFAppState().optiondimage =
+                                                                            value;
+                                                                      });
+                                                                    });
+                                                                  });
+
+                                                                  if (picked !=
+                                                                      null) {
+                                                                    print(picked
+                                                                        .files
+                                                                        .first
+                                                                        .name);
+                                                                  }
+                                                                },
+                                                              ),
+                                                              SizedBox(
+                                                                width: 20,
+                                                              ),
+                                                              ElevatedButton(
+                                                                child: Text(
+                                                                    'Delete Image'),
+                                                                onPressed:
+                                                                    () async {
+                                                                  setState(() {
+                                                                    FFAppState()
+                                                                        .optiondimage = '';
+                                                                  });
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ],
                                                 )
@@ -1360,10 +1951,23 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                           .add(Option4!.text);
                                                     }
                                                   }
+
                                                   questionslist[tempquiz] = {
+                                                    'questionImage':
+                                                        FFAppState().editImage,
                                                     'question':
                                                         questioncontroller
                                                             ?.text,
+                                                    'OptionsImage': {
+                                                      'A': FFAppState()
+                                                          .optionaimage,
+                                                      'B': FFAppState()
+                                                          .optionbimage,
+                                                      'C': FFAppState()
+                                                          .optioncimage,
+                                                      'D': FFAppState()
+                                                          .optiondimage,
+                                                    },
                                                     'options': {
                                                       'A': Option1?.text,
                                                       'B': Option2?.text,
@@ -1443,8 +2047,16 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                             }
                                             print("jjj${enabledList}");
                                             questionslist.add({
+                                              'questionImage':
+                                                  FFAppState().editImage,
                                               'question':
                                                   questioncontroller?.text,
+                                              'OptionsImage': {
+                                                'A': FFAppState().optionaimage,
+                                                'B': FFAppState().optionbimage,
+                                                'C': FFAppState().optioncimage,
+                                                'D': FFAppState().optiondimage,
+                                              },
                                               'options': {
                                                 'A': Option1?.text,
                                                 'B': Option2?.text,
@@ -1535,106 +2147,6 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                       child: Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(
                                             15, 0, 0, 0),
-                                        child: Container(
-                                          child: DropdownButton<String>(
-                                            underline: Container(),
-                                            isExpanded: true,
-                                            // // Step 3.
-                                            value: tempcoursename,
-                                            // Step 4.
-
-                                            items: globals.courseList
-                                                .map<DropdownMenuItem<String>>(
-                                                    (value) {
-                                              return DropdownMenuItem<String>(
-                                                value: value,
-                                                child: Text(
-                                                  value,
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyText1
-                                                      .override(
-                                                        fontFamily:
-                                                            'Lexend Deca',
-                                                        color:
-                                                            Color(0xFF57636C),
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                      ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                            // Step 5.
-                                            onChanged: (String? newValue) {
-                                              setState(() {
-                                                tempmodulelist = [
-                                                  'Module Name'
-                                                ];
-                                                tempmodulename = 'Module Name';
-                                                tempmodulelist.addAll(globals
-                                                    .coursemoduelmap[newValue]);
-                                                tempcoursename = newValue!;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    tempmodulelist.length != 1
-                                        ? Expanded(
-                                            child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(10, 0, 0, 0),
-                                              child: DropdownButton<String>(
-                                                underline: Container(),
-                                                isExpanded: true,
-                                                // Step 3.
-                                                value: tempmodulename,
-                                                // Step 4.
-
-                                                items: tempmodulelist.map<
-                                                    DropdownMenuItem<
-                                                        String>>((value) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: value,
-                                                    child: Text(
-                                                      value,
-                                                      style:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyText1
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Lexend Deca',
-                                                                color: Color(
-                                                                    0xFF57636C),
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                              ),
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                                // Step 5.
-                                                onChanged: (String? newValue) {
-                                                  setState(() {
-                                                    tempmodulename = newValue!;
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          )
-                                        : Container(
-                                            height: 0,
-                                            width: 0,
-                                          ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            15, 0, 0, 0),
                                         child: TextFormField(
                                           controller: timecontroller,
                                           obscureText: false,
@@ -1650,166 +2162,6 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                           FontWeight.normal,
                                                     ),
                                             hintText: 'Time',
-                                            hintStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyText1
-                                                    .override(
-                                                      fontFamily: 'Lexend Deca',
-                                                      color: Color(0xFF57636C),
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                    ),
-                                            enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0xFFDBE2E7),
-                                                width: 2,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0xFFDBE2E7),
-                                                width: 2,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            errorBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0x00000000),
-                                                width: 2,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            focusedErrorBorder:
-                                                OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0x00000000),
-                                                width: 2,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            contentPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    24, 24, 20, 24),
-                                          ),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyText1
-                                              .override(
-                                                fontFamily: 'Lexend Deca',
-                                                color: Color(0xFF1D2429),
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.normal,
-                                              ),
-                                          maxLines: null,
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 0, 15, 0),
-                                        child: TextFormField(
-                                          controller: numberofattempt,
-                                          obscureText: false,
-                                          decoration: InputDecoration(
-                                            labelStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyText1
-                                                    .override(
-                                                      fontFamily: 'Lexend Deca',
-                                                      color: Color(0xFF57636C),
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                    ),
-                                            hintText: 'Number of attempt',
-                                            hintStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyText1
-                                                    .override(
-                                                      fontFamily: 'Lexend Deca',
-                                                      color: Color(0xFF57636C),
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                    ),
-                                            enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0xFFDBE2E7),
-                                                width: 2,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0xFFDBE2E7),
-                                                width: 2,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            errorBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0x00000000),
-                                                width: 2,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            focusedErrorBorder:
-                                                OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0x00000000),
-                                                width: 2,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            contentPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    24, 24, 20, 24),
-                                          ),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyText1
-                                              .override(
-                                                fontFamily: 'Lexend Deca',
-                                                color: Color(0xFF1D2429),
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.normal,
-                                              ),
-                                          maxLines: null,
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 0, 15, 0),
-                                        child: TextFormField(
-                                          controller: NegativeMarkingController,
-                                          obscureText: false,
-                                          decoration: InputDecoration(
-                                            labelStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyText1
-                                                    .override(
-                                                      fontFamily: 'Lexend Deca',
-                                                      color: Color(0xFF57636C),
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                    ),
-                                            hintText: 'Negative marking',
                                             hintStyle:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyText1

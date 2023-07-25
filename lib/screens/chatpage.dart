@@ -4,6 +4,10 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'dart:html' as html;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
+//import 'package:flutter_sound_lite/public/flutter_sound_recorder.dart';
+import 'package:microphone/microphone.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
@@ -60,12 +64,14 @@ Future<void> handlePasteEvent() async {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  late RawKeyboard _keyboard;
   final GetUnread unread = GetUnread();
   final _textController = TextEditingController();
   bool _isRecording = false;
   final FocusNode _focusNode = FocusNode();
   String id = FirebaseAuth.instance.currentUser!.uid;
   String? idcurr;
+  MicrophoneRecorder? _recorder;
   String namecurrent =
       FirebaseAuth.instance.currentUser!.displayName.toString().split(" ")[0];
   String selectedTileIndex = "";
@@ -93,16 +99,26 @@ class _ChatPageState extends State<ChatPage> {
   //List<DateTime> time = [];
   Set<String> _updatedDocuments = {};
   Set<String> newdocuments = {};
-
+  bool played = false;
   //String? pickedFileName;
+  void _initRecorder() {
+    played == true ? _recorder?.dispose() : null;
+
+    _recorder = MicrophoneRecorder()
+      ..init()
+      ..addListener(() {
+        setState(() {
+          played = true;
+        });
+      });
+  }
 
   void _cancelRecording() async {
     if (_isRecording) {
-      var filePath = await Record().stop();
-      var recordedFile = File(filePath.toString());
-      if (await recordedFile.exists()) {
-        await recordedFile.delete();
-      }
+      setState(_initRecorder);
+      // await _soundRecorder.stopRecorder();
+      // await _soundRecorder.closeAudioSession();
+
       setState(() {
         _isRecording = false;
       });
@@ -141,24 +157,27 @@ class _ChatPageState extends State<ChatPage> {
   void _sendMessage() async {
     if (_textController.text.isNotEmpty) {
       _focusNode.unfocus();
+      String data = await _textController.text.toString();
+      _textController.clear();
+      DateTime time1 = await fetchTimeInIndia();
 
-      final time = DateTime.now();
+      print(time);
+      print(time1.toString());
       updatelast();
-      updatetime(time);
-       final post = await _firestore
+      updatetime(time1, data);
+      final post = await _firestore
           .collection("groups")
           .doc(idcurr)
           .collection("chats")
           .add({
-        'message': _textController.text,
+        'message': data,
         'role': "mentor",
-                'sendBy': namecurrent,
-               
-                'time': time,
-                'type': 'text'
+        'sendBy': namecurrent,
+        'time': time1,
+        'studentid': id,
+        'type': 'text'
       });
     }
-    _textController.clear();
   }
 
   Future<void> _pickFilePhoto() async {
@@ -196,8 +215,12 @@ class _ChatPageState extends State<ChatPage> {
               final time = DateTime.now();
               // Add message to Firestore
               updatelast();
-              updatetime(time);
+              DateTime time1 = await fetchTimeInIndia();
 
+              print(time);
+              print(time1.toString());
+              updatelast();
+              updatetime(time1, "image");
               _firestore
                   .collection("groups")
                   .doc(idcurr)
@@ -207,7 +230,8 @@ class _ChatPageState extends State<ChatPage> {
                 'role': "mentor",
                 'sendBy': namecurrent,
                 'link': downloadUrl,
-                'time': time,
+                'time': time1,
+                'studentid': id,
                 'type': 'image'
               });
             }
@@ -250,8 +274,12 @@ class _ChatPageState extends State<ChatPage> {
               final downloadUrl = await snapshot.ref.getDownloadURL();
               final time = DateTime.now();
               // Add message to Firestore
+              DateTime time1 = await fetchTimeInIndia();
+
+              print(time);
+              print(time1.toString());
               updatelast();
-              updatetime(time);
+              updatetime(time1, "video");
 
               _firestore
                   .collection("groups")
@@ -262,7 +290,8 @@ class _ChatPageState extends State<ChatPage> {
                 'role': "mentor",
                 'sendBy': namecurrent,
                 'link': downloadUrl,
-                'time': time,
+                'time': time1,
+                'studentid': id,
                 'type': 'video'
               });
             }
@@ -301,8 +330,12 @@ class _ChatPageState extends State<ChatPage> {
             final TaskSnapshot snapshot = await uploadTask;
             final downloadUrl = await snapshot.ref.getDownloadURL();
             final time = DateTime.now();
+            DateTime time1 = await fetchTimeInIndia();
+
+            print(time);
+            print(time1.toString());
             updatelast();
-            updatetime(time);
+            updatetime(time1, "file");
             _firestore
                 .collection("groups")
                 .doc(idcurr)
@@ -312,7 +345,8 @@ class _ChatPageState extends State<ChatPage> {
               'role': "mentor",
               'sendBy': namecurrent,
               'link': downloadUrl,
-              'time': time,
+              'time': time1,
+              'studentid': id,
               'type': 'file'
             });
           }
@@ -334,8 +368,29 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  void updatetime(DateTime time) {
+//  void updatetime(DateTime time, String message) {
+//     _firestore.collection("groups").doc(widget.groupId).update({'time': time});
+//     _firestore
+//         .collection("groups")
+//         .doc(widget.groupId)
+//         .update({'lastmessage': message});
+//   }
+  void updatetime(DateTime time, String message) {
     _firestore.collection("groups").doc(idcurr).update({'time': time});
+    _firestore
+        .collection("groups")
+        .doc(idcurr)
+        .update({'lastmessage': message});
+  }
+
+  Future<DateTime> fetchTimeInIndia() async {
+    final response = await http
+        .get(Uri.parse('https://worldtimeapi.org/api/timezone/Asia/Kolkata'));
+    final jsonData = json.decode(response.body);
+    final datetime = jsonData['datetime'];
+    final offset = jsonData['utc_offset'];
+    final parsedDateTime = DateTime.parse(datetime).toUtc();
+    return parsedDateTime;
   }
 
   void updatelast() {
@@ -343,6 +398,103 @@ class _ChatPageState extends State<ChatPage> {
         .collection("groups")
         .doc(idcurr)
         .update({'last': FirebaseAuth.instance.currentUser!.uid.toString()});
+  }
+
+  void _stopRecording() async {
+    if (_isRecording) {
+      await _recorder!.stop();
+      endtime = DateTime.now();
+
+      setState(() {
+        _isRecording = false;
+      });
+      _uploadRecording();
+    }
+  }
+
+  Duration _calculateDuration() {
+    final duration = endtime!.difference(starttime!);
+    return duration;
+  }
+
+//  void _getAppStorageDir() {
+//   final appStorage = html.window.localStorage;
+//   // Use appStorage as needed
+// }
+  Future<String> _uploadRecording() async {
+    final storageRef =
+        FirebaseStorage.instance.ref().child('audio/${DateTime.now()}.mp3');
+//  final fb.UploadTaskSnapshot uploadTaskSnapshot = await storageRef.put(filePath).future;
+    try {
+      await storageRef.putData(await _recorder!.toBytes());
+      final downloadUrl = await storageRef.getDownloadURL();
+      print('File uploaded: $downloadUrl');
+      // final time = DateTime.now();
+      // Add message to Firestore
+
+      DateTime time1 = await fetchTimeInIndia();
+      Duration tt = await _calculateDuration();
+      //  print(time);
+      print(time1.toString());
+      updatelast();
+      updatetime(time1, "audio note");
+      _firestore.collection("groups").doc(idcurr).collection("chats").add({
+        'message': '${DateTime.now()}.mp3',
+        'role': "mentor",
+        'sendBy': namecurrent,
+        'link': downloadUrl,
+        'time': time1,
+        'studentid': id,
+        'duration':
+            '${tt.inHours}:${tt.inMinutes.remainder(60)}:${tt.inSeconds.remainder(60)}',
+        'type': 'audio'
+      });
+
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading file: $e');
+      throw 'Failed to upload recording';
+    }
+  }
+
+  DateTime? starttime;
+  DateTime? endtime;
+  // FlutterSoundRecorder _soundRecorder = FlutterSoundRecorder();
+  void _startRecording() async {
+    _initRecorder();
+    // starttime=DateTime.
+    print("Recording....");
+    if (await Record().hasPermission()) {
+      setState(() {
+        _isRecording = true;
+      });
+
+      // await _initRecorder();
+
+      _recorder!.start();
+      starttime = DateTime.now();
+      //   await _soundRecorder.openAudioSession();
+      //   await _soundRecorder.startRecorder(
+      //     // toFile: '${appStorage!.path}/audio_${DateTime.now().millisecondsSinceEpoch}.m4a',
+      //  //   codec: opusWebM,
+      //     sampleRate: 44100,
+      //     bitRate: 128000,
+      //   );
+    }
+  }
+
+  Widget _buildMicButton() {
+    return IconButton(
+      icon: Icon(Icons.mic_none_rounded, color: Colors.purple),
+      onPressed: _startRecording,
+    );
+  }
+
+  Widget _buildStopRecordingButton() {
+    return IconButton(
+      icon: Icon(Icons.stop_rounded, color: Colors.red),
+      onPressed: _stopRecording,
+    );
   }
 
   Widget _buildCancelButton() {
@@ -388,8 +540,10 @@ class _ChatPageState extends State<ChatPage> {
                     _updatedDocuments.add(change.doc.id);
                     print(_updatedDocuments);
                     displayWebNotification(
-                        "New Message",
                         "${change.doc["student_name"]} has a new message",
+                        changedData.containsKey('lastmessage')
+                            ? "message: ${change.doc["lastmessage"]}"
+                            : "message: new feature is working",
                         "assets/icon.jpeg");
                   }
                   notificationShown = true;
@@ -498,7 +652,11 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
+    _keyboard = RawKeyboard.instance;
+    _keyboard.addListener(_handleKeyPress);
     loadrole();
+
+    // _initRecorder();
     //Configuration.docid = "";
     print("iwejoiweofwoiefwf");
     readunread();
@@ -510,6 +668,20 @@ class _ChatPageState extends State<ChatPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       listenToFirestoreChanges();
     });
+  }
+
+  void _handleKeyPress(RawKeyEvent event) {
+    if (event is RawKeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.enter) {
+      // Trigger your function here
+      _sendMessage();
+    }
+  }
+
+  @override
+  void dispose() {
+    _keyboard.removeListener(_handleKeyPress);
+    super.dispose();
   }
 
   @override
@@ -533,17 +705,17 @@ class _ChatPageState extends State<ChatPage> {
                     height: 10.h,
                     child: Row(
                       children: [
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(top: 0, left: 1, right: 1),
-                          child: Container(
-                            child: Image.asset(
-                              'assets/page-1/images/vector.png',
-                              height: 5.h,
-                              width: 3.h,
-                            ),
-                          ),
-                        ),
+                        // Padding(
+                        //   padding:
+                        //       const EdgeInsets.only(top: 0, left: 1, right: 1),
+                        //   child: Container(
+                        //     child: Image.asset(
+                        //       'assets/page-1/images/vector.png',
+                        //       height: 5.h,
+                        //       width: 3.h,
+                        //     ),
+                        //   ),
+                        // ),
                         Padding(
                           padding: EdgeInsets.only(left: 2.w, right: 0.5.w),
                           child: Container(
@@ -609,8 +781,9 @@ class _ChatPageState extends State<ChatPage> {
                             itemBuilder: (BuildContext context, int index) {
                               DocumentSnapshot document =
                                   snapshot.data!.docs[index];
-                                   Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                                   
+                              Map<String, dynamic> data =
+                                  document.data() as Map<String, dynamic>;
+
                               return GestureDetector(
                                 onTap: () {
                                   setState(() {
@@ -639,7 +812,7 @@ class _ChatPageState extends State<ChatPage> {
                                     width: 30.w,
                                     padding: EdgeInsets.fromLTRB(
                                         1.w, 0.2.h, 0.w, 0.2.h),
-                                    color:_updatedDocuments
+                                    color: _updatedDocuments
                                             .contains(document.id)
                                         ? Color.fromARGB(255, 157, 239, 159)
                                         : selectedTileIndex == document.id
@@ -747,15 +920,22 @@ class _ChatPageState extends State<ChatPage> {
                                                     ),
                                                   ),
                                                   Spacer(),
-                                                  !(data.containsKey('last'))?  Text(
-                                                    "NEW!!!",
-                                                    style: TextStyle(
-                                                      fontFamily: 'Inter',
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Color.fromARGB(255, 144, 5, 149),
-                                                    ),
-                                                  ):Spacer(),
+                                                  !(data.containsKey('last'))
+                                                      ? Text(
+                                                          "NEW!!!",
+                                                          style: TextStyle(
+                                                            fontFamily: 'Inter',
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    144,
+                                                                    5,
+                                                                    149),
+                                                          ),
+                                                        )
+                                                      : Spacer(),
                                                 ],
                                               ),
                                             ],
@@ -915,67 +1095,80 @@ class _ChatPageState extends State<ChatPage> {
                               Container(
                                 width: 70.w,
                                 height: 75.h,
-                                child: 
-                                  StreamBuilder<QuerySnapshot>(
-                                    stream: _messageStream,
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasError) {
-                                        print("snapshot.error");
-                                        return CircularProgressIndicator(
-                                          color: Colors.yellow,
-                                        );
-                                      }
-
-                                      if (!snapshot.hasData) {
-                                        return Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      }
-                                      final messages = snapshot.data!.docs;
-                                      print(
-                                          'Number of documents: ${messages.length}');
-                                      List<MessageBubble> messageBubbles = [];
-                                      for (var message in messages) {
-                                        final messageText = message['message'];
-                                        final messageSender = message['sendBy'];
-                                        final messageType = message['type'];
-                                        final messagetime = message['time'];
-                                        final link = messageType == "image" ||
-                                                messageType == "audio" ||
-                                                messageType == "video" ||
-                                                messageType == "file"
-                                            ? message["link"]
-                                            : "";
-
-                                        final messageBubble = MessageBubble(
-                                          message: messageText,
-                                          sender: messageSender,
-                                          timestamp: messagetime,
-                                          isMe: messageSender == namecurrent,
-                                          link: link,
-                                          type: messageType,
-                                          isURL: isURL(messageText),
-                                        );
-                                        messageBubbles.add(messageBubble);
-                                      }
-                                      return Container(
-                                        height: 80.h,
-                                        width: 65.w,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(40.sp),
-                                            topRight: Radius.circular(40.sp),
-                                          ),
-                                          // color: Colors.white,
-                                        ),
-                                        child: ListView(
-                                          reverse: true,
-                                          children: messageBubbles,
-                                        ),
+                                child: StreamBuilder<QuerySnapshot>(
+                                  stream: _messageStream,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasError) {
+                                      print("snapshot.error");
+                                      return CircularProgressIndicator(
+                                        color: Colors.yellow,
                                       );
-                                    },
-                                  ),
-                                
+                                    }
+
+                                    if (!snapshot.hasData) {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                    final messages = snapshot.data!.docs;
+                                    print(
+                                        'Number of documents: ${messages.length}');
+                                    List<MessageBubble> messageBubbles = [];
+                                    for (var message in messages) {
+                                      final data = message.data()
+                                          as Map<String, dynamic>;
+                                      final messageText = message['message'];
+                                      final messageSender = message['sendBy'];
+                                      final messageType = message['type'];
+                                      final messagetime = message['time'];
+//                                       Duration recording =
+//                                           data.containsKey('duration')
+//                                               ? Duration(
+//   hours: int.parse(message['duration'][0]),
+//   minutes: int.parse(message['duration'][1]),
+//   seconds: int.parse(message['duration'][2]),
+// )
+//                                               : Duration.zero;
+                                      final messageid =
+                                          data.containsKey('studentid')
+                                              ? message['studentid']
+                                              : "old message";
+                                      final link = messageType == "image" ||
+                                              messageType == "audio" ||
+                                              messageType == "video" ||
+                                              messageType == "file"
+                                          ? message["link"]
+                                          : "";
+
+                                      final messageBubble = MessageBubble(
+                                        message: messageText,
+                                        sender: messageSender,
+                                        timestamp: messagetime,
+                                        isMe: messageSender == namecurrent,
+                                        link: link,
+                                        //  recording: recording,
+                                        type: messageType,
+                                        isURL: isURL(messageText),
+                                      );
+                                      messageBubbles.add(messageBubble);
+                                    }
+                                    return Container(
+                                      height: 80.h,
+                                      width: 65.w,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(40.sp),
+                                          topRight: Radius.circular(40.sp),
+                                        ),
+                                        // color: Colors.white,
+                                      ),
+                                      child: ListView(
+                                        reverse: true,
+                                        children: messageBubbles,
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                               Divider(),
                               Padding(
@@ -988,11 +1181,12 @@ class _ChatPageState extends State<ChatPage> {
                                       SizedBox(
                                         width: 1.w,
                                       ),
-                                   
+                                      _isRecording
+                                          ? _buildStopRecordingButton()
+                                          : _buildMicButton(),
                                       _isRecording
                                           ? _buildCancelButton()
                                           : Expanded(
-                                           
                                               child: TextField(
                                                 maxLines: 1,
                                                 controller: _textController,
@@ -1009,7 +1203,6 @@ class _ChatPageState extends State<ChatPage> {
                                               ),
                                               // ),
                                             ),
-
                                       _isRecording
                                           ? SizedBox()
                                           : Row(
@@ -1026,12 +1219,11 @@ class _ChatPageState extends State<ChatPage> {
                                                       color: Colors.purple),
                                                   onPressed: _selectimage,
                                                 ),
-                                            
-                                       IconButton(
-                                              icon: Icon(Icons.send,
-                                                  color: Colors.purple),
-                                              onPressed: _sendMessage,
-                                            ),
+                                                IconButton(
+                                                  icon: Icon(Icons.send,
+                                                      color: Colors.purple),
+                                                  onPressed: _sendMessage,
+                                                ),
                                               ],
                                             ),
                                     ],
@@ -1058,6 +1250,7 @@ class MessageBubble extends StatefulWidget {
   final String type;
   final Timestamp timestamp;
   final String link;
+  //final Duration recording;
   final bool isURL;
 
   MessageBubble(
@@ -1066,6 +1259,7 @@ class MessageBubble extends StatefulWidget {
       required this.isMe,
       required this.type,
       required this.link,
+      //  required this.recording,
       required this.timestamp,
       required this.isURL});
 
@@ -1074,8 +1268,8 @@ class MessageBubble extends StatefulWidget {
 }
 
 class _MessageBubbleState extends State<MessageBubble> {
-  late VideoPlayerController _videoPlayerController;
-  late ChewieController _chewieController;
+  // late VideoPlayerController _videoPlayerController;
+  // late ChewieController _chewieController;
 
   // bool _isPlaying = false; // <-- track whether the audio is playing
   // AudioPlayer _audioPlayer =
@@ -1100,8 +1294,8 @@ class _MessageBubbleState extends State<MessageBubble> {
     super.dispose();
     // _audioPlayer.dispose();
     if (widget.type == "video") {
-      _chewieController.dispose();
-      _videoPlayerController.dispose();
+      // _chewieController.dispose();
+      // _videoPlayerController.dispose();
     }
   }
 
@@ -1109,15 +1303,15 @@ class _MessageBubbleState extends State<MessageBubble> {
   void initState() {
     super.initState();
     isURL(widget.message);
-    if (widget.type == "video") {
-      _videoPlayerController = VideoPlayerController.network(widget.link);
-      _chewieController = ChewieController(
-        videoPlayerController: _videoPlayerController,
-        autoInitialize: true,
-        looping: false,
-        autoPlay: false,
-      );
-    }
+    // if (widget.type == "video") {
+    //   _videoPlayerController = VideoPlayerController.network(widget.link);
+    //   _chewieController = ChewieController(
+    //     videoPlayerController: _videoPlayerController,
+    //     autoInitialize: true,
+    //     looping: false,
+    //     autoPlay: false,
+    //   );
+    // }
   }
 
   Future<void> _downloadAndOpenVideo(String url) async {
@@ -1307,28 +1501,50 @@ class _MessageBubbleState extends State<MessageBubble> {
                           : widget.type == 'audio'
                               ? Container(
                                   width: 300,
-                                  child:
-                                      AudioPlayerWidget(audioUrl: widget.link),
+                                  child: AudioPlayerWidget(
+                                    audioUrl: widget.link,
+                                    //     recording: widget.recording
+                                  ),
                                 )
                               : widget.type == 'video'
-                                  ? Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 300,
-                                          width: 314,
-                                          child: Chewie(
-                                            controller: _chewieController,
+                                  ? Container(
+                                      width: 300,
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                              height: 300,
+                                              child: VideoPlayerWidget(
+                                                link: widget.link,
+                                              )),
+                                          SizedBox(height: 8.0),
+                                          TextButton(
+                                            child: Text('View in Gallery'),
+                                            onPressed: () {
+                                              _downloadAndOpenVideo(
+                                                  widget.link);
+                                            },
                                           ),
-                                        ),
-                                        SizedBox(height: 8.0),
-                                        TextButton(
-                                          child: Text('View in Gallery'),
-                                          onPressed: () {
-                                            _downloadAndOpenVideo(widget.link);
-                                          },
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     )
+                                  // ? Column(
+                                  //     children: [
+                                  //       SizedBox(
+                                  //         height: 300,
+                                  //         width: 314,
+                                  //         child: Chewie(
+                                  //           controller: _chewieController,
+                                  //         ),
+                                  //       ),
+                                  //       SizedBox(height: 8.0),
+                                  //       TextButton(
+                                  //         child: Text('View in Gallery'),
+                                  //         onPressed: () {
+                                  //           _downloadAndOpenVideo(widget.link);
+                                  //         },
+                                  //       ),
+                                  //     ],
+                                  //   )
                                   : SizedBox(
                                       // height: 20,
                                       //  width: 50,
@@ -1363,8 +1579,12 @@ class _MessageBubbleState extends State<MessageBubble> {
 
 class AudioPlayerWidget extends StatefulWidget {
   final String audioUrl;
-
-  const AudioPlayerWidget({Key? key, required this.audioUrl}) : super(key: key);
+  //final Duration recording;
+  const AudioPlayerWidget({
+    Key? key,
+    required this.audioUrl,
+    //required this.recording
+  }) : super(key: key);
 
   @override
   _AudioPlayerWidgetState createState() => _AudioPlayerWidgetState();
@@ -1398,9 +1618,18 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         _currentPosition = event;
       });
     });
-
-    _totalDuration = (await _audioPlayer.getDuration())!;
-
+    _audioPlayer.onPlayerComplete.listen((event) {
+      setState(() {
+        first = false;
+        _isPlaying = false;
+      });
+    });
+    _totalDuration =
+            // widget.recording==Duration.zero?
+            (await _audioPlayer.getDuration())!
+        // !:widget.recording
+        ;
+    print(_totalDuration);
     // _audioPlayer.onPlayerStateChanged.listen((event) {
     //   setState(() {
     //     _isPlaying = event == PlayerState.PLAYING;
@@ -1488,5 +1717,42 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         ],
       ),
     );
+  }
+}
+
+class VideoPlayerWidget extends StatefulWidget {
+  final String link;
+  const VideoPlayerWidget({Key? key, required this.link}) : super(key: key);
+
+  @override
+  State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
+}
+
+class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
+  late VideoPlayerController _videoPlayerController;
+  late ChewieController _chewieController;
+
+  @override
+  void initState() {
+    _videoPlayerController = VideoPlayerController.network(widget.link);
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      autoInitialize: true,
+      looping: false,
+      autoPlay: false,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _chewieController.dispose();
+    _videoPlayerController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Chewie(controller: _chewieController);
   }
 }

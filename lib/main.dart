@@ -117,7 +117,7 @@ Future<void> main() async {
     final url = Uri.base.path;
 
     print('pushed');
-  } else if (Uri.base.path == '/featuredCourses') {
+  } else if (Uri.base.path == '/InternationalPaymentScreen') {
     final url = Uri.base.path;
     FirebaseFirestore.instance
         .collection("Notice")
@@ -137,6 +137,13 @@ Future<void> main() async {
       FirebaseFirestore.instance
           .collection("Notice")
           .doc("fSU4MLz1E0858ft8m7F5_dataeng")
+          .set({'url': url});
+    }
+    else if (Uri.base.queryParameters['cID'] == 'mPqg2Z2BdNHvwaqAEfA0') {
+      final url = Uri.base.queryParameters['cID'];
+      FirebaseFirestore.instance
+          .collection("Notice")
+          .doc("ZL5fDjF0pzsgpNu92BKc_intrntnl_course")
           .set({'url': url});
     }
    print('pushed');
