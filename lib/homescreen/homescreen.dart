@@ -1361,6 +1361,8 @@ userData() async {
                                                       ['outStandingAmtPaid'])) {
                                                 if (course[index].multiCombo ==
                                                     true) {
+                                                      mainCourseId = course[index]
+                                                          .courseId;
                                                   GoRouter.of(context).pushNamed(
                                                       'MultiComboCourseScreen',
                                                       queryParams: {
@@ -1435,6 +1437,8 @@ userData() async {
                                               } else {
                                                 if (course[index].multiCombo ==
                                                     true) {
+                                                      mainCourseId = course[index]
+                                                          .courseId;
                                                   GoRouter.of(context).pushNamed(
                                                       'MultiComboCourseScreen',
                                                       queryParams: {
@@ -1762,6 +1766,8 @@ userData() async {
                                                                             if (navigateToCatalogueScreen(course[index].courseId) &&
                                                                                 !(userMap['payInPartsDetails'][course[index].courseId]['outStandingAmtPaid'])) {
                                                                               if (course[index].multiCombo == true) {
+                                                                                mainCourseId = course[index]
+                                                          .courseId;
                                                                                 GoRouter.of(context).pushNamed('MultiComboCourseScreen', queryParams: {
                                                                                   'courseName': course[index].courseName.toString(),
                                                                                   'id': course[index].courseId,
@@ -1816,6 +1822,8 @@ userData() async {
                                                                               }
                                                                             } else {
                                                                               if (course[index].multiCombo == true) {
+                                                                                mainCourseId = course[index]
+                                                          .courseId;
                                                                                 GoRouter.of(context).pushNamed('MultiComboCourseScreen', queryParams: {
                                                                                   'courseName': course[index].courseName.toString(),
                                                                                   'id': course[index].courseId,
@@ -3512,6 +3520,8 @@ userData() async {
                                                     ['outStandingAmtPaid'])) {
                                               if (course[index].multiCombo ==
                                                   true) {
+                                                    mainCourseId = course[index]
+                                                          .courseId;
                                                 GoRouter.of(context).pushNamed(
                                                     'MultiComboCourseScreen',
                                                     queryParams: {
@@ -3563,6 +3573,8 @@ userData() async {
                                             } else {
                                               if (course[index].multiCombo ==
                                                   true) {
+                                                    mainCourseId = course[index]
+                                                          .courseId;
                                                 GoRouter.of(context).pushNamed(
                                                     'MultiComboCourseScreen',
                                                     queryParams: {
@@ -3954,6 +3966,8 @@ userData() async {
                                                                       if (course[index]
                                                                               .multiCombo ==
                                                                           true) {
+                                                                            mainCourseId = course[index]
+                                                          .courseId;
                                                                         GoRouter.of(context).pushNamed(
                                                                             'MultiComboCourseScreen',
                                                                             queryParams: {
@@ -4020,6 +4034,8 @@ userData() async {
                                                                       if (course[index]
                                                                               .multiCombo ==
                                                                           true) {
+                                                                            mainCourseId = course[index]
+                                                          .courseId;
                                                                         GoRouter.of(context).pushNamed(
                                                                             'MultiComboCourseScreen',
                                                                             queryParams: {

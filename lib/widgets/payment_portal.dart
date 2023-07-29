@@ -470,9 +470,6 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     await loadCourses();
     print("from wjrjwoeo");
 
-    print("woiejwoeoi");
-
-    print("iojwioenwenfw");
     try {
       print("couponcodeused1");
       print(widget.couponcodeused);
