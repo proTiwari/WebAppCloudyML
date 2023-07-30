@@ -97,10 +97,11 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
     quiznameController?.dispose();
     super.dispose();
   }
+
   String generateId() {
-  var uuid = Uuid();
-  return uuid.v4();
-}
+    var uuid = Uuid();
+    return uuid.v4();
+  }
 
   List questionslist = [];
   var items = ['Global quiz', 'Modular quiz'];
@@ -2082,6 +2083,11 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                               AnswerController?.text = '';
                                               AnswerIndexController?.text = '';
                                               showupdatebutton = false;
+                                              FFAppState().editImage = '';
+                                              FFAppState().optionaimage = '';
+                                              FFAppState().optionbimage = '';
+                                              FFAppState().optioncimage = '';
+                                              FFAppState().optiondimage = '';
                                             });
                                             print("kk${questionslist}");
 
@@ -2350,7 +2356,8 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                             "courseName":
                                                                 tempcoursename,
                                                             "sr": leng,
-                                                            "quizid": generateId(),
+                                                            "quizid":
+                                                                generateId(),
                                                             "type": "quiz"
                                                           };
                                                           print("3");

@@ -280,69 +280,12 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 children: [
                   Container(
-                    height: 45,
+                    // height: 45,
                     color: HexColor("440F87"),
-                    child: Row(
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Scaffold.of(context).openDrawer();
-                            },
-                            icon: Icon(
-                              Icons.menu,
-                              color: Colors.white,
-                              size: 30,
-                            )),
-                        SizedBox(
-                          width: horizontalScale * 15,
-                        ),
-                        Image.asset(
-                          "assets/logo2.png",
-                          width: 30,
-                          height: 30,
-                        ),
-                        Text(
-                          "CloudyML",
-                          style: textStyle,
-                        ),
-                        SizedBox(
-                          width: horizontalScale * 25,
-                        ),
-                        // SizedBox(
-                        //   height: 30,
-                        //   width: screenWidth / 3,
-                        //   child: TextField(
-                        //     style: TextStyle(
-                        //         color: HexColor("A7A7A7"), fontSize: 12),
-                        //     decoration: InputDecoration(
-                        //         contentPadding: EdgeInsets.all(5.0),
-                        //         hintText: "Search Courses",
-                        //         focusedBorder: OutlineInputBorder(
-                        //             borderSide: BorderSide(
-                        //                 color: Colors.white, width: 1)),
-                        //         disabledBorder: OutlineInputBorder(
-                        //             borderSide: BorderSide(
-                        //                 color: Colors.white, width: 1)),
-                        //         hintStyle: TextStyle(
-                        //             color: HexColor("A7A7A7"), fontSize: 12),
-                        //         border: OutlineInputBorder(
-                        //             borderSide: BorderSide(
-                        //                 color: Colors.white, width: 1)),
-                        //         enabledBorder: OutlineInputBorder(
-                        //             borderSide: BorderSide(
-                        //                 color: Colors.white, width: 1)),
-                        //         prefixIcon: IconButton(
-                        //             onPressed: () {},
-                        //             icon: Icon(
-                        //               Icons.search_outlined,
-                        //               size: 14,
-                        //               color: Colors.white,
-                        //             ))),
-                        //   ),
-                        // )
-                      ],
-                    ),
+                    padding: const EdgeInsets.only(top: 8.0, right: 5),
+                    child: customMenuBar(context),
                   ),
+
                   ref.data()!["name"] == null
                       ? Container()
                       : Container(

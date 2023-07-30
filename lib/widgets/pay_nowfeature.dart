@@ -167,34 +167,30 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                     .contains(featuredCourse[0].courseId)
                             ? InkWell(
                                 onTap: () {
-
                                   // GoRouter.of(context).pushReplacementNamed('myCourses');
 
-                                  
-                                                                    // if(featuredCourse[0].findex=='40')
-                                                                    // {
-                                                                      mainCourseId = featuredCourse[0].courseId;
-                                                                               GoRouter.of(context).pushNamed(
-                                                                        'NewComboCourseScreen',
-                                                                        queryParams: {
-                                                                          'courseName':
-                                                                              featuredCourse[0]
-                                                                                  .courseName,
-                                                                          'courseId': featuredCourse[0].courseId,
-                                                                        });
-                                                                    // }
-                                                                    // else if(featuredCourse[0].findex=='14')
-                                                                    // {
-                                                                    //            GoRouter.of(context).pushNamed(
-                                                                    //     'newcomboCourse',
-                                                                    //     queryParams: {
-                                                                    //       'courseName':
-                                                                    //           featuredCourse[0]
-                                                                    //               .courseName,
-                                                                    //       'courseId': featuredCourse[0].courseDocumentId,
-                                                                    //     });
-                                                                    // }
-
+                                  // if(featuredCourse[0].findex=='40')
+                                  // {
+                                  mainCourseId = featuredCourse[0].courseId;
+                                  GoRouter.of(context).pushNamed(
+                                      'NewComboCourseScreen',
+                                      queryParams: {
+                                        'courseName':
+                                            featuredCourse[0].courseName,
+                                        'courseId': featuredCourse[0].courseId,
+                                      });
+                                  // }
+                                  // else if(featuredCourse[0].findex=='14')
+                                  // {
+                                  //            GoRouter.of(context).pushNamed(
+                                  //     'newcomboCourse',
+                                  //     queryParams: {
+                                  //       'courseName':
+                                  //           featuredCourse[0]
+                                  //               .courseName,
+                                  //       'courseId': featuredCourse[0].courseDocumentId,
+                                  //     });
+                                  // }
 
                                   // GoRouter.of(context).pushNamed(
                                   //     'newcomboCourse',
@@ -273,18 +269,14 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                   height: 17,
                                                 ),
                                                 Container(
-                                                    height:
-                                                        screenHeight / 8,
-                                                    width:
-                                                        screenWidth / 3.5,
-                                                    decoration:
-                                                        BoxDecoration(
+                                                    height: screenHeight / 8,
+                                                    width: screenWidth / 3.5,
+                                                    decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius
-                                                              .circular(10),
+                                                          BorderRadius.circular(
+                                                              10),
                                                       border: Border.all(
-                                                          color:
-                                                              Colors.white,
+                                                          color: Colors.white,
                                                           width: 0.5),
                                                       color: Colors.white,
                                                     ),
@@ -297,16 +289,15 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                           children: [
                                                             Expanded(
                                                               flex: 1,
-                                                              child:
-                                                                  Container(
+                                                              child: Container(
                                                                 child:
                                                                     CircleAvatar(
-                                                                  radius:
-                                                                      35,
+                                                                  radius: 35,
                                                                   // borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
                                                                   child: Image
                                                                       .network(
-                                                                    featuredCourse[0]
+                                                                    featuredCourse[
+                                                                            0]
                                                                         .courseImageUrl,
                                                                     fit: BoxFit
                                                                         .fill,
@@ -315,15 +306,17 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                               ),
                                                             ),
                                                             Expanded(
-                                                              child:
-                                                                  Container(
+                                                              child: Container(
                                                                 child: Text(
-                                                                    featuredCourse[0]
+                                                                    featuredCourse[
+                                                                            0]
                                                                         .courseName,
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                            FontWeight.bold,
-                                                                        fontSize: 13)),
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize:
+                                                                            13)),
                                                               ),
                                                             ),
                                                           ],
@@ -331,25 +324,20 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                       ],
                                                     )),
                                                 SizedBox(
-                                                    height:
-                                                        29 * verticalScale),
+                                                    height: 29 * verticalScale),
                                                 Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
                                                     Container(
-                                                      width:
-                                                          screenWidth / 7,
-                                                      decoration:
-                                                          BoxDecoration(
+                                                      width: screenWidth / 7,
+                                                      decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(
-                                                                    10),
+                                                                .circular(10),
                                                         border: Border.all(
-                                                            color: Colors
-                                                                .white,
+                                                            color: Colors.white,
                                                             width: 0.5),
                                                       ),
                                                       child: ElevatedButton(
@@ -360,28 +348,24 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                           // print(
                                                           //     'idd ${widget.id} ${featuredCourse[0].courseName}');
                                                           // print('this is condition ${userMap['paidCourseNames'].contains(featuredCourse[int.parse(widget.id!)].courseId)}');
-                                                          Navigator.of(
-                                                                  context)
+                                                          Navigator.of(context)
                                                               .pop();
                                                         },
                                                         child: Text(
                                                           'Close',
                                                           style: TextStyle(
-                                                              color: Colors
-                                                                  .white),
+                                                              color:
+                                                                  Colors.white),
                                                         ),
                                                       ),
                                                     ),
                                                     Container(
-                                                      decoration:
-                                                          BoxDecoration(
+                                                      decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(
-                                                                    10),
+                                                                .circular(10),
                                                         border: Border.all(
-                                                            color: Colors
-                                                                .white,
+                                                            color: Colors.white,
                                                             width: 0.5),
                                                       ),
                                                       child: ElevatedButton(
@@ -389,31 +373,28 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                           var paidcourse;
                                                           print(userMap);
 
-                                                          if (widget
-                                                              .usermap[
+                                                          if (widget.usermap[
                                                                   'paidCourseNames']
                                                               .contains(
                                                                   featuredCourse[
                                                                           0]
                                                                       .courseId)) {
-                                                            Fluttertoast
-                                                                .showToast(
-                                                                    msg:
-                                                                        'You have already enrolled in this course.');
+                                                            Fluttertoast.showToast(
+                                                                msg:
+                                                                    'You have already enrolled in this course.');
                                                           } else if (widget
                                                                           .usermap[
                                                                       'trialCourseList'] !=
                                                                   null &&
-                                                              widget
-                                                                  .usermap[
+                                                              widget.usermap[
                                                                       'trialCourseList']
                                                                   .contains(
-                                                                      featuredCourse[0]
+                                                                      featuredCourse[
+                                                                              0]
                                                                           .courseId)) {
-                                                            Fluttertoast
-                                                                .showToast(
-                                                                    msg:
-                                                                        'You have already tried this course... Please purchase the course.');
+                                                            Fluttertoast.showToast(
+                                                                msg:
+                                                                    'You have already tried this course... Please purchase the course.');
                                                           } else {
                                                             setState(() {
                                                               trialCourse();
@@ -426,31 +407,28 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                       seconds:
                                                                           2),
                                                                   () => {
-
-
-                                                                    // if(featuredCourse[0].findex=='40')
-                                                                    // {
-                                                                      mainCourseId = featuredCourse[0].courseId,
-                                                                       GoRouter.of(context).pushNamed(
-                                                                        'NewComboCourseScreen',
-                                                                        queryParams: {
-                                                                          'courseName':
-                                                                              featuredCourse[0]
-                                                                                  .courseName,
-                                                                          'courseId': featuredCourse[0].courseId,
-                                                                        })
-                                                                    // }
-                                                                    // else if(featuredCourse[0].findex=='14')
-                                                                    // {
-                                                                    //            GoRouter.of(context).pushNamed(
-                                                                    //     'newcomboCourse',
-                                                                    //     queryParams: {
-                                                                    //       'courseName':
-                                                                    //           featuredCourse[0]
-                                                                    //               .courseName,
-                                                                    //       'id': "14",
-                                                                    //     })
-                                                                    // }
+                                                                        // if(featuredCourse[0].findex=='40')
+                                                                        // {
+                                                                        mainCourseId =
+                                                                            featuredCourse[0].courseId,
+                                                                        GoRouter.of(context).pushNamed(
+                                                                            'NewComboCourseScreen',
+                                                                            queryParams: {
+                                                                              'courseName': featuredCourse[0].courseName,
+                                                                              'courseId': featuredCourse[0].courseId,
+                                                                            })
+                                                                        // }
+                                                                        // else if(featuredCourse[0].findex=='14')
+                                                                        // {
+                                                                        //            GoRouter.of(context).pushNamed(
+                                                                        //     'newcomboCourse',
+                                                                        //     queryParams: {
+                                                                        //       'courseName':
+                                                                        //           featuredCourse[0]
+                                                                        //               .courseName,
+                                                                        //       'id': "14",
+                                                                        //     })
+                                                                        // }
 
                                                                         // GoRouter.of(context).pushReplacementNamed('myCourses')
 
@@ -507,12 +485,13 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                     ),
                     InkWell(
                       onTap: () {
-
-                        if(widget.international != null && widget.international == true) {
-                          GoRouter.of(context)
-                              .pushNamed('InternationalPaymentScreen', queryParams: {
-                            'cID': widget.cID,
-                          });
+                        if (widget.international != null &&
+                            widget.international == true) {
+                          GoRouter.of(context).pushNamed(
+                              'InternationalPaymentScreen',
+                              queryParams: {
+                                'cID': widget.cID,
+                              });
                         } else {
                           GoRouter.of(context)
                               .pushNamed('comboPaymentPortal', queryParams: {
@@ -596,34 +575,32 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                         .contains(featuredCourse[0].courseId)
                                 ? InkWell(
                                     onTap: () {
-
-                                      
-                                                                        // if(featuredCourse[0].findex=='40')
-                                                                        // {
-                                                                          mainCourseId = featuredCourse[0].courseId;
-                                                                             GoRouter.of(context).pushNamed(
-                                                                        'NewComboCourseScreen',
-                                                                        queryParams: {
-                                                                          'courseName':
-                                                                              featuredCourse[0]
-                                                                                  .courseName,
-                                                                          'courseId': featuredCourse[0].courseId,
-                                                                        });
-                                                                        // }
-                                                                        // else if(featuredCourse[0].findex=='14')
-                                                                        // {
-                                                                        //            GoRouter.of(context).pushNamed(
-                                                                        //     'newcomboCourse',
-                                                                        //     queryParams: {
-                                                                        //       'courseName':
-                                                                        //           featuredCourse[0]
-                                                                        //               .courseName,
-                                                                        //       'id': "14",
-                                                                        //     });
-                                                                        // }
+                                      // if(featuredCourse[0].findex=='40')
+                                      // {
+                                      mainCourseId = featuredCourse[0].courseId;
+                                      GoRouter.of(context).pushNamed(
+                                          'NewComboCourseScreen',
+                                          queryParams: {
+                                            'courseName':
+                                                featuredCourse[0].courseName,
+                                            'courseId':
+                                                featuredCourse[0].courseId,
+                                          });
+                                      // }
+                                      // else if(featuredCourse[0].findex=='14')
+                                      // {
+                                      //            GoRouter.of(context).pushNamed(
+                                      //     'newcomboCourse',
+                                      //     queryParams: {
+                                      //       'courseName':
+                                      //           featuredCourse[0]
+                                      //               .courseName,
+                                      //       'id': "14",
+                                      //     });
+                                      // }
 
                                       // GoRouter.of(context).pushReplacementNamed('myCourses');
-                                      
+
                                       // GoRouter.of(context).pushNamed(
                                       //                                       'newcomboCourse',
                                       //                                       queryParams: {
@@ -848,45 +825,40 @@ class _PayNowBottomSheetfeatureState extends State<PayNowBottomSheetfeature> {
                                                                   Timer(
                                                                       Duration(
                                                                           seconds:
-                                                                            2),
-                                                                      () => { 
+                                                                              2),
+                                                                      () => {
+                                                                            // GoRouter.of(context).pushReplacementNamed('myCourses')
 
-                                                                        // GoRouter.of(context).pushReplacementNamed('myCourses')
+                                                                            // if(featuredCourse[0].findex=='40')
+                                                                            // {
+                                                                            mainCourseId =
+                                                                                featuredCourse[0].courseId,
+                                                                            GoRouter.of(context).pushNamed('NewComboCourseScreen', queryParams: {
+                                                                              'courseName': featuredCourse[0].courseName,
+                                                                              'courseId': featuredCourse[0].courseId,
+                                                                            })
+                                                                            // }
+                                                                            // else if(featuredCourse[0].findex=='14')
+                                                                            // {
+                                                                            //            GoRouter.of(context).pushNamed(
+                                                                            //     'newcomboCourse',
+                                                                            //     queryParams: {
+                                                                            //       'courseName':
+                                                                            //           featuredCourse[0]
+                                                                            //               .courseName,
+                                                                            //       'id': "14",
+                                                                            //     })
+                                                                            // }
 
-                                                                        
-                                                                        // if(featuredCourse[0].findex=='40')
-                                                                        // {
-                                                                           mainCourseId = featuredCourse[0].courseId,
-                                                                         GoRouter.of(context).pushNamed(
-                                                                        'NewComboCourseScreen',
-                                                                        queryParams: {
-                                                                          'courseName':
-                                                                              featuredCourse[0]
-                                                                                  .courseName,
-                                                                          'courseId': featuredCourse[0].courseId,
-                                                                        })
-                                                                        // }
-                                                                        // else if(featuredCourse[0].findex=='14')
-                                                                        // {
-                                                                        //            GoRouter.of(context).pushNamed(
-                                                                        //     'newcomboCourse',
-                                                                        //     queryParams: {
-                                                                        //       'courseName':
-                                                                        //           featuredCourse[0]
-                                                                        //               .courseName,
-                                                                        //       'id': "14",
-                                                                        //     })
-                                                                        // }
-                                                                        
-                                                                        //  GoRouter.of(context).pushNamed(
-                                                                        //     'newcomboCourse',
-                                                                        //     queryParams: {
-                                                                        //       'courseName':
-                                                                        //           featuredCourse[0]
-                                                                        //               .courseName,
-                                                                        //       'id': "40",
-                                                                        //     })
-                                                                            });
+                                                                            //  GoRouter.of(context).pushNamed(
+                                                                            //     'newcomboCourse',
+                                                                            //     queryParams: {
+                                                                            //       'courseName':
+                                                                            //           featuredCourse[0]
+                                                                            //               .courseName,
+                                                                            //       'id': "40",
+                                                                            //     })
+                                                                          });
                                                                 });
                                                               }
                                                             },

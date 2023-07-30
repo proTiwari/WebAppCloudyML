@@ -65,7 +65,7 @@ class _LandingScreenState extends State<LandingScreen> {
   List<dynamic> courses = [];
   bool? load = true;
   Map userMap = Map<String, dynamic>();
-  final GlobalKey gbkey1=GlobalKey();
+  final GlobalKey gbkey1 = GlobalKey();
 
   String? name = '';
 
@@ -86,9 +86,6 @@ class _LandingScreenState extends State<LandingScreen> {
       print("llooooooooooooo$e");
     }
   }
-
-
- 
 
   // void addCoursetoUser(String id) async {
   //   await FirebaseFirestore.instance
@@ -354,14 +351,17 @@ class _LandingScreenState extends State<LandingScreen> {
   var ref;
   var userDocData;
   String numberOfLearners = '';
-userData() async {
+  userData() async {
     try {
       ref = await FirebaseFirestore.instance
           .collection("Users")
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
 
-      var learners = await FirebaseFirestore.instance.collection('Notice').doc('sessionExpiryDays').get();
+      var learners = await FirebaseFirestore.instance
+          .collection('Notice')
+          .doc('sessionExpiryDays')
+          .get();
       numberOfLearners = learners['numberOfLearners'];
 
       print('uid is ${FirebaseAuth.instance.currentUser!.uid}');
@@ -371,16 +371,22 @@ userData() async {
 
       var userSessionExpiryTime = ref.data()!["sessionExpiryTime"];
 
-      if(userSessionExpiryTime == null) {
-
+      if (userSessionExpiryTime == null) {
         DateTime now = DateTime.now();
 
-        var sessionExpiryDays = await FirebaseFirestore.instance.collection('Notice').doc('sessionExpiryDays').get();
+        var sessionExpiryDays = await FirebaseFirestore.instance
+            .collection('Notice')
+            .doc('sessionExpiryDays')
+            .get();
         print('sessionExpiryDays ${sessionExpiryDays['sessionExpiryDays']}');
 
-        DateTime updatedTime = now.add(Duration(days: sessionExpiryDays['sessionExpiryDays']));
+        DateTime updatedTime =
+            now.add(Duration(days: sessionExpiryDays['sessionExpiryDays']));
 
-        await FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid).update({
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
           'sessionExpiryTime': Timestamp.fromDate(updatedTime),
         });
       }
@@ -390,11 +396,53 @@ userData() async {
       DateTime dateTime = timeStamp.toDate();
       print('converted dateTime $dateTime');
 
+      Future.delayed(
+        Duration(seconds: 2),
+        () {},
+      );
 
-      if (DateTime.now().isAfter(dateTime)){
-        print('I am afterlife');
-        saveLoginOutState(context);
-        logOut(context);
+      if (DateTime.now().isAfter(dateTime)) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Session Timed Out'),
+                content: Container(
+                  height: 35.sp,
+                  width: Adaptive.w(25),
+                  child: Column(
+                    children: [
+                      Text(
+                          'Your session has expired. Please login again to continue.'),
+                      Spacer(),
+                      SizedBox(
+                        height: 20.sp,
+                        width: Adaptive.w(15),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            GoRouter.of(context).pop();
+                          },
+                          child: Text('Login'),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.purpleAccent,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.sp))),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            });
+
+        Future.delayed(
+          Duration(seconds: 2),
+          () {
+            saveLoginOutState(context);
+            logOut(context);
+            GoRouter.of(context).pop();
+          },
+        );
       }
     } catch (e) {
       print("kkkkkkk ${e}");
@@ -740,7 +788,7 @@ userData() async {
   @override
   void initState() {
     getQuizDataAndUpdateScores();
-    
+
     super.initState();
     // print('this is url ${html.window.location.href}');
     // print('this is path ${Uri.base.path}');
@@ -789,224 +837,259 @@ userData() async {
       key: _scaffoldKey,
       drawer: //kIsWeb ? Container() :
           customDrawer(context),
-     floatingActionButton: Device.screenType == ScreenType.mobile
+      floatingActionButton: Device.screenType == ScreenType.mobile
           ? Container(
-        height: showToolTip ? 52.sp : 36.sp,
-        width: 60.sp,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            showToolTip ? Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      height: 32.sp,
-                      width: 60.sp,
-                      padding: EdgeInsets.only(left: 15),
-                      decoration: BoxDecoration(
-                          color: HexColor('#6a5acd').withOpacity(0.95),
-                          borderRadius: BorderRadius.circular(50.sp)
-                      ),
-                      child: Center(
-                          child: Text('Hey, Chat with your Teaching Assistance(TA) for your Doubt Clearance from 6pm to 12 midnight.',
-                            style: TextStyle(color: Colors.white, fontSize: 13.sp, fontWeight: FontWeight.bold),)),
-                    ),
-                    SizedBox(height: 18.sp,)
-                  ],
-                ),
-                Positioned(
-                  right: 20.sp,
-                  bottom: 5.sp,
-                  child: ClipPath(
-                    clipper: TriangleClipper(),
-                    child: Container(
-                      color: HexColor('#6a5acd').withOpacity(0.55),
-                      height: 40,
-                      width: 20,
+              height: showToolTip ? 52.sp : 36.sp,
+              width: 60.sp,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  showToolTip
+                      ? Stack(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Container(
+                                  height: 32.sp,
+                                  width: 60.sp,
+                                  padding: EdgeInsets.only(left: 15),
+                                  decoration: BoxDecoration(
+                                      color:
+                                          HexColor('#6a5acd').withOpacity(0.95),
+                                      borderRadius:
+                                          BorderRadius.circular(50.sp)),
+                                  child: Center(
+                                      child: Text(
+                                    'Hey, Chat with your Teaching Assistance(TA) for your Doubt Clearance from 6pm to 12 midnight.',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13.sp,
+                                        fontWeight: FontWeight.bold),
+                                  )),
+                                ),
+                                SizedBox(
+                                  height: 18.sp,
+                                )
+                              ],
+                            ),
+                            Positioned(
+                              right: 20.sp,
+                              bottom: 5.sp,
+                              child: ClipPath(
+                                clipper: TriangleClipper(),
+                                child: Container(
+                                  color: HexColor('#6a5acd').withOpacity(0.55),
+                                  height: 40,
+                                  width: 20,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              right: 16.sp,
+                              top: 8.sp,
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    showToolTip = false;
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius:
+                                          BorderRadius.circular(5.sp)),
+                                  height: 15.sp,
+                                  width: 15.sp,
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 13.sp,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Container(),
+                  Container(
+                    width: 50.sp,
+                    child: FloatingActionButton(
+                      backgroundColor: Colors.purple,
+                      onPressed: () {
+                        GoRouter.of(context).push('/mobilechat');
+                        // showDialog(
+                        //     context: context,
+                        //     builder: (BuildContext context) {
+                        //       return AlertDialog(
+                        //         backgroundColor: Colors.white,
+                        //         title: Center(
+                        //           child: Text('Contact Support'),
+                        //         ),
+                        //         content: Container(
+                        //           height: 30.sp,
+                        //           child: Column(
+                        //             children: [
+                        //               SelectableText(
+                        //                   'Please email us at app.support@cloudyml.com'),
+                        //               SelectableText(' or call on +91 85879 11971.'),
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       );
+                        //     });
+                      },
+                      child: Container(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.support_agent,
+                            size: 22.sp,
+                          ),
+                          SizedBox(
+                            width: 10.sp,
+                          ),
+                          Text(
+                            'Chat With TA',
+                            style: TextStyle(fontSize: 14.sp),
+                          ),
+                        ],
+                      )),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.sp)),
+                      isExtended: true,
                     ),
                   ),
-                ),
-                Positioned(
-                  right: 16.sp,
-                  top: 8.sp,
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        showToolTip = false;
-                      });
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(5.sp)
-                      ),
-                      height: 15.sp,
-                      width: 15.sp,
-                      child: Icon(
-                        Icons.close,
-                        size: 13.sp,
-                        color: Colors.white,),
-                    ),
-                  ),
-                ),
-              ],
-            ) : Container(),
-            Container(
-              width: 50.sp,
-              child: FloatingActionButton(
-                backgroundColor: Colors.purple,
-                onPressed: () {
-                  GoRouter.of(context).push('/mobilechat');
-                  // showDialog(
-                  //     context: context,
-                  //     builder: (BuildContext context) {
-                  //       return AlertDialog(
-                  //         backgroundColor: Colors.white,
-                  //         title: Center(
-                  //           child: Text('Contact Support'),
-                  //         ),
-                  //         content: Container(
-                  //           height: 30.sp,
-                  //           child: Column(
-                  //             children: [
-                  //               SelectableText(
-                  //                   'Please email us at app.support@cloudyml.com'),
-                  //               SelectableText(' or call on +91 85879 11971.'),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //       );
-                  //     });
-                },
-                child: Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.support_agent, size: 22.sp,),
-                        SizedBox(width: 10.sp,),
-                        Text(
-                          'Chat With TA',
-                          style: TextStyle(fontSize: 14.sp),
-                        ),
-                      ],
-                    )),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.sp)),
-                isExtended: true,
+                ],
               ),
-            ),
-          ],
-        ),
-      )
+            )
           : Container(
-        height: showToolTip ? 44.sp : 24.sp,
-        width: 60.sp,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            showToolTip ? Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      height: 32.sp,
-                      width: 50.sp,
-                      padding: EdgeInsets.only(left: 15),
-                      decoration: BoxDecoration(
-                        color: HexColor('#6a5acd').withOpacity(0.95),
-                        borderRadius: BorderRadius.circular(50.sp)
-                      ),
-                      child: Center(
-                          child: Text('Hey, Chat with your Teaching Assistance(TA) for your Doubt Clearance from 6pm to 12 midnight..',
-                          style: TextStyle(color: Colors.white, fontSize: 11.sp, fontWeight: FontWeight.bold),)),
-                    ),
-                    SizedBox(height: 18.sp,)
-                  ],
-                ),
-                Positioned(
-                  right: 20.sp,
-                  bottom: 5.sp,
-                  child: ClipPath(
-                    clipper: TriangleClipper(),
-                    child: Container(
-                      color: HexColor('#6a5acd').withOpacity(0.55),
-                      height: 35,
-                      width: 20,
+              height: showToolTip ? 44.sp : 24.sp,
+              width: 60.sp,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  showToolTip
+                      ? Stack(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Container(
+                                  height: 32.sp,
+                                  width: 50.sp,
+                                  padding: EdgeInsets.only(left: 15),
+                                  decoration: BoxDecoration(
+                                      color:
+                                          HexColor('#6a5acd').withOpacity(0.95),
+                                      borderRadius:
+                                          BorderRadius.circular(50.sp)),
+                                  child: Center(
+                                      child: Text(
+                                    'Hey, Chat with your Teaching Assistance(TA) for your Doubt Clearance from 6pm to 12 midnight..',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11.sp,
+                                        fontWeight: FontWeight.bold),
+                                  )),
+                                ),
+                                SizedBox(
+                                  height: 18.sp,
+                                )
+                              ],
+                            ),
+                            Positioned(
+                              right: 20.sp,
+                              bottom: 5.sp,
+                              child: ClipPath(
+                                clipper: TriangleClipper(),
+                                child: Container(
+                                  color: HexColor('#6a5acd').withOpacity(0.55),
+                                  height: 35,
+                                  width: 20,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              right: 16.sp,
+                              top: 8.sp,
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    showToolTip = false;
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius:
+                                          BorderRadius.circular(5.sp)),
+                                  height: 12.5.sp,
+                                  width: 12.5.sp,
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 10.sp,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Container(),
+                  Container(
+                    width: 42.sp,
+                    child: FloatingActionButton(
+                      backgroundColor: Colors.purple,
+                      onPressed: () {
+                        GoRouter.of(context).push('/mychat');
+                        // showDialog(
+                        //     context: context,
+                        //     builder: (BuildContext context) {
+                        //       return AlertDialog(
+                        //         backgroundColor: Colors.white,
+                        //         title: Center(
+                        //           child: Text('Contact Support'),
+                        //         ),
+                        //         content: Container(
+                        //           height: 30.sp,
+                        //           child: Column(
+                        //             children: [
+                        //               SelectableText(
+                        //                   'Please email us at app.support@cloudyml.com'),
+                        //               SelectableText(' or call on +91 85879 11971.'),
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       );
+                        //     });
+                      },
+                      child: Container(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.support_agent,
+                            size: 19.sp,
+                          ),
+                          SizedBox(
+                            width: 7.sp,
+                          ),
+                          Text(
+                            'Chat With TA',
+                            style: TextStyle(fontSize: 12.sp),
+                          ),
+                        ],
+                      )),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(17.sp)),
+                      isExtended: true,
                     ),
                   ),
-                ),
-                Positioned(
-                  right: 16.sp,
-                  top: 8.sp,
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        showToolTip = false;
-                      });
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(5.sp)
-                      ),
-                      height: 12.5.sp,
-                      width: 12.5.sp,
-                      child: Icon(Icons.close, size: 10.sp, color: Colors.white,),
-                    ),
-                  ),
-                ),
-              ],
-            ) : Container(),
-            Container(
-              width: 42.sp,
-              child: FloatingActionButton(
-                backgroundColor: Colors.purple,
-                onPressed: () {
-                  GoRouter.of(context).push('/mychat');
-                  // showDialog(
-                  //     context: context,
-                  //     builder: (BuildContext context) {
-                  //       return AlertDialog(
-                  //         backgroundColor: Colors.white,
-                  //         title: Center(
-                  //           child: Text('Contact Support'),
-                  //         ),
-                  //         content: Container(
-                  //           height: 30.sp,
-                  //           child: Column(
-                  //             children: [
-                  //               SelectableText(
-                  //                   'Please email us at app.support@cloudyml.com'),
-                  //               SelectableText(' or call on +91 85879 11971.'),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //       );
-                  //     });
-                },
-                child: Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.support_agent,size: 19.sp,),
-                        SizedBox(width: 7.sp,),
-                        Text(
-                          'Chat With TA',
-                          style: TextStyle(fontSize: 12.sp),
-                        ),
-                      ],
-                    )),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(17.sp)),
-                isExtended: true,
+                ],
               ),
             ),
-          ],
-        ),
-      ),
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
         if (constraints.maxWidth >= 650) {
@@ -1519,8 +1602,6 @@ userData() async {
 
                                                   ComboCourse.comboId.value =
                                                       course[index].courseId;
-                                                       mainCourseId = course[index].courseId;
-                                            print('MAINCC ::: $mainCourseId');
                                                   final id = index.toString();
                                                   final courseName =
                                                       course[index].courseName;
@@ -1871,8 +1952,6 @@ userData() async {
 
                                                                                 final id = index.toString();
                                                                                 final courseName = course[index].courseName;
-                                                                                 mainCourseId = course[index].courseId;
-                                            print('MAINCC ::: $mainCourseId');
 
                                                                                 GoRouter.of(context).pushNamed('NewComboCourseScreen', queryParams: {
                                                                                   'courseId': course[index].courseId,
@@ -2708,7 +2787,7 @@ userData() async {
                         child: ListView.builder(
                             shrinkWrap: true,
                             scrollDirection: Axis.horizontal,
-                            itemCount:featuredCourse.length,
+                            itemCount: featuredCourse.length,
                             itemBuilder: (BuildContext context, index) {
                               if (featuredCourse[index].courseName == "null") {
                                 return Container();
@@ -2750,7 +2829,7 @@ userData() async {
                                             'cID': cID,
                                             'courseName': courseName,
                                             'id': id,
-                                            'coursePrice': featuredCourse[index].international != null && featuredCourse[index].international == true ?  ((double.parse(courseP) / 82)+5).toString() : courseP
+                                            'coursePrice': courseP
                                           });
 
                                       // Navigator.push(
@@ -2986,7 +3065,7 @@ userData() async {
                                                                       courseName,
                                                                   'id': id,
                                                                   'coursePrice':
-                                                                  featuredCourse[index].international != null && featuredCourse[index].international == true ?  ((double.parse(courseP) / 82)+5).toString() : courseP
+                                                                      courseP
                                                                 });
 
                                                             // Navigator.push(
@@ -3650,8 +3729,6 @@ userData() async {
                                                 ComboCourse.comboId.value =
                                                     course[index].courseId;
                                                 final id = index.toString();
-                                                 mainCourseId = course[index].courseId;
-                                            print('MAINCC ::: $mainCourseId');
                                                 final courseName =
                                                     course[index].courseName;
 
@@ -4971,7 +5048,7 @@ userData() async {
                                                     'cID': cID,
                                                     'courseName': courseName,
                                                     'id': id,
-                                                    'coursePrice': featuredCourse[index].international != null && featuredCourse[index].international == true ?  ((double.parse(courseP) / 82)+5).toString() : courseP
+                                                    'coursePrice': courseP
                                                   });
 
                                               // GoRouter.of(context).pushNamed(
@@ -5236,7 +5313,7 @@ userData() async {
                                                                           courseName,
                                                                       'id': id,
                                                                       'coursePrice':
-                                                                      featuredCourse[index].international != null && featuredCourse[index].international == true ?  ((double.parse(courseP) / 82)+5).toString() : courseP
+                                                                          courseP
                                                                     });
 
                                                                 // Navigator.push(

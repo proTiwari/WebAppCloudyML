@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';

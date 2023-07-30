@@ -12,16 +12,14 @@ class ComboCourseController extends GetxController {
 
   @override
   void onInit() {
- getCourseIds().whenComplete(() {
-  print('CCCC: : ${courses}');
-    checkCourseExist();
-    getCourses();
+    getCourseIds().whenComplete(() {
+      print('CCCC: : ${courses}');
+      checkCourseExist();
+      getCourses();
 
-    getPercentageOfCourse();
+      getPercentageOfCourse();
+    });
 
- });
-
-  
     super.onInit();
   }
 
@@ -34,24 +32,17 @@ class ComboCourseController extends GetxController {
 
   var paidCourse = [].obs;
 
-
 //var isLoading = true.obs;
 
- Future getCourseIds()async{
-  
-  await FirebaseFirestore
-            .instance
-            .collection("courses")
-            .where('id', isEqualTo: courseId)
-            .get().then((value){
- courses.value = value.docs.first.get('courses');
-            });
-
-           
-      
+  Future getCourseIds() async {
+    await FirebaseFirestore.instance
+        .collection("courses")
+        .where('id', isEqualTo: courseId)
+        .get()
+        .then((value) {
+      courses.value = value.docs.first.get('courses');
+    });
   }
-
-
 
   getCourses() async {
     await {
@@ -61,23 +52,14 @@ class ComboCourseController extends GetxController {
             .collection("courses")
             .where('id', isEqualTo: element)
             .get();
-        data.then((value) async{
-
-           
-
-                        courseList.add(value.docs.first.data());
+        data.then((value) async {
+          courseList.add(value.docs.first.data());
           courseList.sort((a, b) =>
               courses.indexOf(a["id"]).compareTo(courses.indexOf(b["id"])));
-
-
-
-
-    
-             
         });
       })
     };
-   // isLoading.value = false;
+    // isLoading.value = false;
   }
 
 
@@ -110,13 +92,12 @@ class ComboCourseController extends GetxController {
     });
   }
 
-
   getPercentageOfCourse() async {
-    try{
-       var data = await FirebaseFirestore.instance
-        .collection("courseprogress")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
+    try {
+      var data = await FirebaseFirestore.instance
+          .collection("courseprogress")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
 
       // tmp.clear();
       // for (var i = 0; i < data.data()!.length; i++) {
@@ -132,17 +113,11 @@ class ComboCourseController extends GetxController {
       //   }
       // }
 
-
-
-
- courseData.value = data.data() as Map;
+      courseData.value = data.data() as Map;
 // isLoading.value = false;
-    }catch(e){
-     // isLoading.value = false;
+    } catch (e) {
+      // isLoading.value = false;
       print('the progress exception is$e');
     }
-   
-
   }
-
 }

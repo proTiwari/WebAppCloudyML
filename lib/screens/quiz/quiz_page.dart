@@ -279,7 +279,7 @@ class _QuizPageState extends State<QuizPage> {
           .collection("Users")
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .update({
-        "quiztrack": FieldValue.arrayUnion([quizTrackModel!.toJson()])
+        "quiztrack": FieldValue.arrayUnion([quizTrackModel.toJson()])
       });
     } catch (e) {
       print("errorid: efwif23r2r3ref: ${e}");

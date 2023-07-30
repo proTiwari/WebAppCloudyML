@@ -1379,7 +1379,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
             ),
           );
         } else {
-          // moble screen
+          // mobile screen
           return SingleChildScrollView(
             child: Column(
               children: [
@@ -1469,46 +1469,6 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     ),
                                   ),
                                 ),
-                                // Container(
-                                //   width: screenWidth/3,
-                                //   padding: EdgeInsets.only(left: 5.0),
-                                //   decoration: BoxDecoration(
-                                //     color: Colors.deepPurple.shade100,
-                                //   ),
-                                //   child: Row(
-                                //     mainAxisAlignment: MainAxisAlignment.start,
-                                //     children: [
-                                //       Padding(
-                                //         padding: const EdgeInsets.only(right: 5.0),
-                                //         child: Container(
-                                //           height: 20,
-                                //           width: 25,
-                                //           decoration: BoxDecoration(
-                                //             borderRadius: BorderRadius.circular(3.0),
-                                //             color: HexColor('440F87'),
-                                //           ),
-                                //           child: Center(
-                                //             child: Text(courseMap['reviews'] != null ? courseMap['reviews'] : '5.0',
-                                //               style: TextStyle(fontSize: 12, color: Colors.white,
-                                //                   fontWeight: FontWeight.normal),),
-                                //           ),
-                                //         ),
-                                //       ),
-                                //       Padding(
-                                //         padding:
-                                //         const EdgeInsets.only(right: 5.0),
-                                //         child: StarRating(
-                                //           length: 5,
-                                //           rating: courseMap['reviews'] != null ? double.parse(courseMap['reviews']) : 5.0,
-                                //           color: HexColor('440F87'),
-                                //           starSize: 25,
-                                //           mainAxisAlignment: MainAxisAlignment.start,
-                                //         ),
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
-                                // SizedBox(height: 20,),
                                 Container(
                                   width: screenWidth / 2.5,
                                   padding: EdgeInsets.only(left: 5, right: 5),
