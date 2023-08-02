@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
+import '../../global_variable.dart';
+
 class ComboCourseController extends GetxController {
   final String? courseId;
   ComboCourseController({required this.courseId});
@@ -60,28 +62,32 @@ class ComboCourseController extends GetxController {
     // isLoading.value = false;
   }
 
-  checkCourseExist() async {
-    FirebaseFirestore.instance
+
+
+
+ checkCourseExist() async {
+    await FirebaseFirestore.instance
         .collection("Users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
-        .then((value) {
+        .then((value) async {
       List temPaid = value.get('paidCourseNames');
-      temPaid.forEach((element) {
-        FirebaseFirestore.instance
-            .collection("courses")
-            .where('id', isEqualTo: element)
-            .get()
-            .then((value) {
-          if (value.docs[0].data()['multiCombo'] != null) {
+      print(' MULTII :: $mainCourseId');
+      await FirebaseFirestore.instance
+          .collection("courses")
+          .where('id', isEqualTo: mainCourseId)
+          .get()
+          .then((value) {
+        if (value.docs[0].data()['multiCombo'] != null) {
+          if (value.docs[0].data()['multiCombo']) {
             paidCourse.value = value.docs[0].data()['courses'];
 
-            print(' Paid :: ${paidCourse}');
-          } else {
-            paidCourse.value = temPaid;
-            print(' Paid :: ${paidCourse}');
+            print(' Paid  :: ${value.docs[0].data()['courses']}');
           }
-        });
+        } else {
+          paidCourse.value = temPaid;
+          print(' Paid :: ${courseId}');
+        }
       });
     });
   }

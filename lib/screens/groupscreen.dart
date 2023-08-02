@@ -138,7 +138,7 @@ class _GroupPageState extends State<GroupPage> {
     role = data!["role"];
     if (role != "student") {
       //  _filteredStream = _collectionStream;
-      name = data!["name"].split(" ")[0];
+      name = data["name"].split(" ")[0];
       ;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       List<String>? myList = prefs.getStringList('myList');
@@ -195,7 +195,7 @@ class _GroupPageState extends State<GroupPage> {
 
     if (role == "student") {
       //   _filteredStream = _collectionStream1;
-      name = data!["name"];
+      name = data["name"];
       SharedPreferences prefs = await SharedPreferences.getInstance();
       print(FirebaseAuth.instance.currentUser!.uid);
       List<String>? myList = prefs.getStringList('myList');

@@ -207,7 +207,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                         child: Image.asset('assets/user.jpg'),
                       ),
                       errorWidget: (context, url, error) => Icon(Icons.error),
-                      imageUrl: userData!['image'] == '' ? 'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Fuser.jpg?alt=media&token=f04ea1b0-0a07-4c7a-8e69-f0fbaebfa3fe' : userData!['image'],
+                      imageUrl: userData['image'] == '' ? 'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2Fuser.jpg?alt=media&token=f04ea1b0-0a07-4c7a-8e69-f0fbaebfa3fe' : userData['image'],
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -279,7 +279,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                     child: Padding(
                                       padding: EdgeInsets.only(left: 20.sp),
                                       child: Text(
-                                        'Hello!! ${userData!['name'] ?? 'Guest'}',
+                                        'Hello!! ${userData['name'] ?? 'Guest'}',
                                         style: TextStyle(
                                           fontSize: 20.sp,
                                           color: Colors.white,
@@ -302,7 +302,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                         MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            '${userData!['email'] ?? 'Loading...'}',
+                                            '${userData['email'] ?? 'Loading...'}',
                                             style: TextStyle(
                                               fontSize: 16.sp,
                                               fontWeight: FontWeight.bold,
@@ -310,7 +310,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                             ),
                                           ),
                                           Text(
-                                            '${userData!['mobilenumber'] ?? 'Loading...'}',
+                                            '${userData['mobilenumber'] ?? 'Loading...'}',
                                             style: TextStyle(
                                               fontSize: 16.sp,
                                               fontWeight: FontWeight.bold,

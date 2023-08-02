@@ -1444,6 +1444,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                       ['outStandingAmtPaid'])) {
                                                 if (course[index].multiCombo ==
                                                     true) {
+                                                      mainCourseId = course[index]
+                                                          .courseId;
                                                   GoRouter.of(context).pushNamed(
                                                       'MultiComboCourseScreen',
                                                       queryParams: {
@@ -1518,6 +1520,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                               } else {
                                                 if (course[index].multiCombo ==
                                                     true) {
+                                                      mainCourseId = course[index]
+                                                          .courseId;
                                                   GoRouter.of(context).pushNamed(
                                                       'MultiComboCourseScreen',
                                                       queryParams: {
@@ -1843,6 +1847,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                             if (navigateToCatalogueScreen(course[index].courseId) &&
                                                                                 !(userMap['payInPartsDetails'][course[index].courseId]['outStandingAmtPaid'])) {
                                                                               if (course[index].multiCombo == true) {
+                                                                                mainCourseId = course[index]
+                                                          .courseId;
                                                                                 GoRouter.of(context).pushNamed('MultiComboCourseScreen', queryParams: {
                                                                                   'courseName': course[index].courseName.toString(),
                                                                                   'id': course[index].courseId,
@@ -1897,6 +1903,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                               }
                                                                             } else {
                                                                               if (course[index].multiCombo == true) {
+                                                                                mainCourseId = course[index]
+                                                          .courseId;
                                                                                 GoRouter.of(context).pushNamed('MultiComboCourseScreen', queryParams: {
                                                                                   'courseName': course[index].courseName.toString(),
                                                                                   'id': course[index].courseId,
@@ -3591,6 +3599,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                     ['outStandingAmtPaid'])) {
                                               if (course[index].multiCombo ==
                                                   true) {
+                                                    mainCourseId = course[index]
+                                                          .courseId;
                                                 GoRouter.of(context).pushNamed(
                                                     'MultiComboCourseScreen',
                                                     queryParams: {
@@ -3642,6 +3652,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                             } else {
                                               if (course[index].multiCombo ==
                                                   true) {
+                                                    mainCourseId = course[index]
+                                                          .courseId;
                                                 GoRouter.of(context).pushNamed(
                                                     'MultiComboCourseScreen',
                                                     queryParams: {
@@ -4031,6 +4043,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                       if (course[index]
                                                                               .multiCombo ==
                                                                           true) {
+                                                                            mainCourseId = course[index]
+                                                          .courseId;
                                                                         GoRouter.of(context).pushNamed(
                                                                             'MultiComboCourseScreen',
                                                                             queryParams: {
@@ -4097,6 +4111,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                       if (course[index]
                                                                               .multiCombo ==
                                                                           true) {
+                                                                            mainCourseId = course[index]
+                                                          .courseId;
                                                                         GoRouter.of(context).pushNamed(
                                                                             'MultiComboCourseScreen',
                                                                             queryParams: {
