@@ -660,33 +660,41 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        if (uploadedFile == null) {
-                                          Fluttertoast.showToast(
-                                            msg: 'Please upload a file',
-                                            fontSize: 35,
-                                          );
-                                        } else {
-                                          await submissionTask();
-                                          setState(() {
-                                            // noteText.clear();
-                                            uploadedFile = null;
-                                          });
-                                        }
-                                      },
-                                      child: Text(
-                                        count == 1 ? "Resubmit" : "Submit",
-                                        style: TextStyle(),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: uploadedFile == null
-                                            ? count == 1
-                                                ? Colors.grey
-                                                : Colors.green
-                                            : Colors.deepPurpleAccent,
-                                      ),
-                                    )
+                                    widget.assignmentTrackBoolMap[
+                                                    widget.assignmentName] ==
+                                                true ||
+                                            count == 1
+                                        ? Container()
+                                        : ElevatedButton(
+                                            onPressed: () async {
+                                              if (uploadedFile == null) {
+                                                Fluttertoast.showToast(
+                                                  msg: 'Please upload a file',
+                                                  fontSize: 35,
+                                                );
+                                              } else {
+                                                await submissionTask();
+                                                setState(() {
+                                                  // noteText.clear();
+                                                  uploadedFile = null;
+                                                });
+                                              }
+                                            },
+                                            child: Text(
+                                              count == 1
+                                                  ? "Resubmit"
+                                                  : "Submit",
+                                              style: TextStyle(),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  uploadedFile == null
+                                                      ? count == 1
+                                                          ? Colors.grey
+                                                          : Colors.green
+                                                      : Colors.deepPurpleAccent,
+                                            ),
+                                          )
                                   ],
                                 ),
                               ),

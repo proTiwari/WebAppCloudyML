@@ -115,7 +115,7 @@ dependencies:
   dropdown_button2: ^2.0.0
   custom_pop_up_menu: ^1.2.4
   bot_toast:
-  responsive_sizer:
+  responsive_sizer: 3.1.1
   pinput: ^2.2.31
   image_picker_web: ^3.0.0+1
   toast: ^0.3.0
