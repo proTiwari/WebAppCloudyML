@@ -396,53 +396,10 @@ class _LandingScreenState extends State<LandingScreen> {
       DateTime dateTime = timeStamp.toDate();
       print('converted dateTime $dateTime');
 
-      Future.delayed(
-        Duration(seconds: 2),
-        () {},
-      );
-
       if (DateTime.now().isAfter(dateTime)) {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text('Session Timed Out'),
-                content: Container(
-                  height: 35.sp,
-                  width: Adaptive.w(25),
-                  child: Column(
-                    children: [
-                      Text(
-                          'Your session has expired. Please login again to continue.'),
-                      Spacer(),
-                      SizedBox(
-                        height: 20.sp,
-                        width: Adaptive.w(15),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            GoRouter.of(context).pop();
-                          },
-                          child: Text('Login'),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.purpleAccent,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.sp))),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            });
-
-        Future.delayed(
-          Duration(seconds: 2),
-          () {
-            saveLoginOutState(context);
-            logOut(context);
-            GoRouter.of(context).pop();
-          },
-        );
+        print('I am afterlife');
+        saveLoginOutState(context);
+        logOut(context);
       }
     } catch (e) {
       print("kkkkkkk ${e}");
@@ -1444,8 +1401,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                       ['outStandingAmtPaid'])) {
                                                 if (course[index].multiCombo ==
                                                     true) {
-                                                      mainCourseId = course[index]
-                                                          .courseId;
+                                                  fromcombo = 'no';
+                                                  mainCourseId = course[index].courseId;
                                                   GoRouter.of(context).pushNamed(
                                                       'MultiComboCourseScreen',
                                                       queryParams: {
@@ -1520,8 +1477,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                               } else {
                                                 if (course[index].multiCombo ==
                                                     true) {
-                                                      mainCourseId = course[index]
-                                                          .courseId;
+                                                  fromcombo = 'no';
+                                                  mainCourseId = course[index].courseId;
                                                   GoRouter.of(context).pushNamed(
                                                       'MultiComboCourseScreen',
                                                       queryParams: {
@@ -1605,7 +1562,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                   final id = index.toString();
                                                   final courseName =
                                                       course[index].courseName;
-
+                                             mainCourseId = course[index].courseId;
                                                   GoRouter.of(context).pushNamed(
                                                       'NewComboCourseScreen',
                                                       queryParams: {
@@ -1847,8 +1804,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                             if (navigateToCatalogueScreen(course[index].courseId) &&
                                                                                 !(userMap['payInPartsDetails'][course[index].courseId]['outStandingAmtPaid'])) {
                                                                               if (course[index].multiCombo == true) {
-                                                                                mainCourseId = course[index]
-                                                          .courseId;
+                                                                                fromcombo = 'no';
+                                                                                mainCourseId = course[index].courseId;
                                                                                 GoRouter.of(context).pushNamed('MultiComboCourseScreen', queryParams: {
                                                                                   'courseName': course[index].courseName.toString(),
                                                                                   'id': course[index].courseId,
@@ -1902,9 +1859,9 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                                 // );
                                                                               }
                                                                             } else {
+                                                                              fromcombo = 'no';
+                                                                              mainCourseId = course[index].courseId;
                                                                               if (course[index].multiCombo == true) {
-                                                                                mainCourseId = course[index]
-                                                          .courseId;
                                                                                 GoRouter.of(context).pushNamed('MultiComboCourseScreen', queryParams: {
                                                                                   'courseName': course[index].courseName.toString(),
                                                                                   'id': course[index].courseId,
@@ -1952,7 +1909,7 @@ class _LandingScreenState extends State<LandingScreen> {
 
                                                                                 final id = index.toString();
                                                                                 final courseName = course[index].courseName;
-
+                                                                                 mainCourseId = course[index].courseId;
                                                                                 GoRouter.of(context).pushNamed('NewComboCourseScreen', queryParams: {
                                                                                   'courseId': course[index].courseId,
                                                                                   'courseName': courseName
@@ -2829,7 +2786,17 @@ class _LandingScreenState extends State<LandingScreen> {
                                             'cID': cID,
                                             'courseName': courseName,
                                             'id': id,
-                                            'coursePrice': courseP
+                                            'coursePrice': featuredCourse[index]
+                                                            .international !=
+                                                        null &&
+                                                    featuredCourse[index]
+                                                            .international ==
+                                                        true
+                                                ? ((double.parse(courseP) /
+                                                            82) +
+                                                        5)
+                                                    .toString()
+                                                : courseP
                                           });
 
                                       // Navigator.push(
@@ -3064,8 +3031,14 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                   'courseName':
                                                                       courseName,
                                                                   'id': id,
-                                                                  'coursePrice':
-                                                                      courseP
+                                                                  'coursePrice': featuredCourse[index].international !=
+                                                                              null &&
+                                                                          featuredCourse[index].international ==
+                                                                              true
+                                                                      ? ((double.parse(courseP) / 82) +
+                                                                              5)
+                                                                          .toString()
+                                                                      : courseP
                                                                 });
 
                                                             // Navigator.push(
@@ -3599,8 +3572,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                     ['outStandingAmtPaid'])) {
                                               if (course[index].multiCombo ==
                                                   true) {
-                                                    mainCourseId = course[index]
-                                                          .courseId;
+                                                fromcombo = 'no';
+                                                mainCourseId = course[index].courseId;
                                                 GoRouter.of(context).pushNamed(
                                                     'MultiComboCourseScreen',
                                                     queryParams: {
@@ -3652,8 +3625,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                             } else {
                                               if (course[index].multiCombo ==
                                                   true) {
-                                                    mainCourseId = course[index]
-                                                          .courseId;
+                                                fromcombo = 'no';
+                                                mainCourseId = course[index].courseId;
                                                 GoRouter.of(context).pushNamed(
                                                     'MultiComboCourseScreen',
                                                     queryParams: {
@@ -3731,7 +3704,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                 final id = index.toString();
                                                 final courseName =
                                                     course[index].courseName;
-
+                                                  mainCourseId = course[index].courseId;
                                                 GoRouter.of(context).pushNamed(
                                                     'NewComboCourseScreen',
                                                     queryParams: {
@@ -4043,8 +4016,9 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                       if (course[index]
                                                                               .multiCombo ==
                                                                           true) {
-                                                                            mainCourseId = course[index]
-                                                          .courseId;
+                                                                        fromcombo =
+                                                                            'no';
+                                                                            mainCourseId = course[index].courseId;
                                                                         GoRouter.of(context).pushNamed(
                                                                             'MultiComboCourseScreen',
                                                                             queryParams: {
@@ -4111,8 +4085,9 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                       if (course[index]
                                                                               .multiCombo ==
                                                                           true) {
-                                                                            mainCourseId = course[index]
-                                                          .courseId;
+                                                                        fromcombo =
+                                                                            'no';
+                                                                            mainCourseId = course[index].courseId;
                                                                         GoRouter.of(context).pushNamed(
                                                                             'MultiComboCourseScreen',
                                                                             queryParams: {
@@ -5048,7 +5023,20 @@ class _LandingScreenState extends State<LandingScreen> {
                                                     'cID': cID,
                                                     'courseName': courseName,
                                                     'id': id,
-                                                    'coursePrice': courseP
+                                                    'coursePrice': featuredCourse[
+                                                                        index]
+                                                                    .international !=
+                                                                null &&
+                                                            featuredCourse[
+                                                                        index]
+                                                                    .international ==
+                                                                true
+                                                        ? ((double.parse(
+                                                                        courseP) /
+                                                                    82) +
+                                                                5)
+                                                            .toString()
+                                                        : courseP
                                                   });
 
                                               // GoRouter.of(context).pushNamed(
@@ -5312,8 +5300,12 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                       'courseName':
                                                                           courseName,
                                                                       'id': id,
-                                                                      'coursePrice':
-                                                                          courseP
+                                                                      'coursePrice': featuredCourse[index].international != null &&
+                                                                              featuredCourse[index].international ==
+                                                                                  true
+                                                                          ? ((double.parse(courseP) / 82) + 5)
+                                                                              .toString()
+                                                                          : courseP
                                                                     });
 
                                                                 // Navigator.push(

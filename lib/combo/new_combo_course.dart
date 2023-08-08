@@ -94,10 +94,7 @@ class NewComboCourse extends StatelessWidget {
                 GetX<ComboCourseController>(
                     init: ComboCourseController(courseId: courseIdd),
                     builder: (controller) {
-                      return 
-                    
-
-                      !controller.paidCourse.contains(courseIdd) ?
+                      return  !controller.paidCourse.contains(courseIdd) ?
 
                      Center(
                               child: SizedBox(
@@ -114,19 +111,8 @@ class NewComboCourse extends StatelessWidget {
                                     color: Colors.deepPurpleAccent,
                                     strokeWidth: 3),
                               ),
-                            ) :
-                        
-
-                  
-
-                          
-                          
-                          Obx(
-                              () => 
-
-                           
-                             
-                            SizedBox(
+                            ) : Obx(
+                              () => SizedBox(
                                 child: ListView.builder(
                                     itemCount: controller.courseList.length,
                                     shrinkWrap: true,
@@ -470,11 +456,18 @@ class NewComboCourse extends StatelessWidget {
                                                                               minWidth: width > 700 ? 100 : 60,
                                                                               onPressed: () {
                                                                                 courseId = controller.courseList[index]['docid'];
-
-                                                                                GoRouter.of(context).pushNamed('comboVideoScreen', queryParams: {
-                                                                                  'courseName': controller.courseList[index]['curriculum1'].keys.toList().first.toString(),
-                                                                                  'cID': controller.courseList[index]['docid'],
-                                                                                });
+                                                                                print('iejfoiwjeof');
+                                                                                if (fromcombo == 'yes') {
+                                                                                  GoRouter.of(context).pushNamed('quizList', queryParams: {
+                                                                                    'courseName': controller.courseList[index]['curriculum1'].keys.toList().first.toString(),
+                                                                                    'cID': controller.courseList[index]['docid'],
+                                                                                  });
+                                                                                } else {
+                                                                                  GoRouter.of(context).pushNamed('comboVideoScreen', queryParams: {
+                                                                                    'courseName': controller.courseList[index]['curriculum1'].keys.toList().first.toString(),
+                                                                                    'cID': controller.courseList[index]['docid'],
+                                                                                  });
+                                                                                }
                                                                               },
                                                                               child: Row(
                                                                                 children: [
@@ -711,11 +704,18 @@ class NewComboCourse extends StatelessWidget {
                                                                               minWidth: 100,
                                                                               onPressed: () {
                                                                                 courseId = controller.courseList[index]['docid'];
-
-                                                                                GoRouter.of(context).pushNamed('comboVideoScreen', queryParams: {
-                                                                                  'courseName': controller.courseList[index]['curriculum1'].keys.toList().first.toString(),
-                                                                                  'cID': controller.courseList[index]['docid'],
-                                                                                });
+                                                                                print("eijfowjowjeo");
+                                                                                if (fromcombo == 'yes') {
+                                                                                  GoRouter.of(context).pushNamed('quizList', queryParams: {
+                                                                                    'courseName': controller.courseList[index]['curriculum1'].keys.toList().first.toString(),
+                                                                                    'cID': controller.courseList[index]['docid'],
+                                                                                  });
+                                                                                } else {
+                                                                                  GoRouter.of(context).pushNamed('comboVideoScreen', queryParams: {
+                                                                                    'courseName': controller.courseList[index]['curriculum1'].keys.toList().first.toString(),
+                                                                                    'cID': controller.courseList[index]['docid'],
+                                                                                  });
+                                                                                }
                                                                               },
                                                                               child: Row(
                                                                                 children: [
@@ -785,11 +785,15 @@ class NewComboCourse extends StatelessWidget {
                                                                         height:
                                                                             25,
                                                                       ),
-                                                                      GetX<ComboCourseController>(
-                                                                        init: ComboCourseController(courseId: courseId),
-                                                                        builder: (controller) =>  CircularPercentIndicator(
-                                                                          radius: width <
-                                                                                  700
+                                                                      GetX<
+                                                                          ComboCourseController>(
+                                                                        init: ComboCourseController(
+                                                                            courseId:
+                                                                                courseId),
+                                                                        builder:
+                                                                            (controller) =>
+                                                                                CircularPercentIndicator(
+                                                                          radius: width < 700
                                                                               ? width < 500
                                                                                   ? 55
                                                                                   : 65
@@ -798,11 +802,9 @@ class NewComboCourse extends StatelessWidget {
                                                                               4.0,
                                                                           animation:
                                                                               true,
-                                                                          percent: controller.courseData[controller.courses[index] + "percentage"] ==
-                                                                                  null
+                                                                          percent: controller.courseData[controller.courses[index] + "percentage"] == null
                                                                               ? 0
-                                                                              : controller.courseData[controller.courses[index] + "percentage"] /
-                                                                                  100,
+                                                                              : controller.courseData[controller.courses[index] + "percentage"] / 100,
                                                                           center:
                                                                               Text(
                                                                             controller.courseData[controller.courses[index] + "percentage"] == null
@@ -827,7 +829,8 @@ class NewComboCourse extends StatelessWidget {
                                                                             ? 3
                                                                             : 5,
                                                                       ),
-                                                                      Text("Progress",
+                                                                      Text(
+                                                                        "Progress",
                                                                         // controller.courseData[controller.courses[index] + "percentage"] ==
                                                                         //         null
                                                                         //     ? "0%"
@@ -860,29 +863,31 @@ class NewComboCourse extends StatelessWidget {
                                                           MainAxisAlignment
                                                               .center,
                                                       children: [
-                                                        GetX<ComboCourseController>(
-                                                          init: ComboCourseController(courseId: courseId),
-                                                          builder: (controller) => CircularPercentIndicator(
+                                                        GetX<
+                                                            ComboCourseController>(
+                                                          init:
+                                                              ComboCourseController(
+                                                                  courseId:
+                                                                      courseId),
+                                                          builder: (controller) =>
+                                                              CircularPercentIndicator(
                                                             radius: 110.0,
                                                             lineWidth: 10.0,
                                                             animation: true,
                                                             percent: controller
-                                                                        .courseData[controller
-                                                                                .courses[
+                                                                        .courseData[controller.courses[
                                                                             index] +
                                                                         "percentage"] ==
                                                                     null
                                                                 ? 0
                                                                 : controller
                                                                         .courseData[controller
-                                                                                .courses[
-                                                                            index] +
+                                                                            .courses[index] +
                                                                         "percentage"] /
                                                                     100,
                                                             center: Text(
-                                                                controller.courseData[
-                                                                            controller.courses[index] +
-                                                                                "percentage"] ==
+                                                                controller.courseData[controller.courses[index] +
+                                                                            "percentage"] ==
                                                                         null
                                                                     ? "0%"
                                                                     : '${controller.courseData[controller.courses[index] + "percentage"]}%',

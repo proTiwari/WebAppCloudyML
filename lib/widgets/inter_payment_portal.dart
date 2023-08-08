@@ -178,12 +178,19 @@ class _RazorPayInternationalBtnState extends State<RazorPayInternationalBtn> {
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+
+    await loadCourses();
+    print("from wjrjwoeo");
+
+    await redeemmoneyreward();
+    // pushToHome();
+    Toast.show("Payment successful.");
+    // addCoursetoUser(widget.courseId);
     Toast.show("Payment successful.");
     await redeemmoneyreward();
 
     addCoursetoUser(widget.courseId);
-    loadCourses();
-    pushToHome();
+    // pushToHome();
 
     updateCouponDetailsToUser(
       couponCodeText: widget.couponCodeText,
@@ -378,6 +385,7 @@ class _RazorPayInternationalBtnState extends State<RazorPayInternationalBtn> {
     });
 
     print("Mail Sent");
+    pushToHome();
   }
 
 //    void loadCourses() async {

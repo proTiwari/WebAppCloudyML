@@ -20,6 +20,7 @@ import 'package:cloudyml_app2/router/error_page.dart';
 import 'package:cloudyml_app2/screens/chat_screen.dart';
 import 'package:cloudyml_app2/screens/chatpage.dart';
 import 'package:cloudyml_app2/screens/groups_list.dart';
+import 'package:cloudyml_app2/screens/quiz/quizList.dart';
 import 'package:cloudyml_app2/screens/splash.dart';
 import 'package:cloudyml_app2/store.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +41,7 @@ import '../screens/quiz/admin_quiz.dart';
 import '../screens/quiz/quiz_page.dart';
 import '../screens/quiz/quiz_panel.dart';
 import '../screens/quiz/quizentry.dart';
+import '../screens/quiz/quizesofenrolledcourses.dart';
 import '../screens/review_screen/review_screen.dart';
 import 'login_state_check.dart';
 
@@ -217,6 +219,14 @@ class MyRouter {
           },
         ), //CongratulationsWidget
         GoRoute(
+          name: 'Quizes',
+          path: '/quizes',
+          pageBuilder: (context, state) {
+            return MaterialPage(
+                key: state.pageKey, child: QuizesOfEnrolledCourses());
+          },
+        ),
+        GoRoute(
           name: 'QuizPage',
           path: '/quizpage',
           pageBuilder: (context, state) {
@@ -366,6 +376,22 @@ class MyRouter {
               final String cID = state.queryParams['cID']!;
               return MaterialPage(
                   child: VideoScreen(
+                isDemo: true,
+                cID: cID,
+                courseName: courseName,
+                sr: 1,
+              ));
+            }),
+        GoRoute(
+            name: 'quizlist',
+            path: '/quizlist',
+            pageBuilder: (context, state) {
+              // final bool isDemo = state.queryParams['isDemo']! as bool;
+              // final int sr = state.queryParams['sr']! as int;
+              final String courseName = state.queryParams['courseName']!;
+              final String cID = state.queryParams['cID']!;
+              return MaterialPage(
+                  child: QuizList(
                 isDemo: true,
                 cID: cID,
                 courseName: courseName,
