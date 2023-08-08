@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/combo/combo_course.dart';
 import 'package:cloudyml_app2/combo/combo_store.dart';
 import 'package:cloudyml_app2/fun.dart';
+import 'package:cloudyml_app2/global_variable.dart';
 import 'package:cloudyml_app2/globals.dart';
 import 'package:cloudyml_app2/models/course_details.dart';
 import 'package:cloudyml_app2/module/video_screen.dart';
@@ -280,12 +281,69 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 children: [
                   Container(
-                    // height: 45,
+                    height: 45,
                     color: HexColor("440F87"),
-                    padding: const EdgeInsets.only(top: 8.0, right: 5),
-                    child: customMenuBar(context),
+                    child: Row(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              Scaffold.of(context).openDrawer();
+                            },
+                            icon: Icon(
+                              Icons.menu,
+                              color: Colors.white,
+                              size: 30,
+                            )),
+                        SizedBox(
+                          width: horizontalScale * 15,
+                        ),
+                        Image.asset(
+                          "assets/logo2.png",
+                          width: 30,
+                          height: 30,
+                        ),
+                        Text(
+                          "CloudyML",
+                          style: textStyle,
+                        ),
+                        SizedBox(
+                          width: horizontalScale * 25,
+                        ),
+                        // SizedBox(
+                        //   height: 30,
+                        //   width: screenWidth / 3,
+                        //   child: TextField(
+                        //     style: TextStyle(
+                        //         color: HexColor("A7A7A7"), fontSize: 12),
+                        //     decoration: InputDecoration(
+                        //         contentPadding: EdgeInsets.all(5.0),
+                        //         hintText: "Search Courses",
+                        //         focusedBorder: OutlineInputBorder(
+                        //             borderSide: BorderSide(
+                        //                 color: Colors.white, width: 1)),
+                        //         disabledBorder: OutlineInputBorder(
+                        //             borderSide: BorderSide(
+                        //                 color: Colors.white, width: 1)),
+                        //         hintStyle: TextStyle(
+                        //             color: HexColor("A7A7A7"), fontSize: 12),
+                        //         border: OutlineInputBorder(
+                        //             borderSide: BorderSide(
+                        //                 color: Colors.white, width: 1)),
+                        //         enabledBorder: OutlineInputBorder(
+                        //             borderSide: BorderSide(
+                        //                 color: Colors.white, width: 1)),
+                        //         prefixIcon: IconButton(
+                        //             onPressed: () {},
+                        //             icon: Icon(
+                        //               Icons.search_outlined,
+                        //               size: 14,
+                        //               color: Colors.white,
+                        //             ))),
+                        //   ),
+                        // )
+                      ],
+                    ),
                   ),
-
                   ref.data()!["name"] == null
                       ? Container()
                       : Container(
@@ -340,6 +398,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     InkWell(
                                       onTap: (() async {
+                                        fromcombo='no';
+
                                         // setModuleId(snapshot.data!.docs[index].id);
                                         await getCourseName();
                                         if (navigateToCatalogueScreen(
@@ -349,6 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ['outStandingAmtPaid'])) {
                                           if (course[index].multiCombo ==
                                               true) {
+                                                mainCourseId = course[index].courseId;
                                             GoRouter.of(context).pushNamed(
                                                 'MultiComboCourseScreen',
                                                 queryParams: {
@@ -359,6 +420,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 });
                                           } else if (!course[index]
                                               .isItComboCourse) {
+                                                 mainCourseId = course[index].courseId;
                                             GoRouter.of(context).pushNamed(
                                                 'videoScreen',
                                                 queryParams: {
@@ -392,6 +454,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             // );
                                           } else {
                                             final id = index.toString();
+                                             mainCourseId = course[index].courseId;
                                             final courseName =
                                                 course[index].courseName;
                                             context.goNamed('comboStore',
@@ -419,6 +482,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         } else {
                                           if (course[index].multiCombo ==
                                               true) {
+                                                 mainCourseId = course[index].courseId;
                                             GoRouter.of(context).pushNamed(
                                                 'MultiComboCourseScreen',
                                                 queryParams: {
@@ -429,6 +493,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 });
                                           } else if (!course[index]
                                               .isItComboCourse) {
+                                                 mainCourseId = course[index].courseId;
                                             if (course[index].courseContent ==
                                                 'pdf') {
                                               Navigator.push(
@@ -484,7 +549,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ComboCourse.comboId.value =
                                                 course[index].courseId;
 
+
                                             final id = index.toString();
+                                             mainCourseId = course[index].courseId;
                                             final courseName =
                                                 course[index].courseName;
                                             GoRouter.of(context).pushNamed(
@@ -1202,6 +1269,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               if (courses.contains(course[index].courseId)) {
                                 return InkWell(
                                   onTap: (() {
+                                  fromcombo='no';
+
                                     // setModuleId(snapshot.data!.docs[index].id);
                                     getCourseName();
                                     if (navigateToCatalogueScreen(
@@ -1312,6 +1381,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         final id = index.toString();
                                         final courseName =
                                             course[index].courseName;
+                                       mainCourseId = course[index].courseId;
 
                                         GoRouter.of(context).pushNamed(
                                             'NewComboCourseScreen',

@@ -238,6 +238,8 @@ class _QuizPageState extends State<QuizPage> {
               DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
           quizAttemptGapForCourseQuiz:
               DateTime.now().add(Duration(days: coursequizwindowindays)),
+               quizTakenTime: countUsedTime(),
+            quizMark: correctint.toString()
         );
         returningString = "Congratulations!";
       }
@@ -264,6 +266,8 @@ class _QuizPageState extends State<QuizPage> {
               DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
           quizAttemptGapForCourseQuiz:
               DateTime.now().add(Duration(days: coursequizwindowindays)),
+               quizTakenTime: countUsedTime(),
+            quizMark: correctint.toString()
         );
         returningString =
             "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${modulerquizwindowinhours} hours";
@@ -279,7 +283,7 @@ class _QuizPageState extends State<QuizPage> {
           .collection("Users")
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .update({
-        "quiztrack": FieldValue.arrayUnion([quizTrackModel.toJson()])
+        "quiztrack": FieldValue.arrayUnion([quizTrackModel!.toJson()])
       });
     } catch (e) {
       print("errorid: efwif23r2r3ref: ${e}");

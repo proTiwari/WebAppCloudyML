@@ -84,6 +84,7 @@ class ComboCourseController extends GetxController {
 
             print(' Paid  :: ${value.docs[0].data()['courses']}');
           }
+         
         } else {
           paidCourse.value = temPaid;
           print(' Paid :: ${courseId}');

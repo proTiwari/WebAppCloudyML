@@ -422,38 +422,43 @@ class _ChatPageState extends State<ChatPage> {
 //   // Use appStorage as needed
 // }
   Future<String> _uploadRecording() async {
-    final storageRef =
-        FirebaseStorage.instance.ref().child('audio/${DateTime.now()}.mp3');
+    if (namecurrent != null) {
+      final storageRef =
+          FirebaseStorage.instance.ref().child('audio/${DateTime.now()}.mp3');
 //  final fb.UploadTaskSnapshot uploadTaskSnapshot = await storageRef.put(filePath).future;
-    try {
-      await storageRef.putData(await _recorder!.toBytes());
-      final downloadUrl = await storageRef.getDownloadURL();
-      print('File uploaded: $downloadUrl');
-      // final time = DateTime.now();
-      // Add message to Firestore
+      try {
+        await storageRef.putData(await _recorder!.toBytes());
+        final downloadUrl = await storageRef.getDownloadURL();
+        print('File uploaded: $downloadUrl');
+        // final time = DateTime.now();
+        // Add message to Firestore
 
-      DateTime time1 = await fetchTimeInIndia();
-      Duration tt = await _calculateDuration();
-      //  print(time);
-      print(time1.toString());
-      updatelast();
-      updatetime(time1, "audio note");
-      _firestore.collection("groups").doc(idcurr).collection("chats").add({
-        'message': '${DateTime.now()}.mp3',
-        'role': "mentor",
-        'sendBy': namecurrent,
-        'link': downloadUrl,
-        'time': time1,
-        'studentid': id,
-        'duration':
-            '${tt.inHours}:${tt.inMinutes.remainder(60)}:${tt.inSeconds.remainder(60)}',
-        'type': 'audio'
-      });
+        DateTime time1 = await fetchTimeInIndia();
+        Duration tt = await _calculateDuration();
+        //  print(time);
+        print(time1.toString());
+        updatelast();
+        updatetime(time1, "audio note");
+        _firestore.collection("groups").doc(idcurr).collection("chats").add({
+          'message': '${DateTime.now()}.mp3',
+          'role': "mentor",
+          'sendBy': namecurrent,
+          'link': downloadUrl,
+          'time': time1,
+          'studentid': id,
+          'duration':
+              '${tt.inHours}:${tt.inMinutes.remainder(60)}:${tt.inSeconds.remainder(60)}',
+          'type': 'audio'
+        });
 
-      return downloadUrl;
-    } catch (e) {
-      print('Error uploading file: $e');
-      throw 'Failed to upload recording';
+        return downloadUrl;
+      } catch (e) {
+        print('Error uploading file: $e');
+        throw 'Failed to upload recording';
+      }
+    }
+    else{
+      return "not valid";
     }
   }
 
@@ -705,17 +710,17 @@ class _ChatPageState extends State<ChatPage> {
                     height: 10.h,
                     child: Row(
                       children: [
-                        // Padding(
-                        //   padding:
-                        //       const EdgeInsets.only(top: 0, left: 1, right: 1),
-                        //   child: Container(
-                        //     child: Image.asset(
-                        //       'assets/page-1/images/vector.png',
-                        //       height: 5.h,
-                        //       width: 3.h,
-                        //     ),
-                        //   ),
-                        // ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(top: 0, left: 1, right: 1),
+                          child: Container(
+                            child: Image.asset(
+                              'assets/page-1/images/vector.png',
+                              height: 5.h,
+                              width: 3.h,
+                            ),
+                          ),
+                        ),
                         Padding(
                           padding: EdgeInsets.only(left: 2.w, right: 0.5.w),
                           child: Container(
@@ -1121,14 +1126,8 @@ class _ChatPageState extends State<ChatPage> {
                                       final messageSender = message['sendBy'];
                                       final messageType = message['type'];
                                       final messagetime = message['time'];
-//                                       Duration recording =
-//                                           data.containsKey('duration')
-//                                               ? Duration(
-//   hours: int.parse(message['duration'][0]),
-//   minutes: int.parse(message['duration'][1]),
-//   seconds: int.parse(message['duration'][2]),
-// )
-//                                               : Duration.zero;
+                                        final mid = message.id;
+                                      final gid = idcurr;
                                       final messageid =
                                           data.containsKey('studentid')
                                               ? message['studentid']
@@ -1141,6 +1140,8 @@ class _ChatPageState extends State<ChatPage> {
                                           : "";
 
                                       final messageBubble = MessageBubble(
+                                         mid: mid,
+                              gid: gid!,
                                         message: messageText,
                                         sender: messageSender,
                                         timestamp: messagetime,
@@ -1250,6 +1251,8 @@ class MessageBubble extends StatefulWidget {
   final String type;
   final Timestamp timestamp;
   final String link;
+    final String mid;
+  final String gid;
   //final Duration recording;
   final bool isURL;
 
@@ -1259,6 +1262,8 @@ class MessageBubble extends StatefulWidget {
       required this.isMe,
       required this.type,
       required this.link,
+      required this.mid,
+      required this.gid,
       //  required this.recording,
       required this.timestamp,
       required this.isURL});
@@ -1319,6 +1324,7 @@ class _MessageBubbleState extends State<MessageBubble> {
 
     // Set the download attribute to specify the filename
     anchorElement.download = '';
+     anchorElement.target = '_blank';
 
     // Simulate a click on the anchor element to trigger the download
     anchorElement.click();
@@ -1329,6 +1335,7 @@ class _MessageBubbleState extends State<MessageBubble> {
 
     // Set the download attribute to specify the filename
     anchorElement.download = '';
+     anchorElement.target = '_blank';
 
     // Simulate a click on the anchor element to trigger the download
     anchorElement.click();
@@ -1447,6 +1454,15 @@ class _MessageBubbleState extends State<MessageBubble> {
                                         copyText(widget.message);
                                       },
                                     ),
+                                     IconButton(
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: Colors.red[700],
+                                          ),
+                                          onPressed: () {
+                                           deletemessage(widget.mid);
+                                          },
+                                        ),
                                   ],
                                 ),
                               ],
@@ -1468,6 +1484,17 @@ class _MessageBubbleState extends State<MessageBubble> {
                                     copyText(widget.message);
                                   },
                                 ),
+                                   widget.isMe
+                                      ? IconButton(
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: Colors.red[700],
+                                          ),
+                                          onPressed: () {
+                                       deletemessage(widget.mid);
+                                          },
+                                        ):
+                                        SizedBox()
                               ],
                             )
                       : widget.type == 'image'
@@ -1489,19 +1516,43 @@ class _MessageBubbleState extends State<MessageBubble> {
                                   ),
                                 ),
                                 SizedBox(height: 8.0),
-                                TextButton(
-                                  child: Text('View in Gallery'),
-                                  onPressed: () {
-                                    downloadAndOpenFile(
-                                        widget.link, widget.message);
-                                  },
-                                ),
+                                Row(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 100),
+                                                child: TextButton(
+                                                  child:
+                                                      Text('View in Gallery'),
+                                                  onPressed: () {
+                                                    _downloadAndOpenVideo(
+                                                        widget.link);
+                                                  },
+                                                ),
+                                              ),
+                                              widget.isMe
+                                                  ? IconButton(
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red[700],
+                                                      ),
+                                                      onPressed: () {
+                                                        deletemessage(
+                                                            widget.mid);
+                                                      },
+                                                    )
+                                                  : SizedBox()
+                                            ],
+                                          ),
                               ],
                             )
                           : widget.type == 'audio'
                               ? Container(
                                   width: 300,
                                   child: AudioPlayerWidget(
+                                      isMe: widget.isMe,
+                                     mid: widget.mid,
+                                        gid: widget.gid,
                                     audioUrl: widget.link,
                                     //     recording: widget.recording
                                   ),
@@ -1524,6 +1575,18 @@ class _MessageBubbleState extends State<MessageBubble> {
                                                   widget.link);
                                             },
                                           ),
+                                             widget.isMe
+                                                  ? IconButton(
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red[700],
+                                                      ),
+                                                      onPressed: () {
+                                                        deletemessage(
+                                                            widget.mid);
+                                                      },
+                                                    )
+                                                  : SizedBox()
                                         ],
                                       ),
                                     )
@@ -1548,15 +1611,31 @@ class _MessageBubbleState extends State<MessageBubble> {
                                   : SizedBox(
                                       // height: 20,
                                       //  width: 50,
-                                      child: TextButton(
-                                        child: Text(
-                                          '${widget.message} - View file',
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        onPressed: () {
-                                          downloadAndOpenFile(
-                                              widget.link, widget.message);
-                                        },
+                                      child: Column(
+                                        children: [
+                                          TextButton(
+                                            child: Text(
+                                              '${widget.message} - View file',
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            onPressed: () {
+                                              downloadAndOpenFile(
+                                                  widget.link, widget.message);
+                                            },
+                                          ),
+                                           widget.isMe
+                                                  ? IconButton(
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red[700],
+                                                      ),
+                                                      onPressed: () {
+                                                        deletemessage(
+                                                            widget.mid);
+                                                      },
+                                                    )
+                                                  : SizedBox()
+                                        ],
                                       ),
                                     ),
                   SizedBox(height: 4),
@@ -1575,14 +1654,31 @@ class _MessageBubbleState extends State<MessageBubble> {
       ],
     );
   }
+   void deletemessage(String mid) {
+    FirebaseFirestore.instance
+        .collection("groups")
+        .doc(widget.gid)
+        .collection("chats")
+        .doc(mid)
+        .delete();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Message Deleted')),
+    );
+  }
+
 }
 
 class AudioPlayerWidget extends StatefulWidget {
   final String audioUrl;
+   final String mid;
+  final String gid;
+  final bool isMe;
   //final Duration recording;
   const AudioPlayerWidget({
     Key? key,
     required this.audioUrl,
+     required this.mid, required this.gid,required this.isMe
+    
     //required this.recording
   }) : super(key: key);
 
@@ -1696,6 +1792,18 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                   Text('/'),
                   SizedBox(width: 10),
                   Text(_formatDuration(_totalDuration)),
+                        widget.isMe
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                        color: Colors.red[700],
+                       // size: 10,
+                      ),
+                      onPressed: () {
+                        deletemessage(widget.mid);
+                      },
+                    )
+                  : SizedBox()
                 ],
               ),
             ],
@@ -1718,6 +1826,17 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
       ),
     );
   }
+   void deletemessage(String mid) {
+    FirebaseFirestore.instance
+        .collection("groups")
+        .doc(widget.gid)
+        .collection("chats")
+        .doc(mid)
+        .delete();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Message Deleted')),
+    );
+  }
 }
 
 class VideoPlayerWidget extends StatefulWidget {
@@ -1736,6 +1855,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   void initState() {
     _videoPlayerController = VideoPlayerController.network(widget.link);
     _chewieController = ChewieController(
+      showOptions: false,
       videoPlayerController: _videoPlayerController,
       autoInitialize: true,
       looping: false,

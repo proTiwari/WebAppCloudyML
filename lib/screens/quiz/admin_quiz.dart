@@ -46,6 +46,25 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
   List tempmodulelist = ["Module Name"];
   var tempmodulename = "Module Name";
   var tempcoursename = "Course Name";
+  bool isSwitched = false;
+
+  var textValue = 'Scholarship Quiz    ';
+
+  void toggleSwitch(bool value) {
+    if (isSwitched == false) {
+      setState(() {
+        isSwitched = true;
+        textValue = 'Scholarship Quiz    ';
+      });
+      print('Switch Button is ON');
+    } else {
+      setState(() {
+        isSwitched = false;
+        textValue = 'Scholarship Quiz    ';
+      });
+      print('Scholarship Quiz');
+    }
+  }
 
   @override
   void initState() {
@@ -151,6 +170,75 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    10, 30, 10, 10),
+                                child: TextFormField(
+                                  controller: quiznameController,
+                                  obscureText: false,
+                                  decoration: InputDecoration(
+                                    labelStyle: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Lexend Deca',
+                                          color: Color(0xFF57636C),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                    hintText: 'Quiz Name',
+                                    hintStyle: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Lexend Deca',
+                                          color: Color(0xFF57636C),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Color(0xFFDBE2E7),
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Color(0xFFDBE2E7),
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Color(0x00000000),
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Color(0x00000000),
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    contentPadding:
+                                        EdgeInsetsDirectional.fromSTEB(
+                                            24, 24, 20, 24),
+                                  ),
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyText1
+                                      .override(
+                                        fontFamily: 'Lexend Deca',
+                                        color: Color(0xFF1D2429),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                  maxLines: null,
+                                ),
+                              ),
                               Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -2149,6 +2237,109 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   children: [
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            15, 0, 0, 0),
+                                        child: Container(
+                                          child: DropdownButton<String>(
+                                            underline: Container(),
+                                            isExpanded: true,
+                                            // // Step 3.
+                                            value: tempcoursename,
+                                            // Step 4.
+
+                                            items: globals.courseList
+                                                .map<DropdownMenuItem<String>>(
+                                                    (value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(
+                                                  value,
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyText1
+                                                      .override(
+                                                        fontFamily:
+                                                            'Lexend Deca',
+                                                        color:
+                                                            Color(0xFF57636C),
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            // Step 5.
+                                            onChanged: (String? newValue) {
+                                              setState(() {
+                                                tempmodulelist = [
+                                                  'Module Name'
+                                                ];
+                                                tempmodulename = 'Module Name';
+                                                tempmodulelist.addAll(globals
+                                                    .coursemoduelmap[newValue]);
+                                                tempcoursename = newValue!;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    isSwitched
+                                        ? Container()
+                                        : tempmodulelist.length != 1
+                                            ? Expanded(
+                                                child: Padding(
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(10, 0, 0, 0),
+                                                  child: DropdownButton<String>(
+                                                    underline: Container(),
+                                                    isExpanded: true,
+                                                    // Step 3.
+                                                    value: tempmodulename,
+                                                    // Step 4.
+
+                                                    items: tempmodulelist.map<
+                                                        DropdownMenuItem<
+                                                            String>>((value) {
+                                                      return DropdownMenuItem<
+                                                          String>(
+                                                        value: value,
+                                                        child: Text(
+                                                          value,
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyText1
+                                                              .override(
+                                                                fontFamily:
+                                                                    'Lexend Deca',
+                                                                color: Color(
+                                                                    0xFF57636C),
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                              ),
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                    // Step 5.
+                                                    onChanged:
+                                                        (String? newValue) {
+                                                      setState(() {
+                                                        tempmodulename =
+                                                            newValue!;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              )
+                                            : Container(
+                                                height: 0,
+                                                width: 0,
+                                              ),
                                     Expanded(
                                       child: Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(
