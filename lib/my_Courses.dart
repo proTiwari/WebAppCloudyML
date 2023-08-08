@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:star_rating/star_rating.dart';
 import 'MyAccount/myaccount.dart';
 import 'Providers/UserProvider.dart';
@@ -324,61 +325,144 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: courses.length == 1
                               ? screenWidth / 2.5
                               : screenWidth / 1.2,
-                          height: screenHeight / 5,
+                          height: screenHeight / 2.25,
                           color: Colors.transparent,
                           child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            // shrinkWrap: true,
                             itemCount: course.length,
                             itemBuilder: (BuildContext context, int index) {
                               if (course[index].courseName == "null") {
                                 return Container();
                               }
                               if (courses.contains(course[index].courseId)) {
-                                return Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    InkWell(
-                                      onTap: (() async {
-                                        // setModuleId(snapshot.data!.docs[index].id);
-                                        await getCourseName();
-                                        if (navigateToCatalogueScreen(
-                                                course[index].courseId) &&
-                                            !(userMap['payInPartsDetails']
-                                                    [course[index].courseId]
-                                                ['outStandingAmtPaid'])) {
-                                          if (course[index].multiCombo ==
-                                              true) {
-                                            GoRouter.of(context).pushNamed(
-                                                'MultiComboCourseScreen',
-                                                queryParams: {
-                                                  'courseName': course[index]
-                                                      .courseName
-                                                      .toString(),
-                                                  'id': course[index].courseId,
-                                                });
-                                          } else if (!course[index]
-                                              .isItComboCourse) {
-                                            GoRouter.of(context).pushNamed(
-                                                'videoScreen',
-                                                queryParams: {
-                                                  'courseName': course[index]
-                                                      .curriculum
-                                                      .keys
-                                                      .toList()
-                                                      .first
-                                                      .toString(),
-                                                  'cID': course[index]
-                                                      .courseDocumentId,
-                                                });
+                                return Center(
+                                  child: InkWell(
+                                    onTap: (() async {
+                                      // setModuleId(snapshot.data!.docs[index].id);
+                                      await getCourseName();
+                                      if (navigateToCatalogueScreen(
+                                              course[index].courseId) &&
+                                          !(userMap['payInPartsDetails']
+                                                  [course[index].courseId]
+                                              ['outStandingAmtPaid'])) {
+                                        if (course[index].multiCombo == true) {
+                                          GoRouter.of(context).pushNamed(
+                                              'MultiComboCourseScreen',
+                                              queryParams: {
+                                                'courseName': course[index]
+                                                    .courseName
+                                                    .toString(),
+                                                'id': course[index].courseId,
+                                              });
+                                        } else if (!course[index]
+                                            .isItComboCourse) {
+                                          GoRouter.of(context).pushNamed(
+                                              'videoScreen',
+                                              queryParams: {
+                                                'courseName': course[index]
+                                                    .curriculum
+                                                    .keys
+                                                    .toList()
+                                                    .first
+                                                    .toString(),
+                                                'cID': course[index]
+                                                    .courseDocumentId,
+                                              });
 
+                                          // Navigator.push(
+                                          //   context,
+                                          //   PageTransition(
+                                          //     duration: Duration(
+                                          //         milliseconds: 400),
+                                          //     curve:
+                                          //     Curves.bounceInOut,
+                                          //     type: PageTransitionType
+                                          //         .rightToLeftWithFade,
+                                          //     child: VideoScreen(
+                                          //       isDemo: true,
+                                          //       courseName:
+                                          //       course[index]
+                                          //           .courseName,
+                                          //       sr: 1,
+                                          //     ),
+                                          //   ),
+                                          // );
+                                        } else {
+                                          final id = index.toString();
+                                          final courseName =
+                                              course[index].courseName;
+                                          context.goNamed('comboStore',
+                                              queryParams: {
+                                                'courseName': courseName,
+                                                'id': id
+                                              });
+
+                                          // Navigator.push(
+                                          //   context,
+                                          //   PageTransition(
+                                          //     duration: Duration(
+                                          //         milliseconds: 100),
+                                          //     curve:
+                                          //     Curves.bounceInOut,
+                                          //     type: PageTransitionType
+                                          //         .rightToLeftWithFade,
+                                          //     child: ComboStore(
+                                          //       courses: course[index]
+                                          //           .courses,
+                                          //     ),
+                                          //   ),
+                                          // );
+                                        }
+                                      } else {
+                                        if (course[index].multiCombo == true) {
+                                          GoRouter.of(context).pushNamed(
+                                              'MultiComboCourseScreen',
+                                              queryParams: {
+                                                'courseName': course[index]
+                                                    .courseName
+                                                    .toString(),
+                                                'id': course[index].courseId,
+                                              });
+                                        } else if (!course[index]
+                                            .isItComboCourse) {
+                                          if (course[index].courseContent ==
+                                              'pdf') {
+                                            Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                duration:
+                                                    Duration(milliseconds: 400),
+                                                curve: Curves.bounceInOut,
+                                                type: PageTransitionType
+                                                    .rightToLeftWithFade,
+                                                child: PdfCourseScreen(
+                                                  curriculum: course[index]
+                                                          .curriculum
+                                                      as Map<String, dynamic>,
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            GoRouter.of(context).pushNamed(
+                                              'videoScreen',
+                                              queryParams: {
+                                                'courseName': course[index]
+                                                    .curriculum
+                                                    .keys
+                                                    .toList()
+                                                    .first
+                                                    .toString(),
+                                                'cID': course[index]
+                                                    .courseDocumentId,
+                                              },
+                                            );
                                             // Navigator.push(
                                             //   context,
                                             //   PageTransition(
                                             //     duration: Duration(
-                                            //         milliseconds: 400),
-                                            //     curve:
-                                            //     Curves.bounceInOut,
+                                            //         milliseconds:
+                                            //         400),
+                                            //     curve: Curves
+                                            //         .bounceInOut,
                                             //     type: PageTransitionType
                                             //         .rightToLeftWithFade,
                                             //     child: VideoScreen(
@@ -390,139 +474,52 @@ class _HomeScreenState extends State<HomeScreen> {
                                             //     ),
                                             //   ),
                                             // );
-                                          } else {
-                                            final id = index.toString();
-                                            final courseName =
-                                                course[index].courseName;
-                                            context.goNamed('comboStore',
-                                                queryParams: {
-                                                  'courseName': courseName,
-                                                  'id': id
-                                                });
-
-                                            // Navigator.push(
-                                            //   context,
-                                            //   PageTransition(
-                                            //     duration: Duration(
-                                            //         milliseconds: 100),
-                                            //     curve:
-                                            //     Curves.bounceInOut,
-                                            //     type: PageTransitionType
-                                            //         .rightToLeftWithFade,
-                                            //     child: ComboStore(
-                                            //       courses: course[index]
-                                            //           .courses,
-                                            //     ),
-                                            //   ),
-                                            // );
                                           }
                                         } else {
-                                          if (course[index].multiCombo ==
-                                              true) {
-                                            GoRouter.of(context).pushNamed(
-                                                'MultiComboCourseScreen',
-                                                queryParams: {
-                                                  'courseName': course[index]
-                                                      .courseName
-                                                      .toString(),
-                                                  'id': course[index].courseId,
-                                                });
-                                          } else if (!course[index]
-                                              .isItComboCourse) {
-                                            if (course[index].courseContent ==
-                                                'pdf') {
-                                              Navigator.push(
-                                                context,
-                                                PageTransition(
-                                                  duration: Duration(
-                                                      milliseconds: 400),
-                                                  curve: Curves.bounceInOut,
-                                                  type: PageTransitionType
-                                                      .rightToLeftWithFade,
-                                                  child: PdfCourseScreen(
-                                                    curriculum: course[index]
-                                                            .curriculum
-                                                        as Map<String, dynamic>,
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              GoRouter.of(context).pushNamed(
-                                                'videoScreen',
-                                                queryParams: {
-                                                  'courseName': course[index]
-                                                      .curriculum
-                                                      .keys
-                                                      .toList()
-                                                      .first
-                                                      .toString(),
-                                                  'cID': course[index]
-                                                      .courseDocumentId,
-                                                },
-                                              );
-                                              // Navigator.push(
-                                              //   context,
-                                              //   PageTransition(
-                                              //     duration: Duration(
-                                              //         milliseconds:
-                                              //         400),
-                                              //     curve: Curves
-                                              //         .bounceInOut,
-                                              //     type: PageTransitionType
-                                              //         .rightToLeftWithFade,
-                                              //     child: VideoScreen(
-                                              //       isDemo: true,
-                                              //       courseName:
-                                              //       course[index]
-                                              //           .courseName,
-                                              //       sr: 1,
-                                              //     ),
-                                              //   ),
-                                              // );
-                                            }
-                                          } else {
-                                            ComboCourse.comboId.value =
-                                                course[index].courseId;
+                                          ComboCourse.comboId.value =
+                                              course[index].courseId;
 
-                                            final id = index.toString();
-                                            final courseName =
-                                                course[index].courseName;
-                                            GoRouter.of(context).pushNamed(
-                                                'NewComboCourseScreen',
-                                                queryParams: {
-                                                  'courseId':
-                                                      course[index].courseId,
-                                                  'courseName': courseName
-                                                });
+                                          final id = index.toString();
+                                          final courseName =
+                                              course[index].courseName;
+                                          GoRouter.of(context).pushNamed(
+                                              'NewComboCourseScreen',
+                                              queryParams: {
+                                                'courseId':
+                                                    course[index].courseId,
+                                                'courseName': courseName
+                                              });
 
-                                            // GoRouter.of(context).pushNamed(
-                                            //     'newcomboCourse',
-                                            //     queryParams: {
-                                            //       'id': id,
-                                            //       'courseName': courseName
-                                            //     });
-                                            // Navigator.push(
-                                            //   context,
-                                            //   PageTransition(
-                                            //     duration: Duration(
-                                            //         milliseconds: 400),
-                                            //     curve:
-                                            //     Curves.bounceInOut,
-                                            //     type: PageTransitionType
-                                            //         .rightToLeftWithFade,
-                                            //     child: ComboCourse(
-                                            //       courses: course[index]
-                                            //           .courses,
-                                            //     ),
-                                            //   ),
-                                            // );
-                                          }
+                                          // GoRouter.of(context).pushNamed(
+                                          //     'newcomboCourse',
+                                          //     queryParams: {
+                                          //       'id': id,
+                                          //       'courseName': courseName
+                                          //     });
+                                          // Navigator.push(
+                                          //   context,
+                                          //   PageTransition(
+                                          //     duration: Duration(
+                                          //         milliseconds: 400),
+                                          //     curve:
+                                          //     Curves.bounceInOut,
+                                          //     type: PageTransitionType
+                                          //         .rightToLeftWithFade,
+                                          //     child: ComboCourse(
+                                          //       courses: course[index]
+                                          //           .courses,
+                                          //     ),
+                                          //   ),
+                                          // );
                                         }
-                                        setState(() {
-                                          courseId =
-                                              course[index].courseDocumentId;
-                                        });
-                                      }),
+                                      }
+                                      setState(() {
+                                        courseId =
+                                            course[index].courseDocumentId;
+                                      });
+                                    }),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
                                       child: Container(
                                         width: screenWidth / 2.8,
                                         height: screenHeight / 5.5,
@@ -743,10 +740,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                     ),
-                                    Container(
-                                      width: 25,
-                                    ),
-                                  ],
+                                  ),
                                 );
                               } else {
                                 return Container();
