@@ -238,8 +238,6 @@ class _QuizPageState extends State<QuizPage> {
               DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
           quizAttemptGapForCourseQuiz:
               DateTime.now().add(Duration(days: coursequizwindowindays)),
-               quizTakenTime: countUsedTime(),
-            quizMark: correctint.toString()
         );
         returningString = "Congratulations!";
       }
@@ -266,8 +264,6 @@ class _QuizPageState extends State<QuizPage> {
               DateTime.now().add(Duration(hours: modulerquizwindowinhours)),
           quizAttemptGapForCourseQuiz:
               DateTime.now().add(Duration(days: coursequizwindowindays)),
-               quizTakenTime: countUsedTime(),
-            quizMark: correctint.toString()
         );
         returningString =
             "  You have not cleared the quiz${'\n'}You can attempt this quiz again${'\n'}                after ${modulerquizwindowinhours} hours";
@@ -317,6 +313,23 @@ class _QuizPageState extends State<QuizPage> {
 
   bool submitvalue = false;
 
+    bool listsHaveSameElements(List<dynamic> list1, List<dynamic> list2) {
+    if (list1.length != list2.length) {
+      return false;
+    }
+
+    list1.sort();
+    list2.sort();
+
+    for (var i = 0; i < list1.length; i++) {
+      if (list1[i] != list2[i]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   submit() async {
     print("lll1");
     try {
@@ -330,26 +343,49 @@ class _QuizPageState extends State<QuizPage> {
       print("lll002: $quizdata");
 
       for (var i in quizdata) {
-        print(i['question']);
+       print(i['question']);
         print(i['answeredValue']);
         print(i['answerIndex']);
-        try {
-          if (i['answeredValue'] == i['answerIndex'][0]) {
-            correctint += 1;
+        if (i['answer'].length > 1) {
+          try {
+            if (listsHaveSameElements(
+                i['answeredValueList'], i['answerIndex'])) {
+              correctint += 1;
+            }
+          } catch (e) {
+            print("errorid: 2r3r23r23r: ${e}");
           }
-        } catch (e) {
-          print("errorid: 2r3r23r23r: ${e}");
+        } else {
+          try {
+            if (i['answeredValue'] == i['answerIndex'][0]) {
+              correctint += 1;
+            }
+          } catch (e) {
+            print("errorid: 2r3r23r23r: ${e}");
+          }
         }
       }
       print("lll2");
       var unanswered = 0;
       print("dsfosweweweeeeeeeee");
       for (var i in quizdata) {
-        print(i['question']);
+         print(i['question']);
         print(i['answeredValue']);
+
         try {
-          if (i['answeredValue'] == null) {
-            unanswered += 1;
+          if (i['answer'].length > 1) {
+            try {
+              if (i['answeredValueList'].length == 0) {
+                unanswered += 1;
+              }
+            } catch (e) {
+              print("errorid: 2r3r23r23r: ${e}");
+            }
+          } else {
+            if (i['answeredValue'] == null) {
+              unanswered += 1;
+              
+            }
           }
         } catch (e) {
           print("errorid: 2r3r23r23rffffff: ${e}");
@@ -358,15 +394,27 @@ class _QuizPageState extends State<QuizPage> {
       var wronganswered = 0;
       print("ijofijweio");
       for (var i in quizdata) {
-        print(i['question']);
+                print(i['question']);
         var answeredvaluelist = [i['answeredValue']];
         try {
-          if (answeredvaluelist[0] != null) {
-            print("lllpp");
-            print(i['answerIndex']);
-            if (answeredvaluelist[0] != i['answerIndex'][0]) {
-              print("equallleeii");
-              wronganswered += 1;
+          if (i['answer'].length > 1) {
+            try {
+              if (listsHaveSameElements(
+                      i['answeredValueList'], i['answerIndex']) ==
+                  false) {
+                wronganswered += 1;
+              }
+            } catch (e) {
+              print("errorid: 2r3r23r23r: ${e}");
+            }
+          } else {
+            if (answeredvaluelist[0] != null) {
+              print("lllpp");
+              print(i['answerIndex']);
+              if (answeredvaluelist[0] != i['answerIndex'][0]) {
+                print("equallleeii");
+                wronganswered += 1;
+              }
             }
           }
         } catch (e) {
@@ -2599,15 +2647,17 @@ class _QuizPageState extends State<QuizPage> {
                                                                                     alignment: AlignmentDirectional(-1, 0),
                                                                                     child: Padding(
                                                                                       padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 30),
-                                                                                      child: Text(
-                                                                                        '${quizdata[questionindex]["question"].toString().split("(--image--)")[1]}',
-                                                                                        textAlign: TextAlign.start,
-                                                                                        style: FlutterFlowTheme.of(context).bodyText1.override(
-                                                                                              fontFamily: 'Poppins',
-                                                                                              fontSize: 17,
-                                                                                              fontWeight: FontWeight.normal,
+                                                                                      child: quizdata[questionindex]["question"].toString().split("(--image--)")[1] == null
+                                                                                          ? Container()
+                                                                                          : Text(
+                                                                                              '${quizdata[questionindex]["question"].toString().split("(--image--)")[1]}',
+                                                                                              textAlign: TextAlign.start,
+                                                                                              style: FlutterFlowTheme.of(context).bodyText1.override(
+                                                                                                    fontFamily: 'Poppins',
+                                                                                                    fontSize: 17,
+                                                                                                    fontWeight: FontWeight.normal,
+                                                                                                  ),
                                                                                             ),
-                                                                                      ),
                                                                                     ),
                                                                                   )
                                                                                 : Container(),

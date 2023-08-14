@@ -38,6 +38,7 @@ import '../screens/coupon/create_coupon.dart';
 import '../screens/groupscreen.dart';
 import '../screens/quiz/admin_quiz.dart';
 // import '../screens/quiz/all_certificate_screen.dart';
+import '../screens/quiz/multi_combo_module.dart';
 import '../screens/quiz/quiz_page.dart';
 import '../screens/quiz/quiz_panel.dart';
 import '../screens/quiz/quizentry.dart';
@@ -178,6 +179,23 @@ class MyRouter {
               return MaterialPage(
                   key: state.pageKey,
                   child: MultiComboCourse(
+                    id: id,
+                    courseName: courseName,
+                    // coursePrice: coursePrice,
+                    // cID: cID,
+                  ));
+            }),
+             GoRoute(
+            name: 'MultiComboModuleScreen',
+            path: '/multiComboModuleScreen',
+            pageBuilder: (context, state) {
+              //  final String cID = state.queryParams['cID']!;
+              final String id = state.queryParams['id']!;
+              final String courseName = state.queryParams['courseName']!;
+              //           final String coursePrice = state.queryParams['coursePrice']!;
+              return MaterialPage(
+                  key: state.pageKey,
+                  child: MultiComboModule(
                     id: id,
                     courseName: courseName,
                     // coursePrice: coursePrice,
