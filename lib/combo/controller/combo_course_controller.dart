@@ -122,3 +122,104 @@ class ComboCourseController extends GetxController {
     }
   }
 }
+
+class ComboModuleController extends GetxController {
+  var courseId;
+  ComboModuleController({required this.courseId});
+
+  @override
+  void onInit() {
+    getCourseIds().whenComplete(() {
+      print('CCCC: : ${courses}');
+      getCourses();
+      getPercentageOfCourse();
+    });
+
+    super.onInit();
+  }
+
+  var courseList = [].obs;
+  var courseData = {}.obs;
+  var tmp = [].obs;
+  var oldModuleProgress = false.obs;
+
+  var courses = [].obs;
+  var collect = [];
+
+  List<dynamic> removeDuplicates(List<dynamic> inputList) {
+    List<dynamic> uniqueList = [];
+
+    for (dynamic number in inputList) {
+      if (!uniqueList.contains(number)) {
+        uniqueList.add(number);
+      }
+    }
+
+    return uniqueList;
+  }
+
+  Future getCourseIds() async {
+    for (var i in courseId) {
+      await FirebaseFirestore.instance
+          .collection("courses")
+          .where('id', isEqualTo: i['id'])
+          .get()
+          .then((value) {
+        collect.add(value.docs.first.get('courses'));
+        print("fwoeifo :${collect}");
+      });
+    }
+    // courses.value = collect[0];
+    for (var k in collect) {
+      courses.value = courses.value + k;
+    }
+    print("iwoej ${courses}");
+    courses.value = removeDuplicates(courses.value);
+  }
+
+  getCourses() async {
+    await {
+      courses.forEach((element) {
+        try {
+          print("start wewe --");
+          Future<QuerySnapshot<Map<String, dynamic>>> data = FirebaseFirestore
+              .instance
+              .collection("courses")
+              .where('id', isEqualTo: element)
+              .get();
+          data.then((value) {
+            try {
+              print('vewewe $element');
+              courseList.add(value.docs.first.data());
+              print("`1 ${courseList.length}");
+              courseList.sort((a, b) =>
+                  courses.indexOf(a["id"]).compareTo(courses.indexOf(b["id"])));
+            } catch (e) {
+              print("error wewe2: ${e}");
+            }
+          });
+          print("end wewe --");
+          for (var j in courseList) {
+            print("wewe--");
+            print(j['name']);
+          }
+        } catch (e) {
+          print("pppppp: ${e}");
+        }
+      })
+    };
+  }
+
+  getPercentageOfCourse() async {
+    try {
+      var data = await FirebaseFirestore.instance
+          .collection("courseprogress")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      courseData.value = data.data() as Map;
+    } catch (e) {
+      print('the progress exception is$e');
+    }
+  }
+}

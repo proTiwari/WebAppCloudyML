@@ -501,6 +501,7 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
   void initState() {
     _controller = ScrollController();
     super.initState();
+    fromcombo = 'yes';
     futureFiles = FirebaseApi.listAll('reviews/recent_review');
     futurefilesComboCourseReviews =
         FirebaseApi.listAll('reviews/combo_course_review');
@@ -550,7 +551,7 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                           child: Padding(
                         padding: const EdgeInsets.only(bottom: 15.0),
                         child: Text(
-                          "My Enrolled Courses",
+                          "My Quizzes",
                           style: TextStyle(
                               fontFamily: 'Medium',
                               color: Colors.black,
@@ -584,8 +585,6 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                                             children: [
                                               InkWell(
                                                 onTap: (() async {
-                                                                                                            fromcombo='yes';
-
                                                   await getCourseName();
                                                   print('efjowjefoiwje');
                                                   if (navigateToCatalogueScreen(
@@ -608,8 +607,6 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                                                                 .courseDocumentId,
                                                           });
                                                     } else {
-                                                                                                                fromcombo='yes';
-
                                                       print("owfoiwjoifejw1");
                                                       final id =
                                                           index.toString();
@@ -656,13 +653,13 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                                                       } else {
                                                         print('efjowjefoiwje5');
                                                         print("wijwioefw");
+                                                        fromcombo = 'yes';
                                                         try {
-                                                          fromcombo = 'yes';
                                                           if (course[index]
                                                               .multiCombo!) {
                                                             GoRouter.of(context)
                                                                 .pushNamed(
-                                                                    'MultiComboCourseScreen',
+                                                                    'MultiComboModuleScreen',
                                                                     queryParams: {
                                                                   'courseName': course[
                                                                           index]
@@ -1313,7 +1310,7 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                         padding: EdgeInsets.only(
                             left: 20 * horizontalScale, bottom: 4),
                         child: Text(
-                          'My Courses',
+                          'My Quizzes',
                           textScaleFactor: min(horizontalScale, verticalScale),
                           style: TextStyle(
                             color: Color.fromRGBO(0, 0, 0, 1),
@@ -1373,10 +1370,8 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                                         );
                                       } else {
                                         if (course[index].multiCombo!) {
-                                          fromcombo = 'yes';
-
                                           GoRouter.of(context).pushNamed(
-                                              'MultiComboCourseScreen',
+                                              'MultiComboModuleScreen',
                                               queryParams: {
                                                 'courseName': course[index]
                                                     .courseName
@@ -1384,8 +1379,6 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                                                 'id': course[index].courseId,
                                               });
                                         } else {
-                                          fromcombo='yes';
-
                                           Navigator.push(
                                             context,
                                             PageTransition(
