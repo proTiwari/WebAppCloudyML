@@ -34,6 +34,7 @@ import '../combo/trialfeatutr.dart';
 import '../international_payment_screen.dart';
 import '../models/course_details.dart';
 import '../my_Courses.dart';
+import '../screens/assignment_tab_screen.dart';
 import '../screens/coupon/create_coupon.dart';
 import '../screens/groupscreen.dart';
 import '../screens/quiz/admin_quiz.dart';
@@ -85,6 +86,12 @@ class MyRouter {
             path: '/home',
             pageBuilder: (context, state) {
               return MaterialPage(child: LandingScreen());
+            }),
+        GoRoute(
+            name: 'AssignmentScreenForMentors',
+            path: '/AssignmentScreenForMentors',
+            pageBuilder: (context, state) {
+              return MaterialPage(child: Assignments());
             }),
         GoRoute(
             name: 'store',

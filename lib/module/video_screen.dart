@@ -1443,8 +1443,33 @@ getAssignmentDescription() async {
     });
   }
 
+
+  updateSessionExpiryTime() async {
+    try{
+      var learners = await FirebaseFirestore.instance
+          .collection('Notice')
+          .doc('sessionExpiryDays')
+          .get();
+      DateTime now = DateTime.now();
+      DateTime updatedTime =
+      now.add(Duration(days: learners['sessionExpiryDays']));
+
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'sessionExpiryTime': Timestamp.fromDate(updatedTime),
+      });
+
+    }catch(e){
+      print('updateSessionExpiryTime() $e');
+    }
+
+  }
+
   @override
   void initState() {
+    updateSessionExpiryTime();
     assignmentCheck();
     getAssignmentSolutionVideo();
     getAssignmentDescription();

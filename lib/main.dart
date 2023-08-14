@@ -42,11 +42,10 @@ import 'package:go_router/go_router.dart';
 
 import 'authentication_screens/phone_auth.dart';
 import 'homepage.dart';
-Future<void> backgroundHandler(RemoteMessage message) async {
-}
+
+Future<void> backgroundHandler(RemoteMessage message) async {}
 
 Future<void> main() async {
-  
   await Hive.initFlutter();
   await Hive.openBox('myBox');
   await Hive.openBox("NotificationBox");
@@ -97,21 +96,21 @@ Future<void> main() async {
     if (Uri.base.queryParameters['cID'] == 'aEGX6kMfHzQrVgP3WCwU') {
       final url = Uri.base.queryParameters['cID'];
       FirebaseFirestore.instance
-        .collection("Notice")
-        .doc("NBrEm6KGry8gxOJJkegG_redirect_pay")
-        .set({'url': url});
+          .collection("Notice")
+          .doc("NBrEm6KGry8gxOJJkegG_redirect_pay")
+          .set({'url': url});
     } else if (Uri.base.queryParameters['cID'] == 'F9gxnjW9nf5Lxg5A6758') {
       final url = Uri.base.queryParameters['cID'];
-     FirebaseFirestore.instance
-        .collection("Notice")
-        .doc("M2jEwYyiWdzYWE9gJd8s_de_pay")
-        .set({'url': url});
+      FirebaseFirestore.instance
+          .collection("Notice")
+          .doc("M2jEwYyiWdzYWE9gJd8s_de_pay")
+          .set({'url': url});
     } else if (Uri.base.queryParameters['cID'] == 'XSNqt0oNpuY7i2kb7zsW') {
       final url = Uri.base.queryParameters['cID'];
-     FirebaseFirestore.instance
-        .collection("Notice")
-        .doc("o1Hw1CebDH9I4VfpKuiC_sup_pay")
-        .set({'url': url});
+      FirebaseFirestore.instance
+          .collection("Notice")
+          .doc("o1Hw1CebDH9I4VfpKuiC_sup_pay")
+          .set({'url': url});
     }
 
     final url = Uri.base.path;
@@ -138,18 +137,16 @@ Future<void> main() async {
           .collection("Notice")
           .doc("fSU4MLz1E0858ft8m7F5_dataeng")
           .set({'url': url});
-    }
-    else if (Uri.base.queryParameters['cID'] == 'mPqg2Z2BdNHvwaqAEfA0') {
+    } else if (Uri.base.queryParameters['cID'] == 'mPqg2Z2BdNHvwaqAEfA0') {
       final url = Uri.base.queryParameters['cID'];
       FirebaseFirestore.instance
           .collection("Notice")
           .doc("ZL5fDjF0pzsgpNu92BKc_intrntnl_course")
           .set({'url': url});
     }
-   print('pushed');
-  }
-  else if (Uri.base.path == '/multiComboFeatureScreen') {
-      if (Uri.base.queryParameters['cID'] == 'XSNqt0oNpuY7i2kb7zsW') {
+    print('pushed');
+  } else if (Uri.base.path == '/multiComboFeatureScreen') {
+    if (Uri.base.queryParameters['cID'] == 'XSNqt0oNpuY7i2kb7zsW') {
       final url = Uri.base.queryParameters['cID'];
       FirebaseFirestore.instance
           .collection("Notice")
@@ -178,6 +175,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     ToastContext().init(context);
+    debugInvertOversizedImages = false;
     return ChangeNotifierProvider(
         create: (context) => GoogleSignInProvider(),
         child: MultiProvider(
@@ -204,39 +202,38 @@ class _MyAppState extends State<MyApp> {
               initialData: [],
             ),
           ],
-          child:  Sizer(builder: ((context, orientation, deviceType) {
-            return
-          ResponsiveSizer(builder: (context, orientation, screenType) {
-            final botToastBuilder = BotToastInit();
-            final router = Provider.of<MyRouter>(context, listen: false).routes;
-            return GetMaterialApp.router(
-              routerDelegate: router.routerDelegate,
-              routeInformationParser: router.routeInformationParser,
-              routeInformationProvider: router.routeInformationProvider,
-              debugShowCheckedModeBanner: false,
-              title: 'CloudyML',
-              scrollBehavior: MyCustomScrollBehavior(),
-              builder: (BuildContext context, child) {
-                child = MediaQuery(
-                  child: child!,
-                  data: MediaQuery.of(context).copyWith(textScaleFactor: 1.15),
-                );
-                child = botToastBuilder(context, child);
-                ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-                  return Container();
-                };
-                botToastBuilder(context, widget);
-                return child;
-              },
-              theme: ThemeData(
-                primarySwatch: Colors.blue,
-              ),
-           
-            );
-          });
+          child: Sizer(builder: ((context, orientation, deviceType) {
+            return ResponsiveSizer(builder: (context, orientation, screenType) {
+              final botToastBuilder = BotToastInit();
+              final router =
+                  Provider.of<MyRouter>(context, listen: false).routes;
+              return GetMaterialApp.router(
+                routerDelegate: router.routerDelegate,
+                routeInformationParser: router.routeInformationParser,
+                routeInformationProvider: router.routeInformationProvider,
+                debugShowCheckedModeBanner: false,
+                title: 'CloudyML',
+                scrollBehavior: MyCustomScrollBehavior(),
+                builder: (BuildContext context, child) {
+                  child = MediaQuery(
+                    child: child!,
+                    data:
+                        MediaQuery.of(context).copyWith(textScaleFactor: 1.15),
+                  );
+                  child = botToastBuilder(context, child);
+                  ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                    return Container();
+                  };
+                  botToastBuilder(context, widget);
+                  return child;
+                },
+                theme: ThemeData(
+                  primarySwatch: Colors.blue,
+                ),
+              );
+            });
           })),
-        )
-        );
+        ));
   }
 }
 

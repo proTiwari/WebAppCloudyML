@@ -55,10 +55,9 @@ class _OtpPageState extends State<OtpPage> {
   late String depayurl;
   late String suppayurl;
   late String feaurl;
-    late String deurl;
+  late String deurl;
   late String supurl;
   late String interntnl;
-
 
   void _onKeyboardTap(String value) {
     setState(() {
@@ -114,7 +113,7 @@ class _OtpPageState extends State<OtpPage> {
 
     print("url is=====$diurl");
 
-     interntnl = await FirebaseFirestore.instance
+    interntnl = await FirebaseFirestore.instance
         .collection("Notice")
         .doc("7A85zuoLi4YQpbXlbOAh_redirect")
         .get()
@@ -168,8 +167,8 @@ class _OtpPageState extends State<OtpPage> {
     });
 
     print("url is=====$feaurl");
-    
-        deurl = await FirebaseFirestore.instance
+
+    deurl = await FirebaseFirestore.instance
         .collection("Notice")
         .doc("fSU4MLz1E0858ft8m7F5_dataeng")
         .get()
@@ -189,8 +188,7 @@ class _OtpPageState extends State<OtpPage> {
       return value.data()!.values.first;
     });
 
-        print("url is=====$supurl");
-
+    print("url is=====$supurl");
   }
 
   Widget _otpTextField(BuildContext context, bool autoFocus, int position) {
@@ -297,7 +295,8 @@ class _OtpPageState extends State<OtpPage> {
                 onPressed: () => Navigator.of(context).pop(),
               ),
         elevation: 0,
-        backgroundColor: HexColor("7226D1"), systemOverlayStyle: SystemUiOverlayStyle.light,
+        backgroundColor: HexColor("7226D1"),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -357,6 +356,8 @@ class _OtpPageState extends State<OtpPage> {
                                   'assets/logo.png',
                                   height: 75,
                                   width: 110,
+                                  cacheHeight: 56,
+                                  cacheWidth: 82,
                                 ),
                                 SizedBox(
                                   height: 5,
@@ -381,7 +382,11 @@ class _OtpPageState extends State<OtpPage> {
                                 Expanded(
                                   child: Align(
                                     alignment: Alignment.center,
-                                    child: Image.asset('assets/otpll.png'),
+                                    child: Image.asset(
+                                      'assets/otpll.png',
+                                      cacheWidth: 364,
+                                      cacheHeight: 364,
+                                    ),
                                     // child: SvgPicture.asset(
                                     //   'assets/Frame.svg',
                                     //   height: verticalScale * 360,
@@ -760,8 +765,7 @@ class _OtpPageState extends State<OtpPage> {
                     'id': id,
                     'coursePrice': courseP
                   });
-                } 
-                else if (deurl == 'F9gxnjW9nf5Lxg5A6758') {
+                } else if (deurl == 'F9gxnjW9nf5Lxg5A6758') {
                   final id = "0";
                   final cID = "F9gxnjW9nf5Lxg5A6758";
                   final courseName =
@@ -773,8 +777,7 @@ class _OtpPageState extends State<OtpPage> {
                     'id': id,
                     'coursePrice': courseP
                   });
-                }
-                else if (supurl == 'XSNqt0oNpuY7i2kb7zsW') {
+                } else if (supurl == 'XSNqt0oNpuY7i2kb7zsW') {
                   final id = "0";
                   final cID = "XSNqt0oNpuY7i2kb7zsW";
                   final courseName =
@@ -786,12 +789,10 @@ class _OtpPageState extends State<OtpPage> {
                     'id': id,
                     'coursePrice': courseP
                   });
-                }
-                else if (interntnl == 'mPqg2Z2BdNHvwaqAEfA0') {
+                } else if (interntnl == 'mPqg2Z2BdNHvwaqAEfA0') {
                   final id = "0";
                   final cID = "mPqg2Z2BdNHvwaqAEfA0";
-                  final courseName =
-                      "Data Superstar(International)";
+                  final courseName = "Data Superstar(International)";
                   final courseP = "399";
                   GoRouter.of(context).goNamed('NewFeature', queryParams: {
                     'cID': cID,
@@ -799,8 +800,7 @@ class _OtpPageState extends State<OtpPage> {
                     'id': id,
                     'coursePrice': courseP
                   });
-                }
-                else if (diurl == '/InternationalPaymentScreen') {
+                } else if (diurl == '/InternationalPaymentScreen') {
                   print("i am in otp else");
                   final cID = "aEGX6kMfHzQrVgP3WCwU";
                   GoRouter.of(context).go(
@@ -809,8 +809,7 @@ class _OtpPageState extends State<OtpPage> {
                     //   'cID': cID,
                     //   }
                   );
-                }
-                else if (payurl == 'aEGX6kMfHzQrVgP3WCwU') {
+                } else if (payurl == 'aEGX6kMfHzQrVgP3WCwU') {
                   final cID = "aEGX6kMfHzQrVgP3WCwU";
                   GoRouter.of(context).go(
                     '/comboPaymentPortal?cID=aEGX6kMfHzQrVgP3WCwU',
@@ -818,8 +817,7 @@ class _OtpPageState extends State<OtpPage> {
                     //   'cID': cID,
                     //   }
                   );
-                }
-                else if (depayurl == 'F9gxnjW9nf5Lxg5A6758') {
+                } else if (depayurl == 'F9gxnjW9nf5Lxg5A6758') {
                   final cID = "F9gxnjW9nf5Lxg5A6758";
                   GoRouter.of(context).go(
                     '/comboPaymentPortal?cID=F9gxnjW9nf5Lxg5A6758',
@@ -827,9 +825,7 @@ class _OtpPageState extends State<OtpPage> {
                     //   'cID': cID,
                     //   }
                   );
-                } 
-
-                else if (suppayurl == 'XSNqt0oNpuY7i2kb7zsW') {
+                } else if (suppayurl == 'XSNqt0oNpuY7i2kb7zsW') {
                   final cID = "XSNqt0oNpuY7i2kb7zsW";
                   GoRouter.of(context).go(
                     '/comboPaymentPortal?cID=XSNqt0oNpuY7i2kb7zsW',
@@ -837,7 +833,7 @@ class _OtpPageState extends State<OtpPage> {
                     //   'cID': cID,
                     //   }
                   );
-                }  else {
+                } else {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (_) => LandingScreen()));
                   GoRouter.of(context).pushNamed('home');
@@ -901,22 +897,28 @@ class _OtpPageState extends State<OtpPage> {
     }
   }
 
- void saveLoginState(BuildContext context) async {
+  void saveLoginState(BuildContext context) async {
     Provider.of<LoginState>(context, listen: false).loggedIn = true;
     try {
       DateTime now = DateTime.now();
 
-      var sessionExpiryDays = await FirebaseFirestore.instance.collection('Notice').doc('sessionExpiryDays').get();
+      var sessionExpiryDays = await FirebaseFirestore.instance
+          .collection('Notice')
+          .doc('sessionExpiryDays')
+          .get();
       print('sessionExpiryDays ${sessionExpiryDays['sessionExpiryDays']}');
 
-      DateTime updatedTime = now.add(Duration(days: sessionExpiryDays['sessionExpiryDays']));
+      DateTime updatedTime =
+          now.add(Duration(days: sessionExpiryDays['sessionExpiryDays']));
 
-      await FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid).update({
-         'sessionExpiryTime': Timestamp.fromDate(updatedTime),
-       });
-    }catch(e){
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'sessionExpiryTime': Timestamp.fromDate(updatedTime),
+      });
+    } catch (e) {
       print('session expiry error');
     }
-
   }
 }
