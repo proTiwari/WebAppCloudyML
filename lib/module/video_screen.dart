@@ -91,6 +91,7 @@ class _VideoScreenState extends State<VideoScreen> {
   bool quizNameExistsInList = false;
   TextEditingController updateVideoUrl = TextEditingController();
   TextEditingController updateDescription = TextEditingController();
+  TextEditingController updateSolutionVideo = TextEditingController();
 
   checkQuizScore(String quizName) {
     for (var item in globals.quiztrack) {
@@ -292,7 +293,6 @@ class _VideoScreenState extends State<VideoScreen> {
         // print('quizScoreMap $quizScoreMap');
       }
 
-      // Logic for all assignment description
  
     } catch (e) {
       print('Error quizScoreMap: assignmentMap: $e');
@@ -323,6 +323,72 @@ getAssignmentDescription() async {
 
     }catch(e){
       print('Error getAssignmentDescription: $e');
+    }
+  }
+
+/*-------------- Assignment Solution URL ------------- */
+
+  var assignmentSolutionVideo = {};
+  getAssignmentSolutionVideo() async {
+    try{
+      courseCurriculum = await FirebaseFirestore.instance
+          .collection("courses")
+          .doc(widget.cID)
+          .get();
+
+      var assignmentData = courseCurriculum['curriculum1'][widget.courseName];
+      for (var i = 0; i < assignmentData.length; i++) {
+        for (var j = 0; j < assignmentData[i]['videos'].length; j++) {
+          if (assignmentData[i]['videos'][j]['type'] == 'assignment') {
+            assignmentSolutionVideo[assignmentData[i]['videos'][j]['name']] =
+            assignmentData[i]['videos'][j]['videoUrl'];
+            // print('getAssignmentSolutionVideo $assignmentSolutionVideo');
+          }
+        }
+        print('getAssignmentSolutionVideo $assignmentSolutionVideo');
+      }
+
+    }catch(e){
+      print('Error getAssignmentSolutionVideo: $e');
+    }
+  }
+
+/*-------------- Assignment Solution URL ------------- */
+
+  var assignmentTrack;
+  var assignmentTrackBoolMap = {};
+  assignmentCheck() async {
+    try{
+      courseCurriculum = await FirebaseFirestore.instance
+          .collection("courses")
+          .doc(widget.cID)
+          .get();
+      assignmentTrack = await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(_auth.currentUser!.uid)
+          .get();
+
+      var courseAssignmentList = courseCurriculum['curriculum1'][widget.courseName];
+
+      for (var i = 0; i < courseAssignmentList.length; i++) {
+        for (var j = 0; j < courseAssignmentList[i]['videos'].length; j++) {
+          if (courseAssignmentList[i]['videos'][j]['type'] == 'assignment') {
+            for (var name in assignmentTrack['assignmentTrack']) {
+              if (courseAssignmentList[i]['videos'][j]['name'] == name['assignmentName']) {
+                setState(() {
+                  assignmentTrackBoolMap[name['assignmentName']] = true;
+                });
+              }
+            }
+          }
+        }
+        print('assignmentTrackBoolMap $assignmentTrackBoolMap');
+      }
+
+
+
+    }catch(e){
+      print('assignmentCheck() $e');
     }
   }
 
@@ -1377,8 +1443,35 @@ getAssignmentDescription() async {
     });
   }
 
+
+  updateSessionExpiryTime() async {
+    try{
+      var learners = await FirebaseFirestore.instance
+          .collection('Notice')
+          .doc('sessionExpiryDays')
+          .get();
+      DateTime now = DateTime.now();
+      DateTime updatedTime =
+      now.add(Duration(days: learners['sessionExpiryDays']));
+
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'sessionExpiryTime': Timestamp.fromDate(updatedTime),
+      });
+
+    }catch(e){
+      print('updateSessionExpiryTime() $e');
+    }
+
+  }
+
   @override
   void initState() {
+    updateSessionExpiryTime();
+    assignmentCheck();
+    getAssignmentSolutionVideo();
     getAssignmentDescription();
     getScoreOfAllQuiz();
     globalquizstatus();
@@ -1507,6 +1600,8 @@ getAssignmentDescription() async {
                                   solutionUrl: solutionUrl,
                                   assignmentName: assignmentName,
                                   assignmentDescription: assignmentDescription,
+                            assignmentSolutionVideo: assignmentSolutionVideo,
+                              assignmentTrackBoolMap: assignmentTrackBoolMap,
                                 )
                               : submitResume
                                   ? SubmitResume(
@@ -1704,6 +1799,8 @@ getAssignmentDescription() async {
                                   solutionUrl: solutionUrl,
                                   assignmentName: assignmentName,
                                   assignmentDescription: assignmentDescription,
+                                  assignmentSolutionVideo: assignmentSolutionVideo,
+                                  assignmentTrackBoolMap: assignmentTrackBoolMap,
                                 ),
                               )
                             : submitResume
@@ -3425,6 +3522,8 @@ getAssignmentDescription() async {
                                                                   assignmentName,
                                                               assignmentDescription:
                                                                   assignmentDescription,
+                                                              assignmentSolutionVideo: assignmentSolutionVideo,
+                                                              assignmentTrackBoolMap: assignmentTrackBoolMap,
                                                             )));
                                                 print("Eagle");
                                               }
@@ -3742,6 +3841,8 @@ getAssignmentDescription() async {
                                                                     assignmentName,
                                                                 assignmentDescription:
                                                                     assignmentDescription,
+                                                                assignmentSolutionVideo: assignmentSolutionVideo,
+                                                                assignmentTrackBoolMap: assignmentTrackBoolMap,
                                                               )));
                                                   print("Eagle");
                                                 }
@@ -4398,6 +4499,79 @@ getAssignmentDescription() async {
                                                                           );
                                                                         });
                                                                   }
+                                                                  if (item == 5) {
+                                                                    setState(
+                                                                            () {
+                                                                          updateVideoIndex = subsectionIndex;
+                                                                          editIndex = sectionIndex;
+                                                                          updateVideoName = false;
+                                                                        });
+                                                                    showDialog(
+                                                                        context:
+                                                                        context,
+                                                                        builder:
+                                                                            (context) {
+                                                                          return AlertDialog(
+                                                                            alignment: Alignment.centerLeft,
+                                                                            content:
+                                                                            Container(
+                                                                              height: 350,
+                                                                              width: 350,
+                                                                              child: Column(
+                                                                                children: [
+                                                                                  TextField(
+                                                                                    controller: updateSolutionVideo,
+                                                                                    maxLines: 2,
+                                                                                    decoration: InputDecoration(
+                                                                                      border: OutlineInputBorder(),
+                                                                                      hintText: 'Enter Solution Url',
+                                                                                    ),
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    height: 20,
+                                                                                  ),
+                                                                                  Row(
+                                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                                    children: [
+                                                                                      ElevatedButton(
+                                                                                          onPressed: () {
+                                                                                            if (updateSolutionVideo.text.isNotEmpty && listOfSectionData[widget.courseName][editIndex]['videos'][updateVideoIndex] != null) {
+                                                                                              listOfSectionData[widget.courseName][editIndex]['videos'][updateVideoIndex]['videoUrl'] = updateSolutionVideo.text;
+                                                                                              try {
+                                                                                                FirebaseFirestore.instance.collection('courses').doc(widget.cID).update({
+                                                                                                  'curriculum1': {
+                                                                                                    widget.courseName: listOfSectionData[widget.courseName],
+                                                                                                  }
+                                                                                                }).whenComplete(() => Toast.show('Assignment solution Updated.'));
+                                                                                              } catch (e) {
+                                                                                                print(e.toString());
+                                                                                              }
+                                                                                              setState(() {
+                                                                                                updateSolutionVideo.clear();
+                                                                                                getAssignmentSolutionVideo();
+                                                                                                Navigator.of(context).pop();
+                                                                                                streamVideoData();
+                                                                                              });
+                                                                                            } else {
+                                                                                              Toast.show('Please enter URL');
+                                                                                            }
+                                                                                          },
+                                                                                          child: Text('Submit')),
+                                                                                      SizedBox(width: 20),
+                                                                                      ElevatedButton(
+                                                                                        onPressed: () {
+                                                                                          Navigator.of(context).pop();
+                                                                                        },
+                                                                                        child: Text('Close'),
+                                                                                      )
+                                                                                    ],
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          );
+                                                                        });
+                                                                  }
                                                                 },
                                                                 itemBuilder:
                                                                     (context) =>
@@ -4417,7 +4591,10 @@ getAssignmentDescription() async {
                                                                       child: Text('Update assignment URL')),
                                                                   PopupMenuItem<int>(
                                                                       value: 4,
-                                                                      child: Text('Update assignment Description'))
+                                                                      child: Text('Update assignment Description')),
+                                                                          PopupMenuItem<int>(
+                                                                              value: 5,
+                                                                              child: Text('Update solution video'))
                                                                 ],
                                                               )
                                                             : SizedBox(),

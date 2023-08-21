@@ -814,13 +814,13 @@ var mentorItems = [
   'Your Certificates',
   'Admin Quiz Panel',
   // 'Your Certificates',
-  'Quizes',
+  'My Quizzes',
   'Assignment Review',
   'My Profile',
   'Logout'
 ];
 
-var items = ['My Courses', 'Quizes', 'My Profile', 'Logout'];
+var items = ['My Courses', 'My Quizzes', 'My Profile', 'Logout'];
 String dropdownValue = '';
 
 Widget customMenuBar(BuildContext context) {
@@ -839,14 +839,23 @@ Widget customMenuBar(BuildContext context) {
         SizedBox(
           width: horizontalScale * 10,
         ),
-        Image.asset(
-          "assets/logo2.png",
-          width: 75,
-          height: 55,
-        ),
-        Text(
-          "CloudyML",
-          style: textStyle,
+        InkWell(
+          onTap: () {
+            GoRouter.of(context).pushNamed('home');
+          },
+          child: Row(
+            children: [
+              Image.asset(
+                "assets/logo2.png",
+                width: 75,
+                height: 55,
+              ),
+              Text(
+                "CloudyML",
+                style: textStyle,
+              ),
+            ],
+          ),
         ),
         Spacer(),
         TextButton(
@@ -910,138 +919,6 @@ Widget customMenuBar(BuildContext context) {
         // ),
         TextButton(
             onPressed: () {
-              // showDialog(
-              //     context: context,
-              //     builder: (BuildContext context){
-              //       return AlertDialog(
-              //         title: Center(child: Text('Contact Support', style: TextStyle(
-              //             fontWeight: FontWeight.bold
-              //         ),)),
-              //         content: Container(
-              //           height: 35.sp,
-              //           child: Row(
-              //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //             children: [
-              //               InkWell(
-              //                 onTap: () async {
-              //                   String telephoneUrl =
-              //                       'tel:8587911971';
-              //                   if (await canLaunch(
-              //                       telephoneUrl)) {
-              //                     await launch(telephoneUrl);
-              //                   } else {
-              //                     throw 'Could not launch $telephoneUrl';
-              //                   }
-              //                 },
-              //                 child: Container(
-              //                   width: 30.sp,
-              //                   height: 30.sp,
-              //                   decoration: BoxDecoration(
-              //                       color: Colors.white,
-              //                       borderRadius: BorderRadius.circular(10.sp),
-              //                       boxShadow: [
-              //                         BoxShadow(
-              //                             blurRadius: 20.sp,
-              //                             color: Colors.black26,
-              //                             spreadRadius: 7.sp
-              //                         ),
-              //                       ]
-              //                   ),
-              //                   child: Column(
-              //                     mainAxisAlignment: MainAxisAlignment.center,
-              //                     crossAxisAlignment: CrossAxisAlignment.center,
-              //                     children: [
-              //                       Icon(
-              //                         Icons.phone,
-              //                         color: HexColor('7A62DE'),
-              //                         size: min(
-              //                             horizontalScale, verticalScale) * 40,
-              //                       ),
-              //                       SizedBox(
-              //                         height:
-              //                         10.sp,
-              //                       ),
-              //                       Text(
-              //                         'Call us',
-              //                         textScaleFactor: min(
-              //                             horizontalScale,
-              //                             verticalScale),
-              //                         style: TextStyle(
-              //                             fontWeight:
-              //                             FontWeight
-              //                                 .w400,
-              //                             fontSize: 20),
-              //                       )
-              //                     ],
-              //                   ),
-              //                 ),
-              //               ),
-              //               InkWell(
-              //                 onTap: () async {
-              //                   final Uri params = Uri(
-              //                       scheme: 'mailto',
-              //                       path: 'app.support@cloudyml.com',
-              //                       query:
-              //                       'subject=Query about App');
-              //                   var mailurl =
-              //                   params.toString();
-              //                   if (await canLaunch(
-              //                       mailurl)) {
-              //                     await launch(mailurl);
-              //                   } else {
-              //                     throw 'Could not launch $mailurl';
-              //                   }
-              //                 },
-              //                 child: Container(
-              //                   width: 30.sp,
-              //                   height: 30.sp,
-              //                   decoration: BoxDecoration(
-              //                       color: Colors.white,
-              //                       borderRadius: BorderRadius.circular(10.sp),
-              //                       boxShadow: [
-              //                         BoxShadow(
-              //                             blurRadius: 20.sp,
-              //                             color: Colors.black26,
-              //                             spreadRadius: 7.sp
-              //                         ),
-              //                       ]
-              //                   ),
-              //                   child: Column(
-              //                     mainAxisAlignment: MainAxisAlignment.center,
-              //                     crossAxisAlignment: CrossAxisAlignment.center,
-              //                     children: [
-              //                       Icon(
-              //                         Icons.mail,
-              //                         color: HexColor(
-              //                             '7A62DE'),
-              //                         size: min(
-              //                             horizontalScale,
-              //                             verticalScale) *
-              //                             40,
-              //                       ),
-              //                       SizedBox(
-              //                           height: 10.sp
-              //                       ),
-              //                       Text(
-              //                         'Mail us',
-              //                         textScaleFactor: min(
-              //                             horizontalScale,
-              //                             verticalScale),
-              //                         style: TextStyle(
-              //                             fontWeight:
-              //                             FontWeight
-              //                                 .w400,
-              //                             fontSize: 20),
-              //                       )
-              //                     ],
-              //                   ),
-              //                 ),
-              //               )
-              //             ],
-              //           ),
-              //         ),
-              //       );
-              //     });
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -1126,7 +1003,7 @@ Widget customMenuBar(BuildContext context) {
                 } else if (value == 'Your Certificates') {
                   GoRouter.of(context)
                       .pushReplacementNamed('allcertificatescreen');
-                } else if (value == 'Quizes') {
+                } else if (value == 'My Quizzes') {
                   GoRouter.of(context).pushReplacementNamed('quizes');
                 } else if (value == 'Assignment Review') {
                   GoRouter.of(context)

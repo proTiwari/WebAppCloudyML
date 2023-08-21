@@ -29,7 +29,7 @@ class _SubmitResumeState extends State<SubmitResume> {
   String? fileName;
   Uint8List? uploadedFile;
   String? titleMessage;
-  
+
   String? filePath;
   String comments = '';
   bool isSubmitted = false;
@@ -41,10 +41,9 @@ class _SubmitResumeState extends State<SubmitResume> {
     print('name : ${widget.studentName}');
     getTitle();
     getComments();
-
+    getNumberOfSubmissions();
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -177,8 +176,13 @@ class _SubmitResumeState extends State<SubmitResume> {
 
                               ElevatedButton(
                                 onPressed: () {
-                               uploadResume();
-
+                                  if (numberOfSubmission == 2) {
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            'You can submit resume only 2 times.');
+                                  } else {
+                                    uploadResume();
+                                  }
                                 },
                                 child: Text("Submit"),
                                 style: ElevatedButton.styleFrom(),
@@ -281,7 +285,25 @@ class _SubmitResumeState extends State<SubmitResume> {
     } catch (e) {}
   }
 
+  int numberOfSubmission = 0;
+  getNumberOfSubmissions() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('StudentResumes')
+          .get()
+          .then((value) {
+        final data = value.docs
+            .where((element) => element.get('id') == widget.studentId);
+        numberOfSubmission = data.first.get('numberOfSubmission');
+        setState(() {});
+      });
+    } catch (e) {
+      print('Error while fetching comments : $e');
+    }
+  }
+
   UploadTask? uploadTask;
+
   uploadResume() async {
     try {
       if (uploadedFile == null) {
@@ -316,7 +338,10 @@ class _SubmitResumeState extends State<SubmitResume> {
             FirebaseFirestore.instance
                 .collection('StudentResumes')
                 .doc(data.first.id)
-                .update({'link': '${fileURL}'}).whenComplete(() {
+                .update({
+              'link': '${fileURL}',
+              "numberOfSubmission": numberOfSubmission + 1,
+            }).whenComplete(() {
               isSubmitted = true;
               Fluttertoast.showToast(msg: 'Your Resume Has Been Uploaded');
               setState(() {});
@@ -331,7 +356,8 @@ class _SubmitResumeState extends State<SubmitResume> {
             "id": '${widget.studentId}',
             "comments": '',
             "submitDate": DateTime.now(),
-            "reviewDate" : null,
+            "reviewDate": null,
+            "numberOfSubmission": numberOfSubmission + 1,
           }).whenComplete(() {
             isSubmitted = true;
             Fluttertoast.showToast(msg: 'Your Resume Has Been Uploaded');
@@ -359,7 +385,4 @@ class _SubmitResumeState extends State<SubmitResume> {
       print('Error while fetching comments : $e');
     }
   }
-
-
-
 }

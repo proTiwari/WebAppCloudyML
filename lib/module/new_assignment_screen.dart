@@ -1,15 +1,18 @@
+import 'dart:math';
 import 'dart:typed_data';
+import 'package:better_player/better_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
 import '../global_variable.dart';
 import '../models/firebase_file.dart';
-
 import '../screens/flutter_flow/flutter_flow_theme.dart';
 
 class AssignmentScreen extends StatefulWidget {
@@ -22,6 +25,8 @@ class AssignmentScreen extends StatefulWidget {
       this.solutionUrl,
       this.dataSetUrl,
       this.assignmentName,
+      this.assignmentSolutionVideo,
+      this.assignmentTrackBoolMap,
       this.assignmentDescription})
       : super(key: key);
 
@@ -33,6 +38,8 @@ class AssignmentScreen extends StatefulWidget {
   final dataSetUrl;
   final assignmentName;
   final assignmentDescription;
+  final assignmentSolutionVideo;
+  final assignmentTrackBoolMap;
 
   @override
   State<AssignmentScreen> createState() => _AssignmentScreenState();
@@ -40,6 +47,21 @@ class AssignmentScreen extends StatefulWidget {
 
 class _AssignmentScreenState extends State<AssignmentScreen> {
   // TextEditingController noteText = TextEditingController();
+
+  VideoPlayerController? _controller;
+  late Future<void> _initializeVideoPlayerFuture;
+  initialize() {
+    print('initialize started ');
+    try {
+      _controller = VideoPlayerController.network(
+        widget.assignmentSolutionVideo[widget.assignmentName],
+      );
+      _initializeVideoPlayerFuture = _controller!.initialize();
+      print('initialize completed ${_controller!.value.aspectRatio}');
+    } catch (e) {
+      print('initialize $e');
+    }
+  }
 
   Uint8List? uploadedFile;
 
@@ -104,8 +126,15 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
 
   @override
   void initState() {
+    initialize();
     _extractLink();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller!.dispose();
+    super.dispose();
   }
 
   var count;
@@ -631,71 +660,115 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    // Text(
-                                    //   "Notes",
-                                    //   style: TextStyle(
-                                    //       color: Colors.black54,
-                                    //       fontSize: 18,
-                                    //       fontWeight: FontWeight.bold),
-                                    // ),
-                                    // SizedBox(
-                                    //   height: 10,
-                                    // ),
-                                    // Container(
-                                    //   width: MediaQuery.of(context).size.width / 2,
-                                    //   padding: EdgeInsets.all(10.0),
-                                    //   decoration: BoxDecoration(
-                                    //       color: Colors.white,
-                                    //       border: Border.all(
-                                    //           color: Colors.white12, width: 0.5),
-                                    //       borderRadius: BorderRadius.circular(5.0)),
-                                    //   child: TextField(
-                                    //     controller: noteText,
-                                    //     decoration: InputDecoration(
-                                    //       hintText: 'Please write note here...',
-                                    //       border: InputBorder.none,
-                                    //     ),
-                                    //     maxLines: 10,
-                                    //     minLines: 5,
-                                    //     autocorrect: true,
-                                    //   ),
-                                    // ),
-                                    // SizedBox(
-                                    //   height: 10,
-                                    // ),
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        if (uploadedFile == null) {
-                                          Fluttertoast.showToast(
-                                            msg: 'Please upload a file',
-                                            fontSize: 35,
-                                          );
-                                        } else {
-                                          await submissionTask();
-
-                                          setState(() {
-                                            // noteText.clear();
-                                            uploadedFile = null;
-                                          });
-                                        }
-                                      },
-                                      child: Text(
-                                        count == 1 ? "Resubmit" : "Submit",
-                                        style: TextStyle(),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: uploadedFile == null
-                                            ? count == 1
-                                                ? Colors.grey
-                                                : Colors.green
-                                            : Colors.deepPurpleAccent,
-                                      ),
-                                    )
+                                    widget.assignmentTrackBoolMap[
+                                                    widget.assignmentName] ==
+                                                true ||
+                                            count == 1
+                                        ? Container()
+                                        : ElevatedButton(
+                                            onPressed: () async {
+                                              if (uploadedFile == null) {
+                                                Fluttertoast.showToast(
+                                                  msg: 'Please upload a file',
+                                                  fontSize: 35,
+                                                );
+                                              } else {
+                                                await submissionTask();
+                                                setState(() {
+                                                  // noteText.clear();
+                                                  uploadedFile = null;
+                                                });
+                                              }
+                                            },
+                                            child: Text(
+                                              count == 1
+                                                  ? "Resubmit"
+                                                  : "Submit",
+                                              style: TextStyle(),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  uploadedFile == null
+                                                      ? count == 1
+                                                          ? Colors.grey
+                                                          : Colors.green
+                                                      : Colors.deepPurpleAccent,
+                                            ),
+                                          )
                                   ],
                                 ),
                               ),
                             )
                           : SizedBox(),
+                      SizedBox(
+                        height: 15.sp,
+                      ),
+
+                      widget.assignmentSolutionVideo[widget.assignmentName] !=
+                                  null &&
+                              widget.assignmentTrackBoolMap[
+                                      widget.assignmentName] ==
+                                  true
+                          ? Text(
+                              'Solution Video',
+                              style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          : Container(),
+                      SizedBox(
+                        height: 5.sp,
+                      ),
+                      widget.assignmentSolutionVideo[widget.assignmentName] !=
+                                  null &&
+                              widget.assignmentTrackBoolMap[
+                                      widget.assignmentName] ==
+                                  true
+                          ? Container(
+                              width: Adaptive.w(40),
+                              height: Adaptive.h(40),
+                              child: Stack(
+                                children: [
+                                  FutureBuilder(
+                                    future: _initializeVideoPlayerFuture,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.done) {
+                                        return Container(
+                                            height: Adaptive.h(40),
+                                            width: Adaptive.w(40),
+                                            child: VideoPlayer(_controller!));
+                                      } else {
+                                        return Center(
+                                            child: CircularProgressIndicator());
+                                      }
+                                    },
+                                  ),
+                                  Center(
+                                    child: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          if (_controller!.value.isPlaying) {
+                                            _controller!.pause();
+                                          } else {
+                                            _controller!.play();
+                                          }
+                                        });
+                                      },
+                                      icon: Icon(
+                                        _controller!.value.isPlaying
+                                            ? Icons.pause
+                                            : Icons.play_arrow,
+                                        size: 48,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(),
                     ],
                   ),
                 )),
@@ -740,12 +813,6 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                 fontSize: 20.sp,
                               ),
                             ),
-                            // Text('${widget.selectedSection}',
-                            //   style: TextStyle(
-                            //   color: Colors.grey,
-                            //   fontWeight: FontWeight.bold,
-                            //   fontSize: 22,
-                            // ),),
                           ],
                         ),
                       ),

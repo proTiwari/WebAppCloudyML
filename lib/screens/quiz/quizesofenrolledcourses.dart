@@ -540,7 +540,7 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
       drawer: customDrawer(context),
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-        if (constraints.maxWidth >= 650) {
+        if (true) {
           return SingleChildScrollView(
             child: Column(
               children: [
@@ -563,7 +563,7 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                           ? Center(
                               child: Container(
                                 width: courses.length == 1
-                                    ? screenWidth / 2.5
+                                    ? screenWidth
                                     : screenWidth / 1.2,
                                 height: screenHeight,
                                 color: Colors.transparent,
@@ -576,10 +576,11 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                                     }
                                     if (courses
                                         .contains(course[index].courseId)) {
-                                      return Align(
-                                        alignment: Alignment.center,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 8.0),
+                                        child: Align(
+                                          alignment: Alignment.center,
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
@@ -727,7 +728,12 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                                                   });
                                                 }),
                                                 child: Container(
-                                                  width: screenWidth / 2.8,
+                                                  width: MediaQuery.of(context)
+                                                              .size
+                                                              .width <=
+                                                          650
+                                                      ? screenWidth - 50
+                                                      : screenWidth / 2.8,
                                                   height: screenHeight / 5.5,
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
@@ -768,11 +774,17 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                                                                           fit: BoxFit.fill)),
                                                             ),
                                                             SizedBox(
-                                                              width: 5,
+                                                              width: 3,
                                                             ),
                                                             Container(
-                                                              width:
-                                                                  screenWidth /
+                                                              width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width <=
+                                                                      650
+                                                                  ? screenWidth -
+                                                                      50
+                                                                  : screenWidth /
                                                                       5.6,
                                                               height:
                                                                   screenHeight /
@@ -801,8 +813,9 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                                                                               Colors.black,
                                                                           fontFamily:
                                                                               'Medium',
-                                                                          fontSize:
-                                                                              16,
+                                                                          fontSize: MediaQuery.of(context).size.width <= 650
+                                                                              ? 11
+                                                                              : 14,
                                                                           height:
                                                                               0.95,
                                                                           fontWeight:
@@ -819,46 +832,39 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                                                                           MainAxisAlignment
                                                                               .start,
                                                                       children: [
-                                                                        Padding(
-                                                                          padding:
-                                                                              const EdgeInsets.only(right: 5.0),
+                                                                        Container(
+                                                                          height:
+                                                                              20,
+                                                                          width:
+                                                                              25,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(5.0),
+                                                                            color:
+                                                                                HexColor('440F87'),
+                                                                          ),
                                                                           child:
-                                                                              Container(
-                                                                            height:
-                                                                                20,
-                                                                            width:
-                                                                                25,
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(5.0),
-                                                                              color: HexColor('440F87'),
-                                                                            ),
+                                                                              Center(
                                                                             child:
-                                                                                Center(
-                                                                              child: Text(
-                                                                                course[index].reviews.isNotEmpty ? course[index].reviews : '5.0',
-                                                                                style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.normal),
-                                                                              ),
+                                                                                Text(
+                                                                              course[index].reviews.isNotEmpty ? course[index].reviews : '5.0',
+                                                                              style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.normal),
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                        Padding(
-                                                                          padding:
-                                                                              const EdgeInsets.only(right: 5.0),
-                                                                          child:
-                                                                              StarRating(
-                                                                            length:
-                                                                                5,
-                                                                            rating: course[index].reviews.isNotEmpty
-                                                                                ? double.parse(course[index].reviews)
-                                                                                : 5.0,
-                                                                            color:
-                                                                                HexColor('440F87'),
-                                                                            starSize:
-                                                                                20,
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.start,
-                                                                          ),
+                                                                        StarRating(
+                                                                          length:
+                                                                              5,
+                                                                          rating: course[index].reviews.isNotEmpty
+                                                                              ? double.parse(course[index].reviews)
+                                                                              : 5.0,
+                                                                          color:
+                                                                              HexColor('440F87'),
+                                                                          starSize:
+                                                                              20,
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.start,
                                                                         ),
                                                                       ],
                                                                     ),
@@ -904,9 +910,6 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                                                   ),
                                                 ),
                                               ),
-                                              Container(
-                                                width: 25,
-                                              ),
                                             ],
                                           ),
                                         ),
@@ -938,6 +941,7 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
             ),
           );
         } else {
+          return Container();
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1310,7 +1314,7 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                         padding: EdgeInsets.only(
                             left: 20 * horizontalScale, bottom: 4),
                         child: Text(
-                          'My Quizzes',
+                          'My Quizzes0',
                           textScaleFactor: min(horizontalScale, verticalScale),
                           style: TextStyle(
                             color: Color.fromRGBO(0, 0, 0, 1),

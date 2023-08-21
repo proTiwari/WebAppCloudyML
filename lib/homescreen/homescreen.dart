@@ -721,14 +721,9 @@ class _LandingScreenState extends State<LandingScreen> {
         List data2 = value.data()!['quiztrack'];
         print('data2.length ${data2.length}');
 
-        // for(var j in data2){
-        //   if(j['quizScore'] == null) {
         data2.removeWhere((element) => element['quizScore'] == null);
-        // }
-        // }
 
         print('qizzzz data.length ${data2.length}');
-        // print('qizzzz data.length ${data2}');
 
         await FirebaseFirestore.instance
             .collection("Users")
@@ -1068,6 +1063,8 @@ class _LandingScreenState extends State<LandingScreen> {
                         child: Image.network(
                             'https://firebasestorage.googleapis.com/v0/b/cloudyml-app.appspot.com/o/test_developer%2FGroup%20Lines.png?alt=media&token=19ebd446-f667-492b-96ba-c28c5054718f',
                             fit: BoxFit.fill,
+                            cacheHeight: 350,
+                            cacheWidth: 350,
                             height: screenHeight,
                             width: screenWidth),
                       ),
@@ -1077,6 +1074,8 @@ class _LandingScreenState extends State<LandingScreen> {
                       width: screenWidth,
                       height: screenHeight,
                       child: CachedNetworkImage(
+                        memCacheWidth: 350,
+                        memCacheHeight: 350,
                         placeholder: (context, url) => Container(
                           color: HexColor('0C001B'),
                         ),
@@ -1094,6 +1093,8 @@ class _LandingScreenState extends State<LandingScreen> {
                         width: 450,
                         height: 550,
                         child: CachedNetworkImage(
+                          memCacheHeight: 400,
+                          memCacheWidth: 400,
                           placeholder: (context, url) =>
                               Center(child: CircularProgressIndicator()),
                           errorWidget: (context, url, error) =>
@@ -1402,7 +1403,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                 if (course[index].multiCombo ==
                                                     true) {
                                                   fromcombo = 'no';
-                                                  mainCourseId = course[index].courseId;
+                                                  mainCourseId =
+                                                      course[index].courseId;
                                                   GoRouter.of(context).pushNamed(
                                                       'MultiComboCourseScreen',
                                                       queryParams: {
@@ -1478,7 +1480,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                 if (course[index].multiCombo ==
                                                     true) {
                                                   fromcombo = 'no';
-                                                  mainCourseId = course[index].courseId;
+                                                  mainCourseId =
+                                                      course[index].courseId;
                                                   GoRouter.of(context).pushNamed(
                                                       'MultiComboCourseScreen',
                                                       queryParams: {
@@ -1562,7 +1565,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                   final id = index.toString();
                                                   final courseName =
                                                       course[index].courseName;
-                                             mainCourseId = course[index].courseId;
+                                                  mainCourseId =
+                                                      course[index].courseId;
                                                   GoRouter.of(context).pushNamed(
                                                       'NewComboCourseScreen',
                                                       queryParams: {
@@ -1909,7 +1913,7 @@ class _LandingScreenState extends State<LandingScreen> {
 
                                                                                 final id = index.toString();
                                                                                 final courseName = course[index].courseName;
-                                                                                 mainCourseId = course[index].courseId;
+                                                                                mainCourseId = course[index].courseId;
                                                                                 GoRouter.of(context).pushNamed('NewComboCourseScreen', queryParams: {
                                                                                   'courseId': course[index].courseId,
                                                                                   'courseName': courseName
@@ -3573,7 +3577,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                               if (course[index].multiCombo ==
                                                   true) {
                                                 fromcombo = 'no';
-                                                mainCourseId = course[index].courseId;
+                                                mainCourseId =
+                                                    course[index].courseId;
                                                 GoRouter.of(context).pushNamed(
                                                     'MultiComboCourseScreen',
                                                     queryParams: {
@@ -3626,7 +3631,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                               if (course[index].multiCombo ==
                                                   true) {
                                                 fromcombo = 'no';
-                                                mainCourseId = course[index].courseId;
+                                                mainCourseId =
+                                                    course[index].courseId;
                                                 GoRouter.of(context).pushNamed(
                                                     'MultiComboCourseScreen',
                                                     queryParams: {
@@ -3704,7 +3710,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                 final id = index.toString();
                                                 final courseName =
                                                     course[index].courseName;
-                                                  mainCourseId = course[index].courseId;
+                                                mainCourseId =
+                                                    course[index].courseId;
                                                 GoRouter.of(context).pushNamed(
                                                     'NewComboCourseScreen',
                                                     queryParams: {
@@ -4018,7 +4025,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                           true) {
                                                                         fromcombo =
                                                                             'no';
-                                                                            mainCourseId = course[index].courseId;
+                                                                        mainCourseId =
+                                                                            course[index].courseId;
                                                                         GoRouter.of(context).pushNamed(
                                                                             'MultiComboCourseScreen',
                                                                             queryParams: {
@@ -4087,7 +4095,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                           true) {
                                                                         fromcombo =
                                                                             'no';
-                                                                            mainCourseId = course[index].courseId;
+                                                                        mainCourseId =
+                                                                            course[index].courseId;
                                                                         GoRouter.of(context).pushNamed(
                                                                             'MultiComboCourseScreen',
                                                                             queryParams: {
