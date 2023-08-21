@@ -1630,6 +1630,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                               Center(
                                                                   child:
                                                                       CircularProgressIndicator()),
+                                                          memCacheHeight: 80,
+                                                          memCacheWidth: 80,
                                                           errorWidget: (context,
                                                                   url, error) =>
                                                               Icon(Icons.error),
@@ -2870,6 +2872,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                   topRight:
                                                       Radius.circular(15)),
                                               child: CachedNetworkImage(
+                                                memCacheHeight: 80,
+                                                memCacheWidth: 80,
                                                 placeholder: (context, url) =>
                                                     Center(
                                                         child:
@@ -5131,6 +5135,8 @@ class _LandingScreenState extends State<LandingScreen> {
                                                                   .circular(
                                                                       15)),
                                                       child: CachedNetworkImage(
+                                                        memCacheHeight: 80,
+                                                        memCacheWidth: 80,
                                                         placeholder: (context,
                                                                 url) =>
                                                             Center(

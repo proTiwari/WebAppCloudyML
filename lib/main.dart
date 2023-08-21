@@ -229,6 +229,14 @@ class _MyAppState extends State<MyApp> {
                 },
                 theme: ThemeData(
                   primarySwatch: Colors.blue,
+                  scrollbarTheme: ScrollbarThemeData(
+                    thumbColor:
+                        MaterialStateProperty.all<Color>(Colors.purpleAccent),
+
+                    interactive: true, // Set the desired color
+                    isAlwaysShown:
+                        false, // You can set this to true if you want the scrollbar to be always visible
+                  ),
                 ),
               );
             });
