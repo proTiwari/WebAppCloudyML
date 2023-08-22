@@ -58,7 +58,7 @@ class _OtpPageState extends State<OtpPage> {
   late String deurl;
   late String supurl;
   late String interntnl;
-
+  FocusNode _buttonFocusNode = FocusNode();
   void _onKeyboardTap(String value) {
     setState(() {
       text = text + value;
@@ -89,13 +89,21 @@ class _OtpPageState extends State<OtpPage> {
     ),
   );
 
-  Widget darkRoundedPinPut() {
+  Widget darkRoundedPinPut(BuildContext context) {
     return Container(
       child: Pinput(
         onChanged: (value) => text = value,
         defaultPinTheme: defaultPinTheme.copyDecorationWith(
           borderRadius: BorderRadius.circular(8),
         ),
+        onCompleted: (text) async {
+          await validateOtpAndLogin(context, text);
+        },
+        focusNode: _buttonFocusNode,
+        autofocus: true,
+        onSubmitted: (text) async {
+          await validateOtpAndLogin(context, text);
+        },
         length: 6,
       ),
     );
@@ -266,6 +274,12 @@ class _OtpPageState extends State<OtpPage> {
     url();
     GRecaptchaV3.hideBadge();
     url();
+  }
+
+  @override
+  void dispose() {
+    _buttonFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -455,7 +469,8 @@ class _OtpPageState extends State<OtpPage> {
                                                   CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Expanded(
-                                                    child: darkRoundedPinPut()),
+                                                    child: darkRoundedPinPut(
+                                                        context)),
                                                 // _otpTextField(context, true, 0),
                                                 // _otpTextField(
                                                 //     context, false, 1),
@@ -477,7 +492,7 @@ class _OtpPageState extends State<OtpPage> {
                                   Padding(
                                     padding:
                                         const EdgeInsets.fromLTRB(0, 0, 0, 58),
-                                    child: GestureDetector(
+                                    child: InkWell(
                                       onTap: () async {
                                         await validateOtpAndLogin(
                                             context, text);
