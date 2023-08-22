@@ -191,10 +191,13 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
   }
 
   String currencyRate = '';
-  getCurrencyRate(){
+  getCurrencyRate() {
     try {
-      FirebaseFirestore.instance.collection('CurrencyRates').doc('usd').get().then((value) {
-
+      FirebaseFirestore.instance
+          .collection('CurrencyRates')
+          .doc('usd')
+          .get()
+          .then((value) {
         print('rate rate :: ${value.get('rate')}');
         currencyRate = value.get('rate');
       });
@@ -205,7 +208,6 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
 
   @override
   void initState() {
-
     getCourseName();
     getCurrencyRate();
     super.initState();
@@ -363,6 +365,8 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                     ),
                                     child: CachedNetworkImage(
                                       imageUrl: courseMap['image_url'],
+                                      memCacheWidth: 80,
+                                      memCacheHeight: 80,
                                       placeholder: (context, url) => Center(
                                           child: CircularProgressIndicator()),
                                       errorWidget: (context, url, error) =>
@@ -572,7 +576,7 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                       style: textStyle,
                                     ),
                                     Text(
-                                      '\$${((double.parse(courseMap['Course Price'])/double.parse(currencyRate)) + 5).round().toString()}/-',
+                                      '\$${((double.parse(courseMap['Course Price']) / double.parse(currencyRate)) + 5).round().toString()}/-',
                                       style: textStyle,
                                     ),
                                   ],
@@ -591,6 +595,7 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                             enabled: !apply ? true : false,
                                             controller: couponCodeController,
                                             textAlign: TextAlign.start,
+                                            cursorColor: Colors.purpleAccent,
                                             style: TextStyle(
                                               fontSize: 12.sp,
                                               letterSpacing: 1.2,
@@ -872,7 +877,9 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                                         false;
                                                                   });
                                                                 } else {
-                                                                  if (value['result']['couponValue']
+                                                                  if (value['result']
+                                                                              [
+                                                                              'couponValue']
                                                                           [
                                                                           'type'] ==
                                                                       'percentage') {
@@ -1145,8 +1152,8 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                         alignment: Alignment.centerRight,
                                         child: Text(
                                             typeOfCouponExpired
-                                                ? 'Yay! You have got an extra discount of \$${(double.parse(discountvalue)/double.parse(currencyRate)).round().toString()}. This code will expire on $expiredDate.'
-                                                : 'Yay! You have got an extra discount of \$${(double.parse(discountvalue)/double.parse(currencyRate)).round().toString()}. This code will expire at $expiredDate.',
+                                                ? 'Yay! You have got an extra discount of \$${(double.parse(discountvalue) / double.parse(currencyRate)).round().toString()}. This code will expire on $expiredDate.'
+                                                : 'Yay! You have got an extra discount of \$${(double.parse(discountvalue) / double.parse(currencyRate)).round().toString()}. This code will expire at $expiredDate.',
                                             style: TextStyle(
                                               color: Colors.deepPurpleAccent,
                                               fontSize: 11.sp,
@@ -1171,8 +1178,8 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                       ),
                                       Text(
                                         couponCodeApplied
-                                            ? '\$${(((double.parse(courseMap['Course Price'])/double.parse(currencyRate)) + 5).round() - (double.parse(discountvalue)/double.parse(currencyRate))).round().toString()}/-'
-                                            : '\$${((double.parse(courseMap['Course Price'])/double.parse(currencyRate)) + 5).round().toString()}/-',
+                                            ? '\$${(((double.parse(courseMap['Course Price']) / double.parse(currencyRate)) + 5).round() - (double.parse(discountvalue) / double.parse(currencyRate))).round().toString()}/-'
+                                            : '\$${((double.parse(courseMap['Course Price']) / double.parse(currencyRate)) + 5).round().toString()}/-',
                                         style: textStyle,
                                       ),
                                     ],
@@ -1218,12 +1225,12 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                       int.parse(courseprice),
                                                   courseId: courseMap['id'],
                                                   NoCouponApplied:
-                                                  NoCouponApplied,
+                                                      NoCouponApplied,
                                                   couponCodeText:
                                                       couponCodeController.text,
                                                   amountString: couponCodeApplied
-                                                      ? '${((totalAmount*100).round() - double.parse(discountvalue).round()).toString()}'
-                                                      : '${((totalAmount*100).round().toString())}',
+                                                      ? '${((totalAmount * 100).round() - double.parse(discountvalue).round()).toString()}'
+                                                      : '${((totalAmount * 100).round().toString())}',
                                                   courseName: courseMap['name'],
                                                   courseImageUrl:
                                                       courseMap['image_url'],
@@ -1364,6 +1371,8 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                     ),
                                     child: CachedNetworkImage(
                                       imageUrl: courseMap['image_url'],
+                                      memCacheWidth: 80,
+                                      memCacheHeight: 80,
                                       placeholder: (context, url) => Center(
                                           child: CircularProgressIndicator()),
                                       errorWidget: (context, url, error) =>
@@ -1563,7 +1572,8 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                     ),
                                     FittedBox(
                                       fit: BoxFit.fitWidth,
-                                      child: Text( '\$${courseMap['Amount Payable']}/-',
+                                      child: Text(
+                                        '\$${courseMap['Amount Payable']}/-',
                                       ),
                                     ),
                                   ],
@@ -1583,7 +1593,7 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                     FittedBox(
                                       fit: BoxFit.fitWidth,
                                       child: Text(
-                                        '\$${((double.parse(courseMap['Course Price'])/double.parse(currencyRate)) + 5).round().toString()}/-',
+                                        '\$${((double.parse(courseMap['Course Price']) / double.parse(currencyRate)) + 5).round().toString()}/-',
                                         style: textStyle,
                                       ),
                                     ),
@@ -1594,13 +1604,14 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                 ),
                                 haveACouponCode
                                     ? Container(
-                                        height: 30,
+                                        height: 35,
                                         // width: screenWidth/3.5,
                                         child: TextField(
                                           textAlignVertical:
                                               TextAlignVertical.center,
                                           enabled: !apply ? true : false,
                                           controller: couponCodeController,
+                                          cursorColor: Colors.purpleAccent,
                                           style: TextStyle(
                                             fontSize: 14.sp,
                                             letterSpacing: 1.2,
@@ -1611,16 +1622,15 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                 EdgeInsets.only(left: 10),
                                             // constraints: BoxConstraints(minHeight: 52, minWidth: 366),
                                             suffixIcon: TextButton(
-                                              child: couponCodeApplied
-                                                  ? Text(
-                                                      'Applied',
-                                                      style: TextStyle(
-                                                        color: Color.fromARGB(
-                                                            255, 96, 220, 193),
-                                                        fontFamily: 'Medium',
-                                                        fontSize: 14.sp,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                              child: loading
+                                                  ? Center(
+                                                      child: SizedBox(
+                                                        height: 20,
+                                                        width: 20,
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                                color: Colors
+                                                                    .white),
                                                       ),
                                                     )
                                                   : Text(
@@ -1644,6 +1654,9 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                       try {
                                                         if (couponCodeController
                                                             .text.isNotEmpty) {
+                                                          setState(() {
+                                                            loading = true;
+                                                          });
                                                           var couponAPI =
                                                               await verifyCoupon(
                                                                   couponCodeController
@@ -1652,6 +1665,9 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                               'towards logic');
                                                           if (couponData !=
                                                               null) {
+                                                            setState(() {
+                                                              loading = false;
+                                                            });
                                                             print(couponAPI);
                                                             var value = json
                                                                 .decode(couponAPI[
@@ -2128,8 +2144,8 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                         alignment: Alignment.centerRight,
                                         child: Text(
                                             typeOfCouponExpired
-                                                ? 'Yay! You have got an extra discount of \$${(double.parse(discountvalue)/double.parse(currencyRate)).round().toString()}. This code will expire on $expiredDate.'
-                                                : 'Yay! You have got an extra discount of \$${(double.parse(discountvalue)/double.parse(currencyRate)).round().toString()}. This code valid till $expiredDate.',
+                                                ? 'Yay! You have got an extra discount of \$${(double.parse(discountvalue) / double.parse(currencyRate)).round().toString()}. This code will expire on $expiredDate.'
+                                                : 'Yay! You have got an extra discount of \$${(double.parse(discountvalue) / double.parse(currencyRate)).round().toString()}. This code valid till $expiredDate.',
                                             style: TextStyle(
                                               color: Colors.deepPurpleAccent,
                                               fontSize: 13.sp,
@@ -2158,8 +2174,8 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                         fit: BoxFit.fitWidth,
                                         child: Text(
                                           couponCodeApplied
-                                              ? '\$${(((double.parse(courseMap['Course Price'])/double.parse(currencyRate)) + 5).round() - (double.parse(discountvalue)/double.parse(currencyRate))).round().toString()}/-'
-                                              : '\$${((double.parse(courseMap['Course Price'])/double.parse(currencyRate)) + 5).round().toString()}/-',
+                                              ? '\$${(((double.parse(courseMap['Course Price']) / double.parse(currencyRate)) + 5).round() - (double.parse(discountvalue) / double.parse(currencyRate))).round().toString()}/-'
+                                              : '\$${((double.parse(courseMap['Course Price']) / double.parse(currencyRate)) + 5).round().toString()}/-',
                                           style: textStyle,
                                         ),
                                       ),
@@ -2196,7 +2212,6 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                   ),
                                                 ),
                                                 SizedBox(height: 20),
-
                                                 RazorPayInternationalBtn(
                                                   international: true,
                                                   courseDescription:
@@ -2209,8 +2224,8 @@ class _InternationalPaymentScreenState extends State<InternationalPaymentScreen>
                                                   couponCodeText:
                                                       couponCodeController.text,
                                                   amountString: couponCodeApplied
-                                                      ? '${((totalAmount*100).round() - double.parse(discountvalue).round()).toString()}'
-                                                      : '${((totalAmount*100).round().toString())}',
+                                                      ? '${((totalAmount * 100).round() - double.parse(discountvalue).round()).toString()}'
+                                                      : '${((totalAmount * 100).round().toString())}',
                                                   courseName: courseMap['name'],
                                                   courseImageUrl:
                                                       courseMap['image_url'],

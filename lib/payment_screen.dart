@@ -351,6 +351,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     ),
                                     child: CachedNetworkImage(
                                       imageUrl: courseMap['image_url'],
+                                      memCacheHeight: 80,
+                                      memCacheWidth: 80,
                                       placeholder: (context, url) => Center(
                                           child: CircularProgressIndicator()),
                                       errorWidget: (context, url, error) =>
@@ -600,6 +602,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                             enabled: !apply ? true : false,
                                             controller: couponCodeController,
                                             textAlign: TextAlign.start,
+                                            cursorColor: Colors.purpleAccent,
                                             style: TextStyle(
                                               fontSize: 12.sp,
                                               letterSpacing: 1.2,
@@ -1459,6 +1462,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                     ),
                                     child: CachedNetworkImage(
                                       imageUrl: courseMap['image_url'],
+                                      memCacheWidth: 80,
+                                      memCacheHeight: 80,
                                       placeholder: (context, url) => Center(
                                           child: CircularProgressIndicator()),
                                       errorWidget: (context, url, error) =>
@@ -1678,7 +1683,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                 ),
                                 haveACouponCode
                                     ? Container(
-                                        height: 30,
+                                        height: 35,
                                         // width: screenWidth/3.5,
                                         child: TextField(
                                           textAlignVertical:
@@ -1690,21 +1695,21 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                             letterSpacing: 1.2,
                                             fontFamily: 'Medium',
                                           ),
+                                          cursorColor: Colors.purpleAccent,
                                           decoration: InputDecoration(
                                             contentPadding:
                                                 EdgeInsets.only(left: 10),
                                             // constraints: BoxConstraints(minHeight: 52, minWidth: 366),
                                             suffixIcon: TextButton(
-                                              child: couponCodeApplied
-                                                  ? Text(
-                                                      'Applied',
-                                                      style: TextStyle(
-                                                        color: Color.fromARGB(
-                                                            255, 96, 220, 193),
-                                                        fontFamily: 'Medium',
-                                                        fontSize: 14.sp,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                              child: loading
+                                                  ? Center(
+                                                      child: SizedBox(
+                                                        height: 20,
+                                                        width: 20,
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                                color: Colors
+                                                                    .white),
                                                       ),
                                                     )
                                                   : Text(
@@ -1728,6 +1733,9 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                       try {
                                                         if (couponCodeController
                                                             .text.isNotEmpty) {
+                                                          setState(() {
+                                                            loading = true;
+                                                          });
                                                           var couponAPI =
                                                               await verifyCoupon(
                                                                   couponCodeController
@@ -1736,6 +1744,9 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                               'towards logic');
                                                           if (couponData !=
                                                               null) {
+                                                            setState(() {
+                                                              loading = false;
+                                                            });
                                                             print(couponAPI);
                                                             var value = json
                                                                 .decode(couponAPI[
