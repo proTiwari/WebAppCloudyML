@@ -7,6 +7,7 @@ import 'package:cloudyml_app2/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -34,16 +35,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  @override
-  void initState() {
-    super.initState();
-    GRecaptchaV3.hideBadge();
-    final el = window.document.getElementById('__ff-recaptcha-container');
-    if (el != null) {
-      el.style.visibility = 'hidden';
-    }
-  }
-
   TextEditingController phoneController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool loading = false;
@@ -62,6 +53,25 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   final _loginkey = GlobalKey<FormState>();
   final FirebaseAuth auth = FirebaseAuth.instance;
+  FocusNode _buttonFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    GRecaptchaV3.hideBadge();
+
+    final el = window.document.getElementById('__ff-recaptcha-container');
+    if (el != null) {
+      el.style.visibility = 'hidden';
+    }
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    phoneController.dispose();
+    _buttonFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -257,6 +267,7 @@ class _LoginPageState extends State<LoginPage> {
                                         autofillHints: [
                                           AutofillHints.telephoneNumber
                                         ],
+                                        focusNode: _buttonFocusNode,
                                         autoFocus: true,
                                         textAlignVertical:
                                             TextAlignVertical.center,
@@ -276,12 +287,49 @@ class _LoginPageState extends State<LoginPage> {
                                           print('On Saved: $number');
                                           print(phoneController.text);
                                         },
+                                        onSubmit: () {
+                                          if (phoneController.text.isNotEmpty) {
+                                            globals.phone =
+                                                phoneController.text.toString();
+
+                                            if (phonenumber
+                                                    .toString()
+                                                    .substring(0, 3) ==
+                                                "+91") {
+                                              if (phonenumber
+                                                      .toString()
+                                                      .substring(0, 4) ==
+                                                  "+910") {
+                                                phoneController.text =
+                                                    phoneController.text
+                                                        .toString()
+                                                        .replaceFirst("0", "");
+
+                                                phonenumber = phonenumber
+                                                    .replaceRange(0, 4, '+91');
+
+                                                getCodeWithPhoneNumber(
+                                                    context, "${phonenumber}");
+                                              } else {
+                                                getCodeWithPhoneNumber(
+                                                    context, "${phonenumber}");
+                                              }
+                                            } else {
+                                              getCodeWithPhoneNumber(
+                                                  context, "${phonenumber}");
+                                            }
+                                          } else if (phoneController
+                                              .text.isEmpty) {
+                                            Toast.show(
+                                                'Please enter a phone number');
+                                          }
+                                        },
                                       ),
                                     ),
                                     SizedBox(
                                       height: 20,
                                     ),
-                                    GestureDetector(
+                                    InkWell(
                                       onTap: () {
                                         if (phoneController.text.isNotEmpty) {
                                           globals.phone =
@@ -550,58 +598,6 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             )
                       : null),
-              // AnimatedSwitcher(
-              //     duration: Duration(milliseconds: 200),
-              //     child: (phoneVisible)
-              //         ? Container(
-              //       color: Colors.black54,
-              //       alignment: Alignment.center,
-              //       child: SingleChildScrollView(
-              //         child: Column(
-              //           mainAxisSize: MainAxisSize.min,
-              //           children: [
-              //             Row(
-              //               mainAxisAlignment: MainAxisAlignment.center,
-              //               children: [
-              //                 ElevatedButton(
-              //                     onPressed: () {},
-              //                     style: ElevatedButton.styleFrom(
-              //                       primary: Colors.white,
-              //                       shape: RoundedRectangleBorder(
-              //                           borderRadius: BorderRadius.circular(
-              //                               width * 0.06)),
-              //                     ),
-              //                     child: Text('OTP Verification',
-              //                         textScaleFactor: min(
-              //                             horizontalScale, verticalScale),
-              //                         style: TextStyle(
-              //                           color: HexColor('6153D3'),
-              //                           fontSize: 18,
-              //                         ))),
-              //                 SizedBox(
-              //                   width: horizontalScale * 17,
-              //                 ),
-              //                 IconButton(
-              //                     color: Colors.white,
-              //                     onPressed: () {
-              //                       setState(() {
-              //                         phoneVisible = false;
-              //                       });
-              //                     },
-              //                     icon: Icon(Icons.clear))
-              //               ],
-              //             ),
-              //             Container(
-              //               child: AnimatedSwitcher(
-              //                 duration: Duration(milliseconds: 200),
-              //                 child: PhoneAuthentication(),
-              //               ),
-              //             )
-              //           ],
-              //         ),
-              //       ),
-              //     )
-              //         : null)
             ],
           );
         } else {
