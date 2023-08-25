@@ -486,6 +486,72 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
     authorizationToken = await FirebaseAuth.instance.currentUser!.getIdToken();
   }
 
+  getcoursenamewithoutquiz() async {
+    coursenamewithoutquiz.clear();
+    await FirebaseFirestore.instance.collection("courses").get().then((value) {
+      bool hasquiz = false;
+      value.docs.forEach((element) {
+        try {
+          if (element.data()["combo"] == true ||
+              element.data()["multiCombo"] == true) {
+          } else {
+            if (element.data()["name"] == "Founder's Message") {
+              print("founder's message nnn");
+            }
+            for (var i in element.data()["curriculum1"]
+                ['${element.data()["name"]}']) {
+              for (var j in i['videos']) {
+                if (j['type'].toString().trim() == 'quiz') {
+                  hasquiz = true;
+                }
+              }
+            }
+            print("hhhh ${hasquiz}");
+            ;
+            if (hasquiz == false) {
+              print(
+                  'hhhhhhhhhkk: ${element.data()["multiCombo"] == true} ${element.data()["name"]}');
+              try {
+                element.data()["coursequiz"];
+                if (element.data()["coursequiz"] == null) {
+                  if (element.data()["combo"] == true ||
+                      element.data()["multiCombo"] == true) {
+                  } else {
+                    coursenamewithoutquiz.add(element.data()["name"]);
+                  }
+                }
+                print(coursenamewithoutquiz);
+              } catch (e) {
+                print(e);
+                if (element.data()["combo"] == true ||
+                    element.data()["multiCombo"] == true) {
+                } else {
+                  coursenamewithoutquiz.add(element.data()["name"]);
+                }
+              }
+            } else {
+              hasquiz = false;
+            }
+          }
+        } catch (e) {
+          print(
+              'hhhhhhhhhkk1: ${element.data()["multiCombo"] == true} ${element.data()["name"]}');
+          print('$e');
+          if (element.data()["combo"] == true ||
+              element.data()["multiCombo"] == true) {
+          } else {
+            coursenamewithoutquiz.add(element.data()["name"]);
+          }
+        }
+      });
+    });
+    print("iefwoefw");
+    print(coursenamewithoutquiz);
+    setState(() {
+      coursenamewithoutquiz;
+    });
+  }
+
   bool isAnnounceMent = false;
   String announcementMsg = '';
   void getAnnouncement() async {
@@ -513,6 +579,7 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
     userData();
     startTimer();
     checkrewardexpiry();
+    getcoursenamewithoutquiz();
   }
 
   Timer? countDownTimer;
@@ -576,101 +643,35 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                                     }
                                     if (courses
                                         .contains(course[index].courseId)) {
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 8.0),
-                                        child: Align(
-                                          alignment: Alignment.center,
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              InkWell(
-                                                onTap: (() async {
-                                                  await getCourseName();
-                                                  print('efjowjefoiwje');
-                                                  if (navigateToCatalogueScreen(
-                                                          course[index]
-                                                              .courseId) &&
-                                                      !(userMap['payInPartsDetails']
-                                                              [course[index]
-                                                                  .courseId][
-                                                          'outStandingAmtPaid'])) {
-                                                    if (!course[index]
-                                                        .isItComboCourse) {
-                                                      print("owfoiwjoifejw");
-                                                      GoRouter.of(context)
-                                                          .pushNamed('quizlist',
-                                                              queryParams: {
-                                                            'courseName':
+                                      return coursenamewithoutquiz.contains(
+                                              course[index].courseName)
+                                          ? Container()
+                                          : Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 8.0),
+                                              child: Align(
+                                                alignment: Alignment.center,
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: (() async {
+                                                        await getCourseName();
+                                                        print('efjowjefoiwje');
+                                                        if (navigateToCatalogueScreen(
                                                                 course[index]
-                                                                    .courseName,
-                                                            'cID': course[index]
-                                                                .courseDocumentId,
-                                                          });
-                                                    } else {
-                                                      print("owfoiwjoifejw1");
-                                                      final id =
-                                                          index.toString();
-                                                      final courseName =
-                                                          course[index]
-                                                              .courseName;
-                                                      context.goNamed(
-                                                          'comboStore',
-                                                          queryParams: {
-                                                            'courseName':
-                                                                courseName,
-                                                            'id': id
-                                                          });
-                                                    }
-                                                  } else {
-                                                    print('efjowjefoiwje2');
-                                                    if (!course[index]
-                                                        .isItComboCourse) {
-                                                      print('efjowjefoiwje3');
-                                                      if (course[index]
-                                                              .courseContent ==
-                                                          'pdf') {
-                                                        print('efjowjefoiwje4');
-                                                        Navigator.push(
-                                                          context,
-                                                          PageTransition(
-                                                            duration: Duration(
-                                                                milliseconds:
-                                                                    400),
-                                                            curve: Curves
-                                                                .bounceInOut,
-                                                            type: PageTransitionType
-                                                                .rightToLeftWithFade,
-                                                            child:
-                                                                PdfCourseScreen(
-                                                              curriculum: course[
-                                                                          index]
-                                                                      .curriculum
-                                                                  as Map<String,
-                                                                      dynamic>,
-                                                            ),
-                                                          ),
-                                                        );
-                                                      } else {
-                                                        print('efjowjefoiwje5');
-                                                        print("wijwioefw");
-                                                        fromcombo = 'yes';
-                                                        try {
-                                                          if (course[index]
-                                                              .multiCombo!) {
-                                                            GoRouter.of(context)
-                                                                .pushNamed(
-                                                                    'MultiComboModuleScreen',
-                                                                    queryParams: {
-                                                                  'courseName': course[
-                                                                          index]
-                                                                      .courseName
-                                                                      .toString(),
-                                                                  'id': course[
-                                                                          index]
-                                                                      .courseId,
-                                                                });
-                                                          } else {
+                                                                    .courseId) &&
+                                                            !(userMap['payInPartsDetails']
+                                                                    [
+                                                                    course[index]
+                                                                        .courseId]
+                                                                [
+                                                                'outStandingAmtPaid'])) {
+                                                          if (!course[index]
+                                                              .isItComboCourse) {
+                                                            print(
+                                                                "owfoiwjoifejw");
                                                             GoRouter.of(context)
                                                                 .pushNamed(
                                                                     'quizlist',
@@ -682,238 +683,289 @@ class _QuizesOfEnrolledCoursesState extends State<QuizesOfEnrolledCourses> {
                                                                           index]
                                                                       .courseDocumentId,
                                                                 });
-                                                          }
-                                                        } catch (e) {
-                                                          GoRouter.of(context)
-                                                              .pushNamed(
-                                                                  'quizlist',
-                                                                  queryParams: {
-                                                                'courseName':
-                                                                    course[index]
-                                                                        .courseName,
-                                                                'cID': course[
-                                                                        index]
-                                                                    .courseDocumentId,
-                                                              });
-                                                          print(e);
-                                                        }
-                                                      }
-                                                    } else {
-                                                      ComboCourse
-                                                              .comboId.value =
-                                                          course[index]
-                                                              .courseId;
-
-                                                      final id =
-                                                          index.toString();
-                                                      final courseName =
-                                                          course[index]
-                                                              .courseName;
-                                                      fromcombo = 'yes';
-                                                      GoRouter.of(context)
-                                                          .pushNamed(
-                                                              'NewComboCourseScreen',
-                                                              queryParams: {
-                                                            'courseId':
+                                                          } else {
+                                                            print(
+                                                                "owfoiwjoifejw1");
+                                                            final id = index
+                                                                .toString();
+                                                            final courseName =
                                                                 course[index]
-                                                                    .courseId,
-                                                            'courseName':
-                                                                courseName
-                                                          });
-                                                    }
-                                                  }
-                                                  setState(() {
-                                                    courseId = course[index]
-                                                        .courseDocumentId;
-                                                  });
-                                                }),
-                                                child: Container(
-                                                  width: MediaQuery.of(context)
-                                                              .size
-                                                              .width <=
-                                                          650
-                                                      ? screenWidth - 50
-                                                      : screenWidth / 2.8,
-                                                  height: screenHeight / 5.5,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    border: Border.all(
-                                                      color: HexColor('440F87'),
-                                                      width: 1.5,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  child: Stack(
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: Row(
+                                                                    .courseName;
+                                                            context.goNamed(
+                                                                'comboStore',
+                                                                queryParams: {
+                                                                  'courseName':
+                                                                      courseName,
+                                                                  'id': id
+                                                                });
+                                                          }
+                                                        } else {
+                                                          print(
+                                                              'efjowjefoiwje2');
+                                                          if (!course[index]
+                                                              .isItComboCourse) {
+                                                            print(
+                                                                'efjowjefoiwje3');
+                                                            if (course[index]
+                                                                    .courseContent ==
+                                                                'pdf') {
+                                                              print(
+                                                                  'efjowjefoiwje4');
+                                                              Navigator.push(
+                                                                context,
+                                                                PageTransition(
+                                                                  duration: Duration(
+                                                                      milliseconds:
+                                                                          400),
+                                                                  curve: Curves
+                                                                      .bounceInOut,
+                                                                  type: PageTransitionType
+                                                                      .rightToLeftWithFade,
+                                                                  child:
+                                                                      PdfCourseScreen(
+                                                                    curriculum: course[index]
+                                                                            .curriculum
+                                                                        as Map<
+                                                                            String,
+                                                                            dynamic>,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            } else {
+                                                              print(
+                                                                  'efjowjefoiwje5');
+                                                              print(
+                                                                  "wijwioefw");
+                                                              fromcombo = 'yes';
+                                                              try {
+                                                                if (course[
+                                                                        index]
+                                                                    .multiCombo!) {
+                                                                  GoRouter.of(
+                                                                          context)
+                                                                      .pushNamed(
+                                                                          'MultiComboModuleScreen',
+                                                                          queryParams: {
+                                                                        'courseName': course[index]
+                                                                            .courseName
+                                                                            .toString(),
+                                                                        'id': course[index]
+                                                                            .courseId,
+                                                                      });
+                                                                } else {
+                                                                  GoRouter.of(
+                                                                          context)
+                                                                      .pushNamed(
+                                                                          'quizlist',
+                                                                          queryParams: {
+                                                                        'courseName':
+                                                                            course[index].courseName,
+                                                                        'cID': course[index]
+                                                                            .courseDocumentId,
+                                                                      });
+                                                                }
+                                                              } catch (e) {
+                                                                GoRouter.of(
+                                                                        context)
+                                                                    .pushNamed(
+                                                                        'quizlist',
+                                                                        queryParams: {
+                                                                      'courseName':
+                                                                          course[index]
+                                                                              .courseName,
+                                                                      'cID': course[
+                                                                              index]
+                                                                          .courseDocumentId,
+                                                                    });
+                                                                print(e);
+                                                              }
+                                                            }
+                                                          } else {
+                                                            ComboCourse.comboId
+                                                                    .value =
+                                                                course[index]
+                                                                    .courseId;
+
+                                                            final id = index
+                                                                .toString();
+                                                            final courseName =
+                                                                course[index]
+                                                                    .courseName;
+                                                            fromcombo = 'yes';
+                                                            GoRouter.of(context)
+                                                                .pushNamed(
+                                                                    'QuizNewComboCourseScreen',
+                                                                    queryParams: {
+                                                                  'courseId': course[
+                                                                          index]
+                                                                      .courseId,
+                                                                  'courseName':
+                                                                      courseName
+                                                                });
+                                                          }
+                                                        }
+                                                        setState(() {
+                                                          courseId = course[
+                                                                  index]
+                                                              .courseDocumentId;
+                                                        });
+                                                      }),
+                                                      child: Container(
+                                                        width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width <=
+                                                                650
+                                                            ? screenWidth - 50
+                                                            : screenWidth / 2.8,
+                                                        height:
+                                                            screenHeight / 5.5,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.white,
+                                                          border: Border.all(
+                                                            color: HexColor(
+                                                                '440F87'),
+                                                            width: 1.5,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        child: Stack(
                                                           children: [
-                                                            Container(
-                                                              width: 60 *
-                                                                  horizontalScale,
-                                                              height:
-                                                                  screenHeight /
-                                                                      5.5,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                      border: Border.all(
-                                                                          color: Colors
-                                                                              .transparent),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              5),
-                                                                      image: DecorationImage(
-                                                                          image: CachedNetworkImageProvider(
-                                                                            course[index].courseImageUrl,
-                                                                          ),
-                                                                          fit: BoxFit.fill)),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 3,
-                                                            ),
-                                                            Container(
-                                                              width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width <=
-                                                                      650
-                                                                  ? screenWidth -
-                                                                      50
-                                                                  : screenWidth /
-                                                                      5.6,
-                                                              height:
-                                                                  screenHeight /
-                                                                      5.5,
-                                                              child: Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topCenter,
-                                                                child: Column(
-                                                                  children: [
-                                                                    Align(
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child: Row(
+                                                                children: [
+                                                                  Container(
+                                                                    width: 60 *
+                                                                        horizontalScale,
+                                                                    height:
+                                                                        screenHeight /
+                                                                            5.5,
+                                                                    decoration: BoxDecoration(
+                                                                        border: Border.all(color: Colors.transparent),
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        image: DecorationImage(
+                                                                            image: CachedNetworkImageProvider(
+                                                                              course[index].courseImageUrl,
+                                                                            ),
+                                                                            fit: BoxFit.fill)),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 3,
+                                                                  ),
+                                                                  Container(
+                                                                    width: MediaQuery.of(context).size.width <=
+                                                                            650
+                                                                        ? screenWidth -
+                                                                            50
+                                                                        : screenWidth /
+                                                                            5.6,
+                                                                    height:
+                                                                        screenHeight /
+                                                                            5.5,
+                                                                    child:
+                                                                        Align(
                                                                       alignment:
                                                                           Alignment
-                                                                              .topLeft,
+                                                                              .topCenter,
                                                                       child:
-                                                                          Text(
-                                                                        course[index]
-                                                                            .courseName,
-                                                                        maxLines:
-                                                                            2,
-                                                                        style:
-                                                                            TextStyle(
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          color:
-                                                                              Colors.black,
-                                                                          fontFamily:
-                                                                              'Medium',
-                                                                          fontSize: MediaQuery.of(context).size.width <= 650
-                                                                              ? 11
-                                                                              : 14,
-                                                                          height:
-                                                                              0.95,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height:
-                                                                          10,
-                                                                    ),
-                                                                    Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        Container(
-                                                                          height:
-                                                                              20,
-                                                                          width:
-                                                                              25,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(5.0),
-                                                                            color:
-                                                                                HexColor('440F87'),
-                                                                          ),
-                                                                          child:
-                                                                              Center(
+                                                                          Column(
+                                                                        children: [
+                                                                          Align(
+                                                                            alignment:
+                                                                                Alignment.topLeft,
                                                                             child:
                                                                                 Text(
-                                                                              course[index].reviews.isNotEmpty ? course[index].reviews : '5.0',
-                                                                              style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.normal),
+                                                                              course[index].courseName,
+                                                                              maxLines: 2,
+                                                                              style: TextStyle(
+                                                                                overflow: TextOverflow.ellipsis,
+                                                                                color: Colors.black,
+                                                                                fontFamily: 'Medium',
+                                                                                fontSize: MediaQuery.of(context).size.width <= 650 ? 11 : 14,
+                                                                                height: 0.95,
+                                                                                fontWeight: FontWeight.bold,
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                        StarRating(
-                                                                          length:
-                                                                              5,
-                                                                          rating: course[index].reviews.isNotEmpty
-                                                                              ? double.parse(course[index].reviews)
-                                                                              : 5.0,
-                                                                          color:
-                                                                              HexColor('440F87'),
-                                                                          starSize:
-                                                                              20,
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 5,
-                                                                    ),
-                                                                    courses.length !=
-                                                                                0 &&
-                                                                            coursePercent !=
-                                                                                {}
-                                                                        ? Container(
+                                                                          SizedBox(
                                                                             height:
-                                                                                15,
-                                                                            child:
-                                                                                Row(
-                                                                              children: [
-                                                                                Container(
-                                                                                  height: 5 * horizontalScale,
-                                                                                  width: 150 * verticalScale,
-                                                                                  child: LinearProgressIndicator(
-                                                                                    value: coursePercent[course[index].courseId.toString()] != null ? coursePercent[course[index].courseId] / 100 : 0,
-                                                                                    color: HexColor("8346E1"),
-                                                                                    backgroundColor: HexColor('E3E3E3'),
+                                                                                10,
+                                                                          ),
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                            children: [
+                                                                              Container(
+                                                                                height: 20,
+                                                                                width: 25,
+                                                                                decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(5.0),
+                                                                                  color: HexColor('440F87'),
+                                                                                ),
+                                                                                child: Center(
+                                                                                  child: Text(
+                                                                                    course[index].reviews.isNotEmpty ? course[index].reviews : '5.0',
+                                                                                    style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.normal),
                                                                                   ),
                                                                                 ),
-                                                                                Spacer(),
-                                                                                Text(
-                                                                                  "${coursePercent[course[index].courseId.toString()] != null ? coursePercent[course[index].courseId] : 0}%",
-                                                                                  style: TextStyle(fontSize: 10),
+                                                                              ),
+                                                                              StarRating(
+                                                                                length: 5,
+                                                                                rating: course[index].reviews.isNotEmpty ? double.parse(course[index].reviews) : 5.0,
+                                                                                color: HexColor('440F87'),
+                                                                                starSize: 20,
+                                                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          SizedBox(
+                                                                            height:
+                                                                                5,
+                                                                          ),
+                                                                          courses.length != 0 && coursePercent != {}
+                                                                              ? Container(
+                                                                                  height: 15,
+                                                                                  child: Row(
+                                                                                    children: [
+                                                                                      Container(
+                                                                                        height: 5 * horizontalScale,
+                                                                                        width: 150 * verticalScale,
+                                                                                        child: LinearProgressIndicator(
+                                                                                          value: coursePercent[course[index].courseId.toString()] != null ? coursePercent[course[index].courseId] / 100 : 0,
+                                                                                          color: HexColor("8346E1"),
+                                                                                          backgroundColor: HexColor('E3E3E3'),
+                                                                                        ),
+                                                                                      ),
+                                                                                      Spacer(),
+                                                                                      Text(
+                                                                                        "${coursePercent[course[index].courseId.toString()] != null ? coursePercent[course[index].courseId] : 0}%",
+                                                                                        style: TextStyle(fontSize: 10),
+                                                                                      )
+                                                                                    ],
+                                                                                  ),
                                                                                 )
-                                                                              ],
-                                                                            ),
-                                                                          )
-                                                                        : SizedBox(),
-                                                                  ],
-                                                                ),
+                                                                              : SizedBox(),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ],
                                                         ),
                                                       ),
-                                                    ],
-                                                  ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
+                                            );
                                     } else {
                                       return Container();
                                     }

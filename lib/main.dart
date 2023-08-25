@@ -234,8 +234,8 @@ class _MyAppState extends State<MyApp> {
                         MaterialStateProperty.all<Color>(Colors.purpleAccent),
 
                     interactive: true, // Set the desired color
-                    isAlwaysShown:
-                        false, // You can set this to true if you want the scrollbar to be always visible
+                    // thumbVisibility:
+                    //     false, // You can set this to true if you want the scrollbar to be always visible
                   ),
                 ),
               );

@@ -21,6 +21,7 @@ import 'package:cloudyml_app2/screens/chat_screen.dart';
 import 'package:cloudyml_app2/screens/chatpage.dart';
 import 'package:cloudyml_app2/screens/groups_list.dart';
 import 'package:cloudyml_app2/screens/quiz/quizList.dart';
+import 'package:cloudyml_app2/screens/quiz/quiz_new_combo_course.dart';
 import 'package:cloudyml_app2/screens/splash.dart';
 import 'package:cloudyml_app2/store.dart';
 import 'package:flutter/material.dart';
@@ -148,6 +149,19 @@ class MyRouter {
               return MaterialPage(
                   key: state.pageKey,
                   child: NewComboCourse(
+                    courseName: courseName,
+                    courseIdd: courseId,
+                  ));
+            }),
+             GoRoute(
+            name: 'QuizNewComboCourseScreen',
+            path: '/QuizNewComboCourseScreen',
+            pageBuilder: (context, state) {
+              final String courseId = state.queryParams['courseId']!;
+              final String courseName = state.queryParams['courseName']!;
+              return MaterialPage(
+                  key: state.pageKey,
+                  child: QuizNewComboCourse(
                     courseName: courseName,
                     courseIdd: courseId,
                   ));
