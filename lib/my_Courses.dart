@@ -321,7 +321,7 @@ final Scrollcontroller = ScrollController();
                   ),
                   courses.length > 0
                       ? Scrollbar(
-                          isAlwaysShown: true,
+                          thumbVisibility: true,
                           child: Container(
                             // width: courses.length == 1
                             //     ? screenWidth / 2.5
