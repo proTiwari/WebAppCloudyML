@@ -17,6 +17,7 @@ import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -345,7 +346,7 @@ getAssignmentDescription() async {
             // print('getAssignmentSolutionVideo $assignmentSolutionVideo');
           }
         }
-        print('getAssignmentSolutionVideo $assignmentSolutionVideo');
+        // print('getAssignmentSolutionVideo $assignmentSolutionVideo');
       }
 
     }catch(e){
@@ -353,7 +354,34 @@ getAssignmentDescription() async {
     }
   }
 
-/*-------------- Assignment Solution URL ------------- */
+/*-------------- Assignment Description Show or Not ------------- */
+
+  var assignmentDescriptionShow = {};
+  assignmentDescriptionShowCheck() async {
+    try{
+      courseCurriculum = await FirebaseFirestore.instance
+          .collection("courses")
+          .doc(widget.cID)
+          .get();
+
+      var assignmentData = courseCurriculum['curriculum1'][widget.courseName];
+      for (var i = 0; i < assignmentData.length; i++) {
+        for (var j = 0; j < assignmentData[i]['videos'].length; j++) {
+          if (assignmentData[i]['videos'][j]['type'] == 'assignment') {
+            assignmentDescriptionShow[assignmentData[i]['videos'][j]['name']] =
+            assignmentData[i]['videos'][j]['showDescription'];
+            // print('getAssignmentSolutionVideo $assignmentDescriptionShow');
+          }
+        }
+        print('assignmentDescriptionShowCheck $assignmentDescriptionShow');
+      }
+
+    }catch(e){
+      print('Error assignmentDescriptionShowCheck: $e');
+    }
+  }
+
+/*-------------- Assignment Track ------------- */
 
   var assignmentTrack;
   var assignmentTrackBoolMap = {};
@@ -1469,6 +1497,7 @@ getAssignmentDescription() async {
 
   @override
   void initState() {
+    assignmentDescriptionShowCheck();
     updateSessionExpiryTime();
     assignmentCheck();
     getAssignmentSolutionVideo();
@@ -1602,6 +1631,7 @@ getAssignmentDescription() async {
                                   assignmentDescription: assignmentDescription,
                             assignmentSolutionVideo: assignmentSolutionVideo,
                               assignmentTrackBoolMap: assignmentTrackBoolMap,
+                            showDescription: assignmentDescriptionShow,
                                 )
                               : submitResume
                                   ? SubmitResume(
@@ -1801,6 +1831,7 @@ getAssignmentDescription() async {
                                   assignmentDescription: assignmentDescription,
                                   assignmentSolutionVideo: assignmentSolutionVideo,
                                   assignmentTrackBoolMap: assignmentTrackBoolMap,
+                                  showDescription: assignmentDescriptionShow,
                                 ),
                               )
                             : submitResume
@@ -1904,6 +1935,7 @@ getAssignmentDescription() async {
   TextEditingController assignmentLinkController = TextEditingController();
   TextEditingController pdfLinkController = TextEditingController();
   TextEditingController datasetLinkController = TextEditingController();
+  bool isToggled = false;
 
   Widget addAssigmentPopUp({required dynamic listOfSectionData}) {
     final width = MediaQuery.of(context).size.width;
@@ -1964,6 +1996,29 @@ getAssignmentDescription() async {
                   ),
                 ),
               ),
+            ),
+            SizedBox(
+              height: height / 50,
+            ),
+            StatefulBuilder(
+                builder: (context, state) {
+                return Row(
+                  children: [
+                    Text('Show description?'),
+                    SizedBox(
+                      width: height / 40,
+                    ),
+                    CupertinoSwitch(
+                      value: isToggled,
+                      onChanged: (value) {
+                          isToggled = value;
+                          setState((){});
+                        print('isToggled $isToggled');
+                      },
+                    ),
+                  ]
+                );
+              }
             ),
             SizedBox(
               height: height / 50,
@@ -2098,6 +2153,7 @@ getAssignmentDescription() async {
                             state;
                           });
                           await getAssignmentDescription();
+                          await assignmentDescriptionShowCheck();
                         },
                         child: Text("Add Assignment"),
                         style: ElevatedButton.styleFrom(
@@ -2328,6 +2384,7 @@ getAssignmentDescription() async {
             'description': assignmentDescriptionController.text.isNotEmpty
                 ? assignmentDescriptionController.text
                 : null,
+            'showDescription': isToggled,
           });
 
           await courseRef.doc(widget.cID).update({
@@ -3225,7 +3282,7 @@ getAssignmentDescription() async {
                                               builder: (BuildContext context) {
                                                 return addAssigmentPopUp(
                                                     listOfSectionData:
-                                                        listOfSectionData);
+                                                    listOfSectionData);
                                               },
                                             );
                                           }
@@ -3524,6 +3581,7 @@ getAssignmentDescription() async {
                                                                   assignmentDescription,
                                                               assignmentSolutionVideo: assignmentSolutionVideo,
                                                               assignmentTrackBoolMap: assignmentTrackBoolMap,
+                                                              showDescription: assignmentDescriptionShow,
                                                             )));
                                                 print("Eagle");
                                               }
@@ -3843,6 +3901,7 @@ getAssignmentDescription() async {
                                                                     assignmentDescription,
                                                                 assignmentSolutionVideo: assignmentSolutionVideo,
                                                                 assignmentTrackBoolMap: assignmentTrackBoolMap,
+                                                                showDescription: assignmentDescriptionShow,
                                                               )));
                                                   print("Eagle");
                                                 }
@@ -4317,8 +4376,7 @@ getAssignmentDescription() async {
                                                                           .toString());
                                                                     }
                                                                   }
-                                                                  if (item ==
-                                                                      2) {
+                                                                  if (item == 2) {
                                                                     setState(
                                                                         () {
                                                                       updateVideoNameController
@@ -4572,6 +4630,30 @@ getAssignmentDescription() async {
                                                                           );
                                                                         });
                                                                   }
+                                                                  if (item == 6) {
+                                                                    setState(
+                                                                            () {
+                                                                          updateVideoIndex = subsectionIndex;
+                                                                          editIndex = sectionIndex;
+                                                                          updateVideoName = false;
+                                                                        });
+                                                                    try{
+                                                                      if(listOfSectionData[widget.courseName][editIndex]['videos'][updateVideoIndex]['showDescription'] == null
+                                                                      || listOfSectionData[widget.courseName][editIndex]['videos'][updateVideoIndex]['showDescription'] == true ) {
+                                                                        listOfSectionData[widget.courseName][editIndex]['videos'][updateVideoIndex]['showDescription'] = false;
+                                                                      } else {
+                                                                        listOfSectionData[widget.courseName][editIndex]['videos'][updateVideoIndex]['showDescription'] = true;
+                                                                      }
+                                                                      FirebaseFirestore.instance.collection('courses').doc(widget.cID).update({
+                                                                        'curriculum1': {
+                                                                          widget.courseName: listOfSectionData[widget.courseName],
+                                                                        }
+                                                                      }).whenComplete(() => Toast.show('Description visibility updated.'));
+                                                                      assignmentDescriptionShowCheck();
+                                                                    }catch(e){
+                                                                      print('Description visibility  ${e.toString()}');
+                                                                    }
+                                                                  }
                                                                 },
                                                                 itemBuilder:
                                                                     (context) =>
@@ -4594,7 +4676,10 @@ getAssignmentDescription() async {
                                                                       child: Text('Update assignment Description')),
                                                                           PopupMenuItem<int>(
                                                                               value: 5,
-                                                                              child: Text('Update solution video'))
+                                                                              child: Text('Update solution video')),
+                                                                          PopupMenuItem<int>(
+                                                                              value: 6,
+                                                                              child: Text('Toggle Description Visibility' ))
                                                                 ],
                                                               )
                                                             : SizedBox(),
