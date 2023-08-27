@@ -351,6 +351,7 @@ class _LandingScreenState extends State<LandingScreen> {
   var ref;
   var userDocData;
   String numberOfLearners = '';
+  var sessionExpiryDays;
   userData() async {
     try {
       ref = await FirebaseFirestore.instance
@@ -363,7 +364,7 @@ class _LandingScreenState extends State<LandingScreen> {
           .doc('sessionExpiryDays')
           .get();
       numberOfLearners = learners['numberOfLearners'];
-
+      sessionExpiryDays = learners['sessionExpiryDays'];
       print('uid is ${FirebaseAuth.instance.currentUser!.uid}');
 
       print(ref.data()!["role"].toString());
@@ -373,16 +374,7 @@ class _LandingScreenState extends State<LandingScreen> {
 
       if (userSessionExpiryTime == null) {
         DateTime now = DateTime.now();
-
-        var sessionExpiryDays = await FirebaseFirestore.instance
-            .collection('Notice')
-            .doc('sessionExpiryDays')
-            .get();
-        print('sessionExpiryDays ${sessionExpiryDays['sessionExpiryDays']}');
-
-        DateTime updatedTime =
-            now.add(Duration(days: sessionExpiryDays['sessionExpiryDays']));
-
+        DateTime updatedTime = now.add(Duration(days: sessionExpiryDays));
         await FirebaseFirestore.instance
             .collection('Users')
             .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -397,6 +389,15 @@ class _LandingScreenState extends State<LandingScreen> {
       print('converted dateTime $dateTime');
 
       if (DateTime.now().isAfter(dateTime)) {
+        DateTime now = DateTime.now();
+        DateTime updatedTime = now.add(Duration(days: sessionExpiryDays));
+
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          'sessionExpiryTime': Timestamp.fromDate(updatedTime),
+        });
         print('I am afterlife');
         saveLoginOutState(context);
         logOut(context);
