@@ -4141,7 +4141,12 @@ getAssignmentDescription() async {
                                                                                     shape: CircleBorder(),
                                                                                     onChanged: (bool? value) {
                                                                                       setState(() {
-                                                                                        _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] = 100;
+                                                                                        if(_getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] == 100){
+                                                                                          _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] = 0;
+                                                                                        } else {
+                                                                                          _getVideoPercentageList![sectionIndex][listOfSectionData[widget.courseName][sectionIndex]["id"].toString()][index][listOfSectionData[widget.courseName][sectionIndex]["videos"][subsectionIndex]["id"].toString()] = 100;
+                                                                                        }
+
                                                                                 
                                                                                         updateVideoProgress(_getVideoPercentageList);
                                                                                       });
