@@ -1440,15 +1440,12 @@ bool onExpandedQuizNameExistsInList = false;
         builder: (context, AsyncSnapshot snapshot) {
           // print('dishss ${snapshot}');
           if (snapshot.hasData) {
-            // print("snapdata---------- ${snapshot.hasData}}");
-            // print('${widget.courseName}');
+
             var listOfSectionData;
             var id;
 
             listOfSectionData = snapshot.data["curriculum1"];
             id = snapshot.data["id"];
-            // print(widget.courseName);
-            // print(snapshot.data);
             try {
               listOfSectionData[widget.courseName].sort((a, b) {
                 print("---========");
@@ -1467,8 +1464,7 @@ bool onExpandedQuizNameExistsInList = false;
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children:
-                    List.generate(listOfSectionData[widget.courseName].length,
+                children: List.generate(listOfSectionData[widget.courseName].length,
                         (sectionIndex) {
                   // var listOfDraggable = List<List>.generate(listOfSectionSort.length, (index) => []);
                           indexx2 = sectionIndex;
@@ -3042,6 +3038,27 @@ bool onExpandedQuizNameExistsInList = false;
                                                       )
                                                     ],
                                             ),
+                                          ),
+                                          Container(
+                                            // width: 50,
+                                              height: 50,
+                                              padding: EdgeInsets.only(
+                                                left:
+                                                15,),
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('Note : '),
+                                                  Container(
+                                                    height: 50,
+                                                    width: Adaptive.w(25),
+                                                    child: Text('Please be advised that if the module is empty then there is no quiz in the module',
+
+                                                        maxLines: 2),
+                                                  ),
+
+                                                ],
+                                              )
                                           ),
                                         ],
                                       ),
