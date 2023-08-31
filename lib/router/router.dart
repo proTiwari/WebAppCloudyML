@@ -35,6 +35,7 @@ import '../combo/trialfeatutr.dart';
 import '../international_payment_screen.dart';
 import '../models/course_details.dart';
 import '../my_Courses.dart';
+import '../screens/add_new_course/add_new_course.dart';
 import '../screens/assignment_tab_screen.dart';
 import '../screens/coupon/create_coupon.dart';
 import '../screens/groupscreen.dart';
@@ -153,7 +154,7 @@ class MyRouter {
                     courseIdd: courseId,
                   ));
             }),
-             GoRoute(
+        GoRoute(
             name: 'QuizNewComboCourseScreen',
             path: '/QuizNewComboCourseScreen',
             pageBuilder: (context, state) {
@@ -206,7 +207,7 @@ class MyRouter {
                     // cID: cID,
                   ));
             }),
-             GoRoute(
+        GoRoute(
             name: 'MultiComboModuleScreen',
             path: '/multiComboModuleScreen',
             pageBuilder: (context, state) {
@@ -263,6 +264,13 @@ class MyRouter {
           pageBuilder: (context, state) {
             return MaterialPage(
                 key: state.pageKey, child: QuizesOfEnrolledCourses());
+          },
+        ),
+        GoRoute(
+          name: 'AddCourse',
+          path: '/addNewCourse',
+          pageBuilder: (context, state) {
+            return MaterialPage(child: AddNewCourseScreen());
           },
         ),
         GoRoute(
