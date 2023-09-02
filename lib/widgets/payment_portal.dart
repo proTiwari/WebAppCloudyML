@@ -4,7 +4,6 @@ import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -500,6 +499,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     print("Payment Done");
 
     _purchasedCourses();
+    removeCourseFromTrial();
     await AwesomeNotifications().createNotification(
         content: NotificationContent(
             id: 12345,
@@ -518,6 +518,27 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
       NDate: DateFormat('dd-MM-yyyy | h:mm a').format(DateTime.now()),
       //index:
     );
+  }
+
+  // if user pays for course then remove course from trial course if it exists there
+  // Dipen Pau
+  var trialCourseList;
+  void removeCourseFromTrial() async {
+    try {
+      if (userData['trialCourseList'].contains(widget.courseId)) {
+        trialCourseList = userData['trialCourseList'].remove(widget.courseId);
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          "trialCourseList": trialCourseList,
+        });
+      } else {
+        print('Direct purchase made.');
+      }
+    } catch (e) {
+      print('removeCourseFromTrial() $e');
+    }
   }
 
   // void disableMinAmtBtn() {
@@ -674,22 +695,6 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
               children: [
                 InkWell(
                   onTap: () async {
-                    // if (widget.isPayButtonPressed) {
-                    //   Future.delayed(Duration(milliseconds: 150), () {
-                    //     widget.scrollController.animateTo(
-                    //         widget.scrollController.position.maxScrollExtent,
-                    //         duration: Duration(milliseconds: 800),
-                    //         curve: Curves.easeIn);
-                    //   });
-                    // } else {
-                    //   Future.delayed(Duration(milliseconds: 150), () {
-                    //     widget.scrollController.animateTo(
-                    //         widget.scrollController.position.minScrollExtent,
-                    //         duration: Duration(milliseconds: 400),
-                    //         curve: Curves.easeIn);
-                    //   });
-                    // }
-
                     setState(() {
                       isLoading = true;
                     });
@@ -733,11 +738,6 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                     setState(() {
                       isLoading = false;
                     });
-
-                    // setState(() {
-                    //   widget.isPayButtonPressed = !widget.isPayButtonPressed;
-                    // });
-                    // widget.changeState;
                   },
                   child: Center(
                     child: Container(
