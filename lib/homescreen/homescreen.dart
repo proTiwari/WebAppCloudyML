@@ -9,7 +9,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 // import 'package:showcaseview/showcaseview.dart';
 import 'package:toast/toast.dart';
-
+import 'package:package_info_plus/package_info_plus.dart';
 import '../Services/code_generator.dart';
 import '../Services/deeplink_service.dart';
 import '../catalogue_screen.dart';
@@ -84,6 +84,53 @@ class _LandingScreenState extends State<LandingScreen> {
       });
     } catch (e) {
       print("llooooooooooooo$e");
+    }
+  }
+
+  void refreshPage() {
+    print('owjofewoijeow');
+    html.window.location.reload();
+  }
+
+  checkifupdatedversionisavailable() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    try {
+      print('efjowoiejfwo');
+      FirebaseFirestore.instance
+          .collection('Controllers')
+          .doc('variables')
+          .get()
+          .then((value) {
+        String version = packageInfo.version;
+        String buildNumber = packageInfo.buildNumber;
+        print('efjowoiejfwo1');
+        print(version + buildNumber);
+        print(value.data()!['webversion']);
+        if (value.data()!['webversion'] != "$version+$buildNumber") {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('New version available'),
+                  content: Text('Please update the app to continue using it'),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Continue')),
+                    TextButton(
+                        onPressed: () {
+                          refreshPage();
+                        },
+                        child: Text('Update'))
+                  ],
+                );
+              });
+        }
+      });
+    } catch (e) {
+      print('error in checking version $e');
     }
   }
 
@@ -741,7 +788,6 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   void initState() {
     getQuizDataAndUpdateScores();
-
     super.initState();
     // print('this is url ${html.window.location.href}');
     // print('this is path ${Uri.base.path}');
@@ -813,12 +859,15 @@ class _LandingScreenState extends State<LandingScreen> {
                                       borderRadius:
                                           BorderRadius.circular(50.sp)),
                                   child: Center(
-                                      child: Text(
-                                    'Hey, Chat with your Teaching Assistance(TA) for your Doubt Clearance from 6pm to 12 midnight.',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 13.sp,
-                                        fontWeight: FontWeight.bold),
+                                      child: InkWell(
+                                    onTap: () => refreshPage(),
+                                    child: Text(
+                                      'Hey, Chat with your Teaching Assistance(TA) for your Doubt Clearance from 6pm to 12 midnight.',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 13.sp,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   )),
                                 ),
                                 SizedBox(
@@ -939,12 +988,15 @@ class _LandingScreenState extends State<LandingScreen> {
                                       borderRadius:
                                           BorderRadius.circular(50.sp)),
                                   child: Center(
-                                      child: Text(
-                                    'Hey, Chat with your Teaching Assistance(TA) for your Doubt Clearance from 6pm to 12 midnight..',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11.sp,
-                                        fontWeight: FontWeight.bold),
+                                      child: InkWell(
+                                    onTap: () => refreshPage(),
+                                    child: Text(
+                                      'Hey, Chat with your Teaching Assistance(TA) for your Doubt Clearance from 6pm to 12 midnight..',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 11.sp,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   )),
                                 ),
                                 SizedBox(
