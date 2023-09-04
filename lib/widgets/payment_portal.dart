@@ -481,6 +481,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     await loadCourses();
     print("from wjrjwoeo");
+    removeCourseFromTrial();
 
     // await redeemmoneyreward();
     // pushToHome();
@@ -503,25 +504,24 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     print("Payment Done");
 
     _purchasedCourses();
-    removeCourseFromTrial();
-    await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: 12345,
-            channelKey: 'image',
-            title: widget.courseName,
-            body: 'You bought ${widget.courseName}.Go to My courses.',
-            bigPicture: widget.courseImageUrl,
-            largeIcon: 'asset://assets/logo2.png',
-            notificationLayout: NotificationLayout.BigPicture,
-            displayOnForeground: true));
+    // await AwesomeNotifications().createNotification(
+    //     content: NotificationContent(
+    //         id: 12345,
+    //         channelKey: 'image',
+    //         title: widget.courseName,
+    //         body: 'You bought ${widget.courseName}.Go to My courses.',
+    //         bigPicture: widget.courseImageUrl,
+    //         largeIcon: 'asset://assets/logo2.png',
+    //         notificationLayout: NotificationLayout.BigPicture,
+    //         displayOnForeground: true));
 
-    await Provider.of<UserProvider>(context, listen: false).addToNotificationP(
-      title: widget.courseName,
-      body: 'You bought ${widget.courseName}. Go to My courses.',
-      notifyImage: widget.courseImageUrl,
-      NDate: DateFormat('dd-MM-yyyy | h:mm a').format(DateTime.now()),
-      //index:
-    );
+    // await Provider.of<UserProvider>(context, listen: false).addToNotificationP(
+    //   title: widget.courseName,
+    //   body: 'You bought ${widget.courseName}. Go to My courses.',
+    //   notifyImage: widget.courseImageUrl,
+    //   NDate: DateFormat('dd-MM-yyyy | h:mm a').format(DateTime.now()),
+    //   //index:
+    // );
   }
 
   // if user pays for course then remove course from trial course if it exists there
