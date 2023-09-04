@@ -813,7 +813,7 @@ var mentorItems = [
   'Resume Review',
   'Your Certificates',
   'Admin Quiz Panel',
-  // 'Your Certificates',
+  'Add Course',
   'My Quizzes',
   'Assignment Review',
   'My Profile',
@@ -902,21 +902,6 @@ Widget customMenuBar(BuildContext context) {
         SizedBox(
           width: horizontalScale * 10,
         ),
-        // TextButton(
-        //     onPressed: () {
-        //       GoRouter.of(context).pushNamed('LiveDoubtSession');
-        //     },
-        //     child: Text(
-        //       'Live Doubt Support',
-        //       style:  buttonTextStyle.copyWith(
-        //         color:
-        //         Uri.base.path == '/LiveDoubtScreen'? HexColor('873AFF') :
-        //         Colors.white ,
-        //       ),
-        //     )),
-        // SizedBox(
-        //   width: horizontalScale * 15,
-        // ),
         TextButton(
             onPressed: () {
               showDialog(
@@ -1003,6 +988,8 @@ Widget customMenuBar(BuildContext context) {
                 } else if (value == 'Your Certificates') {
                   GoRouter.of(context)
                       .pushReplacementNamed('allcertificatescreen');
+                } else if (value == 'Add Course') {
+                  GoRouter.of(context).pushNamed('AddCourse');
                 } else if (value == 'My Quizzes') {
                   GoRouter.of(context).pushReplacementNamed('quizes');
                 } else if (value == 'Assignment Review') {
@@ -1051,148 +1038,6 @@ Widget customMenuBar(BuildContext context) {
     ),
   );
 }
-
-// Widget featureCPopup(
-//     IconData icon, String T1, double horizontalScale, double verticalScale) {
-//   return LayoutBuilder(
-//     builder: (BuildContext context, BoxConstraints constraints) {
-//       if (constraints.maxWidth >= 330) {
-//         return Padding(
-//           padding: const EdgeInsets.only(bottom: 10),
-//           child: Container(
-//             width: 325 * horizontalScale,
-//             height: 38 * verticalScale,
-//             decoration: BoxDecoration(
-//               borderRadius: BorderRadius.only(
-//                 topLeft: Radius.circular(8),
-//                 topRight: Radius.circular(8),
-//                 bottomLeft: Radius.circular(8),
-//                 bottomRight: Radius.circular(8),
-//               ),
-//               boxShadow: [
-//                 BoxShadow(
-//                     color: Color.fromRGBO(31, 31, 31, 0.25),
-//                     offset: Offset(0, 0),
-//                     blurRadius: 5)
-//               ],
-//               color: Color.fromRGBO(255, 255, 255, 1),
-//             ),
-//             child: Row(
-//               children: [
-//                 Container(
-//                   width: 38 * min(horizontalScale, verticalScale),
-//                   height: 38 * min(horizontalScale, verticalScale),
-//                   decoration: BoxDecoration(
-//                     borderRadius: BorderRadius.only(
-//                       topLeft: Radius.circular(8),
-//                       topRight: Radius.circular(8),
-//                       bottomLeft: Radius.circular(8),
-//                       bottomRight: Radius.circular(8),
-//                     ),
-//                     color: Color.fromRGBO(54, 141, 255, 1),
-//                   ),
-//                   child: Center(
-//                     child: Icon(
-//                       icon,
-//                       color: Colors.white,
-//                       size: 28 * min(horizontalScale, verticalScale),
-//                     ),
-//                   ),
-//                 ),
-//                 SizedBox(
-//                   width: 10,
-//                 ),
-//                 Container(
-//                   // width: 250 * horizontalScale,
-//                   color: Colors.red,
-//                   height: 38 * verticalScale,
-//                   child: Center(
-//                     child: Text(
-//                       '$T1',
-//                       // textScaleFactor: min(horizontalScale, verticalScale),
-//                       style: TextStyle(
-//                           overflow: TextOverflow.ellipsis,
-//                           color: Colors.black,
-//                           fontSize: 16 * verticalScale,
-//                           fontWeight: FontWeight.bold
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         );
-//       } else {
-//         return Padding(
-//           padding: const EdgeInsets.only(bottom: 10),
-//           child: Container(
-//             width: 364 * horizontalScale,
-//             height: 40 * verticalScale,
-//             decoration: BoxDecoration(
-//               borderRadius: BorderRadius.only(
-//                 topLeft: Radius.circular(8),
-//                 topRight: Radius.circular(8),
-//                 bottomLeft: Radius.circular(8),
-//                 bottomRight: Radius.circular(8),
-//               ),
-//               boxShadow: [
-//                 BoxShadow(
-//                     color: Color.fromRGBO(31, 31, 31, 0.25),
-//                     offset: Offset(0, 0),
-//                     blurRadius: 5)
-//               ],
-//               color: Color.fromRGBO(255, 255, 255, 1),
-//             ),
-//             child: Row(
-//               children: [
-//                 Container(
-//                   width: 38 * min(horizontalScale, verticalScale),
-//                   height: 38 * min(horizontalScale, verticalScale),
-//                   decoration: BoxDecoration(
-//                     borderRadius: BorderRadius.only(
-//                       topLeft: Radius.circular(8),
-//                       topRight: Radius.circular(8),
-//                       bottomLeft: Radius.circular(8),
-//                       bottomRight: Radius.circular(8),
-//                     ),
-//                     color: Color.fromRGBO(54, 141, 255, 1),
-//                   ),
-//                   child: Center(
-//                     child: Icon(
-//                       icon,
-//                       color: Colors.white,
-//                       size: 28 * min(horizontalScale, verticalScale),
-//                     ),
-//                   ),
-//                 ),
-//                 SizedBox(
-//                   width: 10,
-//                 ),
-//                 Container(
-//                   width: 215 * horizontalScale,
-//                   child: Text(
-//                     '$T1',
-//                     maxLines: 2,
-//                     textScaleFactor: min(horizontalScale, verticalScale),
-//                     style: TextStyle(
-//                         overflow: TextOverflow.ellipsis,
-//                         color: Colors.black,
-//                         fontSize: 14 * verticalScale,
-//                         fontWeight: FontWeight.bold
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         );
-//       }
-//
-//     }
-//   );
-//
-// }
 
 Drawer customDrawer(BuildContext context) {
   void saveLoginState(BuildContext context) {

@@ -72,6 +72,25 @@ class _RazorPayInternationalBtnState extends State<RazorPayInternationalBtn> {
     super.initState();
   }
 
+  var trialCourseList;
+  void removeCourseFromTrial() async {
+    try {
+      if (userData['trialCourseList'].contains(widget.courseId)) {
+        trialCourseList = userData['trialCourseList'].remove(widget.courseId);
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          "trialCourseList": trialCourseList,
+        });
+      } else {
+        print('Direct purchase made.');
+      }
+    } catch (e) {
+      print('removeCourseFromTrial() $e');
+    }
+  }
+
   @override
   void dispose() {
     _razorpay.clear(); // Removes all listeners
@@ -178,7 +197,6 @@ class _RazorPayInternationalBtnState extends State<RazorPayInternationalBtn> {
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-
     await loadCourses();
     print("from wjrjwoeo");
 
@@ -205,6 +223,7 @@ class _RazorPayInternationalBtnState extends State<RazorPayInternationalBtn> {
 
     print("Payment Done");
     _purchasedCourses();
+    removeCourseFromTrial();
     await AwesomeNotifications().createNotification(
         content: NotificationContent(
             id: 12345,
@@ -659,7 +678,8 @@ class _RazorPayInternationalBtnState extends State<RazorPayInternationalBtn> {
     print('Indian Price :: ${int.parse(widget.amountString) / 100}');
     finalAmount =
         (((int.parse(widget.amountString) / 100) / double.parse(currencyRate)) +
-                int.parse(additionToPayment)).round()
+                int.parse(additionToPayment))
+            .round()
             .toString();
     print('Final Price :: $finalAmount');
     setState(() {});
