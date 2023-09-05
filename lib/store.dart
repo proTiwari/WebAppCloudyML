@@ -276,6 +276,9 @@ class _StoreScreenState extends State<StoreScreen> {
                                 } else if (value == 'My Profile') {
                                   GoRouter.of(context)
                                       .pushReplacementNamed('myAccount');
+                                } else if (value == 'My Quizzes') {
+                                  GoRouter.of(context)
+                                      .pushReplacementNamed('quizes');
                                 } else if (value == 'Logout') {
                                   logOut(context);
                                   saveLoginOutState(context);

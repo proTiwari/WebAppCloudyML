@@ -88,6 +88,53 @@ class _LandingScreenState extends State<LandingScreen> {
     }
   }
 
+  void refreshPage() {
+    print('owjofewoijeow');
+    html.window.location.reload();
+  }
+
+  checkifupdatedversionisavailable() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    try {
+      print('efjowoiejfwo');
+      FirebaseFirestore.instance
+          .collection('Controllers')
+          .doc('variables')
+          .get()
+          .then((value) {
+        String version = packageInfo.version;
+        String buildNumber = packageInfo.buildNumber;
+        print('efjowoiejfwo1');
+        print(version + buildNumber);
+        print(value.data()!['webversion']);
+        if (value.data()!['webversion'] != "$version+$buildNumber") {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('New version available'),
+                  content: Text('Please update the app to continue using it'),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Continue')),
+                    TextButton(
+                        onPressed: () {
+                          refreshPage();
+                        },
+                        child: Text('Update'))
+                  ],
+                );
+              });
+        }
+      });
+    } catch (e) {
+      print('error in checking version $e');
+    }
+  }
+
   // void addCoursetoUser(String id) async {
   //   await FirebaseFirestore.instance
   //       .collection('Users')
@@ -352,6 +399,7 @@ class _LandingScreenState extends State<LandingScreen> {
   var ref;
   var userDocData;
   String numberOfLearners = '';
+  var sessionExpiryDays;
   userData() async {
     try {
       ref = await FirebaseFirestore.instance
@@ -364,7 +412,7 @@ class _LandingScreenState extends State<LandingScreen> {
           .doc('sessionExpiryDays')
           .get();
       numberOfLearners = learners['numberOfLearners'];
-
+      sessionExpiryDays = learners['sessionExpiryDays'];
       print('uid is ${FirebaseAuth.instance.currentUser!.uid}');
 
       print(ref.data()!["role"].toString());
@@ -374,16 +422,7 @@ class _LandingScreenState extends State<LandingScreen> {
 
       if (userSessionExpiryTime == null) {
         DateTime now = DateTime.now();
-
-        var sessionExpiryDays = await FirebaseFirestore.instance
-            .collection('Notice')
-            .doc('sessionExpiryDays')
-            .get();
-        print('sessionExpiryDays ${sessionExpiryDays['sessionExpiryDays']}');
-
-        DateTime updatedTime =
-            now.add(Duration(days: sessionExpiryDays['sessionExpiryDays']));
-
+        DateTime updatedTime = now.add(Duration(days: sessionExpiryDays));
         await FirebaseFirestore.instance
             .collection('Users')
             .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -398,6 +437,15 @@ class _LandingScreenState extends State<LandingScreen> {
       print('converted dateTime $dateTime');
 
       if (DateTime.now().isAfter(dateTime)) {
+        DateTime now = DateTime.now();
+        DateTime updatedTime = now.add(Duration(days: sessionExpiryDays));
+
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          'sessionExpiryTime': Timestamp.fromDate(updatedTime),
+        });
         print('I am afterlife');
         saveLoginOutState(context);
         logOut(context);
@@ -741,7 +789,6 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   void initState() {
     getQuizDataAndUpdateScores();
-
     super.initState();
     // print('this is url ${html.window.location.href}');
     // print('this is path ${Uri.base.path}');
@@ -764,52 +811,52 @@ class _LandingScreenState extends State<LandingScreen> {
     checkrewardexpiry();
   }
 
-  void refreshPage() {
-    print('owjofewoijeow');
-    html.window.location.reload();
-  }
+  // void refreshPage() {
+  //   print('owjofewoijeow');
+  //   html.window.location.reload();
+  // }
 
-  checkifupdatedversionisavailable() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    try {
-      print('efjowoiejfwo');
-      FirebaseFirestore.instance
-          .collection('Controllers')
-          .doc('variables')
-          .get()
-          .then((value) {
-        String version = packageInfo.version;
-        String buildNumber = packageInfo.buildNumber;
-        print('efjowoiejfwo1');
-        print(version + buildNumber);
-        print(value.data()!['webversion']);
-        if (value.data()!['webversion'] != "$version+$buildNumber") {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text('New version available'),
-                  content: Text('Please update the app to continue using it'),
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text('Continue')),
-                    TextButton(
-                        onPressed: () {
-                          refreshPage();
-                        },
-                        child: Text('Update'))
-                  ],
-                );
-              });
-        }
-      });
-    } catch (e) {
-      print('error in checking version $e');
-    }
-  }
+  // checkifupdatedversionisavailable() async {
+  //   PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  //   try {
+  //     print('efjowoiejfwo');
+  //     FirebaseFirestore.instance
+  //         .collection('Controllers')
+  //         .doc('variables')
+  //         .get()
+  //         .then((value) {
+  //       String version = packageInfo.version;
+  //       String buildNumber = packageInfo.buildNumber;
+  //       print('efjowoiejfwo1');
+  //       print(version + buildNumber);
+  //       print(value.data()!['webversion']);
+  //       if (value.data()!['webversion'] != "$version+$buildNumber") {
+  //         showDialog(
+  //             context: context,
+  //             builder: (context) {
+  //               return AlertDialog(
+  //                 title: Text('New version available'),
+  //                 content: Text('Please update the app to continue using it'),
+  //                 actions: [
+  //                   TextButton(
+  //                       onPressed: () {
+  //                         Navigator.pop(context);
+  //                       },
+  //                       child: Text('Continue')),
+  //                   TextButton(
+  //                       onPressed: () {
+  //                         refreshPage();
+  //                       },
+  //                       child: Text('Update'))
+  //                 ],
+  //               );
+  //             });
+  //       }
+  //     });
+  //   } catch (e) {
+  //     print('error in checking version $e');
+  //   }
+  // }
 
   Timer? countDownTimer;
   Duration myDuration = Duration(days: 5);
@@ -862,12 +909,15 @@ class _LandingScreenState extends State<LandingScreen> {
                                       borderRadius:
                                           BorderRadius.circular(50.sp)),
                                   child: Center(
-                                      child: Text(
-                                    'Hey, Chat with your Teaching Assistance(TA) for your Doubt Clearance from 6pm to 12 midnight.',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 13.sp,
-                                        fontWeight: FontWeight.bold),
+                                      child: InkWell(
+                                    onTap: () => refreshPage(),
+                                    child: Text(
+                                      'Hey, Chat with your Teaching Assistance(TA) for your Doubt Clearance from 6pm to 12 midnight.',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 13.sp,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   )),
                                 ),
                                 SizedBox(
@@ -988,12 +1038,15 @@ class _LandingScreenState extends State<LandingScreen> {
                                       borderRadius:
                                           BorderRadius.circular(50.sp)),
                                   child: Center(
-                                      child: Text(
-                                    'Hey, Chat with your Teaching Assistance(TA) for your Doubt Clearance from 6pm to 12 midnight..',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11.sp,
-                                        fontWeight: FontWeight.bold),
+                                      child: InkWell(
+                                    onTap: () => refreshPage(),
+                                    child: Text(
+                                      'Hey, Chat with your Teaching Assistance(TA) for your Doubt Clearance from 6pm to 12 midnight..',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 11.sp,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   )),
                                 ),
                                 SizedBox(

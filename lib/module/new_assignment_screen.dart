@@ -27,7 +27,8 @@ class AssignmentScreen extends StatefulWidget {
       this.assignmentName,
       this.assignmentSolutionVideo,
       this.assignmentTrackBoolMap,
-      this.assignmentDescription})
+      this.assignmentDescription,
+      this.showDescription})
       : super(key: key);
 
   final courseData;
@@ -40,6 +41,7 @@ class AssignmentScreen extends StatefulWidget {
   final assignmentDescription;
   final assignmentSolutionVideo;
   final assignmentTrackBoolMap;
+  final showDescription;
 
   @override
   State<AssignmentScreen> createState() => _AssignmentScreenState();
@@ -248,335 +250,391 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                       SizedBox(
                         height: 10.sp,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Assignment Instructions',
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 28,
-                              ),
-                            ),
-                            // Text('${widget.selectedSection}',
-                            //   style: TextStyle(
-                            //   color: Colors.grey,
-                            //   fontWeight: FontWeight.bold,
-                            //   fontSize: 22,
-                            // ),),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.grey,
-                                  width: 0.2,
-                                  style: BorderStyle.solid)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: widget.assignmentDescription[
-                                        widget.assignmentName] !=
-                                    null
-                                ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                      // description of Assignment is here
+                      widget.showDescription[widget.assignmentName] == null ||
+                              widget.showDescription[widget.assignmentName] ==
+                                  true
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Row(
                                     children: [
-                                        // (widget.solutionUrl != null &&
-                                        //             widget.solutionUrl != "null" &&
-                                        //             widget.solutionUrl != "") ||
-                                        (widget.assignmentUrl != null &&
-                                                widget.assignmentUrl != "" &&
-                                                widget.assignmentUrl != "null")
-                                            ? Text(
-                                                widget.assignmentDescription[
-                                                    widget.assignmentName],
-                                                textAlign: TextAlign.left,
-                                                maxLines: 6,
-                                              )
-                                            : SizedBox(),
-
-                                        SizedBox(
-                                          height: 10,
+                                      Text(
+                                        'Assignment Instructions',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 28,
                                         ),
+                                      ),
+                                      // Text('${widget.selectedSection}',
+                                      //   style: TextStyle(
+                                      //   color: Colors.grey,
+                                      //   fontWeight: FontWeight.bold,
+                                      //   fontSize: 22,
+                                      // ),),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.grey,
+                                            width: 0.2,
+                                            style: BorderStyle.solid)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child:
+                                          widget.assignmentDescription[
+                                                      widget.assignmentName] !=
+                                                  null
+                                              ? Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                      // (widget.solutionUrl != null &&
+                                                      //             widget.solutionUrl != "null" &&
+                                                      //             widget.solutionUrl != "") ||
+                                                      (widget.assignmentUrl != null &&
+                                                              widget.assignmentUrl !=
+                                                                  "" &&
+                                                              widget.assignmentUrl !=
+                                                                  "null")
+                                                          ? Text(
+                                                              widget.assignmentDescription[
+                                                                  widget
+                                                                      .assignmentName],
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                              maxLines: 6,
+                                                            )
+                                                          : SizedBox(),
 
-                                        extractedLink == ''
-                                            ? Container()
-                                            : Row(
-                                                children: [
-                                                  Text(
-                                                    'Click to open ',
-                                                    style: TextStyle(),
-                                                  ),
-                                                  InkWell(
-                                                    onTap: () {
-                                                      launch(extractedLink);
-                                                    },
-                                                    child: Text(
-                                                      '${extractedLink}',
-                                                      style: TextStyle(
-                                                          color: Colors
-                                                              .deepPurpleAccent),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
 
-                                        // (widget.solutionUrl != null &&
-                                        //             widget.solutionUrl != "null" &&
-                                        //             widget.solutionUrl != "") ||
-                                        (widget.assignmentUrl != null &&
-                                                widget.assignmentUrl != "" &&
-                                                widget.assignmentUrl != "null")
-                                            ? SizedBox(
-                                                height: 20,
-                                              )
-                                            : SizedBox(),
-                                        widget.solutionUrl != null &&
-                                                widget.solutionUrl != "null" &&
-                                                widget.solutionUrl != ""
-                                            ? Row(
-                                                children: [
-                                                  Text(
-                                                      "Reference PDF for output"),
-                                                  InkWell(
-                                                      onTap: () {
-                                                        launch(
-                                                            widget.solutionUrl);
-                                                      },
-                                                      child: Text(
-                                                        'output.pdf',
-                                                        style: TextStyle(
-                                                            color: Colors
-                                                                .deepPurpleAccent),
-                                                      )),
-                                                ],
-                                              )
-                                            : SizedBox(),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        //for assignments
-                                        widget.assignmentUrl != null &&
-                                                widget.assignmentUrl != "" &&
-                                                widget.assignmentUrl != "null"
-                                            ? Row(
-                                                children: [
-                                                  Text(
-                                                    'Click to download ',
-                                                    style: TextStyle(),
-                                                  ),
-                                                  InkWell(
-                                                    onTap: () {
-                                                      launch(
-                                                          widget.assignmentUrl);
-                                                    },
-                                                    child: Text(
-                                                      '${widget.assignmentName}',
-                                                      style: TextStyle(
-                                                          color: Colors
-                                                              .deepPurpleAccent),
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            : SizedBox(),
-                                        //future builder for DataSets
-                                        widget.dataSetUrl.length != 0
-                                            ? Column(
-                                                children: List.generate(
-                                                    widget.dataSetUrl.length,
-                                                    (index) {
-                                                  return Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 8.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          'Click to download ',
-                                                        ),
-                                                        InkWell(
-                                                          onTap: () {
-                                                            launch(widget
-                                                                    .dataSetUrl[
-                                                                index]["url"]);
-                                                            // print(
-                                                            //     'dataset = ${widget.dataSetUrl} ${widget.dataSetUrl.toString()}');
-                                                          },
-                                                          child: Container(
-                                                            width: 640,
-                                                            child: Text(
-                                                              '${widget.dataSetUrl[index]["name"]}',
-                                                              maxLines: 10,
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .deepPurpleAccent),
+                                                      extractedLink == ''
+                                                          ? Container()
+                                                          : Row(
+                                                              children: [
+                                                                Text(
+                                                                  'Click to open ',
+                                                                  style:
+                                                                      TextStyle(),
+                                                                ),
+                                                                InkWell(
+                                                                  onTap: () {
+                                                                    launch(
+                                                                        extractedLink);
+                                                                  },
+                                                                  child: Text(
+                                                                    '${extractedLink}',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .deepPurpleAccent),
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                }),
-                                              )
-                                            : SizedBox()
-                                      ])
-                                : Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                        // (widget.solutionUrl != null &&
-                                        //             widget.solutionUrl != "null" &&
-                                        //             widget.solutionUrl != "") ||
-                                        (widget.assignmentUrl != null &&
-                                                widget.assignmentUrl != "" &&
-                                                widget.assignmentUrl != "null")
-                                            ? Text(
-                                                "Please download the assignment, watch videos as instructed and answer all questions ",
-                                                textAlign: TextAlign.left,
-                                              )
-                                            : SizedBox(),
 
-                                        // (widget.solutionUrl != null &&
-                                        //             widget.solutionUrl != "null" &&
-                                        //             widget.solutionUrl != "") ||
-                                        (widget.assignmentUrl != null &&
-                                                widget.assignmentUrl != "" &&
-                                                widget.assignmentUrl != "null")
-                                            ? Row(
-                                                children: [
-                                                  Text(
-                                                    "accordingly. Open colab by clicking here : ",
-                                                    textAlign: TextAlign.left,
-                                                  ),
-                                                  InkWell(
-                                                      onTap: () => launch(
-                                                          'https://colab.research.google.com/'),
-                                                      child: Text(
-                                                        "https://colab.research.google.com/",
-                                                        style: TextStyle(
-                                                            color: Colors
-                                                                .deepPurpleAccent),
-                                                      )),
-                                                ],
-                                              )
-                                            : SizedBox(),
+                                                      // (widget.solutionUrl != null &&
+                                                      //             widget.solutionUrl != "null" &&
+                                                      //             widget.solutionUrl != "") ||
+                                                      (widget.assignmentUrl != null &&
+                                                              widget.assignmentUrl !=
+                                                                  "" &&
+                                                              widget.assignmentUrl !=
+                                                                  "null")
+                                                          ? SizedBox(
+                                                              height: 20,
+                                                            )
+                                                          : SizedBox(),
+                                                      widget.solutionUrl !=
+                                                                  null &&
+                                                              widget.solutionUrl !=
+                                                                  "null" &&
+                                                              widget.solutionUrl !=
+                                                                  ""
+                                                          ? Row(
+                                                              children: [
+                                                                Text(
+                                                                    "Reference PDF for output"),
+                                                                InkWell(
+                                                                    onTap: () {
+                                                                      launch(widget
+                                                                          .solutionUrl);
+                                                                    },
+                                                                    child: Text(
+                                                                      'output.pdf',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.deepPurpleAccent),
+                                                                    )),
+                                                              ],
+                                                            )
+                                                          : SizedBox(),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      //for assignments
+                                                      widget.assignmentUrl !=
+                                                                  null &&
+                                                              widget.assignmentUrl !=
+                                                                  "" &&
+                                                              widget.assignmentUrl !=
+                                                                  "null"
+                                                          ? Row(
+                                                              children: [
+                                                                Text(
+                                                                  'Click to download ',
+                                                                  style:
+                                                                      TextStyle(),
+                                                                ),
+                                                                InkWell(
+                                                                  onTap: () {
+                                                                    launch(widget
+                                                                        .assignmentUrl);
+                                                                  },
+                                                                  child: Text(
+                                                                    '${widget.assignmentName}',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .deepPurpleAccent),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            )
+                                                          : SizedBox(),
+                                                      //future builder for DataSets
+                                                      widget.dataSetUrl
+                                                                  .length !=
+                                                              0
+                                                          ? Column(
+                                                              children: List.generate(
+                                                                  widget
+                                                                      .dataSetUrl
+                                                                      .length,
+                                                                  (index) {
+                                                                return Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      top: 8.0),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Text(
+                                                                        'Click to download ',
+                                                                      ),
+                                                                      InkWell(
+                                                                        onTap:
+                                                                            () {
+                                                                          launch(widget.dataSetUrl[index]
+                                                                              [
+                                                                              "url"]);
+                                                                          // print(
+                                                                          //     'dataset = ${widget.dataSetUrl} ${widget.dataSetUrl.toString()}');
+                                                                        },
+                                                                        child:
+                                                                            Container(
+                                                                          width:
+                                                                              640,
+                                                                          child:
+                                                                              Text(
+                                                                            '${widget.dataSetUrl[index]["name"]}',
+                                                                            maxLines:
+                                                                                10,
+                                                                            style:
+                                                                                TextStyle(color: Colors.deepPurpleAccent),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              }),
+                                                            )
+                                                          : SizedBox()
+                                                    ])
+                                              : Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                      // (widget.solutionUrl != null &&
+                                                      //             widget.solutionUrl != "null" &&
+                                                      //             widget.solutionUrl != "") ||
+                                                      (widget.assignmentUrl != null &&
+                                                              widget.assignmentUrl !=
+                                                                  "" &&
+                                                              widget.assignmentUrl !=
+                                                                  "null")
+                                                          ? Text(
+                                                              "Please download the assignment, watch videos as instructed and answer all questions ",
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                            )
+                                                          : SizedBox(),
 
-                                        // (widget.solutionUrl != null &&
-                                        //             widget.solutionUrl != "null" &&
-                                        //             widget.solutionUrl != "") ||
-                                        (widget.assignmentUrl != null &&
-                                                widget.assignmentUrl != "" &&
-                                                widget.assignmentUrl != "null")
-                                            ? SizedBox(
-                                                height: 20,
-                                              )
-                                            : SizedBox(),
-                                        widget.solutionUrl != null &&
-                                                widget.solutionUrl != "null" &&
-                                                widget.solutionUrl != ""
-                                            ? Row(
-                                                children: [
-                                                  Text(
-                                                      "Reference PDF for output"),
-                                                  InkWell(
-                                                      onTap: () {
-                                                        launch(
-                                                            widget.solutionUrl);
-                                                      },
-                                                      child: Text(
-                                                        'output.pdf',
-                                                        style: TextStyle(
-                                                            color: Colors
-                                                                .deepPurpleAccent),
-                                                      )),
-                                                ],
-                                              )
-                                            : SizedBox(),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        //for assignments
-                                        widget.assignmentUrl != null &&
-                                                widget.assignmentUrl != "" &&
-                                                widget.assignmentUrl != "null"
-                                            ? Row(
-                                                children: [
-                                                  Text(
-                                                    'Click to download ',
-                                                    style: TextStyle(),
-                                                  ),
-                                                  InkWell(
-                                                    onTap: () {
-                                                      launch(
-                                                          widget.assignmentUrl);
-                                                    },
-                                                    child: Text(
-                                                      '${widget.assignmentName}',
-                                                      style: TextStyle(
-                                                          color: Colors
-                                                              .deepPurpleAccent),
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            : SizedBox(),
-                                        //future builder for DataSets
-                                        widget.dataSetUrl.length != 0
-                                            ? Column(
-                                                children: List.generate(
-                                                    widget.dataSetUrl.length,
-                                                    (index) {
-                                                  return Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 8.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          'Click to download ',
-                                                        ),
-                                                        InkWell(
-                                                          onTap: () {
-                                                            launch(widget
-                                                                    .dataSetUrl[
-                                                                index]["url"]);
-                                                            // print(
-                                                            //     'dataset = ${widget.dataSetUrl} ${widget.dataSetUrl.toString()}');
-                                                          },
-                                                          child: Container(
-                                                            width: 640,
-                                                            child: Text(
-                                                              '${widget.dataSetUrl[index]["name"]}',
-                                                              maxLines: 10,
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .deepPurpleAccent),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                }),
-                                              )
-                                            : SizedBox()
-                                      ]),
-                          ),
-                        ),
-                      ),
-                      // main grey container
+                                                      // (widget.solutionUrl != null &&
+                                                      //             widget.solutionUrl != "null" &&
+                                                      //             widget.solutionUrl != "") ||
+                                                      (widget.assignmentUrl != null &&
+                                                              widget.assignmentUrl !=
+                                                                  "" &&
+                                                              widget.assignmentUrl !=
+                                                                  "null")
+                                                          ? Row(
+                                                              children: [
+                                                                Text(
+                                                                  "accordingly. Open colab by clicking here : ",
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .left,
+                                                                ),
+                                                                InkWell(
+                                                                    onTap: () =>
+                                                                        launch(
+                                                                            'https://colab.research.google.com/'),
+                                                                    child: Text(
+                                                                      "https://colab.research.google.com/",
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.deepPurpleAccent),
+                                                                    )),
+                                                              ],
+                                                            )
+                                                          : SizedBox(),
 
-                      // (widget.solutionUrl != null &&
-                      //             widget.solutionUrl != "null" &&
-                      //             widget.solutionUrl != "") ||
+                                                      // (widget.solutionUrl != null &&
+                                                      //             widget.solutionUrl != "null" &&
+                                                      //             widget.solutionUrl != "") ||
+                                                      (widget.assignmentUrl != null &&
+                                                              widget.assignmentUrl !=
+                                                                  "" &&
+                                                              widget.assignmentUrl !=
+                                                                  "null")
+                                                          ? SizedBox(
+                                                              height: 20,
+                                                            )
+                                                          : SizedBox(),
+                                                      widget.solutionUrl !=
+                                                                  null &&
+                                                              widget.solutionUrl !=
+                                                                  "null" &&
+                                                              widget.solutionUrl !=
+                                                                  ""
+                                                          ? Row(
+                                                              children: [
+                                                                Text(
+                                                                    "Reference PDF for output"),
+                                                                InkWell(
+                                                                    onTap: () {
+                                                                      launch(widget
+                                                                          .solutionUrl);
+                                                                    },
+                                                                    child: Text(
+                                                                      'output.pdf',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.deepPurpleAccent),
+                                                                    )),
+                                                              ],
+                                                            )
+                                                          : SizedBox(),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      //for assignments
+                                                      widget.assignmentUrl !=
+                                                                  null &&
+                                                              widget.assignmentUrl !=
+                                                                  "" &&
+                                                              widget.assignmentUrl !=
+                                                                  "null"
+                                                          ? Row(
+                                                              children: [
+                                                                Text(
+                                                                  'Click to download ',
+                                                                  style:
+                                                                      TextStyle(),
+                                                                ),
+                                                                InkWell(
+                                                                  onTap: () {
+                                                                    launch(widget
+                                                                        .assignmentUrl);
+                                                                  },
+                                                                  child: Text(
+                                                                    '${widget.assignmentName}',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .deepPurpleAccent),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            )
+                                                          : SizedBox(),
+                                                      //future builder for DataSets
+                                                      widget.dataSetUrl
+                                                                  .length !=
+                                                              0
+                                                          ? Column(
+                                                              children: List.generate(
+                                                                  widget
+                                                                      .dataSetUrl
+                                                                      .length,
+                                                                  (index) {
+                                                                return Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      top: 8.0),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Text(
+                                                                        'Click to download ',
+                                                                      ),
+                                                                      InkWell(
+                                                                        onTap:
+                                                                            () {
+                                                                          launch(widget.dataSetUrl[index]
+                                                                              [
+                                                                              "url"]);
+                                                                          // print(
+                                                                          //     'dataset = ${widget.dataSetUrl} ${widget.dataSetUrl.toString()}');
+                                                                        },
+                                                                        child:
+                                                                            Container(
+                                                                          width:
+                                                                              640,
+                                                                          child:
+                                                                              Text(
+                                                                            '${widget.dataSetUrl[index]["name"]}',
+                                                                            maxLines:
+                                                                                10,
+                                                                            style:
+                                                                                TextStyle(color: Colors.deepPurpleAccent),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              }),
+                                                            )
+                                                          : SizedBox()
+                                                    ]),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Container(),
                       (widget.assignmentUrl != null &&
                               widget.assignmentUrl != "" &&
                               widget.assignmentUrl != "null")
@@ -703,7 +761,6 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                       SizedBox(
                         height: 15.sp,
                       ),
-
                       widget.assignmentSolutionVideo[widget.assignmentName] !=
                                   null &&
                               widget.assignmentTrackBoolMap[

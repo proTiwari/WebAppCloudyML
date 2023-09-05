@@ -4,7 +4,6 @@ import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -136,6 +135,17 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     });
 
     print("Mail Sent");
+
+    try {
+      print("couponcodeused1");
+      print(widget.couponcodeused);
+      if (widget.couponcodeused == true) {
+        await calltoupdatecouponinuser();
+      }
+    } catch (e) {
+      print("error id woiejiowie: ${e.toString()}");
+    }
+
     pushToHome();
   }
 
@@ -238,9 +248,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     // loadGroup();
     print(widget.courseId);
     print(widget.courseName);
-
     getrzpkey();
-    super.initState();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
@@ -249,6 +257,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
         isOutStandingAmountCheckerPressed);
     updateAmoutStringForRP(isPayInPartsPressed, isMinAmountCheckerPressed,
         isOutStandingAmountCheckerPressed);
+    super.initState();
   }
 
   Future<void> _handlePaymentError(PaymentFailureResponse response) async {
@@ -469,17 +478,9 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     await loadCourses();
     print("from wjrjwoeo");
+    removeCourseFromTrial();
 
-    try {
-      print("couponcodeused1");
-      print(widget.couponcodeused);
-      if (widget.couponcodeused == true) {
-        await calltoupdatecouponinuser();
-      }
-    } catch (e) {
-      print("error id woiejiowie: ${e.toString()}");
-    }
-    await redeemmoneyreward();
+    // await redeemmoneyreward();
     // pushToHome();
     Toast.show("Payment successful.");
     // addCoursetoUser(widget.courseId);
@@ -500,24 +501,45 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     print("Payment Done");
 
     _purchasedCourses();
-    await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: 12345,
-            channelKey: 'image',
-            title: widget.courseName,
-            body: 'You bought ${widget.courseName}.Go to My courses.',
-            bigPicture: widget.courseImageUrl,
-            largeIcon: 'asset://assets/logo2.png',
-            notificationLayout: NotificationLayout.BigPicture,
-            displayOnForeground: true));
+    // await AwesomeNotifications().createNotification(
+    //     content: NotificationContent(
+    //         id: 12345,
+    //         channelKey: 'image',
+    //         title: widget.courseName,
+    //         body: 'You bought ${widget.courseName}.Go to My courses.',
+    //         bigPicture: widget.courseImageUrl,
+    //         largeIcon: 'asset://assets/logo2.png',
+    //         notificationLayout: NotificationLayout.BigPicture,
+    //         displayOnForeground: true));
 
-    await Provider.of<UserProvider>(context, listen: false).addToNotificationP(
-      title: widget.courseName,
-      body: 'You bought ${widget.courseName}. Go to My courses.',
-      notifyImage: widget.courseImageUrl,
-      NDate: DateFormat('dd-MM-yyyy | h:mm a').format(DateTime.now()),
-      //index:
-    );
+    // await Provider.of<UserProvider>(context, listen: false).addToNotificationP(
+    //   title: widget.courseName,
+    //   body: 'You bought ${widget.courseName}. Go to My courses.',
+    //   notifyImage: widget.courseImageUrl,
+    //   NDate: DateFormat('dd-MM-yyyy | h:mm a').format(DateTime.now()),
+    //   //index:
+    // );
+  }
+
+  // if user pays for course then remove course from trial course if it exists there
+  // Dipen Pau
+  var trialCourseList;
+  void removeCourseFromTrial() async {
+    try {
+      if (userData['trialCourseList'].contains(widget.courseId)) {
+        trialCourseList = userData['trialCourseList'].remove(widget.courseId);
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          "trialCourseList": trialCourseList,
+        });
+      } else {
+        print('Direct purchase made.');
+      }
+    } catch (e) {
+      print('removeCourseFromTrial() $e');
+    }
   }
 
   // void disableMinAmtBtn() {
@@ -674,26 +696,9 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
               children: [
                 InkWell(
                   onTap: () async {
-                    // if (widget.isPayButtonPressed) {
-                    //   Future.delayed(Duration(milliseconds: 150), () {
-                    //     widget.scrollController.animateTo(
-                    //         widget.scrollController.position.maxScrollExtent,
-                    //         duration: Duration(milliseconds: 800),
-                    //         curve: Curves.easeIn);
-                    //   });
-                    // } else {
-                    //   Future.delayed(Duration(milliseconds: 150), () {
-                    //     widget.scrollController.animateTo(
-                    //         widget.scrollController.position.minScrollExtent,
-                    //         duration: Duration(milliseconds: 400),
-                    //         curve: Curves.easeIn);
-                    //   });
-                    // }
-
                     setState(() {
                       isLoading = true;
                     });
-
                     updateAmoutStringForRP(
                         isPayInPartsPressed,
                         isMinAmountCheckerPressed,
@@ -733,11 +738,6 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                     setState(() {
                       isLoading = false;
                     });
-
-                    // setState(() {
-                    //   widget.isPayButtonPressed = !widget.isPayButtonPressed;
-                    // });
-                    // widget.changeState;
                   },
                   child: Center(
                     child: Container(

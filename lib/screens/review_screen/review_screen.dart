@@ -181,6 +181,9 @@ class _Review1State extends State<ReviewsScreen> {
                             } else if (value == 'Assignment Review') {
                               GoRouter.of(context).pushReplacementNamed(
                                   'AssignmentScreenForMentors');
+                            } else if (value == 'My Quizzes') {
+                              GoRouter.of(context)
+                                  .pushReplacementNamed('quizes');
                             } else if (value == 'My Profile') {
                               GoRouter.of(context)
                                   .pushReplacementNamed('myAccount');

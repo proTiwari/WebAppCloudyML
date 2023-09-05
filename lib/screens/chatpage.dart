@@ -171,7 +171,7 @@ class _ChatPageState extends State<ChatPage> {
           .collection("chats")
           .add({
         'message': data,
-        'role': "mentor",
+        'role': role,
         'sendBy': namecurrent,
         'time': time1,
         'studentid': id,
@@ -227,7 +227,7 @@ class _ChatPageState extends State<ChatPage> {
                   .collection("chats")
                   .add({
                 'message': fileName,
-                'role': "mentor",
+                'role': role,
                 'sendBy': namecurrent,
                 'link': downloadUrl,
                 'time': time1,
@@ -287,7 +287,7 @@ class _ChatPageState extends State<ChatPage> {
                   .collection("chats")
                   .add({
                 'message': fileName,
-                'role': "mentor",
+                'role': role,
                 'sendBy': namecurrent,
                 'link': downloadUrl,
                 'time': time1,
@@ -342,7 +342,7 @@ class _ChatPageState extends State<ChatPage> {
                 .collection("chats")
                 .add({
               'message': fileName,
-              'role': "mentor",
+              'role': role,
               'sendBy': namecurrent,
               'link': downloadUrl,
               'time': time1,
@@ -441,7 +441,7 @@ class _ChatPageState extends State<ChatPage> {
         updatetime(time1, "audio note");
         _firestore.collection("groups").doc(idcurr).collection("chats").add({
           'message': '${DateTime.now()}.mp3',
-          'role': "mentor",
+          'role': role,
           'sendBy': namecurrent,
           'link': downloadUrl,
           'time': time1,
@@ -789,7 +789,8 @@ class _ChatPageState extends State<ChatPage> {
                               Map<String, dynamic> data =
                                   document.data() as Map<String, dynamic>;
 
-                              return GestureDetector(
+                              return 
+                              GestureDetector(
                                 onTap: () {
                                   setState(() {
                                     _messageStream = FirebaseFirestore.instance
@@ -810,7 +811,20 @@ class _ChatPageState extends State<ChatPage> {
                                     }
                                   });
                                 },
-                                child: Padding(
+                                child: snapshot.data!.docs.length==0?
+                               Text(
+                                                        "You are not registered in any of the courses",
+                                                        style: TextStyle(
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          fontFamily: 'Inter',
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color:
+                                                              Color(0xff011627),
+                                                        ),
+                                                      ):
+                                                      Padding(
                                   padding:
                                       EdgeInsets.only(left: 0.w, right: 0.w),
                                   child: Container(
