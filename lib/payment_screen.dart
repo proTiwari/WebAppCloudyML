@@ -1769,6 +1769,45 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                               var endTime = value[
                                                                       'result'][
                                                                   'couponExpiryDate'];
+                                                              print(endTime);
+                                                              //
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      "coupons")
+                                                                  .where(
+                                                                      "couponCode",
+                                                                      isEqualTo:
+                                                                          couponCodeController
+                                                                              .text)
+                                                                  .get()
+                                                                  .then(
+                                                                      (value) {
+                                                                var element =
+                                                                    value.docs[
+                                                                        0];
+                                                                endTime = element
+                                                                        .data()[
+                                                                    'couponExpiryDate'];
+                                                                print(
+                                                                    'from coupons collection $endTime');
+                                                                FirebaseFirestore
+                                                                    .instance
+                                                                    .collection(
+                                                                        "coupons")
+                                                                    .doc(element
+                                                                            .data()[
+                                                                        'couponId'])
+                                                                    .update({
+                                                                  "couponUsageCount":
+                                                                      FieldValue
+                                                                          .increment(
+                                                                              1)
+                                                                });
+                                                              });
+                                                              print(
+                                                                  'from us doc $endTime');
+
                                                               DateTime
                                                                   dateTime =
                                                                   DateTime.parse(
