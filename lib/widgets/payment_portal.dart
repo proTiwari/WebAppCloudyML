@@ -110,8 +110,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   var key_secret;
 
   loadCourses() async {
-
-  var url = Uri.parse(
+    var url = Uri.parse(
         'https://us-central1-cloudyml-app.cloudfunctions.net/adduser/addgroup');
     await http.post(url, headers: {
       "Access-Control-Allow-Origin": "*", // Required for CORS support to work
@@ -136,8 +135,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     });
 
     print("Mail Sent");
-     
-     
+
     try {
       print("couponcodeused1");
       print(widget.couponcodeused);
@@ -250,9 +248,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
     // loadGroup();
     print(widget.courseId);
     print(widget.courseName);
-
     getrzpkey();
-    super.initState();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
@@ -261,6 +257,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
         isOutStandingAmountCheckerPressed);
     updateAmoutStringForRP(isPayInPartsPressed, isMinAmountCheckerPressed,
         isOutStandingAmountCheckerPressed);
+    super.initState();
   }
 
   Future<void> _handlePaymentError(PaymentFailureResponse response) async {
@@ -702,7 +699,6 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                     setState(() {
                       isLoading = true;
                     });
-
                     updateAmoutStringForRP(
                         isPayInPartsPressed,
                         isMinAmountCheckerPressed,
