@@ -130,7 +130,7 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
 
             try {
               print('start7');
-              globals.coursemoduelmap = {"${element['name']}": "${tepcourse}"};
+              globals.coursemoduelmap["${element['name']}"] = tepcourse;
               print('start8');
               globals.courseList.add(element['name']);
               print('start9');
@@ -155,6 +155,8 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
     setState(() {
       globals.courseList;
     });
+    print("jjjjjjjjjjjjjj1: ${globals.courseList}");
+    print("jjjjjjjjjjjjjj2: ${globals.coursemoduelmap}");
   }
 
   @override
@@ -2364,18 +2366,30 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                   // Step 5.
                                                   onChanged:
                                                       (String? newValue) {
-                                                    setState(() {
-                                                      tempmodulelist = [
-                                                        'Module Name'
-                                                      ];
-                                                      tempmodulename =
-                                                          'Module Name';
-                                                      tempmodulelist.addAll(
-                                                          globals.coursemoduelmap[
-                                                              newValue]);
-                                                      tempcoursename =
-                                                          newValue!;
-                                                    });
+                                                    try {
+                                                      setState(() {
+                                                        tempmodulelist = [
+                                                          'Module Name'
+                                                        ];
+                                                        print('ft1');
+                                                        print(newValue);
+                                                        tempmodulename =
+                                                            'Module Name';
+                                                        print(
+                                                            '${globals.coursemoduelmap[newValue].runtimeType}');
+                                                        for (var i in globals
+                                                                .coursemoduelmap[
+                                                            newValue]) {
+                                                          tempmodulelist.add(i);
+                                                        }
+                                                        print('ft3');
+                                                        tempcoursename =
+                                                            newValue!;
+                                                        print('ft4');
+                                                      });
+                                                    } catch (e) {
+                                                      print("rrrrrrr: ${e}");
+                                                    }
                                                   },
                                                 ),
                                               ),
