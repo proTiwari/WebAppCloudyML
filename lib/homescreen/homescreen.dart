@@ -1746,7 +1746,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                                               Container(
                                                                 height:
                                                                     screenHeight /
-                                                                        16.5,
+                                                                        19.7,
                                                                 width:
                                                                     screenWidth /
                                                                         4.3,
