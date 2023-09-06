@@ -247,7 +247,10 @@ class _SubmitResumeState extends State<SubmitResume> {
     FilePickerResult? result;
 
     try {
-      result = await FilePicker.platform.pickFiles(type: FileType.any);
+      result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+      );
     } catch (e) {
       print(e.toString());
     }
