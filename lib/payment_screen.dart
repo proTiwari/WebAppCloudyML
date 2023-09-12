@@ -230,7 +230,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
       // get firebase id token for authentication
       String? token = await FirebaseAuth.instance.currentUser!.getIdToken();
       var url = Uri.parse(
-          'http://127.0.0.1:5001/cloudyml-app/us-central1/checkCouponCode');
+          'https://us-central1-cloudyml-app.cloudfunctions.net/checkCouponCode');
       var data = {"couponCode": "$couponCode", "course": cID};
       var body = json.encode({"data": data});
       print(body);
@@ -1999,7 +1999,82 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                                         // showToast('invalid type of coupon applied.');
                                                                       }
                                                                     }
-                                                                  } else if (value[
+                                                                  } else if (value['result']['couponType'] ==
+                                                                                'course') {
+                                                                              var startTime = value['result']['couponStartDate'];
+                                                                              print(startTime);
+
+                                                                              var endTime = value['result']['couponExpiryDate'];
+                                                                              DateTime dateTime = DateTime.parse(endTime);
+                                                                              String formattedDateTime = DateFormat('yyyy-MM-dd HH:mm a').format(dateTime.toLocal());
+                                                                              print(formattedDateTime); // prints "2023-04-15"
+
+                                                                              if (DateTime.now().isAfter(dateTime)) {
+                                                                                setState(() {
+                                                                                  emptyCode = false;
+                                                                                  errorOnCoupon = false;
+                                                                                  couponCodeApplied = false;
+                                                                                  couponExpired = true;
+                                                                                  expiredDate = formattedDateTime;
+                                                                                  typeOfCouponExpired = true;
+                                                                                  isButtonDisabled = false;
+                                                                                });
+                                                                                // showToast('Sorry, The coupon has expired.');
+                                                                              } else {
+                                                                                if (value['result']['couponValue']['type'] == 'percentage') {
+                                                                                  // code for percentage type of coupon
+                                                                                  var percentageValue = int.parse(value['result']['couponValue']['value']) * 0.01;
+                                                                                  print('this is value in $percentageValue');
+                                                                                  discountvalue = (totalAmount * percentageValue).toString();
+                                                                                  print(totalAmount);
+                                                                                  print(discountvalue);
+
+                                                                                  setState(() {
+                                                                                    totalAmount = totalAmount - double.parse(discountvalue);
+                                                                                    emptyCode = false;
+                                                                                    errorOnCoupon = false;
+                                                                                    couponCodeApplied = true;
+                                                                                    couponExpired = false;
+                                                                                    haveACouponCode = false;
+                                                                                    expiredDate = formattedDateTime;
+                                                                                    typeOfCouponExpired = true;
+                                                                                  });
+                                                                                  print(totalAmount.toString());
+                                                                                  // showToast('Coupon code applied successfully.');
+                                                                                } else if (value['result']['couponValue']['type'] == 'number') {
+                                                                                  // code for direct amount type of coupon
+
+                                                                                  var numberValue = int.parse(value['result']['couponValue']['value']);
+                                                                                  print('this is value in $numberValue');
+                                                                                  discountvalue = numberValue.toString();
+                                                                                  print(totalAmount);
+                                                                                  print(discountvalue);
+
+                                                                                  setState(() {
+                                                                                    totalAmount = totalAmount - int.parse(discountvalue);
+                                                                                    emptyCode = false;
+                                                                                    errorOnCoupon = false;
+                                                                                    couponCodeApplied = true;
+                                                                                    couponExpired = false;
+                                                                                    haveACouponCode = false;
+                                                                                    expiredDate = formattedDateTime;
+                                                                                    typeOfCouponExpired = true;
+                                                                                  });
+                                                                                  print(totalAmount);
+                                                                                  // showToast('Coupon code applied successfully.');
+                                                                                } else {
+                                                                                  setState(() {
+                                                                                    emptyCode = false;
+                                                                                    errorOnCoupon = true;
+                                                                                    couponCodeApplied = false;
+                                                                                    couponExpired = false;
+                                                                                    isButtonDisabled = false;
+                                                                                  });
+                                                                                  print('111');
+                                                                                  // showToast('invalid type of coupon applied.');
+                                                                                }
+                                                                              }
+                                                                            }else if (value[
                                                                               'result']
                                                                           [
                                                                           'couponType'] ==

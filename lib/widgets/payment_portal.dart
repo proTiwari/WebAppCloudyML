@@ -110,31 +110,35 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
   var key_secret;
 
   loadCourses() async {
-    var url = Uri.parse(
-        'https://us-central1-cloudyml-app.cloudfunctions.net/adduser/addgroup');
-    await http.post(url, headers: {
-      "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-      "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
-    }, body: {
-      "sname": userData["name"],
-      "sid": _auth.currentUser!.uid,
-      "cname": widget.courseName,
-      "image": widget.courseImageUrl,
-      "cid": widget.courseId
-    });
+    try {
+      var url = Uri.parse(
+          'https://us-central1-cloudyml-app.cloudfunctions.net/adduser/addgroup');
+      await http.post(url, headers: {
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
+      }, body: {
+        "sname": userData["name"],
+        "sid": _auth.currentUser!.uid,
+        "cname": widget.courseName,
+        "image": widget.courseImageUrl,
+        "cid": widget.courseId
+      });
 
-    var mailurl = Uri.parse(
-        'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/coursemail');
-    // final response =
-    await http.post(mailurl, headers: {
-      "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-      "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
-    }, body: {
-      "uid": _auth.currentUser!.uid,
-      "cname": widget.courseName,
-    });
+      var mailurl = Uri.parse(
+          'https://us-central1-cloudyml-app.cloudfunctions.net/exceluser/coursemail');
+      // final response =
+      await http.post(mailurl, headers: {
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Methods": "GET, POST,OPTIONS"
+      }, body: {
+        "uid": _auth.currentUser!.uid,
+        "cname": widget.courseName,
+      });
 
-    print("Mail Sent");
+      print("Mail Sent");
+    } catch (e) {
+      print(e);
+    }
 
     try {
       print("couponcodeused1");
