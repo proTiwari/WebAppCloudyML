@@ -21,7 +21,7 @@ class CreateCouponApi {
       String? token = await FirebaseAuth.instance.currentUser!.getIdToken();
       print("iowefjowe");
       var url = Uri.parse(
-          'https://us-central1-cloudyml-app.cloudfunctions.net/createCoupon');
+          'http://127.0.0.1:5001/cloudyml-app/us-central1/createCoupon');
       print("fwefewf");
 
       var data = createCouponInfo.toJson();
@@ -53,7 +53,7 @@ class CreateCouponApi {
       // get firebase id token for authentication
       String? token = await FirebaseAuth.instance.currentUser!.getIdToken();
       var url = Uri.parse(
-          'https://us-central1-cloudyml-app.cloudfunctions.net/checkCouponCode');
+          'http://127.0.0.1:5001/cloudyml-app/us-central1/checkCouponCode');
       var data = {"couponCode": "$couponCode"};
       var body = json.encode({"data": data});
       print(body);

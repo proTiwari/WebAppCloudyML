@@ -198,6 +198,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
   @override
   void initState() {
     super.initState();
+    print('rrrrrrrrrrrrrrrrrrrrrrrrrrrrr:${widget.cID}');
     getCourseName();
   }
 
@@ -224,13 +225,13 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
 
   var couponData;
   var errorOfCouponCode;
-  verifyCoupon(couponCode) async {
+  verifyCoupon(couponCode, cID) async {
     try {
       // get firebase id token for authentication
       String? token = await FirebaseAuth.instance.currentUser!.getIdToken();
       var url = Uri.parse(
-          'https://us-central1-cloudyml-app.cloudfunctions.net/checkCouponCode');
-      var data = {"couponCode": "$couponCode"};
+          'http://127.0.0.1:5001/cloudyml-app/us-central1/checkCouponCode');
+      var data = {"couponCode": "$couponCode", "course": cID};
       var body = json.encode({"data": data});
       print(body);
       var response = await http.post(url, body: body, headers: {
@@ -240,6 +241,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
       print("iowefjwefwefwowe");
 
       if (response.statusCode == 200) {
+        print('success1');
         couponData = response.body;
         print(response.body);
         return {"Success": true, "message": response.body};
@@ -286,345 +288,1469 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         ),
         backgroundColor: Colors.deepPurple,
       ),
-      body: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-        if (constraints.maxWidth >= 650) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  height: screenHeight / 5,
-                  width: screenWidth,
+      body: loadingpayment.value == true
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+              if (constraints.maxWidth >= 650) {
+                return SingleChildScrollView(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Congratulations',
-                        textScaleFactor: min(horizontalScale, verticalScale),
-                        style: congoStyle,
-                      ),
-                      Text(
-                        '🤩You are just one step away🤩',
-                        textScaleFactor: min(horizontalScale, verticalScale),
-                        style: congoStyle,
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 90.0, right: 90, top: 10, bottom: 10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black26,
-                            offset: Offset(
-                              2, // Move to right 10  horizontally
-                              2.0, // Move to bottom 10 Vertically
-                            ),
-                            blurRadius: 40)
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Container(
+                        height: screenHeight / 5,
+                        width: screenWidth,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  left: 20.0, top: 10, bottom: 10),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border:
-                                      Border.all(color: Colors.black, width: 1),
-                                  color: Colors.white,
-                                ),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      height: screenHeight / 3.5,
-                                      width: screenWidth / 3,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(10),
-                                        ),
-                                        child: CachedNetworkImage(
-                                          imageUrl: courseMap['image_url'],
-                                          memCacheHeight: 80,
-                                          memCacheWidth: 80,
-                                          placeholder: (context, url) => Center(
-                                              child:
-                                                  CircularProgressIndicator()),
-                                          errorWidget: (context, url, error) =>
-                                              Icon(Icons.error),
-                                          fit: BoxFit.fill,
-                                          // height: 110 * verticalScale,
-                                          // width: 140 * horizontalScale,
-                                        ),
+                            Text(
+                              'Congratulations',
+                              textScaleFactor:
+                                  min(horizontalScale, verticalScale),
+                              style: congoStyle,
+                            ),
+                            Text(
+                              '🤩You are just one step away🤩',
+                              textScaleFactor:
+                                  min(horizontalScale, verticalScale),
+                              style: congoStyle,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 90.0, right: 90, top: 10, bottom: 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black26,
+                                  offset: Offset(
+                                    2, // Move to right 10  horizontally
+                                    2.0, // Move to bottom 10 Vertically
+                                  ),
+                                  blurRadius: 40)
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 20.0, top: 10, bottom: 10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: Colors.black, width: 1),
+                                        color: Colors.white,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            height: screenHeight / 3.5,
+                                            width: screenWidth / 3,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(10),
+                                                topRight: Radius.circular(10),
+                                              ),
+                                              child: CachedNetworkImage(
+                                                imageUrl:
+                                                    courseMap['image_url'],
+                                                memCacheHeight: 80,
+                                                memCacheWidth: 80,
+                                                placeholder: (context, url) =>
+                                                    Center(
+                                                        child:
+                                                            CircularProgressIndicator()),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Icon(Icons.error),
+                                                fit: BoxFit.fill,
+                                                // height: 110 * verticalScale,
+                                                // width: 140 * horizontalScale,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            width: screenWidth / 3,
+                                            padding: EdgeInsets.only(left: 5.0),
+                                            decoration: BoxDecoration(
+                                              color: Colors.deepPurple.shade100,
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 5.0),
+                                                  child: Container(
+                                                    height: 20,
+                                                    width: 25,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              3.0),
+                                                      color: HexColor('440F87'),
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        courseMap['reviews'] !=
+                                                                null
+                                                            ? courseMap[
+                                                                'reviews']
+                                                            : '5.0',
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 5.0),
+                                                  child: StarRating(
+                                                    length: 5,
+                                                    rating:
+                                                        courseMap['reviews'] !=
+                                                                null
+                                                            ? double.parse(
+                                                                courseMap[
+                                                                    'reviews'])
+                                                            : 5.0,
+                                                    color: HexColor('440F87'),
+                                                    starSize: 25,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          Container(
+                                            width: screenWidth / 3,
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  courseMap['name'],
+                                                  textScaleFactor: min(
+                                                      horizontalScale,
+                                                      verticalScale),
+                                                  style: TextStyle(
+                                                    fontSize: 36,
+                                                    fontWeight: FontWeight.bold,
+                                                    height: 1,
+                                                  ),
+                                                  maxLines: 2,
+                                                ),
+                                                SizedBox(
+                                                  height: 15 * verticalScale,
+                                                ),
+                                                Text(
+                                                  courseMap['description'],
+                                                  textScaleFactor: min(
+                                                      horizontalScale,
+                                                      verticalScale),
+                                                  style: TextStyle(
+                                                      fontSize: 18, height: 1),
+                                                ),
+                                                SizedBox(
+                                                  height: 15 * verticalScale,
+                                                ),
+                                                Text(
+                                                  'English  ||  online  ||  lifetime',
+                                                  textScaleFactor: min(
+                                                      horizontalScale,
+                                                      verticalScale),
+                                                  style: TextStyle(
+                                                      color: Colors
+                                                          .deepPurple.shade600,
+                                                      fontSize: 24,
+                                                      height: 1),
+                                                ),
+                                                SizedBox(
+                                                  height: 15 * verticalScale,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    Container(
-                                      width: screenWidth / 3,
-                                      padding: EdgeInsets.only(left: 5.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.deepPurple.shade100,
-                                      ),
-                                      child: Row(
+                                  ),
+                                  SizedBox(
+                                    width: 40 * horizontalScale,
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.only(top: 10, bottom: 10),
+                                    child: Container(
+                                      width: Adaptive.w(25),
+                                      height: Adaptive.h(65),
+                                      child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 5.0),
-                                            child: Container(
-                                              height: 20,
-                                              width: 25,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(3.0),
-                                                color: HexColor('440F87'),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  courseMap['reviews'] != null
-                                                      ? courseMap['reviews']
-                                                      : '5.0',
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.normal),
+                                          Container(
+                                            child: Center(
+                                              child: Text(
+                                                'BILL SUMMARY',
+                                                textScaleFactor: min(
+                                                    horizontalScale,
+                                                    verticalScale),
+                                                style: TextStyle(
+                                                  fontSize: 45 * verticalScale,
+                                                  fontWeight: FontWeight.bold,
+                                                  height: 1,
                                                 ),
                                               ),
                                             ),
                                           ),
+                                          SizedBox(
+                                            height: 25 * verticalScale,
+                                          ),
+                                          SizedBox(
+                                              child: Divider(
+                                            color: Colors.black,
+                                          )),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 10.0, bottom: 10),
+                                            child: Container(
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text('Course Details',
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              223, 48, 48, 49),
+                                                          fontFamily: 'Poppins',
+                                                          fontSize: 14,
+                                                          letterSpacing:
+                                                              0 /*percentages not used in flutter. defaulting to zero*/,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          height: 1)),
+                                                  Text('Unit Price',
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              223, 48, 48, 49),
+                                                          fontFamily: 'Poppins',
+                                                          fontSize: 14,
+                                                          letterSpacing:
+                                                              0 /*percentages not used in flutter. defaulting to zero*/,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          height: 1)),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                              child: Divider(
+                                            color: Colors.black,
+                                          )),
+                                          SizedBox(height: 15),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "Actual price",
+                                                style: textStyle,
+                                              ),
+                                              Text(
+                                                courseMap['gst'] != null
+                                                    ? '₹${courseMap['Amount Payable']}/-'
+                                                    : courseMap[
+                                                        'Amount Payable'],
+                                                style: textStyle,
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 5),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'Discounted price',
+                                                style: textStyle,
+                                              ),
+                                              Text(
+                                                courseMap['gst'] != null
+                                                    ? '₹${courseMap['Course Price']}/-'
+                                                    : courseMap['Course Price'],
+                                                style: textStyle,
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 5),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "GST",
+                                                style: textStyle,
+                                              ),
+                                              Text(
+                                                courseMap['gst'] != null
+                                                    ? '₹${gstAmount.round().toString()}/-'
+                                                    : '18%',
+                                                style: textStyle,
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 15.sp,
+                                          ),
+                                          haveACouponCode
+                                              ? Center(
+                                                  child: SizedBox(
+                                                    height: 20.sp,
+                                                    width: screenWidth / 3.5,
+                                                    child: TextField(
+                                                      textAlignVertical:
+                                                          TextAlignVertical
+                                                              .center,
+                                                      enabled:
+                                                          !apply ? true : false,
+                                                      controller:
+                                                          couponCodeController,
+                                                      textAlign:
+                                                          TextAlign.start,
+                                                      cursorColor:
+                                                          Colors.purpleAccent,
+                                                      style: TextStyle(
+                                                        fontSize: 12.sp,
+                                                        letterSpacing: 1.2,
+                                                        fontFamily: 'Medium',
+                                                      ),
+                                                      decoration:
+                                                          InputDecoration(
+                                                        contentPadding:
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        10.sp,
+                                                                    horizontal:
+                                                                        10.sp),
+                                                        suffixIcon: TextButton(
+                                                          child: loading
+                                                              ? Center(
+                                                                  child:
+                                                                      SizedBox(
+                                                                    height: 20,
+                                                                    width: 20,
+                                                                    child: CircularProgressIndicator(
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                )
+                                                              : Text(
+                                                                  'Apply',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Color(
+                                                                        0xFF7860DC),
+                                                                    fontFamily:
+                                                                        'Medium',
+                                                                    fontSize:
+                                                                        12.sp,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                          onPressed:
+                                                              isButtonDisabled
+                                                                  ? null
+                                                                  : () async {
+                                                                      setState(
+                                                                          () {
+                                                                        isButtonDisabled =
+                                                                            true;
+                                                                      });
+
+                                                                      try {
+                                                                        if (couponCodeController
+                                                                            .text
+                                                                            .isNotEmpty) {
+                                                                          setState(
+                                                                              () {
+                                                                            loading =
+                                                                                true;
+                                                                          });
+                                                                          var couponAPI;
+                                                                          couponAPI = await verifyCoupon(
+                                                                              couponCodeController.text,
+                                                                              widget.cID);
+                                                                          if (couponAPI !=
+                                                                              null) {
+                                                                            setState(() {
+                                                                              loading = false;
+                                                                            });
+                                                                          }
+                                                                          print(
+                                                                              'towards logic');
+                                                                          if (couponData !=
+                                                                              null) {
+                                                                            print(couponAPI);
+                                                                            var value =
+                                                                                json.decode(couponAPI['message']);
+                                                                            print("return value: ${value['result']}");
+                                                                            print("return value: ${value['result']['couponType']}");
+                                                                            print("return value: ${value['result']['couponStartDate']}");
+
+                                                                            if (value['result']['couponType'] ==
+                                                                                'global') {
+                                                                              var startTime = value['result']['couponStartDate'];
+                                                                              print(startTime);
+
+                                                                              var endTime = value['result']['couponExpiryDate'];
+                                                                              DateTime dateTime = DateTime.parse(endTime);
+                                                                              String formattedDateTime = DateFormat('yyyy-MM-dd HH:mm a').format(dateTime.toLocal());
+                                                                              print(formattedDateTime); // prints "2023-04-15"
+
+                                                                              if (DateTime.now().isAfter(dateTime)) {
+                                                                                setState(() {
+                                                                                  emptyCode = false;
+                                                                                  errorOnCoupon = false;
+                                                                                  couponCodeApplied = false;
+                                                                                  couponExpired = true;
+                                                                                  expiredDate = formattedDateTime;
+                                                                                  typeOfCouponExpired = true;
+                                                                                  isButtonDisabled = false;
+                                                                                });
+                                                                                // showToast('Sorry, The coupon has expired.');
+                                                                              } else {
+                                                                                if (value['result']['couponValue']['type'] == 'percentage') {
+                                                                                  // code for percentage type of coupon
+                                                                                  var percentageValue = int.parse(value['result']['couponValue']['value']) * 0.01;
+                                                                                  print('this is value in $percentageValue');
+                                                                                  discountvalue = (totalAmount * percentageValue).toString();
+                                                                                  print(totalAmount);
+                                                                                  print(discountvalue);
+
+                                                                                  setState(() {
+                                                                                    totalAmount = totalAmount - double.parse(discountvalue);
+                                                                                    emptyCode = false;
+                                                                                    errorOnCoupon = false;
+                                                                                    couponCodeApplied = true;
+                                                                                    couponExpired = false;
+                                                                                    haveACouponCode = false;
+                                                                                    expiredDate = formattedDateTime;
+                                                                                    typeOfCouponExpired = true;
+                                                                                  });
+                                                                                  print(totalAmount.toString());
+                                                                                  // showToast('Coupon code applied successfully.');
+                                                                                } else if (value['result']['couponValue']['type'] == 'number') {
+                                                                                  // code for direct amount type of coupon
+
+                                                                                  var numberValue = int.parse(value['result']['couponValue']['value']);
+                                                                                  print('this is value in $numberValue');
+                                                                                  discountvalue = numberValue.toString();
+                                                                                  print(totalAmount);
+                                                                                  print(discountvalue);
+
+                                                                                  setState(() {
+                                                                                    totalAmount = totalAmount - int.parse(discountvalue);
+                                                                                    emptyCode = false;
+                                                                                    errorOnCoupon = false;
+                                                                                    couponCodeApplied = true;
+                                                                                    couponExpired = false;
+                                                                                    haveACouponCode = false;
+                                                                                    expiredDate = formattedDateTime;
+                                                                                    typeOfCouponExpired = true;
+                                                                                  });
+                                                                                  print(totalAmount);
+                                                                                  // showToast('Coupon code applied successfully.');
+                                                                                } else {
+                                                                                  setState(() {
+                                                                                    emptyCode = false;
+                                                                                    errorOnCoupon = true;
+                                                                                    couponCodeApplied = false;
+                                                                                    couponExpired = false;
+                                                                                    isButtonDisabled = false;
+                                                                                  });
+                                                                                  print('111');
+                                                                                  // showToast('invalid type of coupon applied.');
+                                                                                }
+                                                                              }
+                                                                            } else if (value['result']['couponType'] ==
+                                                                                'course') {
+                                                                              var startTime = value['result']['couponStartDate'];
+                                                                              print(startTime);
+
+                                                                              var endTime = value['result']['couponExpiryDate'];
+                                                                              DateTime dateTime = DateTime.parse(endTime);
+                                                                              String formattedDateTime = DateFormat('yyyy-MM-dd HH:mm a').format(dateTime.toLocal());
+                                                                              print(formattedDateTime); // prints "2023-04-15"
+
+                                                                              if (DateTime.now().isAfter(dateTime)) {
+                                                                                setState(() {
+                                                                                  emptyCode = false;
+                                                                                  errorOnCoupon = false;
+                                                                                  couponCodeApplied = false;
+                                                                                  couponExpired = true;
+                                                                                  expiredDate = formattedDateTime;
+                                                                                  typeOfCouponExpired = true;
+                                                                                  isButtonDisabled = false;
+                                                                                });
+                                                                                // showToast('Sorry, The coupon has expired.');
+                                                                              } else {
+                                                                                if (value['result']['couponValue']['type'] == 'percentage') {
+                                                                                  // code for percentage type of coupon
+                                                                                  var percentageValue = int.parse(value['result']['couponValue']['value']) * 0.01;
+                                                                                  print('this is value in $percentageValue');
+                                                                                  discountvalue = (totalAmount * percentageValue).toString();
+                                                                                  print(totalAmount);
+                                                                                  print(discountvalue);
+
+                                                                                  setState(() {
+                                                                                    totalAmount = totalAmount - double.parse(discountvalue);
+                                                                                    emptyCode = false;
+                                                                                    errorOnCoupon = false;
+                                                                                    couponCodeApplied = true;
+                                                                                    couponExpired = false;
+                                                                                    haveACouponCode = false;
+                                                                                    expiredDate = formattedDateTime;
+                                                                                    typeOfCouponExpired = true;
+                                                                                  });
+                                                                                  print(totalAmount.toString());
+                                                                                  // showToast('Coupon code applied successfully.');
+                                                                                } else if (value['result']['couponValue']['type'] == 'number') {
+                                                                                  // code for direct amount type of coupon
+
+                                                                                  var numberValue = int.parse(value['result']['couponValue']['value']);
+                                                                                  print('this is value in $numberValue');
+                                                                                  discountvalue = numberValue.toString();
+                                                                                  print(totalAmount);
+                                                                                  print(discountvalue);
+
+                                                                                  setState(() {
+                                                                                    totalAmount = totalAmount - int.parse(discountvalue);
+                                                                                    emptyCode = false;
+                                                                                    errorOnCoupon = false;
+                                                                                    couponCodeApplied = true;
+                                                                                    couponExpired = false;
+                                                                                    haveACouponCode = false;
+                                                                                    expiredDate = formattedDateTime;
+                                                                                    typeOfCouponExpired = true;
+                                                                                  });
+                                                                                  print(totalAmount);
+                                                                                  // showToast('Coupon code applied successfully.');
+                                                                                } else {
+                                                                                  setState(() {
+                                                                                    emptyCode = false;
+                                                                                    errorOnCoupon = true;
+                                                                                    couponCodeApplied = false;
+                                                                                    couponExpired = false;
+                                                                                    isButtonDisabled = false;
+                                                                                  });
+                                                                                  print('111');
+                                                                                  // showToast('invalid type of coupon applied.');
+                                                                                }
+                                                                              }
+                                                                            } else if (value['result']['couponType'] ==
+                                                                                'individual') {
+                                                                              var endTime = value['result']['couponExpiryDate'];
+                                                                              DateTime dateTime = DateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z").parse(endTime, true);
+                                                                              print("dateTime: ${dateTime}");
+                                                                              String formattedDateTime = DateFormat('HH:mm a').format(dateTime.toLocal());
+
+                                                                              print("printing formatted date ${formattedDateTime}");
+
+                                                                              if (DateTime.now().isAfter(dateTime)) {
+                                                                                setState(() {
+                                                                                  emptyCode = false;
+                                                                                  errorOnCoupon = false;
+                                                                                  couponCodeApplied = false;
+                                                                                  couponExpired = true;
+                                                                                  typeOfCouponExpired = false;
+                                                                                  expiredDate = formattedDateTime;
+                                                                                  isButtonDisabled = false;
+                                                                                });
+                                                                              } else {
+                                                                                if (value['result']['couponValue']['type'] == 'percentage') {
+                                                                                  // code for percentage type of coupon
+                                                                                  var percentageValue = int.parse(value['result']['couponValue']['value']) * 0.01;
+                                                                                  print('this is value in $percentageValue');
+                                                                                  discountvalue = (totalAmount * percentageValue).toString();
+                                                                                  print(totalAmount);
+                                                                                  print(discountvalue);
+                                                                                  setState(() {
+                                                                                    totalAmount = totalAmount - double.parse(discountvalue);
+                                                                                    emptyCode = false;
+                                                                                    errorOnCoupon = false;
+                                                                                    couponCodeApplied = true;
+                                                                                    couponExpired = false;
+                                                                                    haveACouponCode = false;
+                                                                                    typeOfCouponExpired = false;
+                                                                                    expiredDate = formattedDateTime;
+                                                                                  });
+                                                                                  print(totalAmount.toString());
+                                                                                  // showToast('Coupon code applied successfully.');
+                                                                                } else if (value['result']['couponValue']['type'] == 'number') {
+                                                                                  // code for direct amount type of coupon
+
+                                                                                  var numberValue = int.parse(value['result']['couponValue']['value']);
+                                                                                  print('this is value in $numberValue');
+                                                                                  discountvalue = numberValue.toString();
+                                                                                  print(totalAmount);
+                                                                                  print(discountvalue);
+                                                                                  setState(() {
+                                                                                    totalAmount = totalAmount - int.parse(discountvalue);
+                                                                                    emptyCode = false;
+                                                                                    errorOnCoupon = false;
+                                                                                    couponCodeApplied = true;
+                                                                                    haveACouponCode = false;
+                                                                                    couponExpired = false;
+                                                                                    typeOfCouponExpired = false;
+                                                                                    expiredDate = formattedDateTime;
+                                                                                  });
+                                                                                  print(totalAmount);
+                                                                                  // showToast('Coupon code applied successfully.');
+                                                                                } else {
+                                                                                  setState(() {
+                                                                                    emptyCode = false;
+                                                                                    errorOnCoupon = true;
+                                                                                    couponCodeApplied = false;
+                                                                                    couponExpired = false;
+                                                                                    typeOfCouponExpired = false;
+                                                                                    isButtonDisabled = false;
+                                                                                  });
+                                                                                  print('222');
+                                                                                  // showToast('invalid subtype of coupon applied.');
+                                                                                }
+                                                                              }
+                                                                            } else {
+                                                                              setState(() {
+                                                                                emptyCode = false;
+                                                                                errorOnCoupon = true;
+                                                                                couponCodeApplied = false;
+                                                                                couponExpired = false;
+                                                                                typeOfCouponExpired = false;
+                                                                                isButtonDisabled = false;
+                                                                              });
+                                                                              print('333');
+                                                                              // showToast('invalid type of coupon applied.');
+                                                                            }
+                                                                            couponData =
+                                                                                null;
+                                                                            couponCodeController.clear();
+                                                                          } else if (errorOfCouponCode !=
+                                                                              null) {
+                                                                            print(couponAPI);
+                                                                            var errorValue =
+                                                                                json.decode(couponAPI['message']);
+                                                                            print("reurn: ${errorValue['error']['message']}");
+                                                                            setState(() {
+                                                                              emptyCode = false;
+                                                                              errorOnCoupon = true;
+                                                                              couponCodeApplied = false;
+                                                                              couponExpired = false;
+                                                                              typeOfCouponExpired = false;
+                                                                              isButtonDisabled = false;
+                                                                            });
+                                                                            print('444');
+                                                                            // showToast('${errorValue['error']['message']}.');
+                                                                            errorOfCouponCode =
+                                                                                null;
+                                                                            couponCodeController.clear();
+                                                                          }
+                                                                        } else {
+                                                                          setState(
+                                                                              () {
+                                                                            emptyCode =
+                                                                                true;
+                                                                            errorOnCoupon =
+                                                                                false;
+                                                                            couponCodeApplied =
+                                                                                false;
+                                                                            couponExpired =
+                                                                                false;
+                                                                            typeOfCouponExpired =
+                                                                                false;
+                                                                            isButtonDisabled =
+                                                                                false;
+                                                                          });
+                                                                          // showToast('Please enter a code. Coupon code cannot be empty.');
+                                                                        }
+                                                                      } catch (e) {
+                                                                        setState(
+                                                                            () {
+                                                                          emptyCode =
+                                                                              false;
+                                                                          errorOnCoupon =
+                                                                              true;
+                                                                          couponCodeApplied =
+                                                                              false;
+                                                                          couponExpired =
+                                                                              false;
+                                                                          typeOfCouponExpired =
+                                                                              false;
+                                                                          isButtonDisabled =
+                                                                              false;
+                                                                        });
+                                                                        print(
+                                                                            '555');
+                                                                        // showToast('Invalid coupon code!}');
+                                                                        print(e
+                                                                            .toString());
+                                                                      }
+                                                                    },
+                                                        ),
+                                                        hintText:
+                                                            'Enter coupon code',
+                                                        hintStyle: TextStyle(
+                                                            fontSize: 12.sp),
+                                                        fillColor: Colors
+                                                            .deepPurple
+                                                            .shade100,
+                                                        filled: true,
+                                                        // suffixIconConstraints:
+                                                        // BoxConstraints(minHeight: 52, minWidth: 70),
+                                                        // contentPadding: EdgeInsets.symmetric(horizontal: 0.0,vertical: 0),
+                                                        enabledBorder:
+                                                            OutlineInputBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5),
+                                                                borderSide:
+                                                                    BorderSide
+                                                                        .none),
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5),
+                                                                borderSide:
+                                                                    BorderSide
+                                                                        .none),
+                                                        disabledBorder:
+                                                            OutlineInputBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5),
+                                                                borderSide:
+                                                                    BorderSide
+                                                                        .none),
+                                                      ),
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          coupontext = value;
+                                                          print(coupontext);
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                )
+                                              : InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      isButtonDisabled = false;
+                                                      haveACouponCode = true;
+                                                      totalAmount =
+                                                          totalAmountAfterCoupon;
+                                                      couponCodeApplied = false;
+                                                      typeOfCouponExpired =
+                                                          false;
+                                                    });
+                                                  },
+                                                  child: Align(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: Text(
+                                                        'Have a coupon code?',
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .deepPurple,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      )),
+                                                ),
+                                          SizedBox(height: 7.sp),
+                                          errorOnCoupon
+                                              ? Text(
+                                                  'Applied coupon code is invalid. Please enter a valid coupon code.',
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 11.sp,
+                                                  ))
+                                              : Container(),
+                                          couponExpired
+                                              ? Text(
+                                                  typeOfCouponExpired
+                                                      ? 'Sorry! The coupon code has expired on $expiredDate.'
+                                                      : 'Sorry! The coupon code has expired at $expiredDate.',
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 11.sp,
+                                                  ))
+                                              : Container(),
+                                          emptyCode
+                                              ? Text(
+                                                  'Please enter a code. Coupon code cannot be empty.',
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 11.sp,
+                                                  ))
+                                              : Container(),
+                                          couponCodeApplied
+                                              ? Align(
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: Text(
+                                                      typeOfCouponExpired
+                                                          ? 'Yay! You have got an extra discount of ₹${double.parse(discountvalue).round().toString()}. This code will expire on $expiredDate.'
+                                                          : 'Yay! You have got an extra discount of ₹${double.parse(discountvalue).round().toString()}. This code will expire at $expiredDate.',
+                                                      style: TextStyle(
+                                                        color: Colors
+                                                            .deepPurpleAccent,
+                                                        fontSize: 11.sp,
+                                                      )),
+                                                )
+                                              : Container(),
+                                          SizedBox(height: 8.sp),
+                                          SizedBox(
+                                              child: Divider(
+                                            color: Colors.black,
+                                          )),
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                                right: 5.0),
-                                            child: StarRating(
-                                              length: 5,
-                                              rating:
-                                                  courseMap['reviews'] != null
-                                                      ? double.parse(
-                                                          courseMap['reviews'])
-                                                      : 5.0,
-                                              color: HexColor('440F87'),
-                                              starSize: 25,
+                                                top: 5.0, bottom: 5),
+                                            child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Total Pay',
+                                                  style: textStyle,
+                                                ),
+                                                Text(
+                                                  NoCouponApplied
+                                                      ? courseMap['gst'] != null
+                                                          ? '₹${totalAmount.round().toString()}/-'
+                                                          : '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //courseMap["Amount Payable"]
+                                                      : finalamountToDisplay,
+                                                  style: textStyle,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                              child: Divider(
+                                            color: Colors.black,
+                                          )),
+                                          SizedBox(height: 15 * verticalScale),
+                                          Center(
+                                            child: PaymentButton(
+                                              couponCode: coupontext,
+                                              couponcodeused: !errorOnCoupon,
+                                              coursePriceMoneyRef:
+                                                  int.parse(courseprice),
+                                              amountString: (double.parse(NoCouponApplied
+                                                          ? courseMap['gst'] != null
+                                                              ? '${totalAmount.round().toString()}'
+                                                              : "${int.parse(courseprice) - int.parse(discountvalue)}"
+                                                          : finalAmountToPay) *
+                                                      100)
+                                                  .toString(),
+                                              buttonText: NoCouponApplied
+                                                  ? courseMap['gst'] != null
+                                                      ? 'PAY ₹${totalAmount.round().toString()}/-'
+                                                      : 'PAY ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${courseMap['Course Price']}
+
+                                                  : 'PAY ${finalamountToDisplay}',
+                                              buttonTextForCode:
+                                                  "$finalamountToDisplay",
+                                              changeState: () {
+                                                alertForPayment = true;
+                                                setState(() {});
+                                              },
+                                              courseDescription:
+                                                  courseMap['description'],
+                                              courseName: courseMap['name'],
+                                              isPayButtonPressed:
+                                                  isPayButtonPressed,
+                                              NoCouponApplied: NoCouponApplied,
+                                              scrollController:
+                                                  _scrollController,
+                                              updateCourseIdToCouponDetails:
+                                                  () {
+                                                void addCourseId() {
+                                                  setState(() {
+                                                    id = courseMap['id'];
+                                                    alertForPayment = true;
+                                                  });
+                                                }
+
+                                                addCourseId();
+                                                print(NoCouponApplied);
+                                              },
+                                              outStandingAmountString:
+                                                  (double.parse(NoCouponApplied
+                                                              ? courseMap[
+                                                                  'Amount_Payablepay']
+                                                              : finalAmountToPay) -
+                                                          1000)
+                                                      .toStringAsFixed(2),
+                                              courseId: courseMap['id'],
+                                              courseImageUrl:
+                                                  courseMap['image_url'],
+                                              couponCodeText:
+                                                  couponCodeController.text,
+                                              isItComboCourse:
+                                                  widget.isItComboCourse,
+                                              whichCouponCode:
+                                                  couponCodeController.text,
+                                            ),
+                                          ),
+                                          SizedBox(height: 7.5.sp),
+                                          InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                loadingpayment.value = true;
+                                              });
+                                              alertForPayment = true;
+                                              setState(() {});
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return Dialog(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    child: Container(
+                                                      width: screenWidth / 2.5,
+                                                      padding:
+                                                          EdgeInsets.all(20),
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          Text(
+                                                            'Payment',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 20),
+
+                                                          RazorPayInternationalBtn(
+                                                            courseDescription:
+                                                                courseMap[
+                                                                    'description'],
+                                                            international:
+                                                                false,
+                                                            coursePriceMoneyRef:
+                                                                int.parse(
+                                                                    courseprice),
+                                                            courseId:
+                                                                courseMap['id'],
+                                                            NoCouponApplied:
+                                                                NoCouponApplied,
+                                                            couponCodeText:
+                                                                couponCodeController
+                                                                    .text,
+                                                            amountString: (double.parse(NoCouponApplied
+                                                                        ? courseMap['gst'] != null
+                                                                            ? '${totalAmount.round().toString()}'
+                                                                            : "${int.parse(courseprice) - int.parse(discountvalue)}"
+                                                                        : finalAmountToPay) * //courseMap['Amount_Payablepay']
+                                                                    100)
+                                                                .toString(),
+                                                            courseName:
+                                                                courseMap[
+                                                                    'name'],
+                                                            courseImageUrl:
+                                                                courseMap[
+                                                                    'image_url'],
+                                                          )
+
+                                                          // PaymentButtonn(
+                                                          //   label: 'Razorpay',
+                                                          //   icon: Icons.attach_money,
+                                                          //   color: Colors.green,
+                                                          //   onTap: () {
+                                                          //     // Handle Razorpay payment
+                                                          //   },
+                                                          // ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Center(
+                                              child: Container(
+                                                width: screenWidth,
+                                                height: Device.screenType ==
+                                                        ScreenType.mobile
+                                                    ? 30.sp
+                                                    : 20.sp,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  color: Colors
+                                                      .deepPurple.shade600,
+                                                ),
+                                                child: Center(
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        'Pay Now',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromRGBO(
+                                                                    255,
+                                                                    255,
+                                                                    255,
+                                                                    1),
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            fontSize: 20 *
+                                                                verticalScale,
+                                                            letterSpacing:
+                                                                0 /*percentages not used in flutter. defaulting to zero*/,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            height: 1),
+                                                      ),
+                                                      Text(
+                                                        '(For International Students)',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromRGBO(
+                                                                    255,
+                                                                    255,
+                                                                    255,
+                                                                    1),
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            fontSize: 15 *
+                                                                verticalScale,
+                                                            letterSpacing:
+                                                                0 /*percentages not used in flutter. defaulting to zero*/,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            height: 1),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Container(
-                                      width: screenWidth / 3,
-                                      padding:
-                                          EdgeInsets.only(left: 15, right: 15),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            courseMap['name'],
-                                            textScaleFactor: min(
-                                                horizontalScale, verticalScale),
-                                            style: TextStyle(
-                                              fontSize: 36,
-                                              fontWeight: FontWeight.bold,
-                                              height: 1,
-                                            ),
-                                            maxLines: 2,
-                                          ),
-                                          SizedBox(
-                                            height: 15 * verticalScale,
-                                          ),
-                                          Text(
-                                            courseMap['description'],
-                                            textScaleFactor: min(
-                                                horizontalScale, verticalScale),
-                                            style: TextStyle(
-                                                fontSize: 18, height: 1),
-                                          ),
-                                          SizedBox(
-                                            height: 15 * verticalScale,
-                                          ),
-                                          Text(
-                                            'English  ||  online  ||  lifetime',
-                                            textScaleFactor: min(
-                                                horizontalScale, verticalScale),
-                                            style: TextStyle(
-                                                color:
-                                                    Colors.deepPurple.shade600,
-                                                fontSize: 24,
-                                                height: 1),
-                                          ),
-                                          SizedBox(
-                                            height: 15 * verticalScale,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            SizedBox(
-                              width: 40 * horizontalScale,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 10, bottom: 10),
-                              child: Container(
-                                width: Adaptive.w(25),
-                                height: Adaptive.h(65),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
+                              alertForPayment
+                                  ? Container(
+                                      width: Adaptive.w(100),
+                                      height: Adaptive.h(5),
+                                      color: Colors.red,
                                       child: Center(
                                         child: Text(
-                                          'BILL SUMMARY',
-                                          textScaleFactor: min(
-                                              horizontalScale, verticalScale),
-                                          style: TextStyle(
-                                            fontSize: 45 * verticalScale,
-                                            fontWeight: FontWeight.bold,
-                                            height: 1,
+                                          'Please do not refresh or close the tab. You will be directed to new screen.',
+                                          style: TextStyle(fontSize: 16.sp),
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                // mobile screen
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.sp, right: 10.sp),
+                        child: Container(
+                          height: Adaptive.h(20),
+                          width: Adaptive.w(100),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FittedBox(
+                                fit: BoxFit.fitWidth,
+                                child: Text('Congratulations',
+                                    textScaleFactor:
+                                        min(horizontalScale, verticalScale),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 30.sp,
+                                      height: 1,
+                                    )),
+                              ),
+                              SizedBox(height: 25 * verticalScale),
+                              Container(
+                                child: Text(
+                                  '🤩You are just one step away🤩',
+                                  textScaleFactor:
+                                      min(horizontalScale, verticalScale),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.sp,
+                                    height: 1,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 20.sp,
+                            right: 20.sp,
+                            top: 15.sp,
+                            bottom: 15.sp),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black26,
+                                  offset: Offset(
+                                    2, // Move to right 10  horizontally
+                                    2.0, // Move to bottom 10 Vertically
+                                  ),
+                                  blurRadius: 40)
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: 10.0, top: 10, bottom: 10, right: 10),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        // height: screenHeight/3.5,
+                                        // width: screenWidth/3,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            bottomLeft: Radius.circular(10),
+                                          ),
+                                          child: CachedNetworkImage(
+                                            imageUrl: courseMap['image_url'],
+                                            memCacheWidth: 80,
+                                            memCacheHeight: 80,
+                                            placeholder: (context, url) => Center(
+                                                child:
+                                                    CircularProgressIndicator()),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Icon(Icons.error),
+                                            fit: BoxFit.fill,
+                                            height: 150 * verticalScale,
+                                            width: 165 * horizontalScale,
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 25 * verticalScale,
-                                    ),
-                                    SizedBox(
-                                        child: Divider(
-                                      color: Colors.black,
-                                    )),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 10.0, bottom: 10),
-                                      child: Container(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                      Container(
+                                        width: screenWidth / 2.5,
+                                        padding:
+                                            EdgeInsets.only(left: 5, right: 5),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text('Course Details',
+                                            Container(
+                                              child: Text(
+                                                courseMap['name'],
+                                                textScaleFactor: min(
+                                                    horizontalScale,
+                                                    verticalScale),
                                                 style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        223, 48, 48, 49),
-                                                    fontFamily: 'Poppins',
-                                                    fontSize: 14,
-                                                    letterSpacing:
-                                                        0 /*percentages not used in flutter. defaulting to zero*/,
-                                                    fontWeight: FontWeight.bold,
-                                                    height: 1)),
-                                            Text('Unit Price',
+                                                  fontSize: 20 * verticalScale,
+                                                  fontWeight: FontWeight.bold,
+                                                  height: 1,
+                                                ),
+                                                maxLines: 2,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10 * verticalScale,
+                                            ),
+                                            Container(
+                                              child: Text(
+                                                courseMap['description'],
+                                                textScaleFactor: min(
+                                                    horizontalScale,
+                                                    verticalScale),
                                                 style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        223, 48, 48, 49),
-                                                    fontFamily: 'Poppins',
-                                                    fontSize: 14,
-                                                    letterSpacing:
-                                                        0 /*percentages not used in flutter. defaulting to zero*/,
-                                                    fontWeight: FontWeight.bold,
-                                                    height: 1)),
+                                                  fontSize: 12 * verticalScale,
+                                                  height: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                maxLines: 4,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10 * verticalScale,
+                                            ),
+                                            FittedBox(
+                                              fit: BoxFit.fitWidth,
+                                              child: Text(
+                                                'English  ||  online  ||  lifetime',
+                                                textScaleFactor: min(
+                                                    horizontalScale,
+                                                    verticalScale),
+                                                style: TextStyle(
+                                                    color: Colors
+                                                        .deepPurple.shade600,
+                                                    fontSize:
+                                                        18 * verticalScale,
+                                                    height: 1),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 15 * verticalScale,
+                                            ),
                                           ],
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                        child: Divider(
-                                      color: Colors.black,
-                                    )),
-                                    SizedBox(height: 15),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Actual price",
-                                          style: textStyle,
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 15 * verticalScale,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    right: 10.0, top: 10, bottom: 10, left: 10),
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 25.0),
+                                        child: Container(
+                                          child: Center(
+                                            child: FittedBox(
+                                              fit: BoxFit.fitWidth,
+                                              child: Text(
+                                                'BILL SUMMARY',
+                                                textScaleFactor: min(
+                                                    horizontalScale,
+                                                    verticalScale),
+                                                style: TextStyle(
+                                                  fontSize: 34 * verticalScale,
+                                                  fontWeight: FontWeight.bold,
+                                                  height: 1,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                        Text(
-                                          courseMap['gst'] != null
-                                              ? '₹${courseMap['Amount Payable']}/-'
-                                              : courseMap['Amount Payable'],
-                                          style: textStyle,
+                                      ),
+                                      DottedLine(
+                                        dashGapLength: 0,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 10.0, bottom: 10),
+                                        child: Container(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              FittedBox(
+                                                fit: BoxFit.fitWidth,
+                                                child: Text('Course Details',
+                                                    style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            223, 48, 48, 49),
+                                                        fontFamily: 'Poppins',
+                                                        fontSize:
+                                                            16 * verticalScale,
+                                                        letterSpacing:
+                                                            0 /*percentages not used in flutter. defaulting to zero*/,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        height: 1)),
+                                              ),
+                                              FittedBox(
+                                                fit: BoxFit.fitWidth,
+                                                child: Text('Unit Price',
+                                                    style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            223, 48, 48, 49),
+                                                        fontFamily: 'Poppins',
+                                                        fontSize:
+                                                            16 * verticalScale,
+                                                        letterSpacing:
+                                                            0 /*percentages not used in flutter. defaulting to zero*/,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        height: 1)),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 5),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Discounted price',
-                                          style: textStyle,
-                                        ),
-                                        Text(
-                                          courseMap['gst'] != null
-                                              ? '₹${courseMap['Course Price']}/-'
-                                              : courseMap['Course Price'],
-                                          style: textStyle,
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 5),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "GST",
-                                          style: textStyle,
-                                        ),
-                                        Text(
-                                          courseMap['gst'] != null
-                                              ? '₹${gstAmount.round().toString()}/-'
-                                              : '18%',
-                                          style: textStyle,
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 15.sp,
-                                    ),
-                                    haveACouponCode
-                                        ? Center(
-                                            child: SizedBox(
-                                              height: 20.sp,
-                                              width: screenWidth / 3.5,
+                                      ),
+                                      DottedLine(
+                                        dashGapLength: 0,
+                                      ),
+                                      SizedBox(height: 5 * verticalScale),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          FittedBox(
+                                            fit: BoxFit.fitWidth,
+                                            child: Text(
+                                              "Actual Price",
+                                              style: textStyle,
+                                            ),
+                                          ),
+                                          FittedBox(
+                                            fit: BoxFit.fitWidth,
+                                            child: Text(
+                                              courseMap['gst'] != null
+                                                  ? '₹${courseMap['Amount Payable']}/-'
+                                                  : courseMap['Amount Payable'],
+                                              style: textStyle,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 5 * verticalScale),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          FittedBox(
+                                            fit: BoxFit.fitWidth,
+                                            child: Text(
+                                              'Discounted Price',
+                                              style: textStyle,
+                                            ),
+                                          ),
+                                          FittedBox(
+                                            fit: BoxFit.fitWidth,
+                                            child: Text(
+                                              courseMap['gst'] != null
+                                                  ? '₹${courseMap['Course Price']}/-'
+                                                  : courseMap['Course Price'],
+                                              style: textStyle,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 5 * verticalScale),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          FittedBox(
+                                            fit: BoxFit.fitWidth,
+                                            child: Text(
+                                              "GST",
+                                              style: textStyle,
+                                            ),
+                                          ),
+                                          FittedBox(
+                                            fit: BoxFit.fitWidth,
+                                            child: Text(
+                                              courseMap['gst'] != null
+                                                  ? '₹${gstAmount.round().toString()}/-'
+                                                  : '18%',
+                                              style: textStyle,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 15 * verticalScale,
+                                      ),
+                                      haveACouponCode
+                                          ? Container(
+                                              height: 35,
+                                              // width: screenWidth/3.5,
                                               child: TextField(
                                                 textAlignVertical:
                                                     TextAlignVertical.center,
                                                 enabled: !apply ? true : false,
                                                 controller:
                                                     couponCodeController,
-                                                textAlign: TextAlign.start,
-                                                cursorColor:
-                                                    Colors.purpleAccent,
                                                 style: TextStyle(
-                                                  fontSize: 12.sp,
+                                                  fontSize: 14.sp,
                                                   letterSpacing: 1.2,
                                                   fontFamily: 'Medium',
                                                 ),
+                                                cursorColor:
+                                                    Colors.purpleAccent,
                                                 decoration: InputDecoration(
                                                   contentPadding:
-                                                      EdgeInsets.symmetric(
-                                                          vertical: 10.sp,
-                                                          horizontal: 10.sp),
+                                                      EdgeInsets.only(left: 10),
+                                                  // constraints: BoxConstraints(minHeight: 52, minWidth: 366),
                                                   suffixIcon: TextButton(
                                                     child: loading
                                                         ? Center(
@@ -643,7 +1769,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                                   0xFF7860DC),
                                                               fontFamily:
                                                                   'Medium',
-                                                              fontSize: 12.sp,
+                                                              fontSize: 14.sp,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -665,22 +1791,20 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                                   loading =
                                                                       true;
                                                                 });
-                                                                var couponAPI;
-                                                                couponAPI =
+                                                                var couponAPI =
                                                                     await verifyCoupon(
                                                                         couponCodeController
-                                                                            .text);
-                                                                if (couponAPI !=
+                                                                            .text,
+                                                                        widget
+                                                                            .cID);
+                                                                print(
+                                                                    'towards logic');
+                                                                if (couponData !=
                                                                     null) {
                                                                   setState(() {
                                                                     loading =
                                                                         false;
                                                                   });
-                                                                }
-                                                                print(
-                                                                    'towards logic');
-                                                                if (couponData !=
-                                                                    null) {
                                                                   print(
                                                                       couponAPI);
                                                                   var value = json.decode(
@@ -708,6 +1832,42 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                                         value['result']
                                                                             [
                                                                             'couponExpiryDate'];
+                                                                    print(
+                                                                        endTime);
+                                                                    //
+                                                                    await FirebaseFirestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            "coupons")
+                                                                        .where(
+                                                                            "couponCode",
+                                                                            isEqualTo: couponCodeController
+                                                                                .text)
+                                                                        .get()
+                                                                        .then(
+                                                                            (value) {
+                                                                      var element =
+                                                                          value.docs[
+                                                                              0];
+                                                                      endTime =
+                                                                          element
+                                                                              .data()['couponExpiryDate'];
+                                                                      print(
+                                                                          'from coupons collection $endTime');
+                                                                      FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                              "coupons")
+                                                                          .doc(element.data()[
+                                                                              'couponId'])
+                                                                          .update({
+                                                                        "couponUsageCount":
+                                                                            FieldValue.increment(1)
+                                                                      });
+                                                                    });
+                                                                    print(
+                                                                        'from us doc $endTime');
+
                                                                     DateTime
                                                                         dateTime =
                                                                         DateTime.parse(
@@ -850,18 +2010,15 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                                             'couponExpiryDate'];
                                                                     DateTime
                                                                         dateTime =
-                                                                        DateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z").parse(
-                                                                            endTime,
-                                                                            true);
-                                                                    print(
-                                                                        "dateTime: ${dateTime}");
+                                                                        DateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z")
+                                                                            .parse(endTime);
                                                                     String
                                                                         formattedDateTime =
                                                                         DateFormat('HH:mm a')
                                                                             .format(dateTime.toLocal());
 
                                                                     print(
-                                                                        "printing formatted date ${formattedDateTime}");
+                                                                        formattedDateTime);
 
                                                                     if (DateTime
                                                                             .now()
@@ -1078,7 +2235,8 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                   ),
                                                   hintText: 'Enter coupon code',
                                                   hintStyle: TextStyle(
-                                                      fontSize: 12.sp),
+                                                    fontSize: 14.sp,
+                                                  ),
                                                   fillColor: Colors
                                                       .deepPurple.shade100,
                                                   filled: true,
@@ -1114,1446 +2272,334 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
                                                   });
                                                 },
                                               ),
-                                            ),
-                                          )
-                                        : InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                isButtonDisabled = false;
-                                                haveACouponCode = true;
-                                                totalAmount =
-                                                    totalAmountAfterCoupon;
-                                                couponCodeApplied = false;
-                                                typeOfCouponExpired = false;
-                                              });
-                                            },
-                                            child: Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: Text(
-                                                  'Have a coupon code?',
-                                                  style: TextStyle(
-                                                      color: Colors.deepPurple,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                )),
-                                          ),
-                                    SizedBox(height: 7.sp),
-                                    errorOnCoupon
-                                        ? Text(
-                                            'Applied coupon code is invalid. Please enter a valid coupon code.',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 11.sp,
-                                            ))
-                                        : Container(),
-                                    couponExpired
-                                        ? Text(
-                                            typeOfCouponExpired
-                                                ? 'Sorry! The coupon code has expired on $expiredDate.'
-                                                : 'Sorry! The coupon code has expired at $expiredDate.',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 11.sp,
-                                            ))
-                                        : Container(),
-                                    emptyCode
-                                        ? Text(
-                                            'Please enter a code. Coupon code cannot be empty.',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 11.sp,
-                                            ))
-                                        : Container(),
-                                    couponCodeApplied
-                                        ? Align(
-                                            alignment: Alignment.centerRight,
-                                            child: Text(
-                                                typeOfCouponExpired
-                                                    ? 'Yay! You have got an extra discount of ₹${double.parse(discountvalue).round().toString()}. This code will expire on $expiredDate.'
-                                                    : 'Yay! You have got an extra discount of ₹${double.parse(discountvalue).round().toString()}. This code will expire at $expiredDate.',
-                                                style: TextStyle(
-                                                  color:
-                                                      Colors.deepPurpleAccent,
-                                                  fontSize: 11.sp,
-                                                )),
-                                          )
-                                        : Container(),
-                                    SizedBox(height: 8.sp),
-                                    SizedBox(
-                                        child: Divider(
-                                      color: Colors.black,
-                                    )),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 5.0, bottom: 5),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Total Pay',
-                                            style: textStyle,
-                                          ),
-                                          Text(
-                                            NoCouponApplied
-                                                ? courseMap['gst'] != null
-                                                    ? '₹${totalAmount.round().toString()}/-'
-                                                    : '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //courseMap["Amount Payable"]
-                                                : finalamountToDisplay,
-                                            style: textStyle,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                        child: Divider(
-                                      color: Colors.black,
-                                    )),
-                                    SizedBox(height: 15 * verticalScale),
-                                    Center(
-                                      child: PaymentButton(
-                                        couponCode: coupontext,
-                                        couponcodeused: !errorOnCoupon,
-                                        coursePriceMoneyRef:
-                                            int.parse(courseprice),
-                                        amountString: (double.parse(NoCouponApplied
-                                                    ? courseMap['gst'] != null
-                                                        ? '${totalAmount.round().toString()}'
-                                                        : "${int.parse(courseprice) - int.parse(discountvalue)}"
-                                                    : finalAmountToPay) *
-                                                100)
-                                            .toString(),
-                                        buttonText: NoCouponApplied
-                                            ? courseMap['gst'] != null
-                                                ? 'PAY ₹${totalAmount.round().toString()}/-'
-                                                : 'PAY ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${courseMap['Course Price']}
-
-                                            : 'PAY ${finalamountToDisplay}',
-                                        buttonTextForCode:
-                                            "$finalamountToDisplay",
-                                        changeState: () {
-                                          alertForPayment = true;
-                                          setState(() {});
-                                        },
-                                        courseDescription:
-                                            courseMap['description'],
-                                        courseName: courseMap['name'],
-                                        isPayButtonPressed: isPayButtonPressed,
-                                        NoCouponApplied: NoCouponApplied,
-                                        scrollController: _scrollController,
-                                        updateCourseIdToCouponDetails: () {
-                                          void addCourseId() {
-                                            setState(() {
-                                              id = courseMap['id'];
-                                              alertForPayment = true;
-                                            });
-                                          }
-
-                                          addCourseId();
-                                          print(NoCouponApplied);
-                                        },
-                                        outStandingAmountString: (double.parse(
-                                                    NoCouponApplied
-                                                        ? courseMap[
-                                                            'Amount_Payablepay']
-                                                        : finalAmountToPay) -
-                                                1000)
-                                            .toStringAsFixed(2),
-                                        courseId: courseMap['id'],
-                                        courseImageUrl: courseMap['image_url'],
-                                        couponCodeText:
-                                            couponCodeController.text,
-                                        isItComboCourse: widget.isItComboCourse,
-                                        whichCouponCode:
-                                            couponCodeController.text,
-                                      ),
-                                    ),
-                                    SizedBox(height: 7.5.sp),
-                                    InkWell(
-                                      onTap: () {
-                                        alertForPayment = true;
-                                        setState(() {});
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return Dialog(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: Container(
-                                                width: screenWidth / 2.5,
-                                                padding: EdgeInsets.all(20),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text(
-                                                      'Payment',
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontFamily: 'Poppins',
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 20),
-
-                                                    RazorPayInternationalBtn(
-                                                      courseDescription:
-                                                          courseMap[
-                                                              'description'],
-                                                      international: false,
-                                                      coursePriceMoneyRef:
-                                                          int.parse(
-                                                              courseprice),
-                                                      courseId: courseMap['id'],
-                                                      NoCouponApplied:
-                                                          NoCouponApplied,
-                                                      couponCodeText:
-                                                          couponCodeController
-                                                              .text,
-                                                      amountString: (double.parse(
-                                                                  NoCouponApplied
-                                                                      ? courseMap['gst'] !=
-                                                                              null
-                                                                          ? '${totalAmount.round().toString()}'
-                                                                          : "${int.parse(courseprice) - int.parse(discountvalue)}"
-                                                                      : finalAmountToPay) * //courseMap['Amount_Payablepay']
-                                                              100)
-                                                          .toString(),
-                                                      courseName:
-                                                          courseMap['name'],
-                                                      courseImageUrl: courseMap[
-                                                          'image_url'],
-                                                    )
-
-                                                    // PaymentButtonn(
-                                                    //   label: 'Razorpay',
-                                                    //   icon: Icons.attach_money,
-                                                    //   color: Colors.green,
-                                                    //   onTap: () {
-                                                    //     // Handle Razorpay payment
-                                                    //   },
-                                                    // ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: Center(
-                                        child: Container(
-                                          width: screenWidth,
-                                          height: Device.screenType ==
-                                                  ScreenType.mobile
-                                              ? 30.sp
-                                              : 20.sp,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            color: Colors.deepPurple.shade600,
-                                          ),
-                                          child: Center(
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  'Pay Now',
-                                                  style: TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          255, 255, 255, 1),
-                                                      fontFamily: 'Poppins',
-                                                      fontSize:
-                                                          20 * verticalScale,
-                                                      letterSpacing:
-                                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      height: 1),
-                                                ),
-                                                Text(
-                                                  '(For International Students)',
-                                                  style: TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          255, 255, 255, 1),
-                                                      fontFamily: 'Poppins',
-                                                      fontSize:
-                                                          15 * verticalScale,
-                                                      letterSpacing:
-                                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      height: 1),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        alertForPayment
-                            ? Container(
-                                width: Adaptive.w(100),
-                                height: Adaptive.h(5),
-                                color: Colors.red,
-                                child: Center(
-                                  child: Text(
-                                    'Please do not refresh or close the tab. You will be directed to new screen.',
-                                    style: TextStyle(fontSize: 16.sp),
-                                  ),
-                                ),
-                              )
-                            : Container(),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        } else {
-          // mobile screen
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 10.sp, right: 10.sp),
-                  child: Container(
-                    height: Adaptive.h(20),
-                    width: Adaptive.w(100),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        FittedBox(
-                          fit: BoxFit.fitWidth,
-                          child: Text('Congratulations',
-                              textScaleFactor:
-                                  min(horizontalScale, verticalScale),
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 30.sp,
-                                height: 1,
-                              )),
-                        ),
-                        SizedBox(height: 25 * verticalScale),
-                        Container(
-                          child: Text(
-                            '🤩You are just one step away🤩',
-                            textScaleFactor:
-                                min(horizontalScale, verticalScale),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20.sp,
-                              height: 1,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 20.sp, right: 20.sp, top: 15.sp, bottom: 15.sp),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black26,
-                            offset: Offset(
-                              2, // Move to right 10  horizontally
-                              2.0, // Move to bottom 10 Vertically
-                            ),
-                            blurRadius: 40)
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 10.0, top: 10, bottom: 10, right: 10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  // height: screenHeight/3.5,
-                                  // width: screenWidth/3,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      bottomLeft: Radius.circular(10),
-                                    ),
-                                    child: CachedNetworkImage(
-                                      imageUrl: courseMap['image_url'],
-                                      memCacheWidth: 80,
-                                      memCacheHeight: 80,
-                                      placeholder: (context, url) => Center(
-                                          child: CircularProgressIndicator()),
-                                      errorWidget: (context, url, error) =>
-                                          Icon(Icons.error),
-                                      fit: BoxFit.fill,
-                                      height: 150 * verticalScale,
-                                      width: 165 * horizontalScale,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width: screenWidth / 2.5,
-                                  padding: EdgeInsets.only(left: 5, right: 5),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        child: Text(
-                                          courseMap['name'],
-                                          textScaleFactor: min(
-                                              horizontalScale, verticalScale),
-                                          style: TextStyle(
-                                            fontSize: 20 * verticalScale,
-                                            fontWeight: FontWeight.bold,
-                                            height: 1,
-                                          ),
-                                          maxLines: 2,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10 * verticalScale,
-                                      ),
-                                      Container(
-                                        child: Text(
-                                          courseMap['description'],
-                                          textScaleFactor: min(
-                                              horizontalScale, verticalScale),
-                                          style: TextStyle(
-                                            fontSize: 12 * verticalScale,
-                                            height: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          maxLines: 4,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10 * verticalScale,
-                                      ),
-                                      FittedBox(
-                                        fit: BoxFit.fitWidth,
-                                        child: Text(
-                                          'English  ||  online  ||  lifetime',
-                                          textScaleFactor: min(
-                                              horizontalScale, verticalScale),
-                                          style: TextStyle(
-                                              color: Colors.deepPurple.shade600,
-                                              fontSize: 18 * verticalScale,
-                                              height: 1),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 15 * verticalScale,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 15 * verticalScale,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              right: 10.0, top: 10, bottom: 10, left: 10),
-                          child: Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 25.0),
-                                  child: Container(
-                                    child: Center(
-                                      child: FittedBox(
-                                        fit: BoxFit.fitWidth,
-                                        child: Text(
-                                          'BILL SUMMARY',
-                                          textScaleFactor: min(
-                                              horizontalScale, verticalScale),
-                                          style: TextStyle(
-                                            fontSize: 34 * verticalScale,
-                                            fontWeight: FontWeight.bold,
-                                            height: 1,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                DottedLine(
-                                  dashGapLength: 0,
-                                ),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(top: 10.0, bottom: 10),
-                                  child: Container(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        FittedBox(
-                                          fit: BoxFit.fitWidth,
-                                          child: Text('Course Details',
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      223, 48, 48, 49),
-                                                  fontFamily: 'Poppins',
-                                                  fontSize: 16 * verticalScale,
-                                                  letterSpacing:
-                                                      0 /*percentages not used in flutter. defaulting to zero*/,
-                                                  fontWeight: FontWeight.bold,
-                                                  height: 1)),
-                                        ),
-                                        FittedBox(
-                                          fit: BoxFit.fitWidth,
-                                          child: Text('Unit Price',
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      223, 48, 48, 49),
-                                                  fontFamily: 'Poppins',
-                                                  fontSize: 16 * verticalScale,
-                                                  letterSpacing:
-                                                      0 /*percentages not used in flutter. defaulting to zero*/,
-                                                  fontWeight: FontWeight.bold,
-                                                  height: 1)),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                DottedLine(
-                                  dashGapLength: 0,
-                                ),
-                                SizedBox(height: 5 * verticalScale),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    FittedBox(
-                                      fit: BoxFit.fitWidth,
-                                      child: Text(
-                                        "Actual Price",
-                                        style: textStyle,
-                                      ),
-                                    ),
-                                    FittedBox(
-                                      fit: BoxFit.fitWidth,
-                                      child: Text(
-                                        courseMap['gst'] != null
-                                            ? '₹${courseMap['Amount Payable']}/-'
-                                            : courseMap['Amount Payable'],
-                                        style: textStyle,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 5 * verticalScale),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    FittedBox(
-                                      fit: BoxFit.fitWidth,
-                                      child: Text(
-                                        'Discounted Price',
-                                        style: textStyle,
-                                      ),
-                                    ),
-                                    FittedBox(
-                                      fit: BoxFit.fitWidth,
-                                      child: Text(
-                                        courseMap['gst'] != null
-                                            ? '₹${courseMap['Course Price']}/-'
-                                            : courseMap['Course Price'],
-                                        style: textStyle,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 5 * verticalScale),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    FittedBox(
-                                      fit: BoxFit.fitWidth,
-                                      child: Text(
-                                        "GST",
-                                        style: textStyle,
-                                      ),
-                                    ),
-                                    FittedBox(
-                                      fit: BoxFit.fitWidth,
-                                      child: Text(
-                                        courseMap['gst'] != null
-                                            ? '₹${gstAmount.round().toString()}/-'
-                                            : '18%',
-                                        style: textStyle,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 15 * verticalScale,
-                                ),
-                                haveACouponCode
-                                    ? Container(
-                                        height: 35,
-                                        // width: screenWidth/3.5,
-                                        child: TextField(
-                                          textAlignVertical:
-                                              TextAlignVertical.center,
-                                          enabled: !apply ? true : false,
-                                          controller: couponCodeController,
-                                          style: TextStyle(
-                                            fontSize: 14.sp,
-                                            letterSpacing: 1.2,
-                                            fontFamily: 'Medium',
-                                          ),
-                                          cursorColor: Colors.purpleAccent,
-                                          decoration: InputDecoration(
-                                            contentPadding:
-                                                EdgeInsets.only(left: 10),
-                                            // constraints: BoxConstraints(minHeight: 52, minWidth: 366),
-                                            suffixIcon: TextButton(
-                                              child: loading
-                                                  ? Center(
-                                                      child: SizedBox(
-                                                        height: 20,
-                                                        width: 20,
-                                                        child:
-                                                            CircularProgressIndicator(
-                                                                color: Colors
-                                                                    .white),
-                                                      ),
-                                                    )
-                                                  : Text(
-                                                      'Apply',
-                                                      style: TextStyle(
+                                            )
+                                          : InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  isButtonDisabled = false;
+                                                  haveACouponCode = true;
+                                                  totalAmount =
+                                                      totalAmountAfterCoupon;
+                                                  couponCodeApplied = false;
+                                                  typeOfCouponExpired = false;
+                                                });
+                                              },
+                                              child: Align(
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: Text(
+                                                    'Have a coupon code?',
+                                                    style: TextStyle(
                                                         color:
-                                                            Color(0xFF7860DC),
-                                                        fontFamily: 'Medium',
-                                                        fontSize: 14.sp,
+                                                            Colors.deepPurple,
                                                         fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                              onPressed: isButtonDisabled
-                                                  ? null
-                                                  : () async {
-                                                      setState(() {
-                                                        isButtonDisabled = true;
-                                                      });
-
-                                                      try {
-                                                        if (couponCodeController
-                                                            .text.isNotEmpty) {
-                                                          setState(() {
-                                                            loading = true;
-                                                          });
-                                                          var couponAPI =
-                                                              await verifyCoupon(
-                                                                  couponCodeController
-                                                                      .text);
-                                                          print(
-                                                              'towards logic');
-                                                          if (couponData !=
-                                                              null) {
-                                                            setState(() {
-                                                              loading = false;
-                                                            });
-                                                            print(couponAPI);
-                                                            var value = json
-                                                                .decode(couponAPI[
-                                                                    'message']);
-                                                            print(
-                                                                "return value: ${value['result']}");
-                                                            print(
-                                                                "return value: ${value['result']['couponType']}");
-                                                            print(
-                                                                "return value: ${value['result']['couponStartDate']}");
-
-                                                            if (value['result'][
-                                                                    'couponType'] ==
-                                                                'global') {
-                                                              var startTime = value[
-                                                                      'result'][
-                                                                  'couponStartDate'];
-                                                              print(startTime);
-
-                                                              var endTime = value[
-                                                                      'result'][
-                                                                  'couponExpiryDate'];
-                                                              print(endTime);
-                                                              //
-                                                              await FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      "coupons")
-                                                                  .where(
-                                                                      "couponCode",
-                                                                      isEqualTo:
-                                                                          couponCodeController
-                                                                              .text)
-                                                                  .get()
-                                                                  .then(
-                                                                      (value) {
-                                                                var element =
-                                                                    value.docs[
-                                                                        0];
-                                                                endTime = element
-                                                                        .data()[
-                                                                    'couponExpiryDate'];
-                                                                print(
-                                                                    'from coupons collection $endTime');
-                                                                FirebaseFirestore
-                                                                    .instance
-                                                                    .collection(
-                                                                        "coupons")
-                                                                    .doc(element
-                                                                            .data()[
-                                                                        'couponId'])
-                                                                    .update({
-                                                                  "couponUsageCount":
-                                                                      FieldValue
-                                                                          .increment(
-                                                                              1)
-                                                                });
-                                                              });
-                                                              print(
-                                                                  'from us doc $endTime');
-
-                                                              DateTime
-                                                                  dateTime =
-                                                                  DateTime.parse(
-                                                                      endTime);
-                                                              String
-                                                                  formattedDateTime =
-                                                                  DateFormat(
-                                                                          'yyyy-MM-dd HH:mm a')
-                                                                      .format(dateTime
-                                                                          .toLocal());
-                                                              print(
-                                                                  formattedDateTime); // prints "2023-04-15"
-
-                                                              if (DateTime.now()
-                                                                  .isAfter(
-                                                                      dateTime)) {
-                                                                setState(() {
-                                                                  emptyCode =
-                                                                      false;
-                                                                  errorOnCoupon =
-                                                                      false;
-                                                                  couponCodeApplied =
-                                                                      false;
-                                                                  couponExpired =
-                                                                      true;
-                                                                  expiredDate =
-                                                                      formattedDateTime;
-                                                                  typeOfCouponExpired =
-                                                                      true;
-                                                                  isButtonDisabled =
-                                                                      false;
-                                                                });
-                                                                // showToast('Sorry, The coupon has expired.');
-                                                              } else {
-                                                                if (value['result']
-                                                                            [
-                                                                            'couponValue']
-                                                                        [
-                                                                        'type'] ==
-                                                                    'percentage') {
-                                                                  // code for percentage type of coupon
-                                                                  var percentageValue =
-                                                                      int.parse(value['result']['couponValue']
-                                                                              [
-                                                                              'value']) *
-                                                                          0.01;
-                                                                  print(
-                                                                      'this is value in $percentageValue');
-                                                                  discountvalue =
-                                                                      (totalAmount *
-                                                                              percentageValue)
-                                                                          .toString();
-                                                                  print(
-                                                                      totalAmount);
-                                                                  print(
-                                                                      discountvalue);
-
-                                                                  setState(() {
-                                                                    totalAmount =
-                                                                        totalAmount -
-                                                                            double.parse(discountvalue);
-                                                                    emptyCode =
-                                                                        false;
-                                                                    errorOnCoupon =
-                                                                        false;
-                                                                    couponCodeApplied =
-                                                                        true;
-                                                                    couponExpired =
-                                                                        false;
-                                                                    haveACouponCode =
-                                                                        false;
-                                                                    expiredDate =
-                                                                        formattedDateTime;
-                                                                    typeOfCouponExpired =
-                                                                        true;
-                                                                  });
-                                                                  print(totalAmount
-                                                                      .toString());
-                                                                  // showToast('Coupon code applied successfully.');
-                                                                } else if (value['result']
-                                                                            [
-                                                                            'couponValue']
-                                                                        [
-                                                                        'type'] ==
-                                                                    'number') {
-                                                                  // code for direct amount type of coupon
-
-                                                                  var numberValue =
-                                                                      int.parse(value['result']
-                                                                              [
-                                                                              'couponValue']
-                                                                          [
-                                                                          'value']);
-                                                                  print(
-                                                                      'this is value in $numberValue');
-                                                                  discountvalue =
-                                                                      numberValue
-                                                                          .toString();
-                                                                  print(
-                                                                      totalAmount);
-                                                                  print(
-                                                                      discountvalue);
-
-                                                                  setState(() {
-                                                                    totalAmount =
-                                                                        totalAmount -
-                                                                            int.parse(discountvalue);
-                                                                    emptyCode =
-                                                                        false;
-                                                                    errorOnCoupon =
-                                                                        false;
-                                                                    couponCodeApplied =
-                                                                        true;
-                                                                    couponExpired =
-                                                                        false;
-                                                                    haveACouponCode =
-                                                                        false;
-                                                                    expiredDate =
-                                                                        formattedDateTime;
-                                                                    typeOfCouponExpired =
-                                                                        true;
-                                                                  });
-                                                                  print(
-                                                                      totalAmount);
-                                                                  // showToast('Coupon code applied successfully.');
-                                                                } else {
-                                                                  setState(() {
-                                                                    emptyCode =
-                                                                        false;
-                                                                    errorOnCoupon =
-                                                                        true;
-                                                                    couponCodeApplied =
-                                                                        false;
-                                                                    couponExpired =
-                                                                        false;
-                                                                    isButtonDisabled =
-                                                                        false;
-                                                                  });
-                                                                  print('111');
-                                                                  // showToast('invalid type of coupon applied.');
-                                                                }
-                                                              }
-                                                            } else if (value[
-                                                                        'result']
-                                                                    [
-                                                                    'couponType'] ==
-                                                                'individual') {
-                                                              var endTime = value[
-                                                                      'result'][
-                                                                  'couponExpiryDate'];
-                                                              DateTime
-                                                                  dateTime =
-                                                                  DateFormat(
-                                                                          "EEE MMM dd yyyy HH:mm:ss 'GMT'Z")
-                                                                      .parse(
-                                                                          endTime);
-                                                              String
-                                                                  formattedDateTime =
-                                                                  DateFormat(
-                                                                          'HH:mm a')
-                                                                      .format(dateTime
-                                                                          .toLocal());
-
-                                                              print(
-                                                                  formattedDateTime);
-
-                                                              if (DateTime.now()
-                                                                  .isAfter(
-                                                                      dateTime)) {
-                                                                setState(() {
-                                                                  emptyCode =
-                                                                      false;
-                                                                  errorOnCoupon =
-                                                                      false;
-                                                                  couponCodeApplied =
-                                                                      false;
-                                                                  couponExpired =
-                                                                      true;
-                                                                  typeOfCouponExpired =
-                                                                      false;
-                                                                  expiredDate =
-                                                                      formattedDateTime;
-                                                                  isButtonDisabled =
-                                                                      false;
-                                                                });
-                                                              } else {
-                                                                if (value['result']
-                                                                            [
-                                                                            'couponValue']
-                                                                        [
-                                                                        'type'] ==
-                                                                    'percentage') {
-                                                                  // code for percentage type of coupon
-                                                                  var percentageValue =
-                                                                      int.parse(value['result']['couponValue']
-                                                                              [
-                                                                              'value']) *
-                                                                          0.01;
-                                                                  print(
-                                                                      'this is value in $percentageValue');
-                                                                  discountvalue =
-                                                                      (totalAmount *
-                                                                              percentageValue)
-                                                                          .toString();
-                                                                  print(
-                                                                      totalAmount);
-                                                                  print(
-                                                                      discountvalue);
-                                                                  setState(() {
-                                                                    totalAmount =
-                                                                        totalAmount -
-                                                                            double.parse(discountvalue);
-                                                                    emptyCode =
-                                                                        false;
-                                                                    errorOnCoupon =
-                                                                        false;
-                                                                    couponCodeApplied =
-                                                                        true;
-                                                                    couponExpired =
-                                                                        false;
-                                                                    haveACouponCode =
-                                                                        false;
-                                                                    typeOfCouponExpired =
-                                                                        false;
-                                                                    expiredDate =
-                                                                        formattedDateTime;
-                                                                  });
-                                                                  print(totalAmount
-                                                                      .toString());
-                                                                  // showToast('Coupon code applied successfully.');
-                                                                } else if (value['result']
-                                                                            [
-                                                                            'couponValue']
-                                                                        [
-                                                                        'type'] ==
-                                                                    'number') {
-                                                                  // code for direct amount type of coupon
-
-                                                                  var numberValue =
-                                                                      int.parse(value['result']
-                                                                              [
-                                                                              'couponValue']
-                                                                          [
-                                                                          'value']);
-                                                                  print(
-                                                                      'this is value in $numberValue');
-                                                                  discountvalue =
-                                                                      numberValue
-                                                                          .toString();
-                                                                  print(
-                                                                      totalAmount);
-                                                                  print(
-                                                                      discountvalue);
-                                                                  setState(() {
-                                                                    totalAmount =
-                                                                        totalAmount -
-                                                                            int.parse(discountvalue);
-                                                                    emptyCode =
-                                                                        false;
-                                                                    errorOnCoupon =
-                                                                        false;
-                                                                    couponCodeApplied =
-                                                                        true;
-                                                                    haveACouponCode =
-                                                                        false;
-                                                                    couponExpired =
-                                                                        false;
-                                                                    typeOfCouponExpired =
-                                                                        false;
-                                                                    expiredDate =
-                                                                        formattedDateTime;
-                                                                  });
-                                                                  print(
-                                                                      totalAmount);
-                                                                  // showToast('Coupon code applied successfully.');
-                                                                } else {
-                                                                  setState(() {
-                                                                    emptyCode =
-                                                                        false;
-                                                                    errorOnCoupon =
-                                                                        true;
-                                                                    couponCodeApplied =
-                                                                        false;
-                                                                    couponExpired =
-                                                                        false;
-                                                                    typeOfCouponExpired =
-                                                                        false;
-                                                                    isButtonDisabled =
-                                                                        false;
-                                                                  });
-                                                                  print('222');
-                                                                  // showToast('invalid subtype of coupon applied.');
-                                                                }
-                                                              }
-                                                            } else {
-                                                              setState(() {
-                                                                emptyCode =
-                                                                    false;
-                                                                errorOnCoupon =
-                                                                    true;
-                                                                couponCodeApplied =
-                                                                    false;
-                                                                couponExpired =
-                                                                    false;
-                                                                typeOfCouponExpired =
-                                                                    false;
-                                                                isButtonDisabled =
-                                                                    false;
-                                                              });
-                                                              print('333');
-                                                              // showToast('invalid type of coupon applied.');
-                                                            }
-                                                            couponData = null;
-                                                            couponCodeController
-                                                                .clear();
-                                                          } else if (errorOfCouponCode !=
-                                                              null) {
-                                                            print(couponAPI);
-                                                            var errorValue = json
-                                                                .decode(couponAPI[
-                                                                    'message']);
-                                                            print(
-                                                                "reurn: ${errorValue['error']['message']}");
-                                                            setState(() {
-                                                              emptyCode = false;
-                                                              errorOnCoupon =
-                                                                  true;
-                                                              couponCodeApplied =
-                                                                  false;
-                                                              couponExpired =
-                                                                  false;
-                                                              typeOfCouponExpired =
-                                                                  false;
-                                                              isButtonDisabled =
-                                                                  false;
-                                                            });
-                                                            print('444');
-                                                            // showToast('${errorValue['error']['message']}.');
-                                                            errorOfCouponCode =
-                                                                null;
-                                                            couponCodeController
-                                                                .clear();
-                                                          }
-                                                        } else {
-                                                          setState(() {
-                                                            emptyCode = true;
-                                                            errorOnCoupon =
-                                                                false;
-                                                            couponCodeApplied =
-                                                                false;
-                                                            couponExpired =
-                                                                false;
-                                                            typeOfCouponExpired =
-                                                                false;
-                                                            isButtonDisabled =
-                                                                false;
-                                                          });
-                                                          // showToast('Please enter a code. Coupon code cannot be empty.');
-                                                        }
-                                                      } catch (e) {
-                                                        setState(() {
-                                                          emptyCode = false;
-                                                          errorOnCoupon = true;
-                                                          couponCodeApplied =
-                                                              false;
-                                                          couponExpired = false;
-                                                          typeOfCouponExpired =
-                                                              false;
-                                                          isButtonDisabled =
-                                                              false;
-                                                        });
-                                                        print('555');
-                                                        // showToast('Invalid coupon code!}');
-                                                        print(e.toString());
-                                                      }
-                                                    },
+                                                            FontWeight.bold),
+                                                  )),
                                             ),
-                                            hintText: 'Enter coupon code',
-                                            hintStyle: TextStyle(
-                                              fontSize: 14.sp,
-                                            ),
-                                            fillColor:
-                                                Colors.deepPurple.shade100,
-                                            filled: true,
-                                            // suffixIconConstraints:
-                                            // BoxConstraints(minHeight: 52, minWidth: 70),
-                                            // contentPadding: EdgeInsets.symmetric(horizontal: 0.0,vertical: 0),
-                                            enabledBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                borderSide: BorderSide.none),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                borderSide: BorderSide.none),
-                                            disabledBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                borderSide: BorderSide.none),
-                                          ),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              coupontext = value;
-                                              print(coupontext);
-                                            });
-                                          },
-                                        ),
-                                      )
-                                    : InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            isButtonDisabled = false;
-                                            haveACouponCode = true;
-                                            totalAmount =
-                                                totalAmountAfterCoupon;
-                                            couponCodeApplied = false;
-                                            typeOfCouponExpired = false;
-                                          });
-                                        },
-                                        child: Align(
-                                            alignment: Alignment.centerRight,
-                                            child: Text(
-                                              'Have a coupon code?',
+                                      SizedBox(height: 7.sp),
+                                      errorOnCoupon
+                                          ? Text(
+                                              'Applied coupon code is invalid. Please enter a valid coupon code.',
                                               style: TextStyle(
-                                                  color: Colors.deepPurple,
-                                                  fontWeight: FontWeight.bold),
-                                            )),
-                                      ),
-                                SizedBox(height: 7.sp),
-                                errorOnCoupon
-                                    ? Text(
-                                        'Applied coupon code is invalid. Please enter a valid coupon code.',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 13.sp,
-                                        ))
-                                    : Container(),
-                                couponExpired
-                                    ? Text(
-                                        typeOfCouponExpired
-                                            ? 'Sorry! The coupon code has expired on $expiredDate.'
-                                            : 'Sorry! The coupon code has expired at $expiredDate.',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 13.sp,
-                                        ))
-                                    : Container(),
-                                emptyCode
-                                    ? Text(
-                                        'Please enter a code. Coupon code cannot be empty.',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 13.sp,
-                                        ))
-                                    : Container(),
-                                couponCodeApplied
-                                    ? Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                            typeOfCouponExpired
-                                                ? 'Yay! You have got an extra discount of ₹${double.parse(discountvalue).round().toString()}. This code will expire on $expiredDate.'
-                                                : 'Yay! You have got an extra discount of ₹${double.parse(discountvalue).round().toString()}. This code valid till $expiredDate.',
-                                            style: TextStyle(
-                                              color: Colors.deepPurpleAccent,
-                                              fontSize: 13.sp,
-                                            )),
-                                      )
-                                    : Container(),
-                                SizedBox(height: 8.sp),
-                                DottedLine(
-                                  dashGapLength: 0,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10.0, bottom: 10),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      FittedBox(
-                                        fit: BoxFit.fitWidth,
-                                        child: Text(
-                                          'Total Pay',
-                                          style: textStyle,
-                                        ),
-                                      ),
-                                      FittedBox(
-                                        fit: BoxFit.fitWidth,
-                                        child: Text(
-                                          NoCouponApplied
-                                              ? courseMap['gst'] != null
-                                                  ? '₹${totalAmount.round().toString()}/-'
-                                                  : '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //courseMap["Amount Payable"]
-                                              : finalamountToDisplay,
-                                          style: textStyle,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                DottedLine(
-                                  dashGapLength: 0,
-                                ),
-                                SizedBox(height: 25 * verticalScale),
-                                Container(
-                                  width: screenWidth,
-                                  child: PaymentButton(
-                                    couponCode: coupontext,
-                                    couponcodeused: !errorOnCoupon,
-                                    coursePriceMoneyRef: int.parse(courseprice),
-                                    amountString: (double.parse(NoCouponApplied
-                                                ? courseMap['gst'] != null
-                                                    ? '${totalAmount.round().toString()}'
-                                                    : "${int.parse(courseprice) - int.parse(discountvalue)}"
-                                                : finalAmountToPay) * //courseMap['Amount_Payablepay']
-                                            100)
-                                        .toString(),
-                                    buttonText: NoCouponApplied
-                                        ? courseMap['gst'] != null
-                                            ? 'PAY ₹${totalAmount.round().toString()}/-'
-                                            : 'PAY ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${courseMap['Course Price']}
-
-                                        : 'PAY ${finalamountToDisplay}',
-                                    buttonTextForCode:
-                                        "PAY $finalamountToDisplay",
-                                    changeState: () {
-                                      setState(() {
-                                        // isLoading = !isLoading;
-                                      });
-                                    },
-                                    courseDescription: courseMap['description'],
-                                    courseName: courseMap['name'],
-                                    isPayButtonPressed: isPayButtonPressed,
-                                    NoCouponApplied: NoCouponApplied,
-                                    scrollController: _scrollController,
-                                    updateCourseIdToCouponDetails: () {
-                                      void addCourseId() {
-                                        setState(() {
-                                          id = courseMap['id'];
-                                          alertForPayment = true;
-                                        });
-                                      }
-
-                                      addCourseId();
-                                      print(NoCouponApplied);
-                                    },
-                                    outStandingAmountString: (double.parse(
-                                                NoCouponApplied
-                                                    ? courseMap[
-                                                        'Amount_Payablepay']
-                                                    : finalAmountToPay) -
-                                            1000)
-                                        .toStringAsFixed(2),
-                                    courseId: courseMap['id'],
-                                    courseImageUrl: courseMap['image_url'],
-                                    couponCodeText: couponCodeController.text,
-                                    isItComboCourse: widget.isItComboCourse,
-                                    whichCouponCode: couponCodeController.text,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 15,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    alertForPayment = true;
-                                    setState(() {});
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return Dialog(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          child: Container(
-                                            width: screenWidth / 2.5,
-                                            padding: EdgeInsets.all(20),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(
-                                                  'Payment',
+                                                color: Colors.red,
+                                                fontSize: 13.sp,
+                                              ))
+                                          : Container(),
+                                      couponExpired
+                                          ? Text(
+                                              typeOfCouponExpired
+                                                  ? 'Sorry! The coupon code has expired on $expiredDate.'
+                                                  : 'Sorry! The coupon code has expired at $expiredDate.',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 13.sp,
+                                              ))
+                                          : Container(),
+                                      emptyCode
+                                          ? Text(
+                                              'Please enter a code. Coupon code cannot be empty.',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 13.sp,
+                                              ))
+                                          : Container(),
+                                      couponCodeApplied
+                                          ? Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                  typeOfCouponExpired
+                                                      ? 'Yay! You have got an extra discount of ₹${double.parse(discountvalue).round().toString()}. This code will expire on $expiredDate.'
+                                                      : 'Yay! You have got an extra discount of ₹${double.parse(discountvalue).round().toString()}. This code valid till $expiredDate.',
                                                   style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontFamily: 'Poppins',
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 20),
-
-                                                RazorPayInternationalBtn(
-                                                  courseDescription:
-                                                      courseMap['description'],
-                                                  international: false,
-                                                  coursePriceMoneyRef:
-                                                      int.parse(courseprice),
-                                                  courseId: courseMap['id'],
-                                                  NoCouponApplied:
-                                                      NoCouponApplied,
-                                                  couponCodeText:
-                                                      couponCodeController.text,
-                                                  amountString: (double.parse(
-                                                              NoCouponApplied
-                                                                  ? courseMap['gst'] !=
-                                                                          null
-                                                                      ? '${totalAmount.round().toString()}'
-                                                                      : "${int.parse(courseprice) - int.parse(discountvalue)}"
-                                                                  : finalAmountToPay) * //courseMap['Amount_Payablepay']
-                                                          100)
-                                                      .toString(),
-                                                  courseName: courseMap['name'],
-                                                  courseImageUrl:
-                                                      courseMap['image_url'],
-                                                )
-
-                                                // PaymentButtonn(
-                                                //   label: 'Razorpay',
-                                                //   icon: Icons.attach_money,
-                                                //   color: Colors.green,
-                                                //   onTap: () {
-                                                //     // Handle Razorpay payment
-                                                //   },
-                                                // ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Center(
-                                    child: Container(
-                                      width: screenWidth,
-                                      height:
-                                          Device.screenType == ScreenType.mobile
-                                              ? 30.sp
-                                              : 20.sp,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: Colors.deepPurple.shade600,
+                                                    color:
+                                                        Colors.deepPurpleAccent,
+                                                    fontSize: 13.sp,
+                                                  )),
+                                            )
+                                          : Container(),
+                                      SizedBox(height: 8.sp),
+                                      DottedLine(
+                                        dashGapLength: 0,
                                       ),
-                                      child: Center(
-                                        child: Column(
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 10.0, bottom: 10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(
-                                              'Pay Now',
-                                              style: TextStyle(
-                                                  color: Color.fromRGBO(
-                                                      255, 255, 255, 1),
-                                                  fontFamily: 'Poppins',
-                                                  fontSize: 20 * verticalScale,
-                                                  letterSpacing:
-                                                      0 /*percentages not used in flutter. defaulting to zero*/,
-                                                  fontWeight: FontWeight.bold,
-                                                  height: 1),
+                                            FittedBox(
+                                              fit: BoxFit.fitWidth,
+                                              child: Text(
+                                                'Total Pay',
+                                                style: textStyle,
+                                              ),
                                             ),
-                                            Text(
-                                              '(For International Students)',
-                                              style: TextStyle(
-                                                  color: Color.fromRGBO(
-                                                      255, 255, 255, 1),
-                                                  fontFamily: 'Poppins',
-                                                  fontSize: 15 * verticalScale,
-                                                  letterSpacing:
-                                                      0 /*percentages not used in flutter. defaulting to zero*/,
-                                                  fontWeight: FontWeight.bold,
-                                                  height: 1),
+                                            FittedBox(
+                                              fit: BoxFit.fitWidth,
+                                              child: Text(
+                                                NoCouponApplied
+                                                    ? courseMap['gst'] != null
+                                                        ? '₹${totalAmount.round().toString()}/-'
+                                                        : '₹${int.parse(courseprice) - (int.parse(discountvalue) + newcoursevalue)}/-' //courseMap["Amount Payable"]
+                                                    : finalamountToDisplay,
+                                                style: textStyle,
+                                              ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                alertForPayment
-                                    ? SizedBox(
+                                      DottedLine(
+                                        dashGapLength: 0,
+                                      ),
+                                      SizedBox(height: 25 * verticalScale),
+                                      Container(
+                                        width: screenWidth,
+                                        child: PaymentButton(
+                                          couponCode: coupontext,
+                                          couponcodeused: !errorOnCoupon,
+                                          coursePriceMoneyRef:
+                                              int.parse(courseprice),
+                                          amountString: (double.parse(NoCouponApplied
+                                                      ? courseMap['gst'] != null
+                                                          ? '${totalAmount.round().toString()}'
+                                                          : "${int.parse(courseprice) - int.parse(discountvalue)}"
+                                                      : finalAmountToPay) * //courseMap['Amount_Payablepay']
+                                                  100)
+                                              .toString(),
+                                          buttonText: NoCouponApplied
+                                              ? courseMap['gst'] != null
+                                                  ? 'PAY ₹${totalAmount.round().toString()}/-'
+                                                  : 'PAY ₹${int.parse(courseprice) - int.parse(discountvalue)}/-' //${courseMap['Course Price']}
+
+                                              : 'PAY ${finalamountToDisplay}',
+                                          buttonTextForCode:
+                                              "PAY $finalamountToDisplay",
+                                          changeState: () {
+                                            setState(() {
+                                              // isLoading = !isLoading;
+                                            });
+                                          },
+                                          courseDescription:
+                                              courseMap['description'],
+                                          courseName: courseMap['name'],
+                                          isPayButtonPressed:
+                                              isPayButtonPressed,
+                                          NoCouponApplied: NoCouponApplied,
+                                          scrollController: _scrollController,
+                                          updateCourseIdToCouponDetails: () {
+                                            void addCourseId() {
+                                              setState(() {
+                                                id = courseMap['id'];
+                                                alertForPayment = true;
+                                              });
+                                            }
+
+                                            addCourseId();
+                                            print(NoCouponApplied);
+                                          },
+                                          outStandingAmountString:
+                                              (double.parse(NoCouponApplied
+                                                          ? courseMap[
+                                                              'Amount_Payablepay']
+                                                          : finalAmountToPay) -
+                                                      1000)
+                                                  .toStringAsFixed(2),
+                                          courseId: courseMap['id'],
+                                          courseImageUrl:
+                                              courseMap['image_url'],
+                                          couponCodeText:
+                                              couponCodeController.text,
+                                          isItComboCourse:
+                                              widget.isItComboCourse,
+                                          whichCouponCode:
+                                              couponCodeController.text,
+                                        ),
+                                      ),
+                                      SizedBox(
                                         height: 15,
-                                      )
-                                    : Container(),
-                                alertForPayment
-                                    ? Container(
-                                        width: Adaptive.w(100),
-                                        height: Adaptive.h(5),
-                                        color: Colors.red,
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            print(
+                                                "loadingpaymetn: ${loadingpayment}");
+                                            loadingpayment.value = true;
+                                          });
+                                          alertForPayment = true;
+                                          setState(() {});
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return Dialog(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                ),
+                                                child: Container(
+                                                  width: screenWidth / 2.5,
+                                                  padding: EdgeInsets.all(20),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Text(
+                                                        'Payment',
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontFamily: 'Poppins',
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 20),
+
+                                                      RazorPayInternationalBtn(
+                                                        courseDescription:
+                                                            courseMap[
+                                                                'description'],
+                                                        international: false,
+                                                        coursePriceMoneyRef:
+                                                            int.parse(
+                                                                courseprice),
+                                                        courseId:
+                                                            courseMap['id'],
+                                                        NoCouponApplied:
+                                                            NoCouponApplied,
+                                                        couponCodeText:
+                                                            couponCodeController
+                                                                .text,
+                                                        amountString: (double.parse(NoCouponApplied
+                                                                    ? courseMap['gst'] != null
+                                                                        ? '${totalAmount.round().toString()}'
+                                                                        : "${int.parse(courseprice) - int.parse(discountvalue)}"
+                                                                    : finalAmountToPay) * //courseMap['Amount_Payablepay']
+                                                                100)
+                                                            .toString(),
+                                                        courseName:
+                                                            courseMap['name'],
+                                                        courseImageUrl:
+                                                            courseMap[
+                                                                'image_url'],
+                                                      )
+
+                                                      // PaymentButtonn(
+                                                      //   label: 'Razorpay',
+                                                      //   icon: Icons.attach_money,
+                                                      //   color: Colors.green,
+                                                      //   onTap: () {
+                                                      //     // Handle Razorpay payment
+                                                      //   },
+                                                      // ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
                                         child: Center(
-                                          child: Text(
-                                            'Please do not refresh or close the tab. You will be directed to new screen.',
-                                            style: TextStyle(fontSize: 14.sp),
+                                          child: Container(
+                                            width: screenWidth,
+                                            height: Device.screenType ==
+                                                    ScreenType.mobile
+                                                ? 30.sp
+                                                : 20.sp,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              color: Colors.deepPurple.shade600,
+                                            ),
+                                            child: Center(
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    'Pay Now',
+                                                    style: TextStyle(
+                                                        color: Color.fromRGBO(
+                                                            255, 255, 255, 1),
+                                                        fontFamily: 'Poppins',
+                                                        fontSize:
+                                                            20 * verticalScale,
+                                                        letterSpacing:
+                                                            0 /*percentages not used in flutter. defaulting to zero*/,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        height: 1),
+                                                  ),
+                                                  Text(
+                                                    '(For International Students)',
+                                                    style: TextStyle(
+                                                        color: Color.fromRGBO(
+                                                            255, 255, 255, 1),
+                                                        fontFamily: 'Poppins',
+                                                        fontSize:
+                                                            15 * verticalScale,
+                                                        letterSpacing:
+                                                            0 /*percentages not used in flutter. defaulting to zero*/,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        height: 1),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      )
-                                    : Container(),
-                              ],
-                            ),
+                                      ),
+                                      alertForPayment
+                                          ? SizedBox(
+                                              height: 15,
+                                            )
+                                          : Container(),
+                                      alertForPayment
+                                          ? Container(
+                                              width: Adaptive.w(100),
+                                              height: Adaptive.h(5),
+                                              color: Colors.red,
+                                              child: Center(
+                                                child: Text(
+                                                  'Please do not refresh or close the tab. You will be directed to new screen.',
+                                                  style: TextStyle(
+                                                      fontSize: 14.sp),
+                                                ),
+                                              ),
+                                            )
+                                          : Container(),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
-          );
-        }
-      }),
+                );
+              }
+            }),
     );
   }
 }

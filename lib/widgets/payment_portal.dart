@@ -257,11 +257,16 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
         isOutStandingAmountCheckerPressed);
     updateAmoutStringForRP(isPayInPartsPressed, isMinAmountCheckerPressed,
         isOutStandingAmountCheckerPressed);
+
     super.initState();
   }
 
   Future<void> _handlePaymentError(PaymentFailureResponse response) async {
     Toast.show("Payment failed");
+    print("loadingpaymetn0: ${loadingpayment}");
+    setState(() {
+      loadingpayment.value = false;
+    });
     print("Payment Fail");
   }
 
@@ -482,6 +487,10 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
 
     // await redeemmoneyreward();
     // pushToHome();
+    setState(() {
+      print("loadingpaymetn1: ${loadingpayment}");
+      loadingpayment.value = false;
+    });
     Toast.show("Payment successful.");
     // addCoursetoUser(widget.courseId);
 
@@ -696,6 +705,9 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
               children: [
                 InkWell(
                   onTap: () async {
+                    setState(() {
+                      loadingpayment.value = true;
+                    });
                     setState(() {
                       isLoading = true;
                     });
@@ -920,7 +932,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                                                               Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left:
                                                                             20),
                                                                 child: Text(
@@ -955,10 +967,11 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                                                                       amountStringForUPI);
                                                                 },
                                                                 child: Padding(
-                                                                  padding: const EdgeInsets
+                                                                  padding:
+                                                                      const EdgeInsets
                                                                           .only(
-                                                                      right:
-                                                                          20),
+                                                                          right:
+                                                                              20),
                                                                   child:
                                                                       Container(
                                                                     width: 30,
@@ -1021,7 +1034,7 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                                                               Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         left:
                                                                             20),
                                                                 child: Text(
@@ -1051,10 +1064,11 @@ class _PaymentButtonState extends State<PaymentButton> with CouponCodeMixin {
                                                                       isOutStandingAmountCheckerPressed);
                                                                 },
                                                                 child: Padding(
-                                                                  padding: const EdgeInsets
+                                                                  padding:
+                                                                      const EdgeInsets
                                                                           .only(
-                                                                      right:
-                                                                          20),
+                                                                          right:
+                                                                              20),
                                                                   child:
                                                                       Container(
                                                                     width: 30,
