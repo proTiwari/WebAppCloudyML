@@ -1007,7 +1007,7 @@ class _VideoScreenState extends State<VideoScreen> {
           .where("name", isEqualTo: widget.courseName)
           .get()
           .then((value) {
-            print('wewewe1');
+        print('wewewe1');
         setState(() {
           print('wewewe2');
           try {
