@@ -2377,11 +2377,17 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                             'Module Name';
                                                         print(
                                                             '${globals.coursemoduelmap[newValue].runtimeType}');
-                                                        for (var i in globals
-                                                                .coursemoduelmap[
-                                                            newValue]) {
-                                                          tempmodulelist.add(i);
+                                                        try {
+                                                          for (var i in globals
+                                                                  .coursemoduelmap[
+                                                              newValue]) {
+                                                            tempmodulelist
+                                                                .add(i);
+                                                          }
+                                                        } catch (e) {
+                                                          print(e);
                                                         }
+
                                                         print('ft3');
                                                         tempcoursename =
                                                             newValue!;
@@ -2630,6 +2636,9 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                                   tempcoursename,
                                                               "type": "quiz"
                                                             };
+                                                            print(
+                                                                "quizdata: ${quizdata}");
+                                                            print("id: ${id}");
                                                             FirebaseFirestore
                                                                 .instance
                                                                 .collection(
@@ -2709,7 +2718,7 @@ class _AdminQuizPanelState extends State<AdminQuizPanel> {
                                                                   }).whenComplete(
                                                                           () {
                                                                     Toast.show(
-                                                                        "successfully uploaded");
+                                                                        "successfully uploaded!");
                                                                     print(
                                                                         "iiioopp ${curriculum1}");
                                                                   });
