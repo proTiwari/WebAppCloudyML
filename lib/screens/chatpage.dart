@@ -305,7 +305,7 @@ class _ChatPageState extends State<ChatPage> {
     html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
     uploadInput.multiple = false;
     uploadInput.accept =
-        'application/pdf'; // Modify the accepted file types as needed
+        ''; // Modify the accepted file types as needed
     uploadInput.click();
 
     uploadInput.onChange.listen((e) async {
@@ -789,8 +789,7 @@ class _ChatPageState extends State<ChatPage> {
                               Map<String, dynamic> data =
                                   document.data() as Map<String, dynamic>;
 
-                              return 
-                              GestureDetector(
+                              return GestureDetector(
                                 onTap: () {
                                   setState(() {
                                     _messageStream = FirebaseFirestore.instance
@@ -811,20 +810,7 @@ class _ChatPageState extends State<ChatPage> {
                                     }
                                   });
                                 },
-                                child: snapshot.data!.docs.length==0?
-                               Text(
-                                                        "You are not registered in any of the courses",
-                                                        style: TextStyle(
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          fontFamily: 'Inter',
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color:
-                                                              Color(0xff011627),
-                                                        ),
-                                                      ):
-                                                      Padding(
+                                child: Padding(
                                   padding:
                                       EdgeInsets.only(left: 0.w, right: 0.w),
                                   child: Container(
