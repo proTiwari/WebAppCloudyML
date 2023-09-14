@@ -1,11 +1,10 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudyml_app2/screens/quiz/quiz_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:image_downloader_web/image_downloader_web.dart';
 import 'package:path_provider/path_provider.dart';
@@ -21,12 +20,6 @@ class AllCertificateScreen extends StatefulWidget {
 }
 
 class _AllCertificateScreenState extends State<AllCertificateScreen> {
-  String urlPDFPath = "";
-  bool exists = true;
-  int _totalPages = 0;
-  int _currentPage = 0;
-  bool pdfReady = false;
-  late PDFViewController _pdfViewController;
   bool loaded = false;
 
   Future<File> getFileFromUrl(String url, {name}) async {
@@ -50,31 +43,12 @@ class _AllCertificateScreenState extends State<AllCertificateScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Future<Uint8List> downloadImageFromUrl(String imageUrl) async {
-    http.Response response = await http.get(Uri.parse(imageUrl));
-    if (response.statusCode == 200) {
-      return response.bodyBytes;
-    } else {
-      throw Exception('Failed to download image: ${response.statusCode}');
-    }
-  }
-
-  List<dynamic> certificates = [];
-  List<String> paths = [];
-  List<String> pathurl = [];
-
   Future<void> _downloadImage(image) async {
     try {
       print(image.replaceAll('"', ""));
       await WebImageDownloader.downloadImageFromWeb(image);
-      // url.replaceAll('"', '');
     } catch (e) {
-      print("the cer error is$e");
+      print("Error downloading image: $e");
     }
   }
 
@@ -83,27 +57,47 @@ class _AllCertificateScreenState extends State<AllCertificateScreen> {
     return SafeArea(
       child: Scaffold(
         body: Center(
-          child: StreamBuilder<DocumentSnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("Users")
-                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                  .snapshots(), // Replace with your actual stream
-              builder: (BuildContext context, snapshot) {
-                print("snapshot : ssds ${snapshot.data}");
-                return ListView.builder(
-                  itemCount: snapshot.data!['certificates'].length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return snapshot.data!['certificates'][index]
-                            .contains('http')
-                        ? Column(
+          child: FutureBuilder<DocumentSnapshot>(
+            future: FirebaseFirestore.instance
+                .collection("Users")
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .get(),
+            builder: (BuildContext context, snapshot) {
+              print('wewewewe3w');
+              var certificates = [];
+              try {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+                print("weifjweifw");
+                if (snapshot.hasError) {
+                  print('wefwefwfowif');
+                  return Text('Error: ${snapshot.error}');
+                }
+                certificates = snapshot.data!['certificates'] as List;
+              } catch (e) {
+                print(e.toString());
+              }
+
+              return certificates.length == 0
+                  ? Center(
+                      child: Text('No Certificate Found!'),
+                    )
+                  : ListView.builder(
+                      itemCount: certificates.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final certificate = certificates[index];
+
+                        if (certificate is String &&
+                            certificate.contains('http')) {
+                          return Column(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Container(
                                   height: 600,
                                   width: 1000,
-                                  child: Image.network(
-                                      snapshot.data!['certificates'][index]),
+                                  child: Image.network(certificate),
                                 ),
                               ),
                               Padding(
@@ -113,21 +107,24 @@ class _AllCertificateScreenState extends State<AllCertificateScreen> {
                                       MainAxisAlignment.spaceAround,
                                   children: [
                                     GestureDetector(
-                                        onTap: () {
-                                          print("aaaaaaaaaaaaaaaaaaaaaa");
-                                          _downloadImage(snapshot
-                                              .data!['certificates'][index]);
-                                        },
-                                        child: Icon(Icons.download_sharp)),
+                                      onTap: () {
+                                        print("Downloading image...");
+                                        _downloadImage(certificate);
+                                      },
+                                      child: Icon(Icons.download_sharp),
+                                    ),
                                   ],
                                 ),
                               )
                             ],
-                          )
-                        : Container();
-                  },
-                );
-              }),
+                          );
+                        } else {
+                          return Container(); // Skip non-http certificates
+                        }
+                      },
+                    );
+            },
+          ),
         ),
       ),
     );
