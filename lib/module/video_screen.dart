@@ -16,6 +16,7 @@ import 'package:cloudyml_app2/widgets/settings_bottomsheet.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -38,6 +39,7 @@ import 'dart:ui' as ui;
 import 'package:cloudyml_app2/global_variable.dart' as globals;
 import '../api/firebase_api.dart';
 import '../fun.dart';
+import '../global_variable.dart';
 import '../models/course_details.dart';
 import '../models/firebase_file.dart';
 import '../screens/quiz/quizentry.dart';
@@ -1018,6 +1020,7 @@ class _VideoScreenState extends State<VideoScreen> {
             setState(() {
               coursequiz = [];
             });
+            print("getCourseQuiz: ${e}");
           }
         });
 
@@ -4377,7 +4380,7 @@ class _VideoScreenState extends State<VideoScreen> {
                           ? sectionIndex ==
                                   listOfSectionData[widget.courseName].length -
                                       1
-                              ? coursequiz.runtimeType != Null
+                              ? coursequiz.isNotEmpty
                                   ? Padding(
                                       padding:
                                           const EdgeInsets.fromLTRB(5, 0, 5, 0),
@@ -4400,7 +4403,34 @@ class _VideoScreenState extends State<VideoScreen> {
                                                   ),
                                                   true
                                                       ? Icon(Icons.lock_open)
-                                                      : Icon(Icons.lock)
+                                                      : Icon(Icons.lock),
+                                                  PopupMenuButton<int>(
+                                                    onSelected: (item)  async {
+                                                      if(item == 1) {
+                                                        print('courseID $courseId $mainCourseId');
+
+                                                      try{
+
+                                                        await FirebaseFirestore.instance.collection('courses').doc(widget.cID).update({
+                                                          'coursequiz': FieldValue.delete(),
+                                                        });
+
+                                                        setState(() {
+
+                                                        });
+
+                                                      }catch(e) {
+                                                        print('certificate quiz delete $e');
+                                                      }
+                                                         
+                                                      }
+                                                    },
+                                                      itemBuilder: (context) => [
+                                                    PopupMenuItem<int>(
+                                                        child: Text('Delete Quiz'),
+                                                        value: 1,
+                                                    )
+                                                  ])
                                                 ],
                                               ),
                                               children: true
