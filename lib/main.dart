@@ -99,7 +99,13 @@ Future<void> main() async {
           .collection("Notice")
           .doc("NBrEm6KGry8gxOJJkegG_redirect_pay")
           .set({'url': url});
-    } else if (Uri.base.queryParameters['cID'] == 'F9gxnjW9nf5Lxg5A6758') {
+    } else if (Uri.base.queryParameters['cID'] == 'RIUjOvGBV6YSzMTpMWEG') {
+      final url = Uri.base.queryParameters['cID'];
+      FirebaseFirestore.instance
+          .collection("Notice")
+          .doc("HX4neryeAOB1dzUeIAg1_prompt")
+          .set({'url': url});
+    }else if (Uri.base.queryParameters['cID'] == 'F9gxnjW9nf5Lxg5A6758') {
       final url = Uri.base.queryParameters['cID'];
       FirebaseFirestore.instance
           .collection("Notice")

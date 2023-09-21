@@ -113,6 +113,12 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         print('pay Deleted');
       });
 
+       FirebaseFirestore.instance.collection('Notice')
+      ..doc("HX4neryeAOB1dzUeIAg1_prompt")
+          .update({'url': ""}).whenComplete(() {
+        print('prompt pay Deleted');
+      });
+
     FirebaseFirestore.instance.collection('Notice')
       ..doc("o1Hw1CebDH9I4VfpKuiC_sup_pay")
           .update({'url': ""}).whenComplete(() {
@@ -288,11 +294,7 @@ class _PaymentScreenState extends State<PaymentScreen> with CouponCodeMixin {
         ),
         backgroundColor: Colors.deepPurple,
       ),
-      body: loadingpayment.value == true
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : LayoutBuilder(
+      body: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
               if (constraints.maxWidth >= 650) {
                 return SingleChildScrollView(

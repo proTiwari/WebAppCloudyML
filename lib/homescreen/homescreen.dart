@@ -881,13 +881,7 @@ class _LandingScreenState extends State<LandingScreen> {
     var horizontalScale = screenWidth / mockUpWidth;
     setFeaturedCourse(course);
     setNotification();
-    return courses.length == 0
-        ? Center(
-            child: CircularPercentIndicator(
-              radius: 28,
-            ),
-          )
-        : Scaffold(
+    return Scaffold(
             // resizeToAvoidBottomInset: false,
             key: _scaffoldKey,
             drawer: //kIsWeb ? Container() :
