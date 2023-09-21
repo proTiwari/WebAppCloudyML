@@ -267,15 +267,18 @@ class _CatelogueScreenState extends State<CatelogueScreen>
                                                 SizedBox(
                                                   height: 13,
                                                 ),
-                                                Text(
-                                                  course[index].courseDescription,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.w500,
-                                                      fontSize: 12.sp),
-                                                  overflow:
-                                                  TextOverflow.ellipsis,
-                                                  maxLines: 4,
+                                                Container(
+                                                  width: Adaptive.w(32),
+                                                  child: Text(
+                                                    course[index].courseDescription,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                        FontWeight.w500,
+                                                        fontSize: 12.sp),
+                                                    overflow:
+                                                    TextOverflow.ellipsis,
+                                                    maxLines: 4,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -565,19 +568,22 @@ class _CatelogueScreenState extends State<CatelogueScreen>
                                           SizedBox(
                                             height: 13,
                                           ),
-                                          Text(
-                                            course[index].courseDescription,
-                                            style: TextStyle(
-                                                fontWeight:
-                                                    FontWeight.w500,
-                                                fontSize: width < 540
-                                                    ? width < 420
-                                                        ? 11
-                                                        : 13
-                                                    : 14),
-                                            overflow:
-                                                TextOverflow.ellipsis,
-                                            maxLines: 4,
+                                          Container(
+                                            width: Adaptive.w(50),
+                                            child: Text(
+                                              course[index].courseDescription,
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                      FontWeight.w500,
+                                                  fontSize: width < 540
+                                                      ? width < 420
+                                                          ? 11
+                                                          : 13
+                                                      : 14),
+                                              overflow:
+                                                  TextOverflow.ellipsis,
+                                              maxLines: 4,
+                                            ),
                                           ),
                                         ],
                                       ),
