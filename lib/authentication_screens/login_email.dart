@@ -45,6 +45,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
   late String depayurl;
   late String suppayurl;
   late String interntnl;
+  late String promEng;
 
   void url() async {
     diurl = await FirebaseFirestore.instance
@@ -68,6 +69,16 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
     });
 
     print("url is=====$interntnl");
+     promEng= await FirebaseFirestore.instance
+        .collection("Notice")
+        .doc("HX4neryeAOB1dzUeIAg1_prompt")
+        .get()
+        .then((value) {
+      print(value.data()!.values.first);
+      return value.data()!.values.first;
+    });
+
+    print("url is=====$promEng");
 
     payurl = await FirebaseFirestore.instance
         .collection("Notice")
@@ -705,6 +716,17 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                                   'coursePrice':
                                                                       courseP
                                                                 });
+                                                          } else if (promEng ==
+                                                              'RIUjOvGBV6YSzMTpMWEG') {
+                                                            final cID =
+                                                                "RIUjOvGBV6YSzMTpMWEG";
+                                                            GoRouter.of(context)
+                                                                .go(
+                                                              '/paymentPortal?cID=RIUjOvGBV6YSzMTpMWEG',
+                                                              // queryParams: {
+                                                              //   'cID': cID,
+                                                              //   }
+                                                            );
                                                           } else if (payurl ==
                                                               'aEGX6kMfHzQrVgP3WCwU') {
                                                             final cID =
@@ -716,7 +738,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                               //   'cID': cID,
                                                               //   }
                                                             );
-                                                          } else if (depayurl ==
+                                                          }else if (depayurl ==
                                                               'F9gxnjW9nf5Lxg5A6758') {
                                                             final cID =
                                                                 "F9gxnjW9nf5Lxg5A6758";
@@ -1148,7 +1170,17 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                         //   'cID': cID,
                                                         //   }
                                                       );
-                                                    } else if (depayurl ==
+                                                    }  else if (promEng ==
+                                                        'RIUjOvGBV6YSzMTpMWEG') {
+                                                      final cID =
+                                                          "RIUjOvGBV6YSzMTpMWEG";
+                                                      GoRouter.of(context).go(
+                                                        '/paymentPortal?cID=RIUjOvGBV6YSzMTpMWEG',
+                                                        // queryParams: {
+                                                        //   'cID': cID,
+                                                        //   }
+                                                      );
+                                                    }else if (depayurl ==
                                                         'F9gxnjW9nf5Lxg5A6758') {
                                                       final cID =
                                                           "F9gxnjW9nf5Lxg5A6758";
@@ -1715,7 +1747,17 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                       //   'cID': cID,
                                                       //   }
                                                     );
-                                                  } else if (depayurl ==
+                                                  } else if (promEng ==
+                                                      'RIUjOvGBV6YSzMTpMWEG') {
+                                                    final cID =
+                                                        "RIUjOvGBV6YSzMTpMWEG";
+                                                    GoRouter.of(context).go(
+                                                      '/paymentPortal?cID=RIUjOvGBV6YSzMTpMWEG',
+                                                      // queryParams: {
+                                                      //   'cID': cID,
+                                                      //   }
+                                                    );
+                                                  }else if (depayurl ==
                                                       'F9gxnjW9nf5Lxg5A6758') {
                                                     final cID =
                                                         "F9gxnjW9nf5Lxg5A6758";
@@ -2018,7 +2060,17 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                                 //   'cID': cID,
                                                 //   }
                                               );
-                                            } else if (depayurl ==
+                                            } else if (promEng ==
+                                                'RIUjOvGBV6YSzMTpMWEG') {
+                                              final cID =
+                                                  "RIUjOvGBV6YSzMTpMWEG";
+                                              GoRouter.of(context).go(
+                                                '/paymentPortal?cID=RIUjOvGBV6YSzMTpMWEG',
+                                                // queryParams: {
+                                                //   'cID': cID,
+                                                //   }
+                                              );
+                                            }else if (depayurl ==
                                                 'F9gxnjW9nf5Lxg5A6758') {
                                               final cID =
                                                   "F9gxnjW9nf5Lxg5A6758";

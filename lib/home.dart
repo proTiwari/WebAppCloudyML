@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/MyAccount/myaccount.dart';
 import 'package:cloudyml_app2/Providers/UserProvider.dart';
 import 'package:cloudyml_app2/aboutus.dart';
+import 'dart:html' as html;
+import 'package:html/dom.dart' as dom; // Import the dom namespace
 import 'package:cloudyml_app2/authentication/firebase_auth.dart';
 import 'package:cloudyml_app2/payments_history.dart';
 import 'package:cloudyml_app2/my_Courses.dart';
@@ -52,6 +54,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print("wiefow");
+    print("wefowjefw");
     insertToken();
     // final userProvider = Provider.of<UserProvider>(context);
     GRecaptchaV3.hideBadge();
@@ -59,6 +63,10 @@ class _HomePageState extends State<HomePage> {
     userData();
   }
 
+
+
+// Function to retrieve the build number from the HTML meta tag
+  
   void insertToken() async {
     try {
       print("insertToken");
@@ -99,8 +107,6 @@ class _HomePageState extends State<HomePage> {
       print('kkk$e');
     }
   }
-
-
 
   userData() async {
     try {

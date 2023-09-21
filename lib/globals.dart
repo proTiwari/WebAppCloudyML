@@ -14,6 +14,7 @@ const String loggedInKey = 'LoggedIn';
 String? moduleId;
 String? topicId;
 String? fromcombo = '';
+ValueNotifier<bool> loadingpayment = ValueNotifier(false);
 List<String> coursenamewithoutquiz = [];
 
 late String diurl;

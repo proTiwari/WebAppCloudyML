@@ -4,39 +4,47 @@
 
 import 'dart:convert';
 
-CreateCouponModel createCouponModelFromJson(String str) => CreateCouponModel.fromJson(json.decode(str));
+CreateCouponModel createCouponModelFromJson(String str) =>
+    CreateCouponModel.fromJson(json.decode(str));
 
-String createCouponModelToJson(CreateCouponModel data) => json.encode(data.toJson());
+String createCouponModelToJson(CreateCouponModel data) =>
+    json.encode(data.toJson());
 
 class CreateCouponModel {
-    CreateCouponModel({
-        this.couponCode,
-        this.couponType,
-        this.couponValue,
-        this.couponDescription,
-        this.couponName,
-        this.couponImage,
-        this.couponStatus,
-        this.couponExpiryDate,
-        this.couponStartDate,
-        this.validforhours,
-    });
+  CreateCouponModel({
+    this.course,
+    this.couponCode,
+    this.couponType,
+    this.couponValue,
+    this.couponDescription,
+    this.couponName,
+    this.couponImage,
+    this.couponStatus,
+    this.couponExpiryDate,
+    this.couponStartDate,
+    this.validforhours,
+  });
 
-    String? couponCode;
-    String? couponType;
-    CouponValue? couponValue;
-    String? couponDescription;
-    String? couponName;
-    String? couponImage;
-    String? couponStatus;
-    String? couponExpiryDate;
-    String? couponStartDate;
-    String? validforhours;
+  String? course;
+  String? couponCode;
+  String? couponType;
+  CouponValue? couponValue;
+  String? couponDescription;
+  String? couponName;
+  String? couponImage;
+  String? couponStatus;
+  String? couponExpiryDate;
+  String? couponStartDate;
+  String? validforhours;
 
-    factory CreateCouponModel.fromJson(Map<String, dynamic> json) => CreateCouponModel(
+  factory CreateCouponModel.fromJson(Map<String, dynamic> json) =>
+      CreateCouponModel(
+        course: json['course'],
         couponCode: json["couponCode"],
         couponType: json["couponType"],
-        couponValue: json["couponValue"] == null ? null : CouponValue.fromJson(json["couponValue"]),
+        couponValue: json["couponValue"] == null
+            ? null
+            : CouponValue.fromJson(json["couponValue"]),
         couponDescription: json["couponDescription"],
         couponName: json["couponName"],
         couponImage: json["couponImage"],
@@ -44,9 +52,10 @@ class CreateCouponModel {
         couponExpiryDate: json["couponExpiryDate"],
         couponStartDate: json["couponStartDate"],
         validforhours: json["validforhours"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
+        "course": course,
         "couponCode": couponCode,
         "couponType": couponType,
         "couponValue": couponValue?.toJson(),
@@ -57,25 +66,25 @@ class CreateCouponModel {
         "couponExpiryDate": couponExpiryDate,
         "couponStartDate": couponStartDate,
         "validforhours": validforhours,
-    };
+      };
 }
 
 class CouponValue {
-    CouponValue({
-        this.type,
-        this.value,
-    });
+  CouponValue({
+    this.type,
+    this.value,
+  });
 
-    String? type;
-    String? value;
+  String? type;
+  String? value;
 
-    factory CouponValue.fromJson(Map<String, dynamic> json) => CouponValue(
+  factory CouponValue.fromJson(Map<String, dynamic> json) => CouponValue(
         type: json["type"],
         value: json["value"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "type": type,
         "value": value,
-    };
+      };
 }

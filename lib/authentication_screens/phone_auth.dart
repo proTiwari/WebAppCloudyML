@@ -1099,7 +1099,6 @@ class _LoginPageState extends State<LoginPage> {
               setState(() {
                 loading = false;
               });
-
               Toast.show(error);
             });
           },
