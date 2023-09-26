@@ -100,11 +100,11 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
                         child: TextFormField(
                           controller: amountPayable,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter amount';
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter amount';
+                          //   }
+                          // },
                           decoration: decoratedField.copyWith(
                               labelText: 'Enter Amount Payable'),
                         )),
@@ -114,11 +114,11 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
                         child: TextFormField(
                           controller: coursePrice,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter course price';
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter course price';
+                          //   }
+                          // },
                           decoration: decoratedField.copyWith(
                               labelText: 'Enter Course Price'),
                         )),
@@ -128,11 +128,11 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
                         child: TextFormField(
                           controller: discountPrice,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter discount price';
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter discount price';
+                          //   }
+                          // },
                           decoration: decoratedField.copyWith(
                               labelText: 'Enter Discount Price'),
                         )),
@@ -184,11 +184,11 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
                         child: TextFormField(
                           controller: descriptionOfCourse,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter description of Course';
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter description of Course';
+                          //   }
+                          // },
                           decoration: decoratedField.copyWith(
                               labelText: 'Enter description of Course'),
                         )),
@@ -198,11 +198,11 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
                         child: TextFormField(
                           controller: duration,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter duration of Course';
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter duration of Course';
+                          //   }
+                          // },
                           decoration: decoratedField.copyWith(
                               labelText: 'Enter duration of Course'),
                         )),
@@ -230,11 +230,11 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
                             FilteringTextInputFormatter.digitsOnly,
                             IntegerInputFormatter()
                           ],
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter video count of Course (Only Number)';
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter video count of Course (Only Number)';
+                          //   }
+                          // },
                           decoration: decoratedField.copyWith(
                               labelText:
                                   'Enter videos count of Course (Only Number)'),
