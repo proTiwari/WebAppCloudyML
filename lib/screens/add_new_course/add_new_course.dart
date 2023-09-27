@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/theme.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,11 +44,10 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
   final coursePrice = TextEditingController();
   final discountPrice = TextEditingController();
   final courseIDE = TextEditingController();
-  final firstModuleId = TextEditingController();
+  // final firstModuleId = TextEditingController();
   final firstModuleName = TextEditingController();
   final descriptionOfCourse = TextEditingController();
   final duration = TextEditingController();
-  final imageUrl = TextEditingController();
   final videosCount = TextEditingController();
   bool autoValidate = true;
   bool isItCombo = false;
@@ -54,6 +55,47 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
   bool isItPaid = false;
   bool show = false;
   bool isItTrialCourse = false;
+
+  String? fileName;
+  Uint8List? uploadedFile;
+  String? titleMessage;
+
+  String? filePath;
+  String comments = '';
+  bool isSubmitted = false;
+
+  Future getFile() async {
+    FilePickerResult? result;
+
+    try {
+      result = await FilePicker.platform.pickFiles(
+        type: FileType.any
+      );
+    } catch (e) {
+      print(e.toString());
+    }
+
+    if (result != null && result.files.isNotEmpty) {
+      try {
+        Uint8List? uploadFile = result.files.single.bytes;
+
+        String pickedFileName = result.files.first.name;
+
+        setState(() {
+          uploadedFile = uploadFile;
+          fileName = pickedFileName;
+        });
+
+        if (uploadedFile != null) {
+          Fluttertoast.showToast(msg: 'Your file is attached');
+        }
+      } catch (e) {
+        Fluttertoast.showToast(msg: e.toString());
+        print(e.toString());
+      }
+    }
+  }
+
 
   @override
   void initState() {
@@ -100,11 +142,11 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
                         child: TextFormField(
                           controller: amountPayable,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter amount';
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter amount';
+                          //   }
+                          // },
                           decoration: decoratedField.copyWith(
                               labelText: 'Enter Amount Payable'),
                         )),
@@ -114,11 +156,11 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
                         child: TextFormField(
                           controller: coursePrice,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter course price';
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter course price';
+                          //   }
+                          // },
                           decoration: decoratedField.copyWith(
                               labelText: 'Enter Course Price'),
                         )),
@@ -128,11 +170,11 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
                         child: TextFormField(
                           controller: discountPrice,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter discount price';
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter discount price';
+                          //   }
+                          // },
                           decoration: decoratedField.copyWith(
                               labelText: 'Enter Discount Price'),
                         )),
@@ -150,20 +192,20 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
                           decoration: decoratedField.copyWith(
                               labelText: 'Enter Course ID'),
                         )),
-                    verticalBox,
-                    SizedBox(
-                        width: Adaptive.w(40),
-                        child: TextFormField(
-                          controller: firstModuleId,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter First Module ID';
-                            }
-                          },
-                          decoration: decoratedField.copyWith(
-                              labelText: 'Enter First Module ID of Course'),
-                        )),
+                    // verticalBox,
+                    // SizedBox(
+                    //     width: Adaptive.w(40),
+                    //     child: TextFormField(
+                    //       controller: firstModuleId,
+                    //       autovalidateMode: AutovalidateMode.onUserInteraction,
+                    //       validator: (value) {
+                    //         if (value == null || value.isEmpty) {
+                    //           return 'Please enter First Module ID';
+                    //         }
+                    //       },
+                    //       decoration: decoratedField.copyWith(
+                    //           labelText: 'Enter First Module ID of Course'),
+                    //     )),
                     verticalBox,
                     SizedBox(
                         width: Adaptive.w(40),
@@ -184,11 +226,11 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
                         child: TextFormField(
                           controller: descriptionOfCourse,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter description of Course';
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter description of Course';
+                          //   }
+                          // },
                           decoration: decoratedField.copyWith(
                               labelText: 'Enter description of Course'),
                         )),
@@ -198,27 +240,13 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
                         child: TextFormField(
                           controller: duration,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter duration of Course';
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter duration of Course';
+                          //   }
+                          // },
                           decoration: decoratedField.copyWith(
                               labelText: 'Enter duration of Course'),
-                        )),
-                    verticalBox,
-                    SizedBox(
-                        width: Adaptive.w(40),
-                        child: TextFormField(
-                          controller: imageUrl,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter imageUrl of Course';
-                            }
-                          },
-                          decoration: decoratedField.copyWith(
-                              labelText: 'Enter ImageUrl of Course'),
                         )),
                     verticalBox,
                     SizedBox(
@@ -230,15 +258,32 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
                             FilteringTextInputFormatter.digitsOnly,
                             IntegerInputFormatter()
                           ],
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter video count of Course (Only Number)';
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter video count of Course (Only Number)';
+                          //   }
+                          // },
                           decoration: decoratedField.copyWith(
                               labelText:
                                   'Enter videos count of Course (Only Number)'),
                         )),
+                    verticalBox,
+                    SizedBox(
+                      width: Adaptive.w(40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton(
+                              onPressed: (){
+                                getFile();
+                          }, child: Text('Upload Image'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: MyColors.primaryColor
+                          )),
+                          Text(uploadedFile != null ? 'Updated' : '', style: TextStyle(color: MyColors.primaryColor),)
+                        ],
+                      ),
+                    ),
                     verticalBox,
                     SizedBox(
                       width: Adaptive.w(40),
@@ -383,67 +428,82 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
   final textStyle = TextStyle(color: Colors.purpleAccent, fontSize: 14.sp);
 
   addCourse() async {
-    try {
-      DocumentReference docRef =
+      try {
+        if (uploadedFile == null) {
+          Fluttertoast.showToast(msg: 'Please Select File');
+        } else {
+          var storageRef = FirebaseStorage.instance
+              .ref()
+              .child('Course Images')
+              .child(fileName!);
+
+          final UploadTask uploadTask = storageRef.putData(uploadedFile!);
+
+          final TaskSnapshot downloadUrl = await uploadTask;
+          final String fileURL = (await downloadUrl.ref.getDownloadURL());
+          print('Resume Download link :  $fileURL');
+          DocumentReference docRef =
           await FirebaseFirestore.instance.collection('courses').add({
-        'name': courseName.text,
-        'Amount Payable': amountPayable.text,
-        'Amount_Payablepay': amountPayable.text,
-        'Course Price': coursePrice.text,
-        'Discount': discountPrice.text,
-        'combo': isItCombo,
-        'courseContent': 'video',
-        'created by': 'Akash Raj',
-        'curriculum': {},
-        'courses': [
-          courseIDE.text,
-        ],
-        'curriculum1': {
-          courseName.text: [
-            {
-              'id': firstModuleId.text,
-              'modulename': firstModuleName.text,
-              'sr': 0,
-              'videos': [],
+            'name': courseName.text,
+            'Amount Payable': amountPayable.text,
+            'Amount_Payablepay': amountPayable.text,
+            'Course Price': coursePrice.text,
+            'Discount': discountPrice.text,
+            'combo': isItCombo,
+            'courseContent': 'video',
+            'created by': 'Akash Raj',
+            'curriculum': {},
+            'courses': [
+              courseIDE.text,
+            ],
+            'curriculum1': {
+              courseName.text: [
+                {
+                  'id': courseIDE.text + 'M1',
+                  'modulename': firstModuleName.text,
+                  'sr': 0,
+                  'videos': [],
+                },
+              ],
             },
-          ],
-        },
-        'mentors': [
-          'jbG4j36JiihVuZmpoLov2lhrWF02',
-          'QVtxxzHyc6az2LPpvH210lUOeXl1',
-          '2AS3AK7WVQaAMY999D3xf5ycG3h1',
-          'a2WWgtY2ikS8xjCxra0GEfRft5N2',
-          'BX9662ZGi4MfO4C9CvJm4u2JFo63',
-          '6RsvdRETWmXf1pyVGqCUl0qEDmF2',
-          'jeYDhaZCRWW4EC9qZ0YTHKz4PH63',
-          'I6uXWtzpimTYxtGqEXcM9AXcoAi2',
-          'Kr4pX5EZ6CfigOd5C1xjdIYzMml2',
-          'XhcpQzd6cjXF43gCmna1agAfS2A2',
-          'fKHHbDBbbySVJZu2NMAVVIYZZpu2',
-          'oQQ9CrJ8FkP06OoGdrtcwSwY89q1',
-          'rR0oKFMCaOYIlblKzrjYoYMW3Vl1',
-          'v66PnlwqWERgcCDA6ZZLbI0mHPF2',
-          'TOV5h3ezQhWGTb5cCVvBPca1Iqh1',
-          '6RsvdRETWmXf1pyVGqCUl0qEDmF2'
-        ],
-        'demo': isItDemo,
-        'description': descriptionOfCourse.text,
-        'duration': duration.text,
-        'gst': '18',
-        'id': courseIDE.text,
-        'paid': isItPaid,
-        'image_url': imageUrl.text,
-        'language': 'English',
-        'reviews': '4.95',
-        'show': show,
-        'trialCourse': isItTrialCourse,
-        'trialDays': '3',
-        'videosCount': int.parse(videosCount.text),
-      });
-      await docRef.update({'docid': docRef.id});
-    } catch (e) {
-      print('addCourse() ${e.toString()}');
-    }
+            'mentors': [
+              'jbG4j36JiihVuZmpoLov2lhrWF02',
+              'QVtxxzHyc6az2LPpvH210lUOeXl1',
+              '2AS3AK7WVQaAMY999D3xf5ycG3h1',
+              'a2WWgtY2ikS8xjCxra0GEfRft5N2',
+              'BX9662ZGi4MfO4C9CvJm4u2JFo63',
+              '6RsvdRETWmXf1pyVGqCUl0qEDmF2',
+              'jeYDhaZCRWW4EC9qZ0YTHKz4PH63',
+              'I6uXWtzpimTYxtGqEXcM9AXcoAi2',
+              'Kr4pX5EZ6CfigOd5C1xjdIYzMml2',
+              'XhcpQzd6cjXF43gCmna1agAfS2A2',
+              'fKHHbDBbbySVJZu2NMAVVIYZZpu2',
+              'oQQ9CrJ8FkP06OoGdrtcwSwY89q1',
+              'rR0oKFMCaOYIlblKzrjYoYMW3Vl1',
+              'v66PnlwqWERgcCDA6ZZLbI0mHPF2',
+              'TOV5h3ezQhWGTb5cCVvBPca1Iqh1',
+              '6RsvdRETWmXf1pyVGqCUl0qEDmF2'
+            ],
+            'demo': isItDemo,
+            'description': descriptionOfCourse.text,
+            'duration': duration.text,
+            'gst': '18',
+            'id': courseIDE.text,
+            'paid': isItPaid,
+            'image_url': fileURL,
+            'language': 'English',
+            'reviews': '4.95',
+            'show': show,
+            'trialCourse': isItTrialCourse,
+            'trialDays': '3',
+            'videosCount': int.parse(videosCount.text),
+          });
+          await docRef.update({'docid': docRef.id});
+        }
+      } catch (e) {
+        print('addCourse $e');
+        Fluttertoast.showToast(msg: 'Error adding course.');
+      }
   }
 
   clearFields() {
@@ -452,11 +512,10 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
     coursePrice.clear();
     discountPrice.clear();
     courseIDE.clear();
-    firstModuleId.clear();
+    // firstModuleId.clear();
     firstModuleName.clear();
     descriptionOfCourse.clear();
     duration.clear();
-    imageUrl.clear();
     videosCount.clear();
     isItCombo = false;
     isItDemo = false;
