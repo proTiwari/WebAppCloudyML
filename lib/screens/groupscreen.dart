@@ -11,6 +11,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ntp/ntp.dart';
 
 class GroupPage extends StatefulWidget { 
   Map<String, dynamic>? groupData;
@@ -138,7 +140,7 @@ class _GroupPageState extends State<GroupPage> {
     role = data!["role"];
     if (role != "student") {
       //  _filteredStream = _collectionStream;
-      name = data["name"].split(" ")[0];
+      name = data!["name"].split(" ")[0];
       ;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       List<String>? myList = prefs.getStringList('myList');
@@ -195,7 +197,7 @@ class _GroupPageState extends State<GroupPage> {
 
     if (role == "student") {
       //   _filteredStream = _collectionStream1;
-      name = data["name"];
+      name = data!["name"];
       SharedPreferences prefs = await SharedPreferences.getInstance();
       print(FirebaseAuth.instance.currentUser!.uid);
       List<String>? myList = prefs.getStringList('myList');
@@ -253,6 +255,34 @@ class _GroupPageState extends State<GroupPage> {
     // print(name);
     return role;
   }
+  Future<void> checkDeviceTime() async {
+    try {
+      final now = DateTime.now();
+      final ntpTime = await NTP.now();
+      final timeDifference = ntpTime.difference(now).inSeconds.abs();
+
+      // Define a threshold for time difference (e.g., 30 seconds) to consider as incorrect.
+      final timeThreshold = 30;
+
+      if (timeDifference > timeThreshold) {
+        // Device time is incorrect, show a popup to correct it.
+        showTimeCorrectionPopup();
+      }
+    } catch (e) {
+      print('Error checking device time: $e');
+    }
+  }
+
+  void showTimeCorrectionPopup() {
+    Fluttertoast.showToast(
+      msg: 'Your device time is incorrect. Please correct it.',
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+    );
+  }
+
   void showPopup(BuildContext context, String message) {
   showDialog(
     context: context,
@@ -268,7 +298,7 @@ class _GroupPageState extends State<GroupPage> {
     //loadrole();
     Configuration.docid = "";
     print("iwejoiweofwoiefwf");
-
+    checkDeviceTime();
     listenToFirestoreChanges();
     listenToFirestoreChanges1();
   }

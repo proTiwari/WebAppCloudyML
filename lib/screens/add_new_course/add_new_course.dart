@@ -111,6 +111,7 @@ class _AddNewCourseScreenState extends State<AddNewCourseScreen> {
 final selectedIndex = 0.obs;
   Set<int> selectedIndices = Set<int>().obs;
 
+
   @override
   void initState() {
     super.initState();
@@ -507,6 +508,7 @@ final selectedIndex = 0.obs;
             'created by': 'Akash Raj',
             'curriculum': {},
             'courses': listOfCourse,
+
             'curriculum1': {
               courseName.text: [
                 {
