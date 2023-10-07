@@ -12,25 +12,19 @@ import 'package:cloudyml_app2/models/offline_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudyml_app2/screens/quiz/quizinstructions.dart';
 import 'package:cloudyml_app2/widgets/assignment_bottomsheet.dart';
-import 'package:cloudyml_app2/widgets/settings_bottomsheet.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:get/get.dart' as getX;
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:hive/hive.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:toast/toast.dart';
 import 'package:video_player/video_player.dart';
@@ -1420,7 +1414,7 @@ class _VideoScreenState extends State<VideoScreen> {
   TextEditingController assignmentLinkController = TextEditingController();
   TextEditingController pdfLinkController = TextEditingController();
   TextEditingController datasetLinkController = TextEditingController();
-  bool isToggled = false;
+  final isToggled = false.obs;
 
   Widget addAssigmentPopUp({required dynamic listOfSectionData}) {
     final width = MediaQuery.of(context).size.width;
@@ -1491,13 +1485,16 @@ class _VideoScreenState extends State<VideoScreen> {
                 SizedBox(
                   width: height / 40,
                 ),
-                CupertinoSwitch(
-                  value: isToggled,
-                  onChanged: (value) {
-                    isToggled = value;
-                    setState(() {});
-                    print('isToggled $isToggled');
-                  },
+                getX.Obx(
+                        () {
+                    return CupertinoSwitch(
+                      value: isToggled.value,
+                      onChanged: (value) {
+                        isToggled.value = !isToggled.value;
+                        print('isToggled ${isToggled.value}');
+                      },
+                    );
+                  }
                 ),
               ]);
             }),
