@@ -1,3 +1,4 @@
+import 'package:cloudyml_app2/authentication/onboardbg.dart';
 import 'package:cloudyml_app2/screens/config.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -71,6 +72,7 @@ class _ChatScreenState extends State<ChatScreen> {
   File? pickedFile;
 
   String? pickedFileName;
+
   void _getAppStorageDir() async {
     appStorage = await getApplicationDocumentsDirectory();
   }
@@ -157,12 +159,12 @@ class _ChatScreenState extends State<ChatScreen> {
       final time = DateTime.now();
       // Add message to Firestore
 
-      DateTime time1 = await fetchTimeInIndia();
+     // DateTime time1 = await fetchTimeInIndia();
 
       print(time);
-      print(time1.toString());
+      //print(time1.toString());
       updatelast();
-      updatetime(time1, _textController.text);
+      updatetime(time, "audio recieved");
       _firestore
           .collection("groups")
           .doc(widget.groupId)
@@ -173,7 +175,7 @@ class _ChatScreenState extends State<ChatScreen> {
         'sendBy': widget.name,
         'link': downloadUrl,
         'studentid': widget.id,
-        'time': time1,
+        'time': time,
         'type': 'audio'
       });
 
@@ -192,9 +194,9 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   bool checktext(String string) {
-    final links = ['http://', 'https://', 'www.', 'http:// ', 'https:// '];
+    final links = ['http://', 'https://'];
     int count = 0;
-
+    
     for (final link in links) {
       int index = string.indexOf(link);
       while (index != -1) {
@@ -226,7 +228,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<DateTime> fetchTimeInIndia() async {
     final response = await http
-        .get(Uri.parse('https://worldtimeapi.org/api/timezone/Asia/Kolkata'));
+        .get(Uri.parse('http://worldtimeapi.org/api/timezone/Asia/Kolkata'));
     final jsonData = json.decode(response.body);
     final datetime = jsonData['datetime'];
     final offset = jsonData['utc_offset'];
@@ -290,12 +292,12 @@ class _ChatScreenState extends State<ChatScreen> {
       final time = DateTime.now();
       // Add message to Firestore
 
-      DateTime time1 = await fetchTimeInIndia();
+     // DateTime time1 = await fetchTimeInIndia();
 
       print(time);
-      print(time1.toString());
+     // print(time1.toString());
       updatelast();
-      updatetime(time1, _textController.text);
+      updatetime(time, "image recieved");
 
       _firestore
           .collection("groups")
@@ -307,7 +309,7 @@ class _ChatScreenState extends State<ChatScreen> {
         'sendBy': widget.name,
         'link': _downloadUrl,
         'studentid': widget.id,
-        'time': time1,
+        'time': time,
         'type': 'image'
       });
     }
@@ -331,12 +333,12 @@ class _ChatScreenState extends State<ChatScreen> {
       final time = DateTime.now();
       // Add message to Firestore
 
-      DateTime time1 = await fetchTimeInIndia();
+      //DateTime time1 = await fetchTimeInIndia();
 
       print(time);
-      print(time1.toString());
+      //print(time1.toString());
       updatelast();
-      updatetime(time1, _textController.text);
+      updatetime(time, "image recieved");
 
       _firestore
           .collection("groups")
@@ -348,7 +350,7 @@ class _ChatScreenState extends State<ChatScreen> {
         'sendBy': widget.name,
         'link': _downloadUrl,
         'studentid': widget.id,
-        'time': time1,
+        'time': time,
         'type': 'image'
       });
     }
@@ -372,12 +374,12 @@ class _ChatScreenState extends State<ChatScreen> {
       final time = DateTime.now();
       // Add message to Firestore
 
-      DateTime time1 = await fetchTimeInIndia();
+    //  DateTime time1 = await fetchTimeInIndia();
 
       print(time);
-      print(time1.toString());
+      //print(time1.toString());
       updatelast();
-      updatetime(time1, _textController.text);
+      updatetime(time, "video recieved");
 
       _firestore
           .collection("groups")
@@ -389,7 +391,7 @@ class _ChatScreenState extends State<ChatScreen> {
         'sendBy': widget.name,
         'link': _downloadUrl,
         'studentid': widget.id,
-        'time': time1,
+        'time': time,
         'type': 'video'
       });
     }
@@ -413,12 +415,12 @@ class _ChatScreenState extends State<ChatScreen> {
       final time = DateTime.now();
       // Add message to Firestore
 
-      DateTime time1 = await fetchTimeInIndia();
+    //  DateTime time1 = await fetchTimeInIndia();
 
       print(time);
-      print(time1.toString());
+    //  print(time1.toString());
       updatelast();
-      updatetime(time1, _textController.text);
+      updatetime(time, "video recieved");
 
       _firestore
           .collection("groups")
@@ -430,7 +432,7 @@ class _ChatScreenState extends State<ChatScreen> {
         'sendBy': widget.name,
         'link': _downloadUrl,
         'studentid': widget.id,
-        'time': time1,
+        'time': time,
         'type': 'video'
       });
     }
@@ -522,12 +524,12 @@ class _ChatScreenState extends State<ChatScreen> {
         final time = DateTime.now();
         // Add message to Firestore
 
-        DateTime time1 = await fetchTimeInIndia();
+       // DateTime time1 = await fetchTimeInIndia();
 
         print(time);
-        print(time1.toString());
+      //  print(time1.toString());
         updatelast();
-        updatetime(time1, _textController.text);
+        updatetime(time, "file recieved");
         _firestore
             .collection("groups")
             .doc(widget.groupId)
@@ -538,7 +540,7 @@ class _ChatScreenState extends State<ChatScreen> {
           'sendBy': widget.name,
           'link': _downloadUrl,
           'studentid': widget.id,
-          'time': time1,
+          'time': time,
           'type': 'file'
         });
       }
@@ -606,12 +608,12 @@ class _ChatScreenState extends State<ChatScreen> {
       String student_id = widget.id;
       _textController.clear();
       // here student_id will come from frontEnd  socket.handshake.auth.student_id4
-      DateTime time1 = await fetchTimeInIndia();
+     // DateTime time1 = await fetchTimeInIndia();
       final time = DateTime.now();
       print(time);
-      print(time1.toString());
+     // print(time1.toString());
       updatelast();
-      updatetime(time1, _textController.text);
+      updatetime(time, _textController.text);
       final post = await _firestore
           .collection("groups")
           .doc(id)
@@ -621,7 +623,7 @@ class _ChatScreenState extends State<ChatScreen> {
         'role': widget.role,
         'sendBy': widget.name,
         'studentid': widget.id,
-        'time': time1,
+        'time': time,
         'type': 'text'
       });
 
@@ -754,17 +756,22 @@ class _ChatScreenState extends State<ChatScreen> {
                           );
                         }
                         final messages = snapshot.data!.docs;
-                       
+
                         print('Number of documents: ${messages.length}');
                         List<MessageBubble> messageBubbles = [];
                         for (var message in messages) {
-                           final data =message.data() as Map<String,dynamic>;
+                          final data = message.data() as Map<String, dynamic>;
                           final messageText = message['message'];
                           final messageSender = message['sendBy'];
                           final messageType = message['type'];
                           final messagetime = message['time'];
                           final currentUser = widget.id;
-                          final messageid = data.containsKey('studentid')?message['studentid']:"old message";
+                          final mid = message.id;
+                          final gid = widget.groupId;
+                          final messageid = data.containsKey('studentid')
+                              ? message['studentid']
+                              : "old message";
+                              
                           final link = messageType == "image" ||
                                   messageType == "audio" ||
                                   messageType == "video" ||
@@ -776,7 +783,14 @@ class _ChatScreenState extends State<ChatScreen> {
                               message: messageText,
                               sender: messageSender,
                               timestamp: messagetime,
-                              isMe: (messageSender == widget.name)&&(messageid=="old message"?true:messageid==currentUser?true:false),
+                              mid: mid,
+                              gid: gid,
+                              isMe: (messageSender == widget.name) &&
+                                  (messageid == "old message"
+                                      ? true
+                                      : messageid == currentUser
+                                          ? true
+                                          : false),
                               link: link,
                               type: messageType,
                               isURL: isURL(messageText));
@@ -865,11 +879,10 @@ class _ChatScreenState extends State<ChatScreen> {
                               ),
                         _isRecording
                             ? SizedBox()
-                            :   IconButton(
-            icon: Icon(Icons.send, color: Colors.purple),
-            onPressed: containsSingleURL(_textController.text)
-                ? _sendMessage
-                : error()),
+                            : IconButton(
+                                icon: Icon(Icons.send, color: Colors.purple),
+                                onPressed: _sendMessage,
+                              ),
                       ],
                     ),
                   ),
@@ -939,6 +952,8 @@ class MessageBubble extends StatefulWidget {
   final Timestamp timestamp;
   final String link;
   final bool isURL;
+  final String mid;
+  final String gid;
 
   MessageBubble(
       {required this.message,
@@ -946,8 +961,10 @@ class MessageBubble extends StatefulWidget {
       required this.isMe,
       required this.type,
       required this.link,
+      required this.mid,
       required this.timestamp,
-      required this.isURL});
+      required this.isURL,
+      required this.gid});
 
   @override
   State<MessageBubble> createState() => _MessageBubbleState();
@@ -1099,46 +1116,61 @@ class _MessageBubbleState extends State<MessageBubble> {
                   ),
                   widget.type == 'text'
                       ? widget.isURL
-                          ? Container(
-                              width: 300,
-                              child: Column(children: [
+                          ? Column(
+                              children: [
                                 Container(
-                                  height: 300,
-                                  child: InAppWebView(
-                                    initialUrlRequest: URLRequest(
-                                      url:
-                                          Uri.parse(extractURL(widget.message)),
-                                    ),
-                                    initialOptions: InAppWebViewGroupOptions(
-                                      crossPlatform: InAppWebViewOptions(
-                                        useShouldOverrideUrlLoading: true,
-                                        mediaPlaybackRequiresUserGesture: false,
+                                  width: 300,
+                                  child: Column(children: [
+                                    Container(
+                                      height: 300,
+                                      child: InAppWebView(
+                                        initialUrlRequest: URLRequest(
+                                          url: Uri.parse(
+                                              extractURL(widget.message)),
+                                        ),
+                                        initialOptions:
+                                            InAppWebViewGroupOptions(
+                                          crossPlatform: InAppWebViewOptions(
+                                            useShouldOverrideUrlLoading: true,
+                                            mediaPlaybackRequiresUserGesture:
+                                                false,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          launch(widget.message);
-                                        },
-                                        child: HighlightedText(
-                                            text: widget.message,
-                                            highlight:
-                                                extractURL(widget.message)),
-                                      ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              launch(widget.message);
+                                            },
+                                            child: HighlightedText(
+                                                text: widget.message,
+                                                highlight:
+                                                    extractURL(widget.message)),
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.copy),
+                                          onPressed: () {
+                                            copyText(widget.message);
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: Colors.red[700],
+                                          ),
+                                          onPressed: () {
+                                            deletemessage(widget.mid);
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                    IconButton(
-                                      icon: Icon(Icons.copy),
-                                      onPressed: () {
-                                        copyText(widget.message);
-                                      },
-                                    ),
-                                  ],
+                                  ]),
                                 ),
-                              ]),
+                              ],
                             )
                           : Container(
                               constraints:
@@ -1161,6 +1193,17 @@ class _MessageBubbleState extends State<MessageBubble> {
                                       copyText(widget.message);
                                     },
                                   ),
+                                  widget.isMe
+                                      ? IconButton(
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: Colors.red[700],
+                                          ),
+                                          onPressed: () {
+                                            deletemessage(widget.mid);
+                                          },
+                                        )
+                                      : SizedBox(),
                                 ],
                               ),
                             )
@@ -1187,18 +1230,48 @@ class _MessageBubbleState extends State<MessageBubble> {
                                     ),
                                   ),
                                   SizedBox(height: 8.0),
-                                  TextButton(
-                                    child: Text('View in Gallery'),
-                                    onPressed: () {
-                                      downloadAndOpenFile(
-                                          widget.link, widget.message);
-                                    },
+                                  Center(
+                                    child: Row(
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 100),
+                                          child: TextButton(
+                                            child: Text('View in Gallery'),
+                                            onPressed: () {
+                                              downloadAndOpenFile(
+                                                  widget.link, widget.message);
+                                            },
+                                          ),
+                                        ),
+                                        widget.isMe
+                                            ? IconButton(
+                                                icon: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red[700],
+                                                ),
+                                                onPressed: () {
+                                                  deletemessage(widget.mid);
+                                                },
+                                              )
+                                            : SizedBox(),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
                             )
                           : widget.type == 'audio'
-                              ? AudioPlayerWidget(audioUrl: widget.link)
+                              ? Row(
+                                  children: [
+                                    AudioPlayerWidget(
+                                        audioUrl: widget.link,
+                                        mid: widget.mid,
+                                        gid: widget.gid,
+                                        isMe: widget.isMe
+                                        ),
+                                  ],
+                                )
                               : widget.type == 'video'
                                   ? Container(
                                       width: 300,
@@ -1210,12 +1283,33 @@ class _MessageBubbleState extends State<MessageBubble> {
                                                 link: widget.link,
                                               )),
                                           SizedBox(height: 8.0),
-                                          TextButton(
-                                            child: Text('View in Gallery'),
-                                            onPressed: () {
-                                              _downloadAndOpenVideo(
-                                                  widget.link);
-                                            },
+                                          Row(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 100),
+                                                child: TextButton(
+                                                  child:
+                                                      Text('View in Gallery'),
+                                                  onPressed: () {
+                                                    _downloadAndOpenVideo(
+                                                        widget.link);
+                                                  },
+                                                ),
+                                              ),
+                                              widget.isMe
+                                                  ? IconButton(
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red[700],
+                                                      ),
+                                                      onPressed: () {
+                                                        deletemessage(
+                                                            widget.mid);
+                                                      },
+                                                    )
+                                                  : SizedBox()
+                                            ],
                                           ),
                                         ],
                                       ),
@@ -1224,24 +1318,44 @@ class _MessageBubbleState extends State<MessageBubble> {
                                       width: 300,
                                       // height: 20,
                                       //  width: 50,
-                                      child: TextButton(
-                                        child: Text(
-                                          '${widget.message} - View file',
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        onPressed: () {
-                                          downloadAndOpenFile(
-                                              widget.link, widget.message);
-                                        },
+                                      child: Column(
+                                        children: [
+                                          TextButton(
+                                            child: Text(
+                                              '${widget.message} - View file',
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            onPressed: () {
+                                              downloadAndOpenFile(
+                                                  widget.link, widget.message);
+                                            },
+                                          ),
+                                           widget.isMe
+                                                  ? IconButton(
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red[700],
+                                                      ),
+                                                      onPressed: () {
+                                                        deletemessage(
+                                                            widget.mid);
+                                                      },
+                                                    )
+                                                  : SizedBox()
+                                        ],
                                       ),
                                     ),
                   SizedBox(height: 4),
-                  Text(
-                    "${DateFormat('h:mm a').format(widget.timestamp.toDate())}",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 10,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        "${DateFormat('h:mm a').format(widget.timestamp.toDate())}",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -1251,12 +1365,28 @@ class _MessageBubbleState extends State<MessageBubble> {
       ],
     );
   }
+
+  void deletemessage(String messageid) {
+    FirebaseFirestore.instance
+        .collection("groups")
+        .doc(widget.gid)
+        .collection("chats")
+        .doc(messageid)
+        .delete();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Message Deleted')),
+    );
+  }
 }
 
 class AudioPlayerWidget extends StatefulWidget {
   final String audioUrl;
-
-  const AudioPlayerWidget({Key? key, required this.audioUrl}) : super(key: key);
+  final String mid;
+  final String gid;
+  final bool isMe;
+  const AudioPlayerWidget(
+      {Key? key, required this.audioUrl, required this.mid, required this.gid,required this.isMe})
+      : super(key: key);
 
   @override
   _AudioPlayerWidgetState createState() => _AudioPlayerWidgetState();
@@ -1359,8 +1489,21 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                   Text('/'),
                   SizedBox(width: 10),
                   Text(_formatDuration(_totalDuration)),
+                    widget.isMe
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                        color: Colors.red[700],
+                       // size: 10,
+                      ),
+                      onPressed: () {
+                        deletemessage(widget.mid);
+                      },
+                    )
+                  : SizedBox()
                 ],
               ),
+            
             ],
           ),
           Padding(
@@ -1381,6 +1524,18 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
       ),
     );
   }
+
+  void deletemessage(String mid) {
+    FirebaseFirestore.instance
+        .collection("groups")
+        .doc(widget.gid)
+        .collection("chats")
+        .doc(mid)
+        .delete();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Message Deleted')),
+    );
+  }
 }
 
 class VideoPlayerWidget extends StatefulWidget {
@@ -1399,11 +1554,12 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   void initState() {
     _videoPlayerController = VideoPlayerController.network(widget.link);
     _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
-      autoInitialize: true,
-      looping: false,
-      autoPlay: false,
-    );
+        videoPlayerController: _videoPlayerController,
+        autoInitialize: true,
+        looping: false,
+        autoPlay: false,
+        showOptions: false,
+        allowPlaybackSpeedChanging: false);
   }
 
   @override
