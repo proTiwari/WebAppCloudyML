@@ -86,26 +86,63 @@ class _VideoScreenState extends State<VideoScreen> {
   bool stopdownloading = true;
   bool showAssignSol = false;
   bool quizbool = false;
+
   var quizdata;
-  var quizScore = 0;
+  var quizScore;
   bool quizNameExistsInList = false;
   TextEditingController updateVideoUrl = TextEditingController();
   TextEditingController updateDescription = TextEditingController();
   TextEditingController updateSolutionVideo = TextEditingController();
 
   checkQuizScore(String quizName) {
+    print('ijwefijwojefl1');
     for (var item in globals.quiztrack) {
-      if (item['quizname'] == quizName) {
-        setState(() {
-          quizScore = item['quizScore'];
-          quizNameExistsInList = true;
-        });
-        break;
-      } else {
-        quizScore = 0;
-        quizNameExistsInList = false;
+      print('ijwefijwojefl2 ${item['quizname']}');
+      print('ijwefijwojefl2 ${quizName}');
+      // if (item['quizname'] == quizName) {
+      //   print('ijwefijwojefl3');
+      //   setState(() {
+      //     print('ijwefijwojefl4');
+      //     quizScore = item['quizScore'];
+      //     print('ijwefijwojefl5');
+      //     quizNameExistsInList = true;
+      //     print('ijwefijwojefl $quizScore');
+      //   });
+      //   print('ijwefijwojefl6');
+      //   break;
+      // } else {
+      //   print('ijwefijwojefl7');
+      //   quizScore = 0;
+      //   quizNameExistsInList = false;
+      // }
+      print('${widget.courseName}');
+      print('${item['courseName']}');
+      if (widget.courseName == item['courseName']) {
+        // extract all the numbers from the string item['quizname']
+        var quizname = item['quizname'];
+        var quiznameNumbers = quizname.replaceAll(RegExp(r'[^0-9]'), '');
+        var quiznamenumbercount = quizName.replaceAll(RegExp(r'[^0-9]'), '');
+        print('ijwefijwojefl7 $quiznameNumbers');
+        print('ijwefijwojefl7 $quiznamenumbercount');
+        if (quiznameNumbers == quiznamenumbercount) {
+          print('ijwefijwojefl8');
+          setState(() {
+            print('ijwefijwojefl9');
+            quizScore = item['quizScore'];
+            print('ijwefijwojefl10');
+            quizNameExistsInList = true;
+            print('ijwefijwojefl $quizScore');
+          });
+          print('ijwefijwojefl11');
+          break;
+        } else {
+          print('ijwefijwojefl12');
+          quizScore = 0;
+          quizNameExistsInList = false;
+        }
       }
     }
+    print('ijwefijwojefl9 ${globals.quiztrack}');
   }
 
   var _delayToInvokeonControlUpdate = 0;
@@ -260,11 +297,24 @@ class _VideoScreenState extends State<VideoScreen> {
         for (var j = 0; j < courseQuizList[i]['videos'].length; j++) {
           if (courseQuizList[i]['videos'][j]['type'] == 'quiz') {
             for (var name in userQuizTrack['quiztrack']) {
-              if (courseQuizList[i]['videos'][j]['name'] == name['quizname']) {
-                setState(() {
-                  quizScoreMap[name['quizname']] = name['quizScore'];
-                });
+              if (widget.courseName == name['courseName']) {
+                var quiznameNumbers = courseQuizList[i]['videos'][j]['name']
+                    .replaceAll(RegExp(r'[^0-9]'), '');
+                var quiznamenumbercount =
+                    name['quizname'].replaceAll(RegExp(r'[^0-9]'), '');
+                if (quiznameNumbers == quiznamenumbercount) {
+                  setState(() {
+                    quizScoreMap[courseQuizList[i]['videos'][j]['name']] =
+                        name['quizScore'].toStringAsFixed(2);
+                  });
+                }
               }
+              // if (courseQuizList[i]['videos'][j]['name'] == name['quizname']) {
+              //   setState(() {
+              //     quizScoreMap[name['quizname']] =
+              //         name['quizScore'].toStringAsFixed(2);
+              //   });
+              // }
             }
           }
         }
@@ -3000,8 +3050,12 @@ class _VideoScreenState extends State<VideoScreen> {
                                                   print("iwoe");
                                                   htmlbool = true;
                                                 });
+                                                print(
+                                                    'iwoeifjowefiow#${quizdata['name']}');
                                                 checkQuizScore(
                                                     quizdata['name']);
+                                                print(
+                                                    'iwoeifjowefiow#${quizScore}');
                                               } else {
                                                 // showAssignment = true;
                                                 setState(() {
@@ -3400,8 +3454,6 @@ class _VideoScreenState extends State<VideoScreen> {
                                                               .toString()
                                                       ? HexColor("#fbedfc")
                                                       : Colors.white,
-                                                  //     Colors.red,
-
                                                   padding: EdgeInsets.only(
                                                       left: listOfSectionData[widget.courseName]
                                                                           [sectionIndex]
@@ -4423,6 +4475,9 @@ class _VideoScreenState extends State<VideoScreen> {
                                                                   htmlbool =
                                                                       true;
                                                                 });
+                                                                checkQuizScore(
+                                                                    quizdata[
+                                                                        'name']);
                                                               },
                                                               child: Row(
                                                                 mainAxisAlignment:
