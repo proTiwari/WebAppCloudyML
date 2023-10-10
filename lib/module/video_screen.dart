@@ -343,8 +343,8 @@ class _VideoScreenState extends State<VideoScreen> {
                     });
                   }
                 }else if(widget.courseName == 'Python For Data science'){
-                  
- if (courseQuizList[i]['videos'][j]['name'] ==
+
+                  if (courseQuizList[i]['videos'][j]['name'] ==
                       name['quizname']) {
                     setState(() {
                       quizScoreMap[courseQuizList[i]['videos'][j]['name']] =
