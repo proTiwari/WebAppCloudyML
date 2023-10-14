@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:star_rating/star_rating.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class StudentReviewScreen extends StatefulWidget {
   const StudentReviewScreen({Key? key}) : super(key: key);
@@ -51,6 +52,13 @@ class _StudentReviewScreenState extends State<StudentReviewScreen> {
     }
   }
 
+  String formatTimeAgo(String timestamp) {
+    final DateTime parsedTime = DateTime.parse(timestamp);
+    final now = DateTime.now();
+
+    return timeago.format(now.subtract(now.difference(parsedTime)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +68,14 @@ class _StudentReviewScreenState extends State<StudentReviewScreen> {
             )
           : error
               ? Center(
-                  child: Text('Error occured while fetching data!'),
+                  child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PostReviewScreen()));
+                      },
+                      child: Text('Error occured while fetching data!')),
                 )
               : LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints constraint) {
@@ -107,7 +122,7 @@ class _StudentReviewScreenState extends State<StudentReviewScreen> {
                                       ),
                                       StarRating(
                                         length: 5,
-                                        rating: 4.5,
+                                        rating: avgrating!.total!.toDouble(),
                                         color: Colors.purpleAccent,
                                         starSize: 20,
                                       ),
@@ -203,14 +218,17 @@ class _StudentReviewScreenState extends State<StudentReviewScreen> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           StarRating(
-                                            rating: 4.5,
+                                            rating: double.parse(
+                                                reviews[index].rating!),
                                             starSize: 20,
                                             color: Colors.purpleAccent,
                                             length: 5,
                                           ),
                                           SizedBox(width: 8),
                                           Text(
-                                            '${reviews[index].date}',
+                                            formatTimeAgo(
+                                              '${reviews[index].date.toString()}',
+                                            ),
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.grey),

@@ -338,22 +338,22 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
                                         "${experienceStartDate!.day}/${experienceStartDate!.month}/${experienceStartDate!.year} to ${experienceEndDate!.day}/${experienceEndDate!.month}/${experienceEndDate!.year}",
                                     "date": DateTime.now().toString(),
                                   }));
+
                                   setState(() {
                                     loading = false;
+                                    _nameController.text = '';
+                                    _emailController.text = '';
+                                    _courseController.text = '';
+                                    _linkdinlinkController.text = '';
+
+                                    _reviewdescriptionController.text = '';
+                                    _ratingController.text = '';
+                                    experienceStartDate = null;
+                                    experienceEndDate = null;
                                   });
+
+                                  // Navigator.pop(context);
                                 }
-                                // Toast.show(await postReview({
-                                //   "name": _nameController.text,
-                                //   "email": _emailController.text,
-                                //   "course": _courseController.text,
-                                //   "linkdinlink": _linkdinlinkController.text,
-                                //   "reviewdescription":
-                                //       _reviewdescriptionController.text,
-                                //   "rating": _ratingController.text,
-                                //   "experience":
-                                //       "${experienceStartDate!.day}/${experienceStartDate!.month}/${experienceStartDate!.year} to ${experienceEndDate!.day}/${experienceEndDate!.month}/${experienceEndDate!.year}",
-                                //   "date": DateTime.now().toString(),
-                                // }));
                               },
                               style: ElevatedButton.styleFrom(
                                 primary: Colors.blue, // Background color
