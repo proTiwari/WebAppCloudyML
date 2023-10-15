@@ -114,7 +114,7 @@ class _StudentReviewScreenState extends State<StudentReviewScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        '${avgrating!.total}',
+                                        '${avgrating!.total?.toStringAsFixed(1)}',
                                         style: TextStyle(
                                           fontSize: 36,
                                           fontWeight: FontWeight.bold,
@@ -137,23 +137,28 @@ class _StudentReviewScreenState extends State<StudentReviewScreen> {
                                     children: [
                                       rateBar(
                                           rate: '5',
-                                          value: avgrating!.five!.toDouble(),
+                                          value:
+                                              avgrating!.five!.toDouble() / 10,
                                           context: context),
                                       rateBar(
                                           rate: '4',
-                                          value: avgrating!.four!.toDouble(),
+                                          value:
+                                              avgrating!.four!.toDouble() / 10,
                                           context: context),
                                       rateBar(
                                           rate: '3',
-                                          value: avgrating!.three!.toDouble(),
+                                          value:
+                                              avgrating!.three!.toDouble() / 10,
                                           context: context),
                                       rateBar(
                                           rate: '2',
-                                          value: avgrating!.two!.toDouble(),
+                                          value:
+                                              avgrating!.two!.toDouble() / 10,
                                           context: context),
                                       rateBar(
                                           rate: '1',
-                                          value: avgrating!.one!.toDouble(),
+                                          value:
+                                              avgrating!.one!.toDouble() / 10,
                                           context: context),
                                     ],
                                   ),
