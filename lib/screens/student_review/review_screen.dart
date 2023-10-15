@@ -157,38 +157,43 @@ class _StudentReviewScreenState extends State<StudentReviewScreen> {
                                                         children: [
                                                           rateBar(
                                                               rate: '5',
-                                                              value: avgrating!
-                                                                      .five!
-                                                                      .toDouble() /
-                                                                  10,
+                                                              value: (avgrating!
+                                                                          .five!
+                                                                          .toDouble() /
+                                                                      100) *
+                                                                  5,
                                                               context: context),
                                                           rateBar(
                                                               rate: '4',
-                                                              value: avgrating!
-                                                                      .four!
-                                                                      .toDouble() /
-                                                                  10,
+                                                              value: (avgrating!
+                                                                          .four!
+                                                                          .toDouble() /
+                                                                      100) *
+                                                                  5,
                                                               context: context),
                                                           rateBar(
                                                               rate: '3',
-                                                              value: avgrating!
-                                                                      .three!
-                                                                      .toDouble() /
-                                                                  10,
+                                                              value: (avgrating!
+                                                                          .three!
+                                                                          .toDouble() /
+                                                                      100) *
+                                                                  5,
                                                               context: context),
                                                           rateBar(
                                                               rate: '2',
-                                                              value: avgrating!
-                                                                      .two!
-                                                                      .toDouble() /
-                                                                  10,
+                                                              value: (avgrating!
+                                                                          .two!
+                                                                          .toDouble() /
+                                                                      100) *
+                                                                  5,
                                                               context: context),
                                                           rateBar(
                                                               rate: '1',
-                                                              value: avgrating!
-                                                                      .one!
-                                                                      .toDouble() /
-                                                                  10,
+                                                              value: (avgrating!
+                                                                          .one!
+                                                                          .toDouble() /
+                                                                      100) *
+                                                                  5,
                                                               context: context),
                                                         ],
                                                       ),
