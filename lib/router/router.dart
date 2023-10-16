@@ -69,8 +69,8 @@ class MyRouter {
         // final pc=state.location==('/featuredCourses?cID=aEGX6kMfHzQrVgP3WCwU&courseName=Data+Science+%26+Analytics+Placement+Assurance+Program&id=0&coursePrice=9999');
         String currentURL = html.window.location.href;
         print('currentURL: $currentURL');
-        if (currentURL.contains("review")) {
-          return ('/review');
+        if (currentURL.contains("/students/review")) {
+          return ('/students/review');
         } else {
           if (!loggedIn && !goingToLogin) {
             return ('/');
@@ -84,7 +84,7 @@ class MyRouter {
       routes: <RouteBase>[
         GoRoute(
           name: 'review',
-          path: '/review',
+          path: '/students/review',
           pageBuilder: (context, state) {
             return MaterialPage(child: StudentReviewScreen());
           },

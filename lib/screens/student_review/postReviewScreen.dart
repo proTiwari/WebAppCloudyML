@@ -68,7 +68,7 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
                     children: [
                       IconButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pop(context, true);
                         },
                         icon: Icon(Icons.arrow_back_ios),
                       ),
